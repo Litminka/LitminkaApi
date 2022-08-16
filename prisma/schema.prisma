@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int                   @id @default(autoincrement())
+  createdAt      DateTime              @default(now())
+  email          String                @unique
+  login          String                @unique
+  password       String
+  name           String?
+  role_id        Int
+  role           Role                  @relation(fields: [role_id], references: [id])
+  integration    Integration?
+  shikimori_link Shikimori_Link_Token?
+  refreshToken   RefreshToken[]
+  anime_list     Anime_list[]
+  follows        Follow[]
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  permissions Permission[]
+  users       User[]
+}
+
+model Permission {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  roles Role[]
+}
+
+model RefreshToken {
+  id      Int    @id @default(autoincrement())
+  token   String @unique
+  user_id Int
+  user    User   @relation(fields: [user_id], references: [id])
+}
+
+model Integration {
+  id                      Int     @id @default(autoincrement())
+  shikimori_token         String?
+  shikimori_refresh_token String?
+  shikimori_code          String?
+  shikimori_id            Int?    @unique
+  discord_id              String?
+  telegram_id             String?
+  vk_id                   String?
+  user_id                 Int     @unique
+  user                    User    @relation(fields: [user_id], references: [id])
+}
+
+model Shikimori_Link_Token {
+  id      Int    @id @default(autoincrement())
+  user_id Int    @unique
+  user    User   @relation(fields: [user_id], references: [id])
+  token   String @unique
+}
+
+model Anime {
+  id                  Int                 @id @default(autoincrement())
+  shikimori_id        Int                 @unique
+  image               String
+  japanese_name       String?
+  english_name        String
+  name                String?
+  description         String?
+  status              String
+  rpa_rating          String?
+  media_type          String
+  max_episodes        Int
+  current_episodes    Int
+  first_episode_aired DateTime?
+  last_episode_aired  DateTime?
+  shikimori_score     Float
+  franchise_name      String?
+  kodik_link          String?
+  genres              Genre[]
+  anime_translations  Anime_translation[]
+  anime_lists         Anime_list[]
+  follows             Follow[]
+}
+
+model Genre {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  anime Anime[]
+}
+
+model Anime_translation {
+  id               Int      @id @default(autoincrement())
+  current_episodes Int
+  group_id         Int
+  group            Group    @relation(fields: [group_id], references: [id])
+  anime_id         Int
+  anime            Anime    @relation(fields: [anime_id], references: [id])
+  follow           Follow[]
+}
+
+model Group {
+  id                Int                 @id
+  name              String              @unique
+  type              String
+  Anime_translation Anime_translation[]
+}
+
+model Follow {
+  id             Int               @id @default(autoincrement())
+  status         String
+  user_id        Int
+  user           User              @relation(fields: [user_id], references: [id])
+  anime_id       Int
+  anime          Anime             @relation(fields: [anime_id], references: [id])
+  translation_id Int
+  translation    Anime_translation @relation(fields: [translation_id], references: [id])
+}
+
+model Anime_list {
+  id               Int     @id @default(autoincrement())
+  anime_id         Int
+  anime            Anime   @relation(fields: [anime_id], references: [id])
+  user_id          Int
+  user             User    @relation(fields: [user_id], references: [id])
+  status           String
+  is_favorite      Boolean
+  watched_episodes Int
+  rating           Int?
+}

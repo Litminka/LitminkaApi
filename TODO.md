@@ -1,0 +1,1 @@
+1. Test Shikimori linking with unchecked mark
