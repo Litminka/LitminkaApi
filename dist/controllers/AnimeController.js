@@ -36,6 +36,11 @@ class AnimeController {
                 where: { id: anime_id },
                 include: {
                     genres: true,
+                    anime_translations: {
+                        include: {
+                            group: true
+                        }
+                    }
                 }
             });
             if (!anime)
@@ -81,6 +86,11 @@ class AnimeController {
                     where: { id: anime_id },
                     include: {
                         genres: true,
+                        anime_translations: {
+                            include: {
+                                group: true
+                            }
+                        }
                     }
                 });
             }

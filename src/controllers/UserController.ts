@@ -66,7 +66,7 @@ export default class UserController {
             }
         });
         const { id } = user;
-
+        console.log(id);
         const token = jwt.sign({ id }, process.env.tokenSecret!, { expiresIn: process.env.tokenLife })
         const refreshToken = jwt.sign({ id }, process.env.tokenRefreshSecret!, { expiresIn: process.env.tokenRefreshLife })
         await prisma.refreshToken.create({

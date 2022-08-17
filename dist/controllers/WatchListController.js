@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const shikimoriapi_1 = __importDefault(require("../helper/shikimoriapi"));
 const express_validator_1 = require("express-validator");
 const db_1 = require("../db");
+const groupsplice_1 = __importDefault(require("../helper/groupsplice"));
 const kodikapi_1 = __importDefault(require("../helper/kodikapi"));
 class WatchListController {
     static getWatchList(req, res) {
@@ -41,6 +42,7 @@ class WatchListController {
     }
     static importList(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Get current user
             const { id } = req.auth;
             let user;
             try {
@@ -66,8 +68,7 @@ class WatchListController {
             console.log("Got list");
             const watchList = animeList;
             const shikimoriAnimeIds = watchList.map((anime) => anime.target_id);
-            // Splice all ids into groups of 50, so we can batch request anime from shikimori
-            //TODO: Rewrite this entirely to use kodik's api
+            // Get all animes from kodik
             const kodik = new kodikapi_1.default();
             const awaitResult = shikimoriAnimeIds.flatMap((shikimori_id) => __awaiter(this, void 0, void 0, function* () {
                 let response = yield kodik.getFullAnime(shikimori_id);
@@ -76,10 +77,28 @@ class WatchListController {
                 return response;
             }));
             let result = yield Promise.all(awaitResult.flatMap((p) => __awaiter(this, void 0, void 0, function* () { return yield p; })));
-            console.log("Got anime from kodik");
             if (res.headersSent)
                 return;
-            // FIXME: Skip adding to list if not on kodik
+            console.log("Got anime from kodik");
+            // Isolate all results that returned nothing
+            const noResult = result.filter(result => result.results.length == 0);
+            const noResultIds = noResult.map(result => result.shikimori_request);
+            result = result.filter(result => result.results.length > 0);
+            // Request all isolated ids from shikimori
+            // Splice all ids into groups of 50, so we can batch request anime from shikimori
+            const idsSpliced = (0, groupsplice_1.default)(noResultIds, 50);
+            const shikimoriRes = idsSpliced.flatMap((batch) => __awaiter(this, void 0, void 0, function* () {
+                let response = yield shikimoriapi.getBatchAnime(batch);
+                if (response.reqStatus === 500)
+                    return res.status(500).json({ message: "Server error" });
+                return response;
+            }));
+            let noResultAnime = yield Promise.all(shikimoriRes.flatMap((p) => __awaiter(this, void 0, void 0, function* () { return yield p; })));
+            noResultAnime = noResultAnime.flat();
+            if (res.headersSent)
+                return;
+            console.log("Got anime from shikimori");
+            // Form unique genres from all collected data
             const genres = result.flatMap(kodikresult => {
                 return kodikresult.results.map(result => result.translation);
             });
@@ -90,6 +109,7 @@ class WatchListController {
                     genresUnique.push(item);
                 return null;
             });
+            // Insert all unique genres
             yield db_1.prisma.$transaction(genresUnique.map(genre => {
                 return db_1.prisma.group.upsert({
                     where: { id: genre.id },
@@ -101,8 +121,8 @@ class WatchListController {
                     update: {}
                 });
             }));
-            const animeInList = yield db_1.prisma.$transaction(result.map((record) => {
-                console.log(record);
+            // Insert kodik anime
+            let animeInList = yield db_1.prisma.$transaction(result.map((record) => {
                 const { results } = record;
                 const [anime] = results;
                 const { material_data } = anime;
@@ -160,6 +180,37 @@ class WatchListController {
                     }
                 });
             }));
+            // Insert shikimori anime
+            const shikimoriUpdate = yield db_1.prisma.$transaction(noResultAnime.map((anime) => {
+                return db_1.prisma.anime.upsert({
+                    where: {
+                        shikimori_id: anime.id,
+                    },
+                    create: {
+                        current_episodes: anime.episodes_aired,
+                        max_episodes: anime.episodes,
+                        shikimori_id: anime.id,
+                        english_name: anime.name,
+                        status: anime.status,
+                        image: anime.image.original,
+                        name: anime.russian,
+                        media_type: anime.kind,
+                        shikimori_score: parseFloat(anime.score),
+                        first_episode_aired: new Date(anime.aired_on),
+                        last_episode_aired: new Date(anime.released_on),
+                    },
+                    update: {
+                        current_episodes: anime.episodes_aired,
+                        max_episodes: anime.episodes,
+                        status: anime.status,
+                        image: anime.image.original,
+                        shikimori_score: parseFloat(anime.score),
+                        first_episode_aired: new Date(anime.aired_on),
+                        last_episode_aired: new Date(anime.released_on),
+                    }
+                });
+            }));
+            animeInList = animeInList.concat(shikimoriUpdate);
             console.log("anime updated");
             for (let i = 0; i < watchList.length; i++) {
                 const listEntry = watchList[i];

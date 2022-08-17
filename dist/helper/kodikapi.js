@@ -46,7 +46,7 @@ class KodikApi {
             if (response.status !== 200)
                 return { reqStatus: 500, message: "Server error" };
             const res = yield response.json();
-            res.shikimori_request = shikimori_id.toString();
+            res.shikimori_request = shikimori_id;
             return res;
         });
     }
