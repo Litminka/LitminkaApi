@@ -231,6 +231,7 @@ export interface KodikAnimeFullRequest {
     time: string,
     total: number,
     reqStatus: 200,
+    shikimori_request: number
     results: KodikAnimeFull[]
 }
 export interface KodikGenresRequest {

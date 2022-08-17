@@ -14,6 +14,7 @@ export default class AnimeController {
             include: {
                 integration: true,
                 shikimori_link: true,
+
             }
         })
         const anime_id: number = req.params.anime_id as unknown as number;
@@ -21,6 +22,11 @@ export default class AnimeController {
             where: { id: anime_id },
             include: {
                 genres: true,
+                anime_translations: {
+                    include: {
+                        group: true
+                    }
+                }
             }
         });
         if (!anime) return res.status(404).json({ message: "This anime doesn't exist" });
@@ -63,6 +69,11 @@ export default class AnimeController {
                 where: { id: anime_id },
                 include: {
                     genres: true,
+                    anime_translations: {
+                        include: {
+                            group: true
+                        }
+                    }
                 }
             });
         }
