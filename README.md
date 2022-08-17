@@ -1,18 +1,24 @@
+
 ## Table of contents
 - [Table of contents](#tableofcontents)
 - [Description](#description)
 - [Documentation](#documentaion)
 
 ----
+
 ## Description
 API for [litminka.ru](litminka.ru)
 
 Litminka - is a service for managing lists, watching and discussing anime-serials and films.
 
 This project works with [shikimori](shikimori.one) list integration, syncronization and automatic editing. One of selling points is an ability to follow specific dub/sub for every serial and notificications for new episodes through the website or connect a discord bot, or a telegram bot.
+
 ----
+
 ## Documentaion
 Right now the website is in development, documentation will be available later
+
+----
 
 ## Содержание
 - [Содержание](#содержание)
