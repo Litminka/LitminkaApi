@@ -39,6 +39,7 @@ type watchListStatus = "planned" | "watching" | "rewatching" | "completed" | "on
 type animeKind = "tv" | "movie" | "ova" | "ona" | "special" | "music" | "tv_13" | "tv_24" | "tv_48s";
 type animeStatus = "released" | "ongoing" | "anons";
 type pgRating = "none" | "g" | "pg" | "pg_13" | "r" | "r_plus" | "rx";
+type pgCapitilizedRating = "None" | "G" | "PG" | "PG_13" | "R" | "R+" | "RX";
 interface ratingAmount {
     name: number,
     value: number
@@ -167,6 +168,9 @@ export interface ShikimoriAnimeFull {
     user_rate: null,
     reqStatus: number
 }
+
+
+
 interface screenshot {
     original: string,
     preview: string
@@ -216,7 +220,6 @@ export interface ServerError {
     message: string
 }
 
-<<<<<<< HEAD
 export interface KodikAnimeRequest {
     time: string,
     total: number,
@@ -230,6 +233,18 @@ export interface KodikAnimeFullRequest {
     reqStatus: 200,
     results: KodikAnimeFull[]
 }
+export interface KodikGenresRequest {
+    time: string,
+    total: number,
+    reqStatus: 200,
+    results: KodikGenre[]
+}
+
+interface KodikGenre {
+    title: string,
+    count: number
+}
+
 
 interface KodikAnime {
     id: string,
@@ -294,6 +309,4 @@ interface KodikAnimeFull extends KodikAnime {
     }
 }
 
-=======
->>>>>>> parent of 666c075... add kodik api and anime
 export type RequestTypes = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

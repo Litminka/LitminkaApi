@@ -23,6 +23,7 @@ export default class AnimeController {
                 genres: true,
             }
         });
+        if (!anime) return res.status(404).json({ message: "This anime doesn't exist" });
         if (!user) return res.json({
             body: anime
         });

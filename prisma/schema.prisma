@@ -71,7 +71,7 @@ model Anime {
   shikimori_id        Int                 @unique
   image               String
   japanese_name       String?
-  english_name        String
+  english_name        String?
   name                String?
   description         String?
   status              String
@@ -100,9 +100,9 @@ model Anime_translation {
   id               Int      @id @default(autoincrement())
   current_episodes Int
   group_id         Int
-  group            Group    @relation(fields: [group_id], references: [id])
+  group            Group    @relation(fields: [group_id], references: [id], onUpdate: Cascade, onDelete: Cascade )
   anime_id         Int
-  anime            Anime    @relation(fields: [anime_id], references: [id])
+  anime            Anime    @relation(fields: [anime_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   follow           Follow[]
 }
 

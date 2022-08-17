@@ -20,7 +20,7 @@ class KodikApi {
     getAnime(shikimori_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const params = new URLSearchParams({
-                "token": "e6ce538fd62a27956c9b01fc74561163",
+                "token": process.env.kodik_api_key,
                 "shikimori_id": shikimori_id.toString(),
             });
             const response = yield (0, node_fetch_1.default)(`${this.baseurl}/search`, {
@@ -35,11 +35,28 @@ class KodikApi {
     getFullAnime(shikimori_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const params = new URLSearchParams({
-                "token": "e6ce538fd62a27956c9b01fc74561163",
+                "token": process.env.kodik_api_key,
                 "shikimori_id": shikimori_id.toString(),
                 "with_material_data": "true"
             });
             const response = yield (0, node_fetch_1.default)(`${this.baseurl}/search`, {
+                method: "POST",
+                body: params
+            });
+            if (response.status !== 200)
+                return { reqStatus: 500, message: "Server error" };
+            const res = yield response.json();
+            res.shikimori_request = shikimori_id.toString();
+            return res;
+        });
+    }
+    getGenres() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const params = new URLSearchParams({
+                "token": process.env.kodik_api_key,
+                "genres_type": "shikimori",
+            });
+            const response = yield (0, node_fetch_1.default)(`${this.baseurl}/genres`, {
                 method: "POST",
                 body: params
             });

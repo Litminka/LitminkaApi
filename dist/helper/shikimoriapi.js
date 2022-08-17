@@ -70,7 +70,7 @@ class ShikimoriApi {
             // If token exists then we assume user has just linked shikimori
             if (token) {
                 requestBody.append("code", this.user.integration.shikimori_code);
-                requestBody.append("redirect_uri", `https://api.litminka.ru:8001/shikimori/link?token=${token.token}`);
+                requestBody.append("redirect_uri", `https://api.litminka.ru/shikimori/link?token=${token.token}`);
             }
             else {
                 requestBody.append("refresh_token", this.user.integration.shikimori_refresh_token);
@@ -194,7 +194,7 @@ class ShikimoriApi {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.user.integration.shikimori_id === null)
                 return false;
-            return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration.shikimori_id}&target_type=Anime`, "GET");
+            return this.requestMaker(`/v2/user_rates?user_id=946450&target_type=Anime`, "GET");
         });
     }
     getBatchAnime(ids) {

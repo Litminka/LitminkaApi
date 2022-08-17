@@ -25,7 +25,7 @@ class WatchListController {
                 user = yield db_1.prisma.user.findFirstOrThrow({
                     where: { id },
                     include: {
-                        anime_List: {
+                        anime_list: {
                             include: {
                                 anime: true
                             }
@@ -36,7 +36,7 @@ class WatchListController {
             catch (error) {
                 return res.status(403).json({ message: "unauthorized" });
             }
-            return res.json(user.anime_List);
+            return res.json(user.anime_list);
         });
     }
     static importList(req, res) {
@@ -63,6 +63,7 @@ class WatchListController {
                 });
             if (animeList.reqStatus === 500)
                 return res.status(500).json({ message: "Server error" });
+            console.log("Got list");
             const watchList = animeList;
             const shikimoriAnimeIds = watchList.map((anime) => anime.target_id);
             // Splice all ids into groups of 50, so we can batch request anime from shikimori
@@ -74,75 +75,129 @@ class WatchListController {
                     return res.status(500).json({ message: "Server error" });
                 return response;
             }));
-            const result = yield Promise.all(awaitResult.flatMap((p) => __awaiter(this, void 0, void 0, function* () { return yield p; })));
-            console.log(result);
-            return;
-            // if (res.headersSent) return;
-            // const animeInList = await prisma.$transaction(
-            //     result.map((anime) => {
-            //         return prisma.anime.upsert({
-            //             where: {
-            //                 shikimori_id: anime.id,
-            //             },
-            //             create: {
-            //                 current_episodes: anime.episodes_aired,
-            //                 max_episodes: anime.episodes,
-            //                 shikimori_id: anime.id,
-            //                 english_name: anime.name,
-            //                 status: anime.status,
-            //                 image: anime.image.original,
-            //                 name: anime.russian,
-            //                 media_type: anime.kind,
-            //                 shikimori_score: parseFloat(anime.score),
-            //                 first_episode_aired: new Date(anime.aired_on),
-            //                 last_episode_aired: new Date(anime.released_on),
-            //             },
-            //             update: {
-            //                 current_episodes: anime.episodes_aired,
-            //                 max_episodes: anime.episodes,
-            //                 status: anime.status,
-            //                 image: anime.image.original,
-            //                 shikimori_score: parseFloat(anime.score),
-            //                 first_episode_aired: new Date(anime.aired_on),
-            //                 last_episode_aired: new Date(anime.released_on),
-            //             }
-            //         });
-            //     })
-            // );
-            // for (let i = 0; i < watchList.length; i++) {
-            //     const listEntry = watchList[i];
-            //     const res = await prisma.anime_list.updateMany({
-            //         where: {
-            //             AND: {
-            //                 user_id: id,
-            //                 anime_id: animeInList.find((anime) => anime.shikimori_id == listEntry.target_id)!.id,
-            //             }
-            //         },
-            //         data: {
-            //             status: listEntry.status,
-            //             watched_episodes: listEntry.episodes,
-            //             rating: listEntry.score
-            //         }
-            //     });
-            //     const { count } = res;
-            //     if (count > 0) watchList.splice(i--, 1);
-            // }
-            // const animeCreateData = watchList.map((listEntry) => {
-            //     return {
-            //         is_favorite: false,
-            //         status: listEntry.status,
-            //         watched_episodes: listEntry.episodes,
-            //         user_id: id,
-            //         anime_id: animeInList.find((anime) => anime.shikimori_id == listEntry.target_id)!.id,
-            //         rating: listEntry.score,
-            //     }
-            // })
-            // await prisma.anime_list.createMany({
-            //     data: animeCreateData
-            // });
-            // return res.json({
-            //     message: 'List imported successfully'
-            // });
+            let result = yield Promise.all(awaitResult.flatMap((p) => __awaiter(this, void 0, void 0, function* () { return yield p; })));
+            console.log("Got anime from kodik");
+            if (res.headersSent)
+                return;
+            // FIXME: Skip adding to list if not on kodik
+            const genres = result.flatMap(kodikresult => {
+                return kodikresult.results.map(result => result.translation);
+            });
+            const genresUnique = [];
+            genres.filter(function (item) {
+                var i = genresUnique.findIndex(x => (x.id == item.id));
+                if (i <= -1)
+                    genresUnique.push(item);
+                return null;
+            });
+            yield db_1.prisma.$transaction(genresUnique.map(genre => {
+                return db_1.prisma.group.upsert({
+                    where: { id: genre.id },
+                    create: {
+                        id: genre.id,
+                        name: genre.title,
+                        type: genre.type
+                    },
+                    update: {}
+                });
+            }));
+            const animeInList = yield db_1.prisma.$transaction(result.map((record) => {
+                console.log(record);
+                const { results } = record;
+                const [anime] = results;
+                const { material_data } = anime;
+                return db_1.prisma.anime.upsert({
+                    where: {
+                        shikimori_id: parseInt(anime.shikimori_id),
+                    },
+                    create: {
+                        current_episodes: material_data.episodes_aired,
+                        max_episodes: material_data.episodes_total,
+                        shikimori_id: parseInt(anime.shikimori_id),
+                        english_name: material_data.title_en,
+                        status: material_data.anime_status,
+                        image: material_data.poster_url,
+                        name: material_data.anime_title,
+                        media_type: material_data.anime_kind,
+                        shikimori_score: material_data.shikimori_rating,
+                        first_episode_aired: new Date(material_data.aired_at),
+                        kodik_link: anime.link,
+                        rpa_rating: material_data.rating_mpaa,
+                        description: material_data.anime_description,
+                        last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null,
+                        anime_translations: {
+                            createMany: {
+                                data: results.map(anime => {
+                                    var _a;
+                                    return {
+                                        group_id: anime.translation.id,
+                                        current_episodes: (_a = anime.episodes_count) !== null && _a !== void 0 ? _a : 0
+                                    };
+                                })
+                            }
+                        },
+                        genres: {
+                            connectOrCreate: material_data.anime_genres.map(genre => {
+                                return {
+                                    where: {
+                                        name: genre
+                                    },
+                                    create: {
+                                        name: genre
+                                    }
+                                };
+                            })
+                        }
+                    },
+                    update: {
+                        current_episodes: material_data.episodes_aired,
+                        max_episodes: material_data.episodes_total,
+                        status: material_data.anime_status,
+                        image: material_data.poster_url,
+                        shikimori_score: material_data.shikimori_rating,
+                        first_episode_aired: new Date(material_data.aired_at),
+                        last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null
+                    }
+                });
+            }));
+            console.log("anime updated");
+            for (let i = 0; i < watchList.length; i++) {
+                const listEntry = watchList[i];
+                const res = yield db_1.prisma.anime_list.updateMany({
+                    where: {
+                        AND: {
+                            user_id: id,
+                            anime_id: animeInList.find((anime) => anime.shikimori_id == listEntry.target_id).id,
+                        }
+                    },
+                    data: {
+                        status: listEntry.status,
+                        watched_episodes: listEntry.episodes,
+                        rating: listEntry.score
+                    }
+                });
+                // if were updated, remove from watchlist
+                // prisma does not have upsert many, so we remove updated titles
+                const { count } = res;
+                if (count > 0)
+                    watchList.splice(i--, 1);
+            }
+            yield db_1.prisma.anime_list.createMany({
+                data: watchList.map((listEntry) => {
+                    return {
+                        is_favorite: false,
+                        status: listEntry.status,
+                        watched_episodes: listEntry.episodes,
+                        user_id: id,
+                        anime_id: animeInList.find((anime) => anime.shikimori_id == listEntry.target_id).id,
+                        rating: listEntry.score,
+                    };
+                })
+            });
+            console.log("watchlist imported");
+            return res.json({
+                message: 'List imported successfully'
+            });
         });
     }
     static addToList(req, res) {

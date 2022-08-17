@@ -43,7 +43,7 @@ export default class ShikimoriApi implements iShikimoriApi {
         // If token exists then we assume user has just linked shikimori
         if (token) {
             requestBody.append("code", this.user.integration!.shikimori_code!);
-            requestBody.append("redirect_uri", `https://api.litminka.ru:8001/shikimori/link?token=${token!.token}`);
+            requestBody.append("redirect_uri", `https://api.litminka.ru/shikimori/link?token=${token!.token}`);
         } else {
             requestBody.append("refresh_token", this.user.integration!.shikimori_refresh_token!)
         }
@@ -150,7 +150,7 @@ export default class ShikimoriApi implements iShikimoriApi {
 
     public async getUserList(): Promise<ShikimoriWatchList[] | ServerError | false> {
         if (this.user.integration!.shikimori_id === null) return false;
-        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimori_id}&target_type=Anime`, "GET");
+        return this.requestMaker(`/v2/user_rates?user_id=946450&target_type=Anime`, "GET");
     }
 
     public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[] | ServerError> {

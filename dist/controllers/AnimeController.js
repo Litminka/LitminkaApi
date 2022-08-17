@@ -35,18 +35,20 @@ class AnimeController {
             let anime = yield db_1.prisma.anime.findFirst({
                 where: { id: anime_id },
                 include: {
-                    genre: true,
+                    genres: true,
                 }
             });
+            if (!anime)
+                return res.status(404).json({ message: "This anime doesn't exist" });
             if (!user)
                 return res.json({
                     body: anime
                 });
+            // TODO: add user role checking, and setting checking to allow shikimori requests only to specific users
             if (((anime === null || anime === void 0 ? void 0 : anime.description) != null && (anime === null || anime === void 0 ? void 0 : anime.rpa_rating) != null))
                 return res.json({
                     body: anime
                 });
-            //TODO: Rewrite this entirely to use kodik's api
             const shikimoriApi = new shikimoriapi_1.default(user);
             const resAnime = yield shikimoriApi.getAnimeById(anime.shikimori_id);
             if (resAnime.reqStatus !== 500 && resAnime.reqStatus !== 404) {
@@ -61,7 +63,7 @@ class AnimeController {
                         japanese_name: update.japanese ? update.japanese[0] : null,
                         franchise_name: update.franchise,
                         rpa_rating: update.rating,
-                        genre: {
+                        genres: {
                             connectOrCreate: update.genres.map((genre) => {
                                 return {
                                     where: {
@@ -78,7 +80,7 @@ class AnimeController {
                 anime = yield db_1.prisma.anime.findFirst({
                     where: { id: anime_id },
                     include: {
-                        genre: true,
+                        genres: true,
                     }
                 });
             }
