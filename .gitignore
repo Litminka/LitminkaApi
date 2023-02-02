@@ -4,3 +4,6 @@ node_modules
 .vscode
 config.json
 cert/
+
+# Require to build app
+dist
