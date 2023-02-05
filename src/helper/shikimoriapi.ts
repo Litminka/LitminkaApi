@@ -3,6 +3,7 @@ import fetch, { Headers } from "node-fetch";
 import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/custom";
 import sleep from "./sleep";
 import { prisma } from '../db';
+import { shikiRateLimiter } from "../shikiRateLimiter";
 import { RateLimiter } from "limiter";
 interface iShikimoriApi {
     user: User & {
@@ -10,18 +11,20 @@ interface iShikimoriApi {
     },
     limiter: RateLimiter
 }
-const baseUrl = "https://shikimori.one/api";
+
+const baseUrl = `${process.env.shikimori_url}/api`;
 export default class ShikimoriApi implements iShikimoriApi {
     user: User & { integration: Integration | null };
     limiter: RateLimiter;
     constructor(user: User & { integration: Integration | null }) {
         this.user = user;
-        this.limiter = new RateLimiter({ tokensPerInterval: 3, interval: "sec" });
+        this.limiter = shikiRateLimiter;
+
     }
 
     /**
      * Renew tokens or get fresh ones from shikimori
-     * @returns Promise<void | false> if token is imposible to get
+     * @returns Promise<void | false> if token is impossible to get
      */
     private async getToken(): Promise<void | false> {
         let token = null;
@@ -43,11 +46,11 @@ export default class ShikimoriApi implements iShikimoriApi {
         // If token exists then we assume user has just linked shikimori
         if (token) {
             requestBody.append("code", this.user.integration!.shikimori_code!);
-            requestBody.append("redirect_uri", `https://api.litminka.ru/shikimori/link?token=${token!.token}`);
+            requestBody.append("redirect_uri", `${process.env.app_url}/shikimori/link?token=${token!.token}`);
         } else {
             requestBody.append("refresh_token", this.user.integration!.shikimori_refresh_token!)
         }
-        const response = await fetch("https://shikimori.one/oauth/token", {
+        const response = await fetch(`${process.env.shikimori_url}/oauth/token`, {
             method: "POST",
             headers: {
                 "User-Agent": process.env.shikimori_agent!,
@@ -58,7 +61,7 @@ export default class ShikimoriApi implements iShikimoriApi {
         const { status } = response;
         // Sloppy protection against multiple requests
         if (status === 429) {
-            await sleep(200);
+            await this.limiter.removeTokens(1);
             return this.getToken();
         }
         /* 
@@ -98,15 +101,15 @@ export default class ShikimoriApi implements iShikimoriApi {
      * 
      * @param method The HTTP method of the request
      * 
-     * @param auth By default is false, not reqired. Pass true if authentication on shikimori is reqired for this request
+     * @param auth By default is false, not required. Pass true if authentication on shikimori is required for this request
      * 
-     * @param requestdata By default is null. Pass object body if request is not GET
+     * @param requestData By default is null. Pass object body if request is not GET
      * 
      * @returns result data from the request
-     * @returns SsrverError object if request fails
-     * @returns false is request is unable to be made due to auth reqirement
+     * @returns ServerError object if request fails
+     * @returns false is request is unable to be made due to auth requirement
      */
-    private async requestMaker(url: string, method: RequestTypes, auth = false, requestdata = null) {
+    private async requestMaker(url: string, method: RequestTypes, auth = false, requestData = null) {
         if (this.user.integration === null || this.user.integration.shikimori_code === null) return false;
         if (this.user.integration.shikimori_token === null && auth) {
             const result = await this.getToken();
@@ -120,12 +123,13 @@ export default class ShikimoriApi implements iShikimoriApi {
                 if (result === false) return false;
             };
             const headers = new Headers();
+
             headers.append("User-Agent", process.env.shikimori_agent!);
             if (auth) headers.append("Authorization", `Bearer ${this.user.integration.shikimori_token}`);
             const options: options = {
                 method, headers
             };
-            if (method !== "GET") options.body = requestdata;
+            if (method !== "GET") options.body = requestData;
             const response = await fetch(`${baseUrl}${url}`, options);
             const { status } = response;
             if (status === 500) return { status: 500, message: "Server error" };
@@ -150,11 +154,11 @@ export default class ShikimoriApi implements iShikimoriApi {
 
     public async getUserList(): Promise<ShikimoriWatchList[] | ServerError | false> {
         if (this.user.integration!.shikimori_id === null) return false;
-        return this.requestMaker(`/v2/user_rates?user_id=946450&target_type=Anime`, "GET");
+        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration?.shikimori_id}&target_type=Anime`, "GET");
     }
 
     public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[] | ServerError> {
-        const animeids = ids.join(",");
-        return this.requestMaker(`/animes?ids=${animeids}&limit=50`, "GET");
+        const animeIds = ids.join(",");
+        return this.requestMaker(`/animes?ids=${animeIds}&limit=50`, "GET");
     }
 }

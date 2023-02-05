@@ -1,6 +1,5 @@
 import { Request } from "express";
 import { Headers } from "node-fetch";
-import { type } from "os";
 
 export interface RequestWithAuth extends Request {
     auth?: {

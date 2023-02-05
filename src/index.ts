@@ -7,14 +7,20 @@ import { shikimoriRouter } from './routes/ShikimoriRouter';
 import { tokenRouter } from './routes/TokenRouter';
 import { watchListRouter } from './routes/WatchListRouter';
 import { followRouter } from './routes/FollowRouter';
-import path from 'path';
+import { animeRouter } from './routes/AnimeRouter';
 import * as fs from 'fs';
 import * as https from 'https';
-import { animeRouter } from './routes/AnimeRouter';
-
 dotenv.config();
+
 const app: Express = express();
 const port: string | undefined = process.env.PORT;
+
+if (!process.env.shikimori_agent) throw new Error("No agent specified in ENV");
+if (!process.env.shikimori_client_id) throw new Error("No client id specified in ENV");
+if (!process.env.shikimori_client_secret) throw new Error("No client secret specified in ENV");
+if (!process.env.shikimori_url) throw new Error("Shikimori base url is not specified");
+if (!process.env.app_url) throw new Error("App Url not specified");
+
 
 app.use(helmet());
 app.use(bodyParser.json());
@@ -36,9 +42,11 @@ app.get("/shikimori_token", (req: Request, res: Response) => {
     console.log(req.query);
 })
 
-const key = fs.readFileSync(path.join(__dirname, "..", "cert", "f", "localhost", "localhost.decrypted.key"));
-const cert = fs.readFileSync(path.join(__dirname, "..", "cert", "f", "localhost", "localhost.crt"));
+const httpsOptions = {
+    key: fs.readFileSync('./cert/server.key'),
+    cert: fs.readFileSync('./cert/server.cert')
+}
 
-https.createServer({ key, cert }, app).listen(port, () => {
+https.createServer(httpsOptions, app).listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });

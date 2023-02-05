@@ -12,8 +12,7 @@ export default class FollowController {
         const { group_name } = req.body as Follow;
         const { id }: { id: number } = req.auth!;
         const user = await prisma.user.findFirst({ where: { id }, });
-        if (!user) return res.status(403).json({ errors: "unathorized" });
-
+        if (!user) return res.status(403).json({ errors: "unauthorized" });
         const anime_id: number = req.params.anime_id as unknown as number;
         let anime;
         try {
@@ -30,15 +29,26 @@ export default class FollowController {
         } catch (error) {
             return res.status(404).json({ message: "This anime doesn't exist" });
         }
-        const translations = anime!.anime_translations.filter(anime => anime.group.name == group_name)
-        if (translations.length == 0) return res.status(422).json({ error: "This anime doesn't have given group" })
-        const [translation] = translations;
+        const translation = anime.anime_translations.find(anime => anime.group.name == group_name)
+        if (typeof translation === "undefined") return res.status(422).json({ error: "This anime doesn't have given group" })
+        const follow = await prisma.follow.findFirst({
+            where: {
+                anime_id: anime_id,
+                user_id: id,
+                translation: {
+                    group: {
+                        name: translation.group.name
+                    }
+                }
+            }
+        });
+        if (follow) return res.status(422).json({ error: "This anime is already followed" })
         await prisma.user.update({
             where: { id },
             data: {
                 follows: {
                     create: {
-                        status: "Follow",
+                        status: "follow",
                         anime_id: anime.id,
                         translation_id: translation.id,
                     }
@@ -46,7 +56,7 @@ export default class FollowController {
             }
         });
         return res.status(200).json({
-            message: "Anime followed successfuly"
+            message: "Anime followed successfully"
         })
     }
 }

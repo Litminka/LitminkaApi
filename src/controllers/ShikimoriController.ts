@@ -18,7 +18,7 @@ export default class ShikimoriController {
                 token: token,
             }
         })
-        const link = `https://api.litminka.ru/shikimori/link?token=${token}`;
+        const link = `/shikimori/link?token=${token}`;
         return res.status(200).json({
             link: `https://shikimori.one/oauth/authorize?client_id=${process.env.shikimori_client_id}&redirect_uri=${link}&response_type=code&scope=user_rates`
         });

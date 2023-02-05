@@ -27,12 +27,13 @@ export default class UserController {
                             name: "user"
                         }
                     }
-                }
+                },
+                integration: { create: {} }
             }
         });
         return res.json({
             data: {
-                message: "User created successfuly"
+                message: "User created successfully"
             }
         });
     }
@@ -77,7 +78,7 @@ export default class UserController {
         });
         return res.status(200).json({
             data: {
-                message: "You've successfuly logged in",
+                message: "You've successfully logged in",
                 token,
                 refreshToken
             }

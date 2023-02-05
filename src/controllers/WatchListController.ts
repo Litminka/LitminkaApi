@@ -2,10 +2,11 @@ import ShikimoriApi from "../helper/shikimoriapi";
 import { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 import { prisma } from '../db';
-import { AddToList, KodikAnimeFullRequest, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList, ShikimoriWhoAmI } from "../ts/custom";
+import { AddToList, KodikAnime, KodikAnimeFullRequest, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList, ShikimoriWhoAmI } from "../ts/custom";
 import groupArrSplice from "../helper/groupsplice";
 import KodikApi from "../helper/kodikapi";
 import { create } from "domain";
+import { watch } from "fs";
 export default class WatchListController {
     public static async getWatchList(req: RequestWithAuth, res: Response): Promise<Object> {
         const { id } = req.auth!;
@@ -49,7 +50,7 @@ export default class WatchListController {
         });
         if ((<ServerError>animeList).reqStatus === 500) return res.status(500).json({ message: "Server error" });
         console.log("Got list");
-        const watchList: ShikimoriWatchList[] = (<ShikimoriWatchList[]>animeList);
+        const watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
 
         // Get all animes from kodik
@@ -82,123 +83,121 @@ export default class WatchListController {
         if (res.headersSent) return;
         console.log("Got anime from shikimori");
 
-        // Form unique genres from all collected data
-        const genres = result.flatMap(kodikresult => {
-            return kodikresult.results.map(result => result.translation);
+        // Form unique translations from all collected data
+        const translations: KodikAnime["translation"][]  = result.flatMap(kodikResult => {
+            return kodikResult.results.map(result => result.translation);
         });
-        const genresUnique: any[] = [];
-        genres.filter(function (item) {
-            var i = genresUnique.findIndex(x => (x.id == item.id));
-            if (i <= -1) genresUnique.push(item);
+        const translationUnique: KodikAnime["translation"][] = [];
+        translations.filter(function (item) {
+            const i = translationUnique.findIndex(x => (x.id == item.id));
+            if (i <= -1) translationUnique.push(item);
             return null;
         });
 
-        // Insert all unique genres
+        // Insert all unique translations
         await prisma.$transaction(
-            genresUnique.map(genre => {
+            translationUnique.map(translation => {
                 return prisma.group.upsert({
-                    where: { id: genre.id },
+                    where: { id: translation.id },
                     create: {
-                        id: genre.id,
-                        name: genre.title,
-                        type: genre.type
+                        id: translation.id,
+                        name: translation.title,
+                        type: translation.type
                     },
                     update: {}
                 });
             })
         );
-        // Insert kodik anime
-        let animeInList = await prisma.$transaction(
-            result.map((record) => {
-                const { results } = record;
-                const [anime] = results;
-                const { material_data } = anime;
-                return prisma.anime.upsert({
-                    where: {
-                        shikimori_id: parseInt(anime.shikimori_id),
-                    },
-                    create: {
-                        current_episodes: material_data.episodes_aired,
-                        max_episodes: material_data.episodes_total,
-                        shikimori_id: parseInt(anime.shikimori_id),
-                        english_name: material_data.title_en,
-                        status: material_data.anime_status,
-                        image: material_data.poster_url,
-                        name: material_data.anime_title,
-                        media_type: material_data.anime_kind,
-                        shikimori_score: material_data.shikimori_rating,
-                        first_episode_aired: new Date(material_data.aired_at),
-                        kodik_link: anime.link,
-                        rpa_rating: material_data.rating_mpaa,
-                        description: material_data.anime_description,
-                        last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null,
-                        anime_translations: {
-                            createMany: {
-                                data: results.map(anime => {
-                                    return {
-                                        group_id: anime.translation.id,
-                                        current_episodes: anime.episodes_count ?? 0
-                                    }
-                                })
-                            }
-                        },
-                        genres: {
-                            connectOrCreate: material_data.anime_genres.map(genre => {
+        const listTransaction = result.map((record) => {
+            const { results } = record;
+            const [anime] = results;
+            const { material_data } = anime;
+            return prisma.anime.upsert({
+                where: {
+                    shikimori_id: parseInt(anime.shikimori_id),
+                },
+                create: {
+                    current_episodes: material_data.episodes_aired,
+                    max_episodes: material_data.episodes_total,
+                    shikimori_id: parseInt(anime.shikimori_id),
+                    english_name: material_data.title_en,
+                    status: material_data.anime_status,
+                    image: material_data.poster_url,
+                    name: material_data.anime_title,
+                    media_type: material_data.anime_kind,
+                    shikimori_score: material_data.shikimori_rating,
+                    first_episode_aired: new Date(material_data.aired_at),
+                    kodik_link: anime.link,
+                    rpa_rating: material_data.rating_mpaa,
+                    description: material_data.anime_description,
+                    last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null,
+                    anime_translations: {
+                        createMany: {
+                            data: results.map(anime => {
                                 return {
-                                    where: {
-                                        name: genre
-                                    },
-                                    create: {
-                                        name: genre
-                                    }
+                                    group_id: anime.translation.id,
+                                    current_episodes: anime.episodes_count ?? 0
                                 }
                             })
                         }
                     },
-                    update: {
-                        current_episodes: material_data.episodes_aired,
-                        max_episodes: material_data.episodes_total,
-                        status: material_data.anime_status,
-                        image: material_data.poster_url,
-                        shikimori_score: material_data.shikimori_rating,
-                        first_episode_aired: new Date(material_data.aired_at),
-                        last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null
+                    genres: {
+                        connectOrCreate: material_data.anime_genres.map(genre => {
+                            return {
+                                where: {
+                                    name: genre
+                                },
+                                create: {
+                                    name: genre
+                                }
+                            }
+                        })
                     }
-                });
-            })
-        );
+                },
+                update: {
+                    current_episodes: material_data.episodes_aired,
+                    max_episodes: material_data.episodes_total,
+                    status: material_data.anime_status,
+                    image: material_data.poster_url,
+                    shikimori_score: material_data.shikimori_rating,
+                    first_episode_aired: new Date(material_data.aired_at),
+                    last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null
+                }
+            });
+        });
+        // Insert kodik anime
+        let animeInList = await prisma.$transaction(listTransaction);
         // Insert shikimori anime
-        const shikimoriUpdate = await prisma.$transaction(
-            noResultAnime.map((anime) => {
-                return prisma.anime.upsert({
-                    where: {
-                        shikimori_id: anime.id,
-                    },
-                    create: {
-                        current_episodes: anime.episodes_aired,
-                        max_episodes: anime.episodes,
-                        shikimori_id: anime.id,
-                        english_name: anime.name,
-                        status: anime.status,
-                        image: anime.image.original,
-                        name: anime.russian,
-                        media_type: anime.kind,
-                        shikimori_score: parseFloat(anime.score),
-                        first_episode_aired: new Date(anime.aired_on),
-                        last_episode_aired: new Date(anime.released_on),
-                    },
-                    update: {
-                        current_episodes: anime.episodes_aired,
-                        max_episodes: anime.episodes,
-                        status: anime.status,
-                        image: anime.image.original,
-                        shikimori_score: parseFloat(anime.score),
-                        first_episode_aired: new Date(anime.aired_on),
-                        last_episode_aired: new Date(anime.released_on),
-                    }
-                });
-            })
-        );
+        const shikimoriTransaction = noResultAnime.map((anime) => {
+            return prisma.anime.upsert({
+                where: {
+                    shikimori_id: anime.id,
+                },
+                create: {
+                    current_episodes: anime.episodes_aired,
+                    max_episodes: anime.episodes,
+                    shikimori_id: anime.id,
+                    english_name: anime.name,
+                    status: anime.status,
+                    image: anime.image.original,
+                    name: anime.russian,
+                    media_type: anime.kind,
+                    shikimori_score: parseFloat(anime.score),
+                    first_episode_aired: new Date(anime.aired_on),
+                    last_episode_aired: new Date(anime.released_on),
+                },
+                update: {
+                    current_episodes: anime.episodes_aired,
+                    max_episodes: anime.episodes,
+                    status: anime.status,
+                    image: anime.image.original,
+                    shikimori_score: parseFloat(anime.score),
+                    first_episode_aired: new Date(anime.aired_on),
+                    last_episode_aired: new Date(anime.released_on),
+                }
+            });
+        });
+        const shikimoriUpdate = await prisma.$transaction(shikimoriTransaction);
         animeInList = animeInList.concat(shikimoriUpdate);
         console.log("anime updated");
         for (let i = 0; i < watchList.length; i++) {
@@ -216,7 +215,7 @@ export default class WatchListController {
                     rating: listEntry.score
                 }
             });
-            // if were updated, remove from watchlist
+            // if were updated, remove from watchfile
             // prisma does not have upsert many, so we remove updated titles
             const { count } = res;
             if (count > 0) watchList.splice(i--, 1);
@@ -246,9 +245,8 @@ export default class WatchListController {
         }
         const { is_favorite, rating, status, watched_episodes } = req.body as AddToList;
         const { id } = req.auth!;
-        let user;
         try {
-            user = await prisma.user.findFirstOrThrow({
+            await prisma.user.findFirstOrThrow({
                 where: { id },
             });
         } catch (error) {
@@ -346,9 +344,8 @@ export default class WatchListController {
 
     public static async deleteFromList(req: RequestWithAuth, res: Response) {
         const { id } = req.auth!;
-        let user;
         try {
-            user = await prisma.user.findFirstOrThrow({
+            await prisma.user.findFirstOrThrow({
                 where: { id },
             });
         } catch (error) {
@@ -371,7 +368,7 @@ export default class WatchListController {
             where: { anime_id: req.params.anime_id as unknown as number },
         });
         return res.json({
-            message: "Entry deleted successfuly"
+            message: "Entry deleted successfully"
         });
     }
 }
