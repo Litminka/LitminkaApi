@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import { prisma } from "../db";
 import ShikimoriApi from "../helper/shikimoriapi";
 import AnimeUpdateService from "../services/AnimeUpdateService";
-import { RequestWithAuth, ServerError, ShikimoriAnimeFull } from "../ts/custom";
+import { RequestWithAuth, ServerError, ShikimoriAnimeFull } from "../ts/index";
 
 
 export default class AnimeController {

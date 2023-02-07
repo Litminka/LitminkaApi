@@ -1,12 +1,11 @@
 import ShikimoriApi from "../helper/shikimoriapi";
 import { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { validationResult } from "express-validator";
 import { prisma } from '../db';
-import { AddToList, KodikAnime, KodikAnimeFullRequest, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList, ShikimoriWhoAmI } from "../ts/custom";
+import { AddToList, KodikAnime, KodikAnimeFullRequest, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts/index";
 import groupArrSplice from "../helper/groupsplice";
 import KodikApi from "../helper/kodikapi";
-import { create } from "domain";
-import { watch } from "fs";
+
 export default class WatchListController {
     public static async getWatchList(req: RequestWithAuth, res: Response): Promise<Object> {
         const { id } = req.auth!;
@@ -81,10 +80,9 @@ export default class WatchListController {
         noResultAnime = noResultAnime.flat();
 
         if (res.headersSent) return;
-        console.log("Got anime from shikimori");
 
         // Form unique translations from all collected data
-        const translations: KodikAnime["translation"][]  = result.flatMap(kodikResult => {
+        const translations: KodikAnime["translation"][] = result.flatMap(kodikResult => {
             return kodikResult.results.map(result => result.translation);
         });
         const translationUnique: KodikAnime["translation"][] = [];
@@ -167,7 +165,7 @@ export default class WatchListController {
         });
         // Insert kodik anime
         let animeInList = await prisma.$transaction(listTransaction);
-        // Insert shikimori anime
+
         const shikimoriTransaction = noResultAnime.map((anime) => {
             return prisma.anime.upsert({
                 where: {
@@ -197,9 +195,9 @@ export default class WatchListController {
                 }
             });
         });
+        // Insert shikimori anime
         const shikimoriUpdate = await prisma.$transaction(shikimoriTransaction);
         animeInList = animeInList.concat(shikimoriUpdate);
-        console.log("anime updated");
         for (let i = 0; i < watchList.length; i++) {
             const listEntry = watchList[i];
             const res = await prisma.anime_list.updateMany({
@@ -215,7 +213,7 @@ export default class WatchListController {
                     rating: listEntry.score
                 }
             });
-            // if were updated, remove from watchfile
+            // if were updated, remove from watchlist
             // prisma does not have upsert many, so we remove updated titles
             const { count } = res;
             if (count > 0) watchList.splice(i--, 1);
@@ -232,7 +230,6 @@ export default class WatchListController {
                 }
             })
         });
-        console.log("watchlist imported");
         return res.json({
             message: 'List imported successfully'
         });

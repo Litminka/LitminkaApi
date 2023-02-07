@@ -53,7 +53,7 @@ type animeKind =
     | "tv_48s";
 type animeStatus = "released" | "ongoing" | "anons";
 type pgRating = "none" | "g" | "pg" | "pg_13" | "r" | "r_plus" | "rx";
-type pgCapitilizedRating = "None" | "G" | "PG" | "PG_13" | "R" | "R+" | "RX";
+type pgCapitalizedRating = "None" | "G" | "PG" | "PG_13" | "R" | "R+" | "RX";
 interface ratingAmount {
     name: number;
     value: number;
@@ -138,7 +138,7 @@ export interface ShikimoriAnimeFull {
     url: string;
     kind: animeKind;
     /**
-     * Although type is a string, it's a float
+     * Although type is a string, it's float number 
      */
     score: string;
     status: animeStatus;
@@ -306,7 +306,7 @@ interface KodikAnimeFull extends KodikAnime {
         premiere_world: string;
         aired_at: string;
         released_at: string;
-        rating_mpaa: pgCapitilizedRating;
+        rating_mpaa: pgCapitalizedRating;
         minimal_age: number;
         episodes_total: number;
         episodes_aired: number;

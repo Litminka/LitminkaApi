@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import { prisma } from '../db';
 import { Encrypt } from "../helper/encrypt";
 import * as jwt from "jsonwebtoken";
-import { RequestWithAuth } from "../ts/custom";
+import { RequestWithAuth } from "../ts/index";
 
 export default class UserController {
     static async createUser(req: Request, res: Response): Promise<Object> {

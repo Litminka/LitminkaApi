@@ -1,6 +1,6 @@
 import { User, Integration } from "@prisma/client";
 import fetch, { Headers } from "node-fetch";
-import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/custom";
+import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/index";
 import sleep from "./sleep";
 import { prisma } from '../db';
 import { shikiRateLimiter } from "../shikiRateLimiter";
@@ -77,6 +77,7 @@ export default class ShikimoriApi implements iShikimoriApi {
                 data: {
                     shikimori_token: null,
                     shikimori_refresh_token: null,
+                    shikimori_id: null,
                     shikimori_code: null,
                 }
             });
@@ -160,5 +161,9 @@ export default class ShikimoriApi implements iShikimoriApi {
     public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[] | ServerError> {
         const animeIds = ids.join(",");
         return this.requestMaker(`/animes?ids=${animeIds}&limit=50`, "GET");
+    }
+
+    public async getSeasonAnimeByPage(page: number, season: string): Promise<ShikimoriAnime[] | ServerError> {
+        return this.requestMaker(`/animes?limit=50&season=${season}&page=${page}`, "GET");
     }
 }

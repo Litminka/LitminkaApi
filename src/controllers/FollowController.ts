@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { validationResult } from "express-validator";
-import { Follow, RequestWithAuth } from "../ts/custom";
+import { Follow, RequestWithAuth } from "../ts/index";
 import { prisma } from '../db';
 // import KodikApi from "../helper/kodikapi";
 import { Anime_translation } from "@prisma/client";

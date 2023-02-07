@@ -1,6 +1,6 @@
 import { Anime, User } from "@prisma/client";
 import ShikimoriApi from "../helper/shikimoriapi";
-import { ServerError, ShikimoriAnimeFull } from "../ts/custom";
+import { ServerError, ShikimoriAnimeFull } from "../ts/index";
 import { prisma } from "../db";
 
 interface iAnimeUpdateService {

@@ -1,7 +1,7 @@
 import { User, Integration, Shikimori_Link_Token } from "@prisma/client";
 import { Request, Response } from "express";
 import crypto from "crypto";
-import { RequestWithAuth, ServerError, ShikimoriWhoAmI } from "../ts/custom";
+import { RequestWithAuth, ServerError, ShikimoriWhoAmI } from "../ts/index";
 import ShikimoriApi from "../helper/shikimoriapi";
 import { prisma } from '../db';
 export default class ShikimoriController {
@@ -18,7 +18,7 @@ export default class ShikimoriController {
                 token: token,
             }
         })
-        const link = `/shikimori/link?token=${token}`;
+        const link = `${process.env.app_url}/shikimori/link?token=${token}`;
         return res.status(200).json({
             link: `https://shikimori.one/oauth/authorize?client_id=${process.env.shikimori_client_id}&redirect_uri=${link}&response_type=code&scope=user_rates`
         });
@@ -86,6 +86,29 @@ export default class ShikimoriController {
             message: 'User does not have shikimori integration'
         });
         if (profile.reqStatus === 500) return res.status(500).json({ message: "Server error" });
+
+        const integrated = await prisma.integration.findFirst({
+            where: {
+                shikimori_id: (<ShikimoriWhoAmI>profile).id
+            }
+        });
+        // fix if user integrated another account
+        if (integrated) {
+            await prisma.integration.update({
+                where: {
+                    user_id: user.id
+                },
+                data: {
+                    shikimori_code: null,
+                    shikimori_token: null,
+                    shikimori_refresh_token: null,
+                    shikimori_id: null,
+                }
+            });
+            return res.status(401).json({
+                message: "Account already linked",
+            });
+        }
         await prisma.integration.update({
             where: {
                 user_id: user.id
@@ -96,6 +119,44 @@ export default class ShikimoriController {
         });
         return res.status(200).json({
             message: "Account linked!"
+        })
+    }
+
+    static async unlink(req: RequestWithAuth, res: Response) {
+        const { id } = req.auth!;
+        let user;
+        try {
+            user = await prisma.user.findFirstOrThrow({
+                where: {
+                    id
+                },
+                include: {
+                    integration: true,
+                    shikimori_link: true
+                },
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(403).json({
+                message: "User does not exist"
+            });
+        }
+        await prisma.user.update({
+            where: { id },
+            data: {
+                integration: {
+                    update: {
+                        shikimori_code: null,
+                        shikimori_id: null,
+                        shikimori_refresh_token: null,
+                        shikimori_token: null,
+                    }
+                }
+            }
+        })
+        return res.status(200).json({
+            message: "Account unlinked",
+            link: "https://shikimori.one/oauth/applications/672",
         })
     }
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from "jsonwebtoken";
-import { RequestWithAuth } from '../ts/custom';
+import { RequestWithAuth } from '../ts/index';
 
 export function optionalAuth(req: RequestWithAuth, res: Response, next: NextFunction) {
     const token = req.get("authorization");

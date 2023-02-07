@@ -1,5 +1,5 @@
 import fetch, { Headers } from "node-fetch";
-import { KodikAnimeFullRequest, KodikGenresRequest, ServerError } from "../ts/custom";
+import { KodikAnimeFullRequest, KodikGenresRequest, ServerError } from "../ts/index";
 
 export default class KodikApi {
     baseurl = "https://kodikapi.com"
