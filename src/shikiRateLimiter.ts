@@ -6,4 +6,4 @@ declare global {
 
 }
 export const shikiRateLimiter = global.shikiRateLimiter || new RateLimiter({ tokensPerInterval: 5, interval: "sec" });
-if (process.env.NODE_ENV !== 'production') global.shikiRateLimiter = shikiRateLimiter;
+if (process.env.NODE_ENV !== 'production') global.shikiRateLimiter = shikiRateLimiter;  

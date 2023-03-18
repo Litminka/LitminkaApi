@@ -8,18 +8,17 @@ import { RateLimiter } from "limiter";
 interface iShikimoriApi {
     user: User & {
         integration: Integration | null
-    },
+    } | undefined,
     limiter: RateLimiter
 }
 
 const baseUrl = `${process.env.shikimori_url}/api`;
 export default class ShikimoriApi implements iShikimoriApi {
-    user: User & { integration: Integration | null };
+    user: User & { integration: Integration | null } | undefined;
     limiter: RateLimiter;
-    constructor(user: User & { integration: Integration | null }) {
+    constructor(user: User & { integration: Integration | null } | undefined) {
         this.user = user;
         this.limiter = shikiRateLimiter;
-
     }
 
     /**
@@ -28,6 +27,7 @@ export default class ShikimoriApi implements iShikimoriApi {
      */
     private async getToken(): Promise<void | false> {
         let token = null;
+        if (!this.user) return false;
         if (this.user.integration!.shikimori_refresh_token === null) {
             token = await prisma.shikimori_Link_Token.findFirst({
                 where: {
@@ -111,11 +111,14 @@ export default class ShikimoriApi implements iShikimoriApi {
      * @returns false is request is unable to be made due to auth requirement
      */
     private async requestMaker(url: string, method: RequestTypes, auth = false, requestData = null) {
-        if (this.user.integration === null || this.user.integration.shikimori_code === null) return false;
-        if (this.user.integration.shikimori_token === null && auth) {
-            const result = await this.getToken();
-            if (result === false) return false;
-        };
+        if (auth) {
+            if (!this.user) return false;
+            if (this.user.integration === null || this.user.integration.shikimori_code === null) return false;
+            if (this.user.integration.shikimori_token === null) {
+                const result = await this.getToken();
+                if (result === false) return false;
+            };
+        }
         let requestStatus: number = 200;
         do {
             await this.limiter.removeTokens(1);
@@ -126,7 +129,7 @@ export default class ShikimoriApi implements iShikimoriApi {
             const headers = new Headers();
 
             headers.append("User-Agent", process.env.shikimori_agent!);
-            if (auth) headers.append("Authorization", `Bearer ${this.user.integration.shikimori_token}`);
+            if (auth) headers.append("Authorization", `Bearer ${this.user!.integration!.shikimori_token}`);
             const options: options = {
                 method, headers
             };
@@ -145,8 +148,6 @@ export default class ShikimoriApi implements iShikimoriApi {
 
     public async getProfile(): Promise<ShikimoriWhoAmI | ServerError | false> {
         return this.requestMaker("/users/whoami", "GET", true);
-        //FIXME: Low priority! Look into possibility of fixing instant reattach
-        // Maybe delete link token from db?
     }
 
     public async getAnimeById(id: number): Promise<ShikimoriAnimeFull | ServerError> {
@@ -154,6 +155,7 @@ export default class ShikimoriApi implements iShikimoriApi {
     }
 
     public async getUserList(): Promise<ShikimoriWatchList[] | ServerError | false> {
+        if (!this.user) return false;
         if (this.user.integration!.shikimori_id === null) return false;
         return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration?.shikimori_id}&target_type=Anime`, "GET");
     }

@@ -85,6 +85,7 @@ export default class ShikimoriController {
         if (!profile) return res.status(401).json({
             message: 'User does not have shikimori integration'
         });
+        
         if (profile.reqStatus === 500) return res.status(500).json({ message: "Server error" });
 
         const integrated = await prisma.integration.findFirst({
@@ -116,6 +117,9 @@ export default class ShikimoriController {
             data: {
                 shikimori_id: (<ShikimoriWhoAmI>profile).id
             }
+        });
+        await prisma.shikimori_Link_Token.delete({
+            where: { token }
         });
         return res.status(200).json({
             message: "Account linked!"

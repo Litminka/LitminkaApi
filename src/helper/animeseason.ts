@@ -9,7 +9,6 @@ export function getSeason(date: Date) {
 
     const d = dayjs(date);
     const month: number = d.month();
-    console.log(month);
     const index = Math.floor(month / 3);
     return seasons[index];
 }

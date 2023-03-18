@@ -30,7 +30,7 @@ const editWatchListValidation = (): any[] => {
             });
             if (!anime) throw new Error("Anime doesn't exist");
             watchedRange.max = anime.max_episodes;
-        }),
+        }).bail(),
         body("status").notEmpty().isString().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
         body("watched_episodes").notEmpty().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
         body("rating").notEmpty().isInt({ min: 0, max: 10 }),

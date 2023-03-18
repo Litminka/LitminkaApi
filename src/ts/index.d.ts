@@ -1,3 +1,4 @@
+import { Anime, Anime_translation } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
 
@@ -120,7 +121,7 @@ export interface ShikimoriAnime {
      */
     aired_on: string;
     /**
-     * Last episodes aired
+     * Last episode aired
      */
     released_on: string;
 }
@@ -219,6 +220,7 @@ export interface AddToList {
 
 export interface Follow {
     group_name: string;
+    type: "follow" | "announcement"
 }
 
 export interface options {
@@ -246,6 +248,23 @@ export interface KodikAnimeFullRequest {
     shikimori_request: number;
     results: KodikAnimeFull[];
 }
+
+export interface KodikAnimeWithTranslationsRequest {
+    time: string;
+    total: number;
+    reqStatus: 200;
+    shikimori_request: number;
+    result: KodikAnimeWithTranslations | null;
+}
+
+export interface KodikAnimeWithTranslationsFullRequest {
+    time: string;
+    total: number;
+    reqStatus: 200;
+    shikimori_request: number;
+    result: KodikAnimeWithTranslationsFull | null;
+}
+
 export interface KodikGenresRequest {
     time: string;
     total: number;
@@ -257,6 +276,22 @@ interface KodikGenre {
     title: string;
     count: number;
 }
+export type translation = {
+    id: number;
+    title: string;
+    type: "voice" | "subtitles";
+};
+
+export type checkAnime = (Anime & {
+    anime_translations: Anime_translation[];
+});
+
+export type translations = {
+    id: number;
+    title: string;
+    type: "voice" | "subtitles";
+    episodes_count: number;
+}[]
 
 interface KodikAnime {
     id: string;
@@ -265,11 +300,7 @@ interface KodikAnime {
     title: string;
     title_orig: string;
     other_title: string;
-    translation: {
-        id: number;
-        title: string;
-        type: "voice" | "subtitles";
-    };
+    translation: translation
     year: number;
     last_season: number;
     last_episode: number;
@@ -280,6 +311,25 @@ interface KodikAnime {
     updated_at: string;
     screenshots: string[];
 }
+
+interface KodikAnimeWithTranslationsN {
+    id: string;
+    type: "anime-serial";
+    link: string;
+    title: string;
+    title_orig: string;
+    other_title: string;
+    year: number;
+    last_season: number;
+    last_episode: number;
+    shikimori_id: string;
+    blocked_countries: string[];
+    created_at: string;
+    updated_at: string;
+    screenshots: string[];
+    translations: translations
+}
+type KodikAnimeWithTranslations = Omit<KodikAnimeWithTranslationsN, "translation">;
 
 interface KodikAnimeFull extends KodikAnime {
     material_data: {
@@ -319,6 +369,24 @@ interface KodikAnimeFull extends KodikAnime {
         designers: string[];
         operators: string[];
     };
+}
+
+interface KodikAnimeWithTranslationsFullN extends KodikAnimeFull, KodikAnimeWithTranslations {
+
+}
+type KodikAnimeWithTranslationsFull = Omit<KodikAnimeWithTranslationsFullN, "translation">;
+
+
+export type info = {
+    translation?: Anime_translation,
+    user_id: number
+}
+export type followType = {
+    anime: {
+        shikimori_id: number;
+    };
+    info: info[]
+    status: string;
 }
 
 export type RequestTypes = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

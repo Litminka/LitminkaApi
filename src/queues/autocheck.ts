@@ -1,10 +1,14 @@
+
+import { Anime, Anime_translation } from '@prisma/client';
 import { Queue, Worker, Job } from 'bullmq';
-import dayjs from 'dayjs';
-import { Server } from 'http';
 import { prisma } from "../db";
 import { getCurrentSeasonEnd, getPreviousSeasonStart, getSeason } from '../helper/animeseason';
+import groupArrSplice from '../helper/groupsplice';
+import KodikApi from '../helper/kodikapi';
 import ShikimoriApi from '../helper/shikimoriapi';
-import { ServerError, ShikimoriAnime } from '../ts/index';
+import AutoCheckService from '../services/AutoCheckService';
+import FollowService from '../services/FollowService';
+import { checkAnime, followType, KodikAnimeWithTranslationsFull, KodikAnimeWithTranslationsFullRequest, ServerError, ShikimoriAnime } from '../ts/index';
 
 const autoCheckQueue = new Queue("autocheck", {
     connection: {
@@ -14,49 +18,117 @@ const autoCheckQueue = new Queue("autocheck", {
 });
 
 const worker = new Worker("autocheck", async (job: Job) => {
+    // get titles
+    // sort titles as pairs with users
+    // separate follow types
+    // request all from shikimori
+    // request follows from shikimori
+
+    // request titles from kodik
+    // separate titles into array
+    // check each title
+    // send notification
+    // update title
+
+
     console.log("started a job");
+    const started = Date.now();
     const follows = await prisma.follow.findMany({
-        include: {
+        where: {
+            status: "follow",
+        },
+        select: {
+            status: true,
+            user_id: true,
+            anime: {
+                select: {
+                    shikimori_id: true
+                }
+            },
             translation: true
         },
-        distinct: ["anime_id"]
     });
-    const admin = await prisma.user.findFirstOrThrow({
+    const followService = new FollowService();
+    const autoCheckService = new AutoCheckService();
+
+    const announcements = await prisma.follow.findMany({
         where: {
-            id: 1,
+            status: "announcement"
+        },
+        select: {
+            status: true,
+            user_id: true,
+            anime: {
+                select: {
+                    shikimori_id: true
+                }
+            }
+        },
+    })
+    const followsMap = followService.getFollowsMap(follows);
+    console.dir(followsMap);
+    const announcementMap = followService.getFollowsMap(announcements);
+    console.dir(announcementMap);
+    const followIds = [...followsMap.keys()];
+    const announcementsIds = [...announcementMap.keys()];
+    const defaultAnime = await autoCheckService.getDefaultAnime();
+    console.log(`Got basic check anime, amount: ${defaultAnime.length}`)
+
+    const followedAnime = await autoCheckService.getAnime(followIds);
+    console.log(`Got follows, amount: ${followedAnime.length}`)
+
+    const announcedAnime = await autoCheckService.getAnime(announcementsIds)
+    console.log(`Got announcements, amount: ${announcedAnime.length}`)
+
+    console.log(`Getting anime from kodik`);
+    const kodikDefaultAnime = await autoCheckService.getKodikAnime(defaultAnime);
+    console.log(`Got kodik anime, amount: ${kodikDefaultAnime.length}`)
+
+    console.log(`Getting anime from kodik`);
+    const kodikFollowedAnime = await autoCheckService.getKodikAnime(followedAnime);
+    console.log(`Got kodik anime, amount: ${kodikFollowedAnime.length}`)
+
+    const kodikAnimeMap = new Map<number, KodikAnimeWithTranslationsFullRequest['result']>()
+    for (const anime of [...kodikDefaultAnime, ...kodikFollowedAnime]) {
+        if (typeof anime.result === null) continue
+        kodikAnimeMap.set(anime.shikimori_request, anime.result)
+    }
+    const ids = [...followIds, ...announcementsIds, ...defaultAnime.map(anime => anime.id)];
+    const anime = await prisma.anime.findMany({
+        where: {
+            shikimori_id: {
+                in: ids
+            }
         },
         include: {
-            integration: true
+            anime_translations: true
         }
-    })
-    const shikimoriApi = new ShikimoriApi(admin);
-    const date = new Date();
-    const prevSeasonStart = getPreviousSeasonStart(date);
-    const currentSeasonEnd = getCurrentSeasonEnd(date)
+    });
+    const animeMap = new Map<number, checkAnime>();
+    for (const anim of anime) animeMap.set(anim.shikimori_id, anim);
 
-    const prevSeasonString = `${getSeason(prevSeasonStart)}_${prevSeasonStart.getFullYear()}`;
-    const currentSeasonString = `${getSeason(currentSeasonEnd)}_${currentSeasonEnd.getFullYear()}`;
-    let page = 0;
-    const checkAnime: ShikimoriAnime[] = [];
-    let seasonString = prevSeasonString;
-    do {
-        const anime = await shikimoriApi.getSeasonAnimeByPage(page, seasonString);
-        if (!anime) throw new Error("Admin account not linked");
-        const error = anime as ServerError;
-        if (error.reqStatus === 500) throw new Error("Shikimori 500");
-        const shikimoriAnime = anime as ShikimoriAnime[];
-        if (shikimoriAnime.length == 0 && seasonString != currentSeasonString) {
-            seasonString = currentSeasonString
-            page = 0;
-            continue;
+    for (const anime of [...defaultAnime, ...followedAnime, ...announcedAnime]) {
+        const { id, status } = anime;
+        const follow = followsMap.get(id);
+        const dbAnime = animeMap.get(id);
+        const kodikAnime = kodikAnimeMap.get(id);
+        if (typeof dbAnime !== "undefined" && kodikAnime !== null && typeof kodikAnime !== "undefined") {
+            if (dbAnime.status !== status) {
+                console.log(`Anime ${dbAnime.name} changed status ${dbAnime.status} -> ${status}`)
+            }
+            for (const translation of dbAnime.anime_translations) {
+                const kodikTranslation = kodikAnime.translations.find(kodikTranslation => translation.group_id === kodikTranslation.id)
+                if (kodikTranslation?.episodes_count !== translation.current_episodes) console.log(`NEW Episode: ${dbAnime.name}: ${kodikTranslation?.title} ${kodikTranslation?.episodes_count}`);
+            }
+
         }
-        console.log("test");
-        if (shikimoriAnime.length == 0) break
-        checkAnime.push(...shikimoriAnime);
-        page += 1;
-    } while (true);
-    console.log(checkAnime.length);
+        if (typeof follow === "undefined") continue;
+        console.log(follow);
+    }
+
     // Do something with job
+    const finished = Date.now();
+    console.log(`Finished in: ${(finished - started) / 1000} seconds`)
     return 'some value';
 }, {
     connection: {
@@ -64,6 +136,9 @@ const worker = new Worker("autocheck", async (job: Job) => {
         port: parseInt(process.env.REDIS_PORT!),
     }
 });
+
+
+
 
 // autoCheckQueue.add("autocheck", {}, {
 //     repeat: {
