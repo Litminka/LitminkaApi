@@ -1,0 +1,338 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "litminka-api",
+    "dateExported": "2023-05-07T11:02:39.730Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "8729fe83-44db-4bc2-8a70-074703449882",
+            "name": "Users",
+            "containerId": "",
+            "created": "2023-05-07T10:23:03.598Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "1139aac7-e987-4f42-89bf-ef2dbe905fd0",
+            "name": "Watch-list",
+            "containerId": "",
+            "created": "2023-05-07T10:23:09.909Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "4741f700-f44b-4531-8503-c431dda58a9c",
+            "name": "Anime",
+            "containerId": "",
+            "created": "2023-05-07T10:23:14.710Z",
+            "sortNum": 30000
+        },
+        {
+            "_id": "a7733e06-7b81-4490-b29b-eed5f94abdbc",
+            "name": "Follow",
+            "containerId": "4741f700-f44b-4531-8503-c431dda58a9c",
+            "created": "2023-05-07T10:23:20.230Z",
+            "sortNum": 40000
+        },
+        {
+            "_id": "292eb3a1-367a-45fb-b7a0-8ecf97879f02",
+            "name": "Shikimori",
+            "containerId": "",
+            "created": "2023-05-07T10:23:27.317Z",
+            "sortNum": 50000
+        },
+        {
+            "_id": "ecd1dbd6-7cfe-4510-a56b-9653f8908df8",
+            "name": "Token",
+            "containerId": "",
+            "created": "2023-05-07T10:23:31.646Z",
+            "sortNum": 60000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "3057abd7-7106-4493-959c-b1dc15a31570",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "4741f700-f44b-4531-8503-c431dda58a9c",
+            "name": "getSingle",
+            "url": "/anime/1",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-05-07T10:51:16.126Z",
+            "modified": "2023-05-07T10:58:25.263Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "3362823e-6007-4655-bd28-40440add9743",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "",
+            "name": "index",
+            "url": "",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-05-07T10:21:49.051Z",
+            "modified": "2023-05-07T10:21:59.572Z",
+            "headers": []
+        },
+        {
+            "_id": "46aeb8b2-19b2-40a5-b694-a88ec8e48779",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "8729fe83-44db-4bc2-8a70-074703449882",
+            "name": "getUsers",
+            "url": "/users",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-05-07T10:23:55.636Z",
+            "modified": "2023-05-07T10:26:13.260Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "f601afaa-36b7-4132-adcb-24c8aefb168f",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "8729fe83-44db-4bc2-8a70-074703449882",
+            "name": "register",
+            "url": "/users/register",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2023-05-07T10:26:28.035Z",
+            "modified": "2023-05-07T10:31:56.572Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"login\": \"testuser\",\n  \"email\": \"test@test.email\",\n  \"password\": \"password\",\n  \"passwordConfirm\": \"password\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "6d819636-82ae-4a2e-91c2-3a5d41b1e190",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "8729fe83-44db-4bc2-8a70-074703449882",
+            "name": "login",
+            "url": "/users/login",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2023-05-07T10:32:13.196Z",
+            "modified": "2023-05-07T10:32:43.852Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"login\": \"thenk0\",\n  \"password\": \"password\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "234fc376-b120-434b-a666-fa43cf08f856",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "8729fe83-44db-4bc2-8a70-074703449882",
+            "name": "profile",
+            "url": "/users/profile",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2023-05-07T10:32:55.699Z",
+            "modified": "2023-05-07T10:33:19.383Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "f6ee1b3a-58d6-4fcb-8456-9913f030cc51",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "a7733e06-7b81-4490-b29b-eed5f94abdbc",
+            "name": "follow",
+            "url": "/anime/follow/1",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2023-05-07T10:50:24.700Z",
+            "modified": "2023-05-07T10:57:54.196Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"type\": \"follow\",\n  \"group_name\": \"СВ-Дубль\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "88a5b03d-74f3-403a-bed4-886c35e8081b",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "1139aac7-e987-4f42-89bf-ef2dbe905fd0",
+            "name": "getwatchlist",
+            "url": "/watch-list",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2023-05-07T10:33:41.045Z",
+            "modified": "2023-05-07T10:33:59.244Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "7fed3bb3-a07c-43fa-85ab-4b4e5fd3b1b0",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "1139aac7-e987-4f42-89bf-ef2dbe905fd0",
+            "name": "importWatchList",
+            "url": "/watch-list/import",
+            "method": "POST",
+            "sortNum": 70000,
+            "created": "2023-05-07T10:40:37.506Z",
+            "modified": "2023-05-07T10:41:03.531Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "2ad049aa-ae6f-4caa-8b84-2d7814ddc1d2",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "1139aac7-e987-4f42-89bf-ef2dbe905fd0",
+            "name": "addToWatchList",
+            "url": "/watch-list/50",
+            "method": "POST",
+            "sortNum": 80000,
+            "created": "2023-05-07T10:41:27.482Z",
+            "modified": "2023-05-07T10:47:33.747Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"status\": \"completed\",\n  \"watched_episodes\": 1,\n  \"rating\": 10,\n  \"is_favorite\": 1\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "6cc25fa1-0af4-480e-9713-3b2a8ef21d0b",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "1139aac7-e987-4f42-89bf-ef2dbe905fd0",
+            "name": "editWatchList",
+            "url": "/watch-list/1",
+            "method": "PATCH",
+            "sortNum": 90000,
+            "created": "2023-05-07T10:48:42.818Z",
+            "modified": "2023-05-07T10:49:03.312Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"status\": \"completed\",\n  \"watched_episodes\": 1,\n  \"rating\": 10,\n  \"is_favorite\": 1\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "22ac683d-ed7b-4470-831b-d6ca89e73417",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "1139aac7-e987-4f42-89bf-ef2dbe905fd0",
+            "name": "editWatchList Copy",
+            "url": "/watch-list/1",
+            "method": "DELETE",
+            "sortNum": 100000,
+            "created": "2023-05-07T10:49:16.314Z",
+            "modified": "2023-05-07T10:49:22.755Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "74fc619d-3cbb-43e7-b71a-ea935bd8aaa4",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "292eb3a1-367a-45fb-b7a0-8ecf97879f02",
+            "name": "getLink",
+            "url": "",
+            "method": "GET",
+            "sortNum": 110000,
+            "created": "2023-05-07T10:58:55.325Z",
+            "modified": "2023-05-07T10:58:55.325Z",
+            "headers": []
+        },
+        {
+            "_id": "2e4ac220-fcf7-4171-9d1d-0d9aa84499e9",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "292eb3a1-367a-45fb-b7a0-8ecf97879f02",
+            "name": "unlink",
+            "url": "/shikimori/unlink",
+            "method": "DELETE",
+            "sortNum": 130000,
+            "created": "2023-05-07T11:00:08.708Z",
+            "modified": "2023-05-07T11:00:23.777Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "a862fed7-a6d5-4d8c-b85c-fa240773956f",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "292eb3a1-367a-45fb-b7a0-8ecf97879f02",
+            "name": "profile",
+            "url": "/shikimori/profile",
+            "method": "GET",
+            "sortNum": 140000,
+            "created": "2023-05-07T11:00:34.779Z",
+            "modified": "2023-05-07T11:00:42.867Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODM1NDE5NjN9.z891SX8UY3hvRmqrKxQDW13OwRdHiCKUPQIZGItGniU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "3dbccc36-6601-4913-82f7-c620062924ec",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "ecd1dbd6-7cfe-4510-a56b-9653f8908df8",
+            "name": "refresh",
+            "url": "/token/refresh",
+            "method": "GET",
+            "sortNum": 150000,
+            "created": "2023-05-07T11:01:07.240Z",
+            "modified": "2023-05-07T11:01:37.884Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgzNDU1NTYzLCJleHAiOjE2ODQ2NjUxNjN9.bnBqm31Wlvr1nd-w1KbZN11Tnv9PmH6lOmOiBtxLn3M"
+            },
+            "tests": []
+        }
+    ],
+    "settings": {
+        "options": {
+            "baseUrl": "https://localhost"
+        }
+    }
+}

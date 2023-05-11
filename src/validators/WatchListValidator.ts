@@ -14,10 +14,10 @@ const addToWatchListValidation = (): any[] => {
             if (!anime) throw new Error("Anime doesn't exist");
             watchedRange.max = anime.max_episodes;
         }),
-        body("status").notEmpty().isString().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
-        body("watched_episodes").notEmpty().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
-        body("rating").notEmpty().isInt({ min: 0, max: 10 }),
-        body("is_favorite").notEmpty().isBoolean().bail().toBoolean()
+        body("status").notEmpty().bail().isString().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
+        body("watched_episodes").notEmpty().bail().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
+        body("rating").notEmpty().bail().isInt({ min: 0, max: 10 }),
+        body("is_favorite").notEmpty().bail().isBoolean().bail().toBoolean()
     ]
 };
 const editWatchListValidation = (): any[] => {
@@ -31,10 +31,10 @@ const editWatchListValidation = (): any[] => {
             if (!anime) throw new Error("Anime doesn't exist");
             watchedRange.max = anime.max_episodes;
         }).bail(),
-        body("status").notEmpty().isString().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
-        body("watched_episodes").notEmpty().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
-        body("rating").notEmpty().isInt({ min: 0, max: 10 }),
-        body("is_favorite").notEmpty().isBoolean().bail().toBoolean()
+        body("status").notEmpty().bail().isString().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
+        body("watched_episodes").notEmpty().bail().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
+        body("rating").notEmpty().bail().isInt({ min: 0, max: 10 }),
+        body("is_favorite").notEmpty().bail().isBoolean().bail().toBoolean()
     ]
 };
 

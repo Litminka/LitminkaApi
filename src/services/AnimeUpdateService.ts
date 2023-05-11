@@ -1,22 +1,24 @@
 import { Anime, User } from "@prisma/client";
-import ShikimoriApi from "../helper/shikimoriapi";
-import { KodikAnime, ServerError, ShikimoriAnimeFull, KodikAnimeFullRequest, ShikimoriAnime, KodikAnimeWithTranslationsFullRequest, translations, translation } from "../ts/index";
+import ShikimoriApiService from "./ShikimoriApiService";
+import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../ts/index";
+import { KodikAnime, KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
 import { prisma } from "../db";
 
 interface iAnimeUpdateService {
-    shikimoriApi: ShikimoriApi
-    user: User
+    shikimoriApi: ShikimoriApiService | undefined
+    user: User | undefined
 }
 
 export default class AnimeUpdateService implements iAnimeUpdateService {
-    shikimoriApi: ShikimoriApi;
-    user: User;
-    constructor(shikimori: ShikimoriApi, user: User) {
+    shikimoriApi: ShikimoriApiService | undefined;
+    user: User | undefined;
+    constructor(shikimori?: ShikimoriApiService, user?: User) {
         this.shikimoriApi = shikimori;
         this.user = user;
     }
 
     async update(anime: Anime): Promise<boolean> {
+        if (!this.shikimoriApi) throw { error: 'No shikimori api specified' };
         const resAnime: ShikimoriAnimeFull | ServerError = await this.shikimoriApi.getAnimeById(anime.shikimori_id);
         if (!resAnime) return false;
         if (resAnime.reqStatus === 500 || resAnime.reqStatus === 404) return false;
@@ -81,18 +83,65 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         return shikimoriUpdate;
     }
 
-    async updateAnimeKodik(result: KodikAnimeWithTranslationsFullRequest[]) {
-        const listTransaction = result.map((record) => {
-            const { result: anime } = record;
-            const { material_data } = anime!;
+    async updateTranslationGroups(result: KodikAnimeFull[]) {
+        const translations: Map<number, translation> = new Map();
+        const groupIdsSet: Set<number> = new Set();
+        for (const anime of result) {
+            for (const translation of anime.translations) {
+                groupIdsSet.add(translation.id);
+                translations.set(translation.id, translation);
+            }
+        }
+        const groups = await prisma.group.findMany({
+            where: {
+                id: {
+                    in: Array.from(groupIdsSet)
+                }
+            }
+        })
+        const inDbGroupIds = new Set(groups.map(group => group.id));
+        const notInDbIds = new Set([...groupIdsSet].filter(x => !inDbGroupIds.has(x)));
+        const promises = Array.from(inDbGroupIds).map(id => {
+            const translation = translations.get(id);
+            prisma.group.updateMany({
+                where: {
+                    id,
+                },
+                data: {
+                    id: translation!.id,
+                    type: translation!.type,
+                    name: translation!.title
+                }
+            });
+        })
+        await Promise.all([
+            ...promises,
+            prisma.group.createMany({
+                data: Array.from(notInDbIds).map(id => {
+                    const translation = translations.get(id);
+                    return {
+                        id: translation!.id,
+                        type: translation!.type,
+                        name: translation!.title
+                    }
+                })
+            }),
+
+        ])
+    }
+
+    async updateAnimeKodik(result: KodikAnimeFull[]) {
+        await this.updateTranslationGroups(result);
+        const listTransaction = result.map((anime) => {
+            const { material_data } = anime;
             return prisma.anime.upsert({
                 where: {
-                    shikimori_id: parseInt(anime!.shikimori_id),
+                    shikimori_id: parseInt(anime.shikimori_id),
                 },
                 create: {
                     current_episodes: material_data.episodes_aired,
                     max_episodes: material_data.episodes_total,
-                    shikimori_id: parseInt(anime!.shikimori_id),
+                    shikimori_id: parseInt(anime.shikimori_id),
                     english_name: material_data.title_en,
                     status: material_data.anime_status,
                     image: material_data.poster_url,
@@ -100,22 +149,22 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     media_type: material_data.anime_kind,
                     shikimori_score: material_data.shikimori_rating,
                     first_episode_aired: new Date(material_data.aired_at),
-                    kodik_link: anime!.link,
+                    kodik_link: anime.link,
                     rpa_rating: material_data.rating_mpaa,
                     description: material_data.anime_description,
                     last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null,
                     anime_translations: {
                         createMany: {
-                            data: anime!.translations.map(translation => {
+                            data: anime.translations.map(translation => {
                                 return {
                                     group_id: translation.id,
-                                    current_episodes: translation.episodes_count ?? 0
+                                    current_episodes: translation.episodes_count ?? 0,
                                 }
                             })
                         }
                     },
                     genres: {
-                        connectOrCreate: material_data.anime_genres.map(name => {
+                        connectOrCreate: material_data.anime_genres?.map(name => {
                             return {
                                 where: { name },
                                 create: { name }
@@ -127,6 +176,9 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     current_episodes: material_data.episodes_aired,
                     max_episodes: material_data.episodes_total,
                     status: material_data.anime_status,
+                    rpa_rating: material_data.rating_mpaa,
+                    kodik_link: anime.link,
+                    description: material_data.anime_description,
                     image: material_data.poster_url,
                     shikimori_score: material_data.shikimori_rating,
                     first_episode_aired: new Date(material_data.aired_at),
@@ -139,15 +191,37 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         return animeInList;
     }
 
-    async updateGroups(result: KodikAnimeWithTranslationsFullRequest[]) {
+    async updateTranslations(anime: KodikAnimeFull, animeDB: checkAnime) {
+        for (const translation of anime.translations) {
+            const update = await prisma.anime_translation.updateMany({
+                where: {
+                    AND: {
+                        anime_id: animeDB.id,
+                        group_id: translation.id,
+                    }
+                },
+                data: {
+                    current_episodes: translation.episodes_count,
+                }
+            })
+            if (update) continue;
+            prisma.anime_translation.create({
+                data: {
+                    anime_id: animeDB.id,
+                    group_id: translation.id,
+                    current_episodes: translation.episodes_count,
+                }
+            });
+        }
+    }
+
+    async updateGroups(result: KodikAnimeFull[]) {
         // Form unique translations from all collected data
         const translations: Map<number, translation> = new Map<number, translation>();
         for (const res of result) {
-            if (res.result === null) continue;
-            for (const translation of res.result.translations) {
+            for (const translation of res.translations) {
                 translations.set(translation.id, translation);
             }
-
         }
         const translationsArr = Array.from(translations.values());
         // Insert all unique translations

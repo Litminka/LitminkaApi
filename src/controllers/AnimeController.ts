@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { prisma } from "../db";
-import ShikimoriApi from "../helper/shikimoriapi";
+import ShikimoriApiService from "../services/ShikimoriApiService";
 import AnimeUpdateService from "../services/AnimeUpdateService";
 import { RequestWithAuth, ServerError, ShikimoriAnimeFull } from "../ts/index";
 
@@ -39,7 +39,7 @@ export default class AnimeController {
         if ((anime.description != null && anime.rpa_rating != null)) return res.json({
             body: anime
         });
-        const shikimoriApi = new ShikimoriApi(user);
+        const shikimoriApi = new ShikimoriApiService(user);
         const animeUpdateService = new AnimeUpdateService(shikimoriApi, user);
         const updated = await animeUpdateService.update(anime);
         if (updated) {

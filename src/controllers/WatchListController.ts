@@ -1,10 +1,10 @@
-import ShikimoriApi from "../helper/shikimoriapi";
+import ShikimoriApiService from "../services/ShikimoriApiService";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { prisma } from '../db';
-import { AddToList, KodikAnime, KodikAnimeFullRequest, KodikAnimeWithTranslationsFullRequest, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts/index";
+import { AddToList, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts/index";
 import groupArrSplice from "../helper/groupsplice";
-import KodikApi from "../helper/kodikapi";
+import KodikApiService from "../services/KodikApiService";
 import AnimeUpdateService from "../services/AnimeUpdateService";
 
 export default class WatchListController {
@@ -44,7 +44,7 @@ export default class WatchListController {
         } catch (error) {
             return res.status(403).json({ message: "unauthorized" })
         }
-        const shikimoriapi = new ShikimoriApi(user);
+        const shikimoriapi = new ShikimoriApiService(user);
         let animeList = await shikimoriapi.getUserList();
         if (!animeList) return res.status(401).json({
             message: 'User does not have shikimori integration'
@@ -55,20 +55,13 @@ export default class WatchListController {
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
 
         // Get all anime from kodik
-        const kodik = new KodikApi();
-        let result = await kodik.getBatchAnime(shikimoriAnimeIds);
-
-        const error = result as ServerError;
-        if (error.reqStatus === 500) return res.status(500).json({ message: "Server error" });
-
-        result = result as KodikAnimeWithTranslationsFullRequest[];
-        if (res.headersSent) return;
+        const kodik = new KodikApiService();
+        let result = await kodik.getFullBatchAnime(shikimoriAnimeIds);
         console.log("Got anime from kodik");
 
         // Isolate all results that returned nothing
-        const noResult = result.filter(result => result.result == null);
-        const noResultIds = noResult.map(result => result.shikimori_request)
-        result = result.filter(result => result.result != null);
+        const kodikIds = result.map(anime => parseInt(anime.shikimori_id));
+        const noResultIds = shikimoriAnimeIds.filter(id => kodikIds.indexOf(id) < 0);
 
         // Request all isolated ids from shikimori
         // Splice all ids into groups of 50, so we can batch request anime from shikimori
@@ -81,8 +74,6 @@ export default class WatchListController {
         let noResultAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
         noResultAnime = noResultAnime.flat();
 
-        if (res.headersSent) return;
-        
         const animeUpdateService = new AnimeUpdateService(shikimoriapi, user);
         await animeUpdateService.updateGroups(result);
         let animeInList = await animeUpdateService.updateAnimeKodik(result);

@@ -1,7 +1,6 @@
 import { User, Integration } from "@prisma/client";
 import fetch, { Headers } from "node-fetch";
 import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/index";
-import sleep from "./sleep";
 import { prisma } from '../db';
 import { shikiRateLimiter } from "../shikiRateLimiter";
 import { RateLimiter } from "limiter";
@@ -13,7 +12,7 @@ interface iShikimoriApi {
 }
 
 const baseUrl = `${process.env.shikimori_url}/api`;
-export default class ShikimoriApi implements iShikimoriApi {
+export default class ShikimoriApiService implements iShikimoriApi {
     user: User & { integration: Integration | null } | undefined;
     limiter: RateLimiter;
     constructor(user: User & { integration: Integration | null } | undefined) {
@@ -23,9 +22,9 @@ export default class ShikimoriApi implements iShikimoriApi {
 
     /**
      * Renew tokens or get fresh ones from shikimori
-     * @returns Promise<void | false> if token is impossible to get
+     * @returns Promise(Boolean) meaning success of operation
      */
-    private async getToken(): Promise<void | false> {
+    private async getToken(): Promise<boolean> {
         let token = null;
         if (!this.user) return false;
         if (this.user.integration!.shikimori_refresh_token === null) {
@@ -43,7 +42,7 @@ export default class ShikimoriApi implements iShikimoriApi {
             "client_id": process.env.shikimori_client_id!,
             "client_secret": process.env.shikimori_client_secret!,
         });
-        // If token exists then we assume user has just linked shikimori
+        // If token exists, then we assume user has just linked shikimori
         if (token) {
             requestBody.append("code", this.user.integration!.shikimori_code!);
             requestBody.append("redirect_uri", `${process.env.app_url}/shikimori/link?token=${token!.token}`);
@@ -65,7 +64,7 @@ export default class ShikimoriApi implements iShikimoriApi {
             return this.getToken();
         }
         /* 
-            If token is invalid
+            If refresh token on backend is invalid
             Assume user has dropped the integration
             Do the same on our end
         */
@@ -93,6 +92,7 @@ export default class ShikimoriApi implements iShikimoriApi {
             },
             data: integrationBody
         });
+        return true;
     }
     /**
      * Make a request to shikimori api, supports authorization and retries for failed requests
@@ -102,7 +102,7 @@ export default class ShikimoriApi implements iShikimoriApi {
      * 
      * @param method The HTTP method of the request
      * 
-     * @param auth By default is false, not required. Pass true if authentication on shikimori is required for this request
+     * @param auth By default is false and is not required. Pass true if authentication on shikimori is required for this request
      * 
      * @param requestData By default is null. Pass object body if request is not GET
      * 
@@ -124,7 +124,7 @@ export default class ShikimoriApi implements iShikimoriApi {
             await this.limiter.removeTokens(1);
             if (requestStatus === 401 && auth) {
                 const result = await this.getToken();
-                if (result === false) return false;
+                if (!result) return false;
             };
             const headers = new Headers();
 

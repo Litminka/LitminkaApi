@@ -21,10 +21,17 @@ if (!process.env.shikimori_client_secret) throw new Error("No client secret spec
 if (!process.env.shikimori_url) throw new Error("Shikimori base url is not specified");
 if (!process.env.app_url) throw new Error("App Url not specified");
 
-
 app.use(helmet());
-app.use(bodyParser.json());
+app.use((req, res, next) => {
+    bodyParser.json()(req, res, (err) => {
+        if (err) return res.status(400).json({
+            error: err.message
+        })
+        next();
+    });
+});
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.get('/', (req: Request, res: Response) => {
     res.json({
         res: "Hello world!"

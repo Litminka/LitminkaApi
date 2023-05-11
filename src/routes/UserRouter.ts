@@ -5,7 +5,7 @@ import { registrationValidation, loginValidation } from "../validators/UserValid
 const router = Router();
 
 router.get("/", UserController.getUsers);
-router.post("/signup", registrationValidation(), UserController.createUser);
-router.post("/signin", loginValidation(), UserController.loginUser);
+router.post("/register", registrationValidation(), UserController.createUser);
+router.post("/login", loginValidation(), UserController.loginUser);
 router.get("/profile", auth, UserController.profile);
 export { router as userRouter };

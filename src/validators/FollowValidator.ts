@@ -2,8 +2,8 @@ import { body, param } from "express-validator";
 
 const FollowValidation = (): any[] => {
     return [
-        body("type").bail().notEmpty().isString().isIn(["announcement", "follow"]).bail(),
-        body("group_name").optional().notEmpty().isString().bail(),
+        body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
+        body("group_name").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail(),
         param("anime_id").notEmpty().bail().isInt().bail().toInt()
     ];
 };

@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 import dotenv from 'dotenv';
 dotenv.config();
 import { Encrypt } from "../src/helper/encrypt";
-import KodikApi from "../src/helper/kodikapi";
+import KodikApiService from "../src/services/KodikApiService";
 async function main() {
     const adminRole = await prisma.role.upsert({
         where: { name: "admin" },
@@ -73,7 +73,7 @@ async function main() {
     });
     console.dir(admin);
     console.dir(user);
-    const kodik = new KodikApi();
+    const kodik = new KodikApiService();
     const genres = await kodik.getGenres();
     if (genres.reqStatus === 500) return console.log(genres);
     const { results } = genres;

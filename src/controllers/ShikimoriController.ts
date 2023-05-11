@@ -2,7 +2,7 @@ import { User, Integration, Shikimori_Link_Token } from "@prisma/client";
 import { Request, Response } from "express";
 import crypto from "crypto";
 import { RequestWithAuth, ServerError, ShikimoriWhoAmI } from "../ts/index";
-import ShikimoriApi from "../helper/shikimoriapi";
+import ShikimoriApiService from "../services/ShikimoriApiService";
 import { prisma } from '../db';
 export default class ShikimoriController {
     static async generateLink(req: RequestWithAuth, res: Response): Promise<Object> {
@@ -80,7 +80,7 @@ export default class ShikimoriController {
             });
         }
 
-        const shikimoriapi = new ShikimoriApi(user);
+        const shikimoriapi = new ShikimoriApiService(user);
         const profile = await shikimoriapi.getProfile();
         if (!profile) return res.status(401).json({
             message: 'User does not have shikimori integration'
@@ -186,7 +186,7 @@ export default class ShikimoriController {
                 message: "User does not exist"
             });
         }
-        const shikimori = new ShikimoriApi(user);
+        const shikimori = new ShikimoriApiService(user);
         const result: ShikimoriWhoAmI | ServerError | false = await shikimori.getProfile();
         if (!result) return res.status(401).json({
             message: 'User does not have shikimori integration'

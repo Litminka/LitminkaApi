@@ -11,19 +11,20 @@ datasource db {
 }
 
 model User {
-  id             Int                   @id @default(autoincrement())
-  createdAt      DateTime              @default(now())
-  email          String                @unique
-  login          String                @unique
-  password       String
-  name           String?
-  role_id        Int
-  role           Role                  @relation(fields: [role_id], references: [id])
-  integration    Integration?
-  shikimori_link Shikimori_Link_Token?
-  refreshToken   RefreshToken[]
-  anime_list     Anime_list[]
-  follows        Follow[]
+  id                       Int                        @id @default(autoincrement())
+  created_at               DateTime                   @default(now())
+  email                    String                     @unique
+  login                    String                     @unique
+  password                 String
+  name                     String?
+  role_id                  Int
+  role                     Role                       @relation(fields: [role_id], references: [id])
+  integration              Integration?
+  shikimori_link           Shikimori_Link_Token?
+  refreshToken             RefreshToken[]
+  anime_list               Anime_list[]
+  follows                  Follow[]
+  User_anime_notifications User_anime_notifications[]
 }
 
 model Role {
@@ -67,27 +68,29 @@ model Shikimori_Link_Token {
 }
 
 model Anime {
-  id                  Int                 @id @default(autoincrement())
-  shikimori_id        Int                 @unique
-  image               String
-  japanese_name       String?
-  english_name        String?
-  name                String?
-  description         String?
-  status              String
-  rpa_rating          String?
-  media_type          String
-  max_episodes        Int
-  current_episodes    Int
-  first_episode_aired DateTime?
-  last_episode_aired  DateTime?
-  shikimori_score     Float
-  franchise_name      String?
-  kodik_link          String?
-  genres              Genre[]
-  anime_translations  Anime_translation[]
-  anime_lists         Anime_list[]
-  follows             Follow[]
+  id                       Int                        @id @default(autoincrement())
+  shikimori_id             Int                        @unique
+  image                    String
+  japanese_name            String?
+  english_name             String?
+  name                     String?
+  description              String?
+  status                   String
+  rpa_rating               String?
+  media_type               String
+  max_episodes             Int
+  current_episodes         Int
+  first_episode_aired      DateTime?
+  last_episode_aired       DateTime?
+  shikimori_score          Float
+  franchise_name           String?
+  kodik_link               String?
+  genres                   Genre[]
+  anime_translations       Anime_translation[]
+  anime_lists              Anime_list[]
+  follows                  Follow[]
+  User_anime_notifications User_anime_notifications[]
+  anime_notifications      Anime_notifications[]
 }
 
 model Genre {
@@ -100,26 +103,28 @@ model Anime_translation {
   id               Int      @id @default(autoincrement())
   current_episodes Int
   group_id         Int
-  group            Group    @relation(fields: [group_id], references: [id], onUpdate: Cascade, onDelete: Cascade )
+  group            Group    @relation(fields: [group_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   anime_id         Int
   anime            Anime    @relation(fields: [anime_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   follow           Follow[]
 }
 
 model Group {
-  id                Int                 @id
-  name              String              @unique
-  type              String
-  Anime_translation Anime_translation[]
+  id                       Int                        @id
+  name                     String                     @unique
+  type                     String
+  Anime_translation        Anime_translation[]
+  User_anime_notifications User_anime_notifications[]
+  anime_notifications      Anime_notifications[]
 }
 
 model Follow {
-  id             Int               @id @default(autoincrement())
+  id             Int                @id @default(autoincrement())
   status         String
   user_id        Int
-  user           User              @relation(fields: [user_id], references: [id])
+  user           User               @relation(fields: [user_id], references: [id])
   anime_id       Int
-  anime          Anime             @relation(fields: [anime_id], references: [id])
+  anime          Anime              @relation(fields: [anime_id], references: [id])
   translation_id Int?
   translation    Anime_translation? @relation(fields: [translation_id], references: [id])
 }
@@ -134,4 +139,29 @@ model Anime_list {
   is_favorite      Boolean
   watched_episodes Int
   rating           Int?
+}
+
+model User_anime_notifications {
+  id         Int      @id @default(autoincrement())
+  anime_id   Int
+  anime      Anime    @relation(fields: [anime_id], references: [id])
+  status     String
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  episode    Int?
+  group_id   Int?
+  group      Group?   @relation(fields: [group_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+}
+
+model Anime_notifications {
+  id         Int      @id @default(autoincrement())
+  anime_id   Int
+  anime      Anime    @relation(fields: [anime_id], references: [id])
+  status     String
+  episode    Int?
+  group_id   Int?
+  group      Group?   @relation(fields: [group_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  created_at DateTime @default(now())
 }
