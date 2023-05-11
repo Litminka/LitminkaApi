@@ -20,6 +20,6 @@
 
 11. Add password switch
 
-12. Implement autocheck
+12. Test autocheck for bugs
 
 13. Test THE HELL out of watchlist importer

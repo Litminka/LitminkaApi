@@ -66,7 +66,6 @@ export default class AutoCheckService {
         for (const translation of anime.anime_translations) {
             const kodikTranslation = kodikAnime.translations.find(kodikTranslation => translation.group_id === kodikTranslation.id)
             if (typeof kodikTranslation === "undefined") continue;
-            const dbTranslation = anime.anime_translations.find(dbTranslation => kodikTranslation.id === dbTranslation.group_id)
             if (kodikTranslation.episodes_count === translation.current_episodes) continue;
             const isFinalEpisode = kodikTranslation.episodes_count === anime.max_episodes;
             console.log(`NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`);
@@ -95,7 +94,7 @@ export default class AutoCheckService {
                     where: {
                         AND: [
                             { anime_id: anime.id, },
-                            { translation_id: dbTranslation!.id, },
+                            { translation_id: translation.id, },
                             { user_id: single.user_id }
                         ]
                     }
