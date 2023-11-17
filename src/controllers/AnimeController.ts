@@ -35,7 +35,7 @@ export default class AnimeController {
         if (!user) return res.json({
             body: anime
         });
-        // TODO: add user role checking, and setting checking to allow shikimori requests only to specific users
+        // TODO: add user role checking, and setting check to allow shikimori requests only to specific users
         if ((anime.description != null && anime.rpa_rating != null)) return res.json({
             body: anime
         });

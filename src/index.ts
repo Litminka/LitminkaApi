@@ -49,6 +49,7 @@ app.get("/shikimori_token", (req: Request, res: Response) => {
     console.log(req.query);
 })
 
+
 const httpsOptions = {
     key: fs.readFileSync('./cert/server.key'),
     cert: fs.readFileSync('./cert/server.cert')

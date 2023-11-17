@@ -1,6 +1,6 @@
 import fetch, { Headers } from "node-fetch";
 import { ServerError } from "../ts/index";
-import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translations, KodikAnime } from "../ts/kodik";
+import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translations, KodikAnime, translation } from "../ts/kodik";
 
 export default class KodikApiService {
     baseurl = "https://kodikapi.com"
@@ -46,7 +46,7 @@ export default class KodikApiService {
         const translations: translations = []
         for (const res of results) {
             let episodes = res.episodes_count;
-            if (typeof episodes === "undefined") {
+            if (episodes === undefined) {
                 episodes = res.material_data.episodes_aired;
             }
             translations.push({
@@ -94,7 +94,7 @@ export default class KodikApiService {
     }
 
     private async _getAnimeFull(shikimori_id: number): Promise<KodikAnimeFull | undefined> {
-        let response;
+        let response: _KodikAnimeFullRequest;
         try {
             response = await this._requestFullAnime(shikimori_id);
         } catch (error) {
@@ -107,7 +107,7 @@ export default class KodikApiService {
     }
 
     private async _getAnime(shikimori_id: number): Promise<KodikAnime | undefined> {
-        let response;
+        let response: _KodikAnimeRequest;
         try {
             response = await this._requestAnime(shikimori_id);
         } catch (error) {
@@ -132,6 +132,18 @@ export default class KodikApiService {
         return await response.json();
     }
 
+    async getTranslationGroups(): Promise<translation[]> {
+        const params = new URLSearchParams({
+            "token": process.env.kodik_api_key!,
+            "genres_type": "shikimori",
+        });
+        const response = await fetch(`${this.baseurl}/translations`, {
+            method: "POST",
+            body: params
+        })
+        return await response.json();
+    }
+
     async getFullBatchAnime(shikimoriIds: number[]): Promise<KodikAnimeFull[]> {
         const awaitResult: Promise<any>[] = [];
         for (const shikimori_id of shikimoriIds) {
@@ -139,7 +151,7 @@ export default class KodikApiService {
             awaitResult.push(promise);
         }
         let result: KodikAnimeFull[] = await Promise.all(awaitResult);
-        result = result.filter(anime => typeof anime !== "undefined");
+        result = result.filter(anime => anime !== undefined);
         return result;
     }
 
@@ -150,7 +162,7 @@ export default class KodikApiService {
             awaitResult.push(promise);
         }
         let result: KodikAnimeFull[] = await Promise.all(awaitResult);
-        result = result.filter(anime => typeof anime !== "undefined");
+        result = result.filter(anime => anime !== undefined);
         return result;
     }
 

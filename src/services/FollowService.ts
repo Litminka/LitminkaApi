@@ -23,7 +23,7 @@ export default class FollowService {
                 const element = followsMap.get(follow.anime.shikimori_id);
                 const { translation, user_id } = follow;
                 if (translation) {
-                    element!.info.push({
+                    element!.info.push({    
                         translation,
                         user_id
                     });

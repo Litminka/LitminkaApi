@@ -3,6 +3,7 @@ import ShikimoriApiService from "./ShikimoriApiService";
 import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../ts/index";
 import { KodikAnime, KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
 import { prisma } from "../db";
+import { cyrillicSlug } from "../helper/cyrillic-slug";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -48,6 +49,57 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         return true;
     }
 
+    async updateAnimeShikimoriFull(animeArr: ShikimoriAnimeFull[]) {
+        const shikimoriTransaction = animeArr.map((anime) => {
+            return prisma.anime.upsert({
+                where: {
+                    shikimori_id: anime.id,
+                },
+                create: {
+                    current_episodes: anime.episodes_aired,
+                    max_episodes: anime.episodes,
+                    shikimori_id: anime.id,
+                    english_name: anime.name,
+                    japanese_name: anime.japanese[0] ?? "",
+                    slug: `${anime.id}-${cyrillicSlug(anime.russian ? anime.russian : anime.name)}`,
+                    description: anime.description,
+                    franchise_name: anime.franchise,
+                    genres: {
+                        connectOrCreate: anime.genres!.map(name => {
+                            return {
+                                where: { name: name.russian },
+                                create: { name: name.russian }
+                            }
+                        })
+                    },
+                    rpa_rating: anime.rating,
+                    status: anime.status,
+                    image: anime.image.original,
+                    name: anime.russian,
+                    media_type: anime.kind,
+                    shikimori_score: parseFloat(anime.score),
+                    first_episode_aired: new Date(anime.aired_on),
+                    last_episode_aired: new Date(anime.released_on),
+                },
+                update: {
+                    current_episodes: anime.episodes_aired,
+                    max_episodes: anime.episodes,
+                    status: anime.status,
+                    description: anime.description,
+                    franchise_name: anime.franchise,
+                    japanese_name: anime.japanese[0] ?? "",
+                    image: anime.image.original,
+                    shikimori_score: parseFloat(anime.score),
+                    first_episode_aired: new Date(anime.aired_on),
+                    last_episode_aired: new Date(anime.released_on),
+                }
+            });
+        });
+        // Insert shikimori anime
+        const shikimoriUpdate = await prisma.$transaction(shikimoriTransaction);
+        return shikimoriUpdate;
+    }
+
     async updateAnimeShikimori(animeArr: ShikimoriAnime[]) {
         const shikimoriTransaction = animeArr.map((anime) => {
             return prisma.anime.upsert({
@@ -59,6 +111,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     max_episodes: anime.episodes,
                     shikimori_id: anime.id,
                     english_name: anime.name,
+                    slug: `${anime.id}-${cyrillicSlug(anime.russian ? anime.russian : anime.name)}`,
                     status: anime.status,
                     image: anime.image.original,
                     name: anime.russian,
@@ -95,13 +148,13 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         const groups = await prisma.group.findMany({
             where: {
                 id: {
-                    in: Array.from(groupIdsSet)
+                    in: [...groupIdsSet]
                 }
             }
         })
         const inDbGroupIds = new Set(groups.map(group => group.id));
         const notInDbIds = new Set([...groupIdsSet].filter(x => !inDbGroupIds.has(x)));
-        const promises = Array.from(inDbGroupIds).map(id => {
+        const groupInDBUpdates = [...inDbGroupIds].map(id => {
             const translation = translations.get(id);
             prisma.group.updateMany({
                 where: {
@@ -114,31 +167,34 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 }
             });
         })
-        await Promise.all([
-            ...promises,
-            prisma.group.createMany({
-                data: Array.from(notInDbIds).map(id => {
-                    const translation = translations.get(id);
-                    return {
-                        id: translation!.id,
-                        type: translation!.type,
-                        name: translation!.title
-                    }
-                })
-            }),
-
-        ])
+        await prisma.group.createMany({
+            data: [...notInDbIds].map(id => {
+                const translation = translations.get(id);
+                return {
+                    id: translation!.id,
+                    type: translation!.type,
+                    name: translation!.title
+                }
+            })
+        });
+        await Promise.all([...groupInDBUpdates])
     }
 
     async updateAnimeKodik(result: KodikAnimeFull[]) {
         await this.updateTranslationGroups(result);
         const listTransaction = result.map((anime) => {
             const { material_data } = anime;
+            let animeSlugTitle = material_data.anime_title;
+            if (!animeSlugTitle) {
+                animeSlugTitle = material_data.title_en;
+            }
+            const slug = `${anime.shikimori_id}-${animeSlugTitle}`;
             return prisma.anime.upsert({
                 where: {
                     shikimori_id: parseInt(anime.shikimori_id),
                 },
                 create: {
+                    slug,
                     current_episodes: material_data.episodes_aired,
                     max_episodes: material_data.episodes_total,
                     shikimori_id: parseInt(anime.shikimori_id),

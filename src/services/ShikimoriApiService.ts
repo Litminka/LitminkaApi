@@ -15,7 +15,7 @@ const baseUrl = `${process.env.shikimori_url}/api`;
 export default class ShikimoriApiService implements iShikimoriApi {
     user: User & { integration: Integration | null } | undefined;
     limiter: RateLimiter;
-    constructor(user: User & { integration: Integration | null } | undefined) {
+    constructor(user: User & { integration: Integration | null } | undefined = undefined) {
         this.user = user;
         this.limiter = shikiRateLimiter;
     }
@@ -143,13 +143,13 @@ export default class ShikimoriApiService implements iShikimoriApi {
                 if (status !== 401) return data;
             }
             requestStatus = status;
-        } while (requestStatus === 401 || requestStatus == 429);
+        } while (requestStatus === 401 || requestStatus === 429);
     }
 
     public async getProfile(): Promise<ShikimoriWhoAmI | ServerError | false> {
         return this.requestMaker("/users/whoami", "GET", true);
     }
-
+    
     public async getAnimeById(id: number): Promise<ShikimoriAnimeFull | ServerError> {
         return this.requestMaker(`/animes/${id}`, "GET");
     }
@@ -157,7 +157,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
     public async getUserList(): Promise<ShikimoriWatchList[] | ServerError | false> {
         if (!this.user) return false;
         if (this.user.integration!.shikimori_id === null) return false;
-        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration?.shikimori_id}&target_type=Anime`, "GET");
+        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimori_id}&target_type=Anime`, "GET");
     }
 
     public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[] | ServerError> {

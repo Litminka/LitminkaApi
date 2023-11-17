@@ -18,19 +18,18 @@ export default class AutoCheckService {
 
     async checkAnime(shikimoriAnime: ShikimoriAnime, kodikAnime?: KodikAnimeFull, follow?: followType, anime?: checkAnime) {
         const { status } = shikimoriAnime;
-        const haveKodik = typeof kodikAnime !== "undefined";
-        const haveShikimori = typeof shikimoriAnime !== "undefined";
-        const haveDbAnime = typeof anime !== "undefined";
-        const haveFollow = typeof follow !== "undefined";
+        const haveKodik = kodikAnime !== undefined;
+        const haveDbAnime = anime !== undefined;
+        const haveFollow = follow !== undefined;
         // if we have no anime in db, create it and exit
         if (!haveDbAnime) {
             if (haveKodik) {
                 this.animeUpdateService.updateAnimeKodik([kodikAnime]);
                 console.log(`New anime found ${kodikAnime.title}`)
-            } else if (haveShikimori) {
-                this.animeUpdateService.updateAnimeShikimori([shikimoriAnime]);
-                console.log(`New anime found ${shikimoriAnime.name}`)
+                return;
             }
+            this.animeUpdateService.updateAnimeShikimori([shikimoriAnime]);
+            console.log(`New anime found ${shikimoriAnime.name}`)
             return;
         }
 
@@ -65,7 +64,7 @@ export default class AutoCheckService {
         }
         for (const translation of anime.anime_translations) {
             const kodikTranslation = kodikAnime.translations.find(kodikTranslation => translation.group_id === kodikTranslation.id)
-            if (typeof kodikTranslation === "undefined") continue;
+            if (kodikTranslation === undefined) continue;
             if (kodikTranslation.episodes_count === translation.current_episodes) continue;
             const isFinalEpisode = kodikTranslation.episodes_count === anime.max_episodes;
             console.log(`NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`);

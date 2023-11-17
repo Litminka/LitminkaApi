@@ -7,7 +7,8 @@ export default class NotificationService {
     async notifyUserRelease(user_id: number, anime_id: number) {
         return prisma.user_anime_notifications.create({
             data: {
-                user_id, anime_id,
+                user_id, 
+                anime_id,
                 status: "anime_released"
             }
         })
@@ -16,7 +17,8 @@ export default class NotificationService {
     async notifyUserEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
         return prisma.user_anime_notifications.create({
             data: {
-                user_id, anime_id,
+                user_id, 
+                anime_id,
                 status: "episode_released",
                 group_id,
                 episode,
@@ -27,7 +29,8 @@ export default class NotificationService {
     async notifyUserFinalEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
         return prisma.user_anime_notifications.create({
             data: {
-                user_id, anime_id,
+                user_id, 
+                anime_id,
                 status: "final_episode_released",
                 group_id,
                 episode,

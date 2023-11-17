@@ -8,5 +8,12 @@ const FollowValidation = (): any[] => {
     ];
 };
 
+const UnFollowValidation = (): any[] => {
+    return [
+        body("group_name").optional().isString().bail(),
+        param("anime_id").notEmpty().bail().isInt().bail().toInt()
+    ];
+};
 
-export { FollowValidation };
+
+export { FollowValidation, UnFollowValidation };

@@ -223,6 +223,10 @@ export interface Follow {
     type: "follow" | "announcement"
 }
 
+export interface DeleteFollow {
+    group_name?: string
+}
+
 export interface options {
     method: string;
     headers: Headers;

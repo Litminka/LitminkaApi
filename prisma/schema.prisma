@@ -75,6 +75,7 @@ model Anime {
   english_name             String?
   name                     String?
   description              String?
+  slug                     String                    @unique
   status                   String
   rpa_rating               String?
   media_type               String

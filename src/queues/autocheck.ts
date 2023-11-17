@@ -4,6 +4,7 @@ import { prisma } from "../db";
 import AutoCheckService from '../services/AutoCheckService';
 import FollowService from '../services/FollowService';
 import { KodikAnimeFull, checkAnime } from '../ts/kodik';
+import KodikApiService from '../services/KodikApiService';
 
 const autoCheckQueue = new Queue("autocheck", {
     connection: {
@@ -27,6 +28,28 @@ const worker = new Worker("autocheck", async (job: Job) => {
 
 
     console.log("started a job");
+
+    console.log("updating translations");
+    const kodikApi = new KodikApiService()
+    const translations = await kodikApi.getTranslationGroups();
+    for (const translation of translations) {
+        prisma.group.upsert({
+            where: {
+                id: translation.id,
+            },
+            create: {
+                id: translation.id,
+                name: translation.title,
+                type: translation.type,
+            },
+            update: {
+                id: translation.id,
+                name: translation.title,
+                type: translation.type,
+            }
+        })
+
+    }
     const started = Date.now();
     const follows = await prisma.follow.findMany({
         where: {
@@ -108,7 +131,7 @@ const worker = new Worker("autocheck", async (job: Job) => {
             continue;
         }
         let follow = followsMap.get(id);
-        if (typeof follow === "undefined") {
+        if (follow === undefined) {
             follow = announcementMap.get(id);
         }
         const dbAnime = animeMap.get(id);

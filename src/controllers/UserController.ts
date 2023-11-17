@@ -7,10 +7,6 @@ import { RequestWithAuth } from "../ts/index";
 
 export default class UserController {
     static async createUser(req: Request, res: Response): Promise<Object> {
-        const result = validationResult(req);
-        if (!result.isEmpty()) {
-            return res.status(422).json({ errors: result.array() });
-        }
         const { email, login, password, name }: { email: string, login: string, password: string, name: string | null } = req.body
         await prisma.user.create({
             data: {
@@ -39,10 +35,6 @@ export default class UserController {
     }
 
     static async loginUser(req: Request, res: Response): Promise<Object> {
-        const result = validationResult(req);
-        if (!result.isEmpty()) {
-            return res.status(422).json({ errors: result.array() });
-        }
         const { login, password }: { login: string, password: string } = req.body;
         const user = await prisma.user.findFirst({
             select: {

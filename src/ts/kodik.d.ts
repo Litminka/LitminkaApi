@@ -38,6 +38,8 @@ export interface KodikGenresRequest {
     results: KodikGenre[];
 }
 
+
+
 interface KodikGenre {
     title: string;
     count: number;

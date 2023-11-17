@@ -118,10 +118,6 @@ export default class WatchListController {
     }
 
     public static async addToList(req: RequestWithAuth, res: Response) {
-        const result = validationResult(req);
-        if (!result.isEmpty()) {
-            return res.status(422).json({ errors: result.array() });
-        }
         const { is_favorite, rating, status, watched_episodes } = req.body as AddToList;
         const { id } = req.auth!;
         try {
@@ -171,8 +167,6 @@ export default class WatchListController {
     }
 
     public static async editList(req: RequestWithAuth, res: Response) {
-        const result = validationResult(req);
-        if (!result.isEmpty()) return res.status(422).json({ errors: result.array() });
         const { is_favorite, rating, status, watched_episodes } = req.body as AddToList;
         const { id } = req.auth!;
         try {
