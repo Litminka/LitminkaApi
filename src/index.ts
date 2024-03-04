@@ -36,14 +36,7 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.urlencoded({ extended: true }));
 
-async function helloWorld(req: Request, res: Response) {
-    await sleep(0.1);
-    await prisma.user.findFirstOrThrow({
-        where: {
-            id: 50
-        }
-    })
-    
+function helloWorld(req: Request, res: Response) {
     res.json({
         res: "Hello world!"
     });
