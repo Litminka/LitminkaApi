@@ -24,7 +24,6 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         if (!resAnime) return false;
         if (resAnime.reqStatus === 500 || resAnime.reqStatus === 404) return false;
         const update = resAnime as ShikimoriAnimeFull;
-        console.log(resAnime);
         await prisma.anime.update({
             where: {
                 id: anime.id
@@ -87,6 +86,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     status: anime.status,
                     description: anime.description,
                     franchise_name: anime.franchise,
+                    media_type: anime.kind,
                     japanese_name: anime.japanese[0] ?? "",
                     image: anime.image.original,
                     shikimori_score: parseFloat(anime.score),
@@ -125,6 +125,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     max_episodes: anime.episodes,
                     status: anime.status,
                     image: anime.image.original,
+                    media_type: anime.kind,
                     shikimori_score: parseFloat(anime.score),
                     first_episode_aired: new Date(anime.aired_on),
                     last_episode_aired: new Date(anime.released_on),
@@ -234,6 +235,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     status: material_data.anime_status,
                     rpa_rating: material_data.rating_mpaa,
                     kodik_link: anime.link,
+                    media_type: material_data.anime_kind,
                     description: material_data.anime_description,
                     image: material_data.poster_url,
                     shikimori_score: material_data.shikimori_rating,
