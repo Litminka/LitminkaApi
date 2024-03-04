@@ -78,7 +78,7 @@ model Anime {
   slug                     String                    @unique
   status                   String
   rpa_rating               String?
-  media_type               String
+  media_type               String?
   max_episodes             Int
   current_episodes         Int
   first_episode_aired      DateTime?
