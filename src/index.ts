@@ -10,9 +10,8 @@ import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/AnimeRouter';
 import * as fs from 'fs';
 import * as https from 'https';
-import sleep from './helper/sleep';
+import { RequestStatuses } from './ts/enums';
 import { wrap } from './middleware/errorHandler';
-import { prisma } from './db';
 dotenv.config();
 
 const app: Express = express();
@@ -28,7 +27,7 @@ if (!process.env.app_url) throw new Error("App Url not specified");
 app.use(helmet());
 app.use((req, res, next) => {
     bodyParser.json()(req, res, (err) => {
-        if (err) return res.status(400).json({
+        if (err) return res.status(RequestStatuses.BadRequest).json({
             error: err.message
         })
         next();

@@ -1,17 +1,18 @@
 import { Anime, Anime_translation } from "@prisma/client";
 import { animeKind, animeStatus, pgCapitalizedRating } from ".";
+import { RequestStatuses } from "./enums";
 
 export interface _KodikAnimeRequest {
     time: string;
     total: number;
-    reqStatus: 200;
+    reqStatus: RequestStatuses.OK;
     results: _KodikAnime[];
 }
 
 export interface _KodikAnimeFullRequest {
     time: string;
     total: number;
-    reqStatus: 200;
+    reqStatus: RequestStatuses.OK;
     shikimori_request: number;
     results: _KodikAnimeFull[];
 }
@@ -19,14 +20,14 @@ export interface _KodikAnimeFullRequest {
 export interface _KodikAnimeWithTranslationsRequest {
     time: string;
     total: number;
-    reqStatus: 200;
+    reqStatus: RequestStatuses.OK;
     result: KodikAnime | null;
 }
 
 export interface _KodikAnimeWithTranslationsFullRequest {
     time: string;
     total: number;
-    reqStatus: 200;
+    reqStatus: RequestStatuses.OK;
     shikimori_request: number;
     result: KodikAnimeFull | null;
 }
@@ -34,7 +35,7 @@ export interface _KodikAnimeWithTranslationsFullRequest {
 export interface KodikGenresRequest {
     time: string;
     total: number;
-    reqStatus: 200;
+    reqStatus: RequestStatuses.OK;
     results: KodikGenre[];
 }
 

@@ -6,6 +6,7 @@ import { AddToList, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatch
 import groupArrSplice from "../helper/groupsplice";
 import KodikApiService from "../services/KodikApiService";
 import AnimeUpdateService from "../services/AnimeUpdateService";
+import { RequestStatuses } from "../ts/enums";
 
 export default class WatchListController {
     public static async getWatchList(req: RequestWithAuth, res: Response): Promise<Object> {
@@ -23,7 +24,7 @@ export default class WatchListController {
                 }
             });
         } catch (error) {
-            return res.status(403).json({ message: "unauthorized" })
+            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
         }
         return res.json(user.anime_list);
     }
@@ -42,14 +43,14 @@ export default class WatchListController {
                 }
             });
         } catch (error) {
-            return res.status(403).json({ message: "unauthorized" })
+            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
         }
         const shikimoriapi = new ShikimoriApiService(user);
         let animeList = await shikimoriapi.getUserList();
-        if (!animeList) return res.status(401).json({
+        if (!animeList) return res.status(RequestStatuses.Unauthorized).json({
             message: 'User does not have shikimori integration'
         });
-        if ((<ServerError>animeList).reqStatus === 500) return res.status(500).json({ message: "Server error" });
+        if ((<ServerError>animeList).reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
         console.log("Got list");
         const watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
@@ -68,7 +69,7 @@ export default class WatchListController {
         const idsSpliced = groupArrSplice(noResultIds, 50);
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
             let response = await shikimoriapi.getBatchAnime(batch);
-            if ((<ServerError>response).reqStatus === 500) return res.status(500).json({ message: "Server error" });
+            if ((<ServerError>response).reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
             return (<ShikimoriAnime[]>response);
         });
         let noResultAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
@@ -125,7 +126,7 @@ export default class WatchListController {
                 where: { id },
             });
         } catch (error) {
-            return res.status(403).json({ message: "unauthorized" })
+            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
         }
         const animeListEntry = await prisma.anime_list.findFirst({
             where: {
@@ -135,7 +136,7 @@ export default class WatchListController {
                 }
             }
         });
-        if (animeListEntry) return res.status(400).json({
+        if (animeListEntry) return res.status(RequestStatuses.BadRequest).json({
             error: {
                 anime_id: "List entry with this anime already exists",
             }
@@ -174,7 +175,7 @@ export default class WatchListController {
                 where: { id },
             });
         } catch (error) {
-            return res.status(403).json({ message: "unauthorized" })
+            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
         }
         const animeListEntry = await prisma.anime_list.findFirst({
             where: {
@@ -184,7 +185,7 @@ export default class WatchListController {
                 }
             }
         });
-        if (!animeListEntry) return res.status(400).json({
+        if (!animeListEntry) return res.status(RequestStatuses.NotFound).json({
             error: {
                 anime_id: "List entry with this anime doesn't exists",
             }
@@ -221,7 +222,7 @@ export default class WatchListController {
                 where: { id },
             });
         } catch (error) {
-            return res.status(403).json({ message: "unauthorized" })
+            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
         }
         const animeListEntry = await prisma.anime_list.findFirst({
             where: {
@@ -231,7 +232,7 @@ export default class WatchListController {
                 }
             }
         });
-        if (!animeListEntry) return res.status(404).json({
+        if (!animeListEntry) return res.status(RequestStatuses.NotFound).json({
             error: {
                 anime_id: "List entry with this anime doesn't exists",
             }

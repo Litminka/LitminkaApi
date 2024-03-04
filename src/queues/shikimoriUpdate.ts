@@ -7,6 +7,7 @@ import ShikimoriApiService from '../services/ShikimoriApiService';
 import groupArrSplice from '../helper/groupsplice';
 import { ServerError, ShikimoriAnimeFull } from '../ts';
 import AnimeUpdateService from '../services/AnimeUpdateService';
+import { RequestStatuses } from '../ts/enums';
 
 const shikimoriCheckQueue = new Queue("shikimoriUpdate", {
     connection: {
@@ -37,7 +38,7 @@ const worker = new Worker("shikimoriUpdate", async (job: Job) => {
     for (const single of anime) {
         const req = await shikimoriApi.getAnimeById(single.shikimori_id);
         const error = req as ServerError;
-        if (error.reqStatus === 500) {
+        if (error.reqStatus === RequestStatuses.InternalServerError) {
             throw error;
         }
         shikimoriAnimeFull.push(req as ShikimoriAnimeFull);

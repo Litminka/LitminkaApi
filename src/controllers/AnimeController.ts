@@ -4,12 +4,13 @@ import { prisma } from "../db";
 import ShikimoriApiService from "../services/ShikimoriApiService";
 import AnimeUpdateService from "../services/AnimeUpdateService";
 import { RequestWithAuth, ServerError, ShikimoriAnimeFull } from "../ts/index";
+import { RequestStatuses } from "../ts/enums";
 
 
 export default class AnimeController {
     public static async getSingleAnime(req: RequestWithAuth, res: Response) {
         const result = validationResult(req);
-        if (!result.isEmpty()) return res.status(404).json({ message: "This anime doesn't exist" });
+        if (!result.isEmpty()) return res.status(RequestStatuses.NotFound).json({ message: "This anime doesn't exist" });
         const user = await prisma.user.findFirst({
             where: {
                 id: req.auth?.id,
@@ -31,7 +32,7 @@ export default class AnimeController {
                 }
             }
         });
-        if (!anime) return res.status(404).json({ message: "This anime doesn't exist" });
+        if (!anime) return res.status(RequestStatuses.NotFound).json({ message: "This anime doesn't exist" });
         if (!user) return res.json({
             body: anime
         });

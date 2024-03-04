@@ -4,6 +4,7 @@ import { prisma } from '../db';
 import { Encrypt } from "../helper/encrypt";
 import * as jwt from "jsonwebtoken";
 import { RequestWithAuth } from "../ts/index";
+import { RequestStatuses } from "../ts/enums";
 
 export default class UserController {
     static async createUser(req: Request, res: Response): Promise<Object> {
@@ -48,7 +49,7 @@ export default class UserController {
                 ]
             }
         });
-        if (!user) return res.status(401).json({
+        if (!user) return res.status(RequestStatuses.Unauthorized).json({
             data: {
                 error: "Login or password incorrect",
             }
@@ -68,7 +69,7 @@ export default class UserController {
                 user_id: id
             }
         });
-        return res.status(200).json({
+        return res.status(RequestStatuses.OK).json({
             data: {
                 message: "You've successfully logged in",
                 token,
@@ -116,12 +117,12 @@ export default class UserController {
 
         // FIXME: Remove sensitive data from this
 
-        if (!user) return res.status(403).json({
+        if (!user) return res.status(RequestStatuses.Forbidden).json({
             data: {
                 message: "Unauthorized",
             }
         })
-        return res.status(200).json({
+        return res.status(RequestStatuses.OK).json({
             data: {
                 message: `Welcome! ${user.login}`,
                 user

@@ -4,6 +4,8 @@ import crypto from "crypto";
 import { RequestWithAuth, ServerError, ShikimoriWhoAmI } from "../ts/index";
 import ShikimoriApiService from "../services/ShikimoriApiService";
 import { prisma } from '../db';
+import { RequestStatuses } from "../ts/enums";
+
 export default class ShikimoriController {
     static async generateLink(req: RequestWithAuth, res: Response): Promise<Object> {
         const { id }: { id: number } = req.auth!;
@@ -19,17 +21,17 @@ export default class ShikimoriController {
             }
         })
         const link = `${process.env.app_url}/shikimori/link?token=${token}`;
-        return res.status(200).json({
+        return res.status(RequestStatuses.OK).json({
             link: `https://shikimori.one/oauth/authorize?client_id=${process.env.shikimori_client_id}&redirect_uri=${link}&response_type=code&scope=user_rates`
         });
     }
 
     static async link(req: Request, res: Response): Promise<Object> {
         const { token, code } = req.query;
-        if (typeof token !== "string") return res.status(401).json({
+        if (typeof token !== "string") return res.status(RequestStatuses.Unauthorized).json({
             message: "Query param token must be string",
         });
-        if (typeof code !== "string") return res.status(401).json({
+        if (typeof code !== "string") return res.status(RequestStatuses.Unauthorized).json({
             message: "Query param code must be string",
         });
         try {
@@ -53,7 +55,7 @@ export default class ShikimoriController {
                 }
             })
         } catch (error) {
-            return res.status(401).json({
+            return res.status(RequestStatuses.Unauthorized).json({
                 message: "Query param code must be string",
             });
         }
@@ -75,18 +77,18 @@ export default class ShikimoriController {
             });
         } catch (error) {
             console.log(error);
-            return res.status(403).json({
+            return res.status(RequestStatuses.Forbidden).json({
                 message: "User does not exist"
             });
         }
 
         const shikimoriapi = new ShikimoriApiService(user);
         const profile = await shikimoriapi.getProfile();
-        if (!profile) return res.status(401).json({
+        if (!profile) return res.status(RequestStatuses.Unauthorized).json({
             message: 'User does not have shikimori integration'
         });
         
-        if (profile.reqStatus === 500) return res.status(500).json({ message: "Server error" });
+        if (profile.reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
 
         const integrated = await prisma.integration.findFirst({
             where: {
@@ -106,7 +108,7 @@ export default class ShikimoriController {
                     shikimori_id: null,
                 }
             });
-            return res.status(401).json({
+            return res.status(RequestStatuses.Unauthorized).json({
                 message: "Account already linked",
             });
         }
@@ -121,7 +123,7 @@ export default class ShikimoriController {
         await prisma.shikimori_Link_Token.delete({
             where: { token }
         });
-        return res.status(200).json({
+        return res.status(RequestStatuses.OK).json({
             message: "Account linked!"
         })
     }
@@ -141,7 +143,7 @@ export default class ShikimoriController {
             });
         } catch (error) {
             console.log(error);
-            return res.status(403).json({
+            return res.status(RequestStatuses.Forbidden).json({
                 message: "User does not exist"
             });
         }
@@ -158,7 +160,7 @@ export default class ShikimoriController {
                 }
             }
         })
-        return res.status(200).json({
+        return res.status(RequestStatuses.OK).json({
             message: "Account unlinked",
             link: "https://shikimori.one/oauth/applications/672",
         })
@@ -182,17 +184,17 @@ export default class ShikimoriController {
             });
         } catch (error) {
             console.log(error);
-            return res.status(403).json({
+            return res.status(RequestStatuses.Forbidden).json({
                 message: "User does not exist"
             });
         }
         const shikimori = new ShikimoriApiService(user);
         const result: ShikimoriWhoAmI | ServerError | false = await shikimori.getProfile();
-        if (!result) return res.status(401).json({
+        if (!result) return res.status(RequestStatuses.Unauthorized).json({
             message: 'User does not have shikimori integration'
         });
-        if (result.reqStatus === 500) return res.status(500).json({ message: "Server error" });
+        if (result.reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
         (<ShikimoriWhoAmI>result).avatar;
-        return res.status(200).json(result);
+        return res.status(RequestStatuses.OK).json(result);
     }
 }

@@ -4,6 +4,7 @@ import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList
 import { prisma } from '../db';
 import { shikiRateLimiter } from "../shikiRateLimiter";
 import { RateLimiter } from "limiter";
+import { RequestStatuses } from "../ts/enums";
 interface iShikimoriApi {
     user: User & {
         integration: Integration | null
@@ -59,7 +60,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
         });
         const { status } = response;
         // Sloppy protection against multiple requests
-        if (status === 429) {
+        if (status === RequestStatuses.TooManyRequests) {
             await this.limiter.removeTokens(1);
             return this.getToken();
         }
@@ -68,7 +69,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             Assume user has dropped the integration
             Do the same on our end
         */
-        if (status === 400) {
+        if (status === RequestStatuses.BadRequest) {
             await prisma.integration.update({
                 where: {
                     user_id: this.user.id
@@ -119,10 +120,10 @@ export default class ShikimoriApiService implements iShikimoriApi {
                 if (result === false) return false;
             };
         }
-        let requestStatus: number = 200;
+        let requestStatus: number = RequestStatuses.OK;
         do {
             await this.limiter.removeTokens(1);
-            if (requestStatus === 401 && auth) {
+            if (requestStatus === RequestStatuses.Unauthorized && auth) {
                 const result = await this.getToken();
                 if (!result) return false;
             };
@@ -136,14 +137,14 @@ export default class ShikimoriApiService implements iShikimoriApi {
             if (method !== "GET") options.body = requestData;
             const response = await fetch(`${baseUrl}${url}`, options);
             const { status } = response;
-            if (status === 500) return { status: 500, message: "Server error" };
-            if (status !== 429) {
+            if (status === RequestStatuses.InternalServerError) return { status: RequestStatuses.InternalServerError, message: "Server error" };
+            if (status !== RequestStatuses.TooManyRequests) {
                 const data: any = await response.json();
                 data.reqStatus = status;
-                if (status !== 401) return data;
+                if (status !== RequestStatuses.Unauthorized) return data;
             }
             requestStatus = status;
-        } while (requestStatus === 401 || requestStatus === 429);
+        } while (requestStatus === RequestStatuses.Unauthorized || requestStatus === RequestStatuses.TooManyRequests);
     }
 
     public async getProfile(): Promise<ShikimoriWhoAmI | ServerError | false> {
