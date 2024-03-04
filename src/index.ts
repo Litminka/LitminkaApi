@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 const helmet = require("helmet");
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
@@ -10,6 +10,9 @@ import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/AnimeRouter';
 import * as fs from 'fs';
 import * as https from 'https';
+import sleep from './helper/sleep';
+import { wrap } from './middleware/errorHandler';
+import { prisma } from './db';
 dotenv.config();
 
 const app: Express = express();
@@ -20,6 +23,7 @@ if (!process.env.shikimori_client_id) throw new Error("No client id specified in
 if (!process.env.shikimori_client_secret) throw new Error("No client secret specified in ENV");
 if (!process.env.shikimori_url) throw new Error("Shikimori base url is not specified");
 if (!process.env.app_url) throw new Error("App Url not specified");
+
 
 app.use(helmet());
 app.use((req, res, next) => {
@@ -32,11 +36,20 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req: Request, res: Response) => {
+async function helloWorld(req: Request, res: Response) {
+    await sleep(0.1);
+    await prisma.user.findFirstOrThrow({
+        where: {
+            id: 50
+        }
+    })
+    
     res.json({
         res: "Hello world!"
     });
-});
+}
+
+app.get('/', wrap(helloWorld));
 
 app.use("/users", userRouter);
 app.use("/watch-list", watchListRouter);
@@ -48,7 +61,6 @@ app.use("/token", tokenRouter);
 app.get("/shikimori_token", (req: Request, res: Response) => {
     console.log(req.query);
 })
-
 
 const httpsOptions = {
     key: fs.readFileSync('./cert/server.key'),
