@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { param } from 'express-validator';
 import AnimeController from '../controllers/AnimeController';
-import { auth } from '../middleware/auth';
 import { optionalAuth } from '../middleware/optionalAuth';
 import { validationNotFound } from '../middleware/validationNotFound';
 const router = Router();

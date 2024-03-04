@@ -231,7 +231,7 @@ export default class WatchListController {
                 }
             }
         });
-        if (!animeListEntry) return res.status(400).json({
+        if (!animeListEntry) return res.status(404).json({
             error: {
                 anime_id: "List entry with this anime doesn't exists",
             }
