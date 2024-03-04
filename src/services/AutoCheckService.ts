@@ -7,6 +7,7 @@ import { KodikAnimeFull, checkAnime } from "../ts/kodik";
 import AnimeUpdateService from "./AnimeUpdateService";
 import NotificationService from "./NotificationService";
 import { prisma } from "../db";
+import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";
 
 export default class AutoCheckService {
     animeUpdateService: AnimeUpdateService;
@@ -33,9 +34,9 @@ export default class AutoCheckService {
             return;
         }
 
-        if (haveFollow && follow.status === "announcement") {
+        if (haveFollow && follow.status === FollowTypes.Announcement) {
             const changedStatus = anime.status !== status;
-            if (changedStatus && anime.status === "anons" && status === "ongoing") {
+            if (changedStatus && anime.status === AnimeStatuses.Announced && status === "ongoing") {
                 // if status changed to ongoing
                 this.notificationService.notifyRelease(anime.id);
                 // notify all followers about it
@@ -59,7 +60,7 @@ export default class AutoCheckService {
         }
 
         let followedTranslationIds: number[] = []
-        if (haveFollow && follow.status === "follow") {
+        if (haveFollow && follow.status === FollowTypes.Follow) {
             followedTranslationIds = follow.info.map(single => single.translation!.group_id);
         }
         for (const translation of anime.anime_translations) {
@@ -124,7 +125,7 @@ export default class AutoCheckService {
             const anime = await shikimoriApi.getSeasonAnimeByPage(page, seasonString);
             if (!anime) throw new Error("Admin account not linked");
             const error = anime as ServerError;
-            if (error.reqStatus === 500) throw new Error("Shikimori 500");
+            if (error.reqStatus === RequestStatuses.InternalServerError) throw new Error("Shikimori 500");
             const shikimoriAnime = anime as ShikimoriAnime[];
             if ((shikimoriAnime.length == 0 || shikimoriAnime.length < 50) && seasonString != currentSeasonString) {
                 seasonString = currentSeasonString
@@ -146,7 +147,7 @@ export default class AutoCheckService {
         console.log("Getting anime from shikimori")
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
             let response = await shikimoriApi.getBatchAnime(batch);
-            if ((<ServerError>response).reqStatus === 500) throw new Error("Shikimori 500");
+            if ((<ServerError>response).reqStatus === RequestStatuses.InternalServerError) throw new Error("Shikimori 500");
             return (<ShikimoriAnime[]>response);
         });
         let followedAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));

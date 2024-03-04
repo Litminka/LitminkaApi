@@ -15,7 +15,6 @@ export default class FollowService {
 
     }
 
-
     getFollowsMap(follows: follows): Map<number, followType> {
         const followsMap = new Map<number, followType>()
         for (const follow of follows) {

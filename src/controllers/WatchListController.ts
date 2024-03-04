@@ -6,6 +6,7 @@ import { AddToList, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatch
 import groupArrSplice from "../helper/groupsplice";
 import KodikApiService from "../services/KodikApiService";
 import AnimeUpdateService from "../services/AnimeUpdateService";
+import { RequestStatuses } from "../ts/enums";
 
 export default class WatchListController {
     public static async getWatchList(req: RequestWithAuth, res: Response): Promise<Object> {
@@ -221,7 +222,7 @@ export default class WatchListController {
                 where: { id },
             });
         } catch (error) {
-            return res.status(403).json({ message: "unauthorized" })
+            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
         }
         const animeListEntry = await prisma.anime_list.findFirst({
             where: {
@@ -231,7 +232,7 @@ export default class WatchListController {
                 }
             }
         });
-        if (!animeListEntry) return res.status(400).json({
+        if (!animeListEntry) return res.status(RequestStatuses.NotFound).json({
             error: {
                 anime_id: "List entry with this anime doesn't exists",
             }

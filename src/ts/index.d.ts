@@ -1,6 +1,7 @@
 import { Anime, Anime_translation } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
+import { RequestStatuses } from "./enums";
 
 export interface RequestWithAuth extends Request {
     auth?: {
@@ -234,12 +235,9 @@ export interface options {
 }
 
 export interface ServerError {
-    reqStatus: 500;
+    reqStatus: RequestStatuses.InternalServerError;
     message: string;
 }
-
-
-
 
 export type info = {
     translation?: Anime_translation,

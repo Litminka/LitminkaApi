@@ -5,6 +5,7 @@ import AutoCheckService from '../services/AutoCheckService';
 import FollowService from '../services/FollowService';
 import { KodikAnimeFull, checkAnime } from '../ts/kodik';
 import KodikApiService from '../services/KodikApiService';
+import { FollowTypes } from '../ts/enums';
 
 const autoCheckQueue = new Queue("autocheck", {
     connection: {
@@ -53,7 +54,7 @@ const worker = new Worker("autocheck", async (job: Job) => {
     const started = Date.now();
     const follows = await prisma.follow.findMany({
         where: {
-            status: "follow",
+            status: FollowTypes.Follow,
         },
         select: {
             status: true,
@@ -71,7 +72,7 @@ const worker = new Worker("autocheck", async (job: Job) => {
 
     const announcements = await prisma.follow.findMany({
         where: {
-            status: "announcement"
+            status: FollowTypes.Announcement
         },
         select: {
             status: true,

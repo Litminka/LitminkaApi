@@ -4,6 +4,7 @@ import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../ts/index";
 import { KodikAnime, KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
 import { prisma } from "../db";
 import { cyrillicSlug } from "../helper/cyrillic-slug";
+import { RequestStatuses } from "../ts/enums";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -22,7 +23,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         if (!this.shikimoriApi) throw { error: 'No shikimori api specified' };
         const resAnime: ShikimoriAnimeFull | ServerError = await this.shikimoriApi.getAnimeById(anime.shikimori_id);
         if (!resAnime) return false;
-        if (resAnime.reqStatus === 500 || resAnime.reqStatus === 404) return false;
+        if (resAnime.reqStatus === RequestStatuses.InternalServerError || resAnime.reqStatus === RequestStatuses.NotFound) return false;
         const update = resAnime as ShikimoriAnimeFull;
         console.log(resAnime);
         await prisma.anime.update({
