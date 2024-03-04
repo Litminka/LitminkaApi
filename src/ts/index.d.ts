@@ -1,7 +1,7 @@
 import { Anime, Anime_translation } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
-import { RequestStatuses } from "./enums";
+import { FollowTypes, RequestStatuses } from "./enums";
 
 export interface RequestWithAuth extends Request {
     auth?: {
@@ -221,7 +221,7 @@ export interface AddToList {
 
 export interface Follow {
     group_name: string;
-    type: "follow" | "announcement"
+    type: FollowTypes.Follow | FollowTypes.Announcement
 }
 
 export interface DeleteFollow {
