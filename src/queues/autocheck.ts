@@ -26,6 +26,8 @@ const worker = new Worker("autocheck", async (job: Job) => {
     // send notification
     // update title
 
+    // todo: update kodik translations groups
+
 
     console.log("started a job");
 

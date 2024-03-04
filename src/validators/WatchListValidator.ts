@@ -9,6 +9,7 @@ const addToWatchListValidation = (): any[] => {
     const watchedRange: minmax = { min: 0 };
     return [
         param("anime_id").notEmpty().isInt().bail().toInt().custom(async value => {
+            // TODO: this will die, if it doesnt find an anime
             const anime = await prisma.anime.findFirst({
                 where: { id: value }
             });

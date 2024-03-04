@@ -1,5 +1,6 @@
 import { prisma } from '../db';
 import { body } from "express-validator";
+import { validationError } from '../middleware/validationError';
 
 const registrationValidation = (): any[] => {
     return [
@@ -25,6 +26,7 @@ const registrationValidation = (): any[] => {
             }
             return true;
         }),
+        validationError
     ];
 };
 
@@ -32,6 +34,7 @@ const loginValidation = (): any[] => {
     return [
         body("login").notEmpty().isString(),
         body("password").notEmpty().isString(),
+        validationError
     ];
 };
 
