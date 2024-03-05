@@ -25,6 +25,9 @@ model User {
   anime_list               Anime_list[]
   follows                  Follow[]
   User_anime_notifications User_anime_notifications[]
+  owned_lists              Group_list[]
+  lists_member             Group_list_members[]
+  group_list_invites       Group_list_invites[]
 }
 
 model Role {
@@ -75,7 +78,7 @@ model Anime {
   english_name             String?
   name                     String?
   description              String?
-  slug                     String                    @unique
+  slug                     String                     @unique
   status                   String
   rpa_rating               String?
   media_type               String?
@@ -90,8 +93,9 @@ model Anime {
   anime_translations       Anime_translation[]
   anime_lists              Anime_list[]
   follows                  Follow[]
-  User_anime_notifications User_anime_notifications[]
+  user_anime_notifications User_anime_notifications[]
   anime_notifications      Anime_notifications[]
+  group_anime_list         Group_anime_list[]
 }
 
 model Genre {
@@ -136,6 +140,46 @@ model Anime_list {
   anime            Anime   @relation(fields: [anime_id], references: [id])
   user_id          Int
   user             User    @relation(fields: [user_id], references: [id])
+  status           String
+  is_favorite      Boolean
+  watched_episodes Int
+  rating           Int?
+}
+
+model Group_list {
+  id          Int                  @id @default(autoincrement())
+  owner       User                 @relation(fields: [owner_id], references: [id])
+  owner_id    Int
+  description String
+  name        String
+  list        Group_anime_list[]
+  members     Group_list_members[]
+  invites     Group_list_invites[]
+}
+
+model Group_list_invites {
+  id      Int        @id @default(autoincrement())
+  user    User       @relation(fields: [user_id], references: [id])
+  user_id Int
+  list_id Int
+  list    Group_list @relation(fields: [list_id], references: [id])
+}
+
+model Group_list_members {
+  id            Int        @id @default(autoincrement())
+  user          User       @relation(fields: [user_id], references: [id])
+  user_id       Int
+  group_id      Int
+  group         Group_list @relation(fields: [group_id], references: [id])
+  override_list Boolean    @default(false)
+}
+
+model Group_anime_list {
+  id               Int        @id @default(autoincrement())
+  anime_id         Int
+  anime            Anime      @relation(fields: [anime_id], references: [id])
+  group_id         Int
+  group_list       Group_list @relation(fields: [group_id], references: [id])
   status           String
   is_favorite      Boolean
   watched_episodes Int

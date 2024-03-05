@@ -190,7 +190,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             if (!animeSlugTitle) {
                 animeSlugTitle = material_data.title_en;
             }
-            const slug = `${anime.shikimori_id}-${animeSlugTitle}`;
+            const slug = `${anime.shikimori_id}-${cyrillicSlug(animeSlugTitle)}`;
             return prisma.anime.upsert({
                 where: {
                     shikimori_id: parseInt(anime.shikimori_id),

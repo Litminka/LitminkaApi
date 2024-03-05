@@ -16,21 +16,16 @@ export default class FollowController {
         const user = await prisma.user.findFirst({ where: { id }, });
         if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
         const anime_id: number = req.params.anime_id as unknown as number;
-        let anime;
-        try {
-            anime = await prisma.anime.findFirstOrThrow({
-                where: { id: anime_id },
-                include: {
-                    anime_translations: {
-                        include: {
-                            group: true
-                        }
+        const anime = await prisma.anime.findFirstOrThrow({
+            where: { id: anime_id },
+            include: {
+                anime_translations: {
+                    include: {
+                        group: true
                     }
                 }
-            })
-        } catch (error) {
-            return res.status(RequestStatuses.NotFound).json({ message: "This anime doesn't exist" });
-        }
+            }
+        })
 
         if (type === FollowTypes.Follow) {
             const translation = anime.anime_translations.find(anime => anime.group.name == group_name)
