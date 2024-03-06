@@ -194,7 +194,6 @@ export default class ShikimoriController {
             message: 'User does not have shikimori integration'
         });
         if (result.reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
-        (<ShikimoriWhoAmI>result).avatar;
         return res.status(RequestStatuses.OK).json(result);
     }
 }
