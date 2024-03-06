@@ -8,18 +8,26 @@
 
 5. Add reviews
 
-6. Add notifications
+6. Выдача уведомлений (общая база и база пользователей) (Thease_Meanse)
+   1. Возвращение объекта уведомлений с фильтрами (по статусу, айди группы, айди аниме)
 
-7. Add news
+7. Добавить логгер (Thease_Meanse)
 
-8. Add search
+8. Автоматическая генерация документации (Thease_Meanse)
+   1. Возвращать страницу на корневой контекст
 
-9. Add top 100 and various additions for front page
+9. Update nginx config (Thease_Meanse)
 
-10. Add user settings
+10. Add news
 
-11. Add password switch
+11. Add search
 
-12. Test autocheck for bugs
+12. Add top 100 and various additions for front page
 
-13. Test THE HELL out of watchlist importer
+13. Add user settings
+
+14. Add password switch
+
+15. Test autocheck for bugs
+
+16. Test THE HELL out of watchlist importer
