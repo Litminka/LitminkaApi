@@ -23,3 +23,5 @@
 12. Test autocheck for bugs
 
 13. Test THE HELL out of watchlist importer
+
+14. Divise methods into public and private

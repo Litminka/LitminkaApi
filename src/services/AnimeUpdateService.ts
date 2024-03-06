@@ -159,9 +159,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         const groupInDBUpdates = [...inDbGroupIds].map(id => {
             const translation = translations.get(id);
             prisma.group.updateMany({
-                where: {
-                    id,
-                },
+                where: { id },
                 data: {
                     id: translation!.id,
                     type: translation!.type,

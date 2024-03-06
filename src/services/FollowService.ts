@@ -11,11 +11,8 @@ type follows = {
 
 
 export default class FollowService {
-    constructor() {
 
-    }
-
-    getFollowsMap(follows: follows): Map<number, followType> {
+    public getFollowsMap(follows: follows): Map<number, followType> {
         const followsMap = new Map<number, followType>()
         for (const follow of follows) {
             if (followsMap.has(follow.anime.shikimori_id)) {
@@ -28,7 +25,7 @@ export default class FollowService {
                     });
                     continue;
                 }
-                element?.info.push({
+                element!.info.push({
                     user_id
                 });
                 continue;
@@ -45,5 +42,7 @@ export default class FollowService {
         }
         return followsMap;
     }
+
+
 
 }
