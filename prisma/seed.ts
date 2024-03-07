@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { logger } from '../src/loggerConf'
 const prisma = new PrismaClient()
 import dotenv from 'dotenv';
 dotenv.config();
@@ -75,7 +76,9 @@ async function main() {
     console.dir(user);
     const kodik = new KodikApiService();
     const genres = await kodik.getGenres();
-    if (genres.reqStatus === 500) return console.log(genres);
+    // if (genres.reqStatus === 500) return console.log(genres);
+    // Test new logger
+    if (genres.reqStatus === 500) return logger.error(genres);
     const { results } = genres;
     results.forEach(async genre => {
         await prisma.genre.upsert({

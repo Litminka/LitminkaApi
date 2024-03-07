@@ -10,8 +10,11 @@ import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/AnimeRouter';
 import * as fs from 'fs';
 import * as https from 'https';
+import * as http from 'http';
 import { RequestStatuses } from './ts/enums';
 import { wrap } from './middleware/errorHandler';
+import { logger } from './loggerConf'
+
 dotenv.config();
 
 const app: Express = express();
@@ -51,14 +54,19 @@ app.use("/shikimori", shikimoriRouter);
 app.use("/token", tokenRouter);
 
 app.get("/shikimori_token", (req: Request, res: Response) => {
-    console.log(req.query);
+    logger.debug(`shikimori_token ${req.query}`)
 })
 
-const httpsOptions = {
-    key: fs.readFileSync('./cert/server.key'),
-    cert: fs.readFileSync('./cert/server.cert')
+if (process.env.ssl) {
+    http.createServer(app).listen(port, () => {
+        logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
+    });
+} else {
+    const httpsOptions = {
+        key: fs.readFileSync(process.env.ssl_key as string),
+        cert: fs.readFileSync(process.env.ssl_cert as string)
+    }
+    https.createServer(httpsOptions, app).listen(port, () => {
+        logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
+    });
 }
-
-https.createServer(httpsOptions, app).listen(port, () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-});

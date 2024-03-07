@@ -34,60 +34,43 @@ export default class ShikimoriController {
         if (typeof code !== "string") return res.status(RequestStatuses.Unauthorized).json({
             message: "Query param code must be string",
         });
-        try {
-            await prisma.shikimori_Link_Token.update({
-                where: { token },
-                data: {
-                    user: {
-                        update: {
-                            integration: {
-                                upsert: {
-                                    create: {
-                                        shikimori_code: code
-                                    },
-                                    update: {
-                                        shikimori_code: code
-                                    }
+        await prisma.shikimori_Link_Token.update({
+            where: { token },
+            data: {
+                user: {
+                    update: {
+                        integration: {
+                            upsert: {
+                                create: {
+                                    shikimori_code: code
+                                },
+                                update: {
+                                    shikimori_code: code
                                 }
                             }
                         }
                     }
                 }
-            })
-        } catch (error) {
-            return res.status(RequestStatuses.Unauthorized).json({
-                message: "Query param code must be string",
-            });
-        }
-        let user: null | User & {
-            integration: Integration | null;
-            shikimori_link: Shikimori_Link_Token | null;
-        };
-        try {
-            user = await prisma.user.findFirstOrThrow({
-                where: {
-                    shikimori_link: {
-                        token
-                    }
-                },
-                include: {
-                    integration: true,
-                    shikimori_link: true
+            }
+        })
+        const user = await prisma.user.findFirstOrThrow({
+            where: {
+                shikimori_link: {
+                    token
                 }
-            });
-        } catch (error) {
-            console.log(error);
-            return res.status(RequestStatuses.Forbidden).json({
-                message: "User does not exist"
-            });
-        }
+            },
+            include: {
+                integration: true,
+                shikimori_link: true
+            }
+        });
 
         const shikimoriapi = new ShikimoriApiService(user);
         const profile = await shikimoriapi.getProfile();
         if (!profile) return res.status(RequestStatuses.Unauthorized).json({
             message: 'User does not have shikimori integration'
         });
-        
+
         if (profile.reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
 
         const integrated = await prisma.integration.findFirst({
@@ -130,23 +113,15 @@ export default class ShikimoriController {
 
     static async unlink(req: RequestWithAuth, res: Response) {
         const { id } = req.auth!;
-        let user;
-        try {
-            user = await prisma.user.findFirstOrThrow({
-                where: {
-                    id
-                },
-                include: {
-                    integration: true,
-                    shikimori_link: true
-                },
-            });
-        } catch (error) {
-            console.log(error);
-            return res.status(RequestStatuses.Forbidden).json({
-                message: "User does not exist"
-            });
-        }
+        const user = await prisma.user.findFirstOrThrow({
+            where: {
+                id
+            },
+            include: {
+                integration: true,
+                shikimori_link: true
+            },
+        });
         await prisma.user.update({
             where: { id },
             data: {
@@ -168,26 +143,15 @@ export default class ShikimoriController {
 
     static async getProfile(req: RequestWithAuth, res: Response): Promise<Object> {
         const { id } = req.auth!;
-        let user: null | User & {
-            integration: Integration | null;
-            shikimori_link: Shikimori_Link_Token | null;
-        };
-        try {
-            user = await prisma.user.findFirstOrThrow({
-                where: {
-                    id
-                },
-                include: {
-                    integration: true,
-                    shikimori_link: true
-                },
-            });
-        } catch (error) {
-            console.log(error);
-            return res.status(RequestStatuses.Forbidden).json({
-                message: "User does not exist"
-            });
-        }
+        const user = await prisma.user.findFirstOrThrow({
+            where: {
+                id
+            },
+            include: {
+                integration: true,
+                shikimori_link: true
+            },
+        });
         const shikimori = new ShikimoriApiService(user);
         const result: ShikimoriWhoAmI | ServerError | false = await shikimori.getProfile();
         if (!result) return res.status(RequestStatuses.Unauthorized).json({
