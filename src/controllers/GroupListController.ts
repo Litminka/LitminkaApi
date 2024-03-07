@@ -3,6 +3,7 @@ import { RequestWithAuth } from "../ts";
 import { RequestStatuses } from "../ts/enums";
 import { prisma } from "../db";
 import BaseError from "../errors/BaseError";
+import GroupListService from "../services/GroupListService";
 
 export default class GroupListController {
 
@@ -11,11 +12,7 @@ export default class GroupListController {
         const user = await prisma.user.findFirst({ where: { id }, include: { owned_lists: true } });
         if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
 
-        const result = await prisma.group_list.findMany({
-            where: {
-                owner_id: id
-            }
-        });
+        const result = await GroupListService.getOwnedGroups(id);
 
         return res.status(RequestStatuses.OK).json(result);
     }
@@ -27,19 +24,7 @@ export default class GroupListController {
 
         const { description, name } = req.body;
 
-        if (user.owned_lists.length >= 10) {
-            throw new BaseError('too_many_groups', {
-                status: RequestStatuses.BadRequest
-            });
-        }
-
-        const result = await prisma.group_list.create({
-            data: {
-                description,
-                name,
-                owner_id: id,
-            }
-        })
+        const result = await GroupListService.createGroup({ description, name, user });
 
         return res.status(RequestStatuses.OK).json(result);
     }
@@ -49,11 +34,7 @@ export default class GroupListController {
         const user = await prisma.user.findFirst({ where: { id } });
         if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
 
-        const userInvites = await prisma.group_list_invites.findMany({
-            where: {
-                user_id: id
-            }
-        })
+        const userInvites = await GroupListService.getUserInvites(id);
 
         return res.status(RequestStatuses.OK).json(userInvites);
     }
@@ -66,38 +47,33 @@ export default class GroupListController {
         const list_id = req.params.group_id as unknown as number;
         const { user_id } = req.body;
 
-        if (user_id === id) {
-            throw new BaseError('cant_invite_yourself', {
-                status: RequestStatuses.UnprocessableContent
-            })
-        }
-
-        if (!user.owned_lists.some(list => list.id === list_id)) {
-            throw new BaseError('not_found', {
-                status: RequestStatuses.NotFound
-            })
-        }
-
-        await prisma.user.findFirstOrThrow({ where: { id: user_id } });
-
-        const userInvite = await prisma.group_list_invites.findMany({
-            where: {
-                list_id,
-                user_id
-            }
-        })
-        
-
-        if (userInvite.length > 0) {
-            throw new BaseError('user_already_invited', {
-                status: RequestStatuses.UnprocessableContent
-            })
-        }
-
-        await prisma.group_list_invites.create({
-            data: { list_id, user_id }
-        });
+        await GroupListService.inviteUser({ owner: user, idToInvite: user_id, list_id })
 
         return res.status(RequestStatuses.Created).json();
+    }
+
+    public static async acceptInvite(req: RequestWithAuth, res: Response) {
+        const { id }: { id: number } = req.auth!;
+        const user = await prisma.user.findFirst({ where: { id }, include: { group_list_invites: true } });
+        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
+
+        const invite_id = req.params.invite_id as unknown as number;
+        const modifyList: boolean | undefined = req.body.modifyList;
+
+        await GroupListService.acceptInvite({ user, invite_id, modifyList });
+
+        return res.status(200).json({ data: "invite_accepted" });
+    }
+
+    public static async denyInvite(req: RequestWithAuth, res: Response) {
+        const { id }: { id: number } = req.auth!;
+        const user = await prisma.user.findFirst({ where: { id }, include: { group_list_invites: true } });
+        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
+
+        const invite_id = req.params.invite_id as unknown as number;
+
+        await GroupListService.denyInvite({ user, invite_id });
+
+        return res.status(200).json({ data: "invite_denied" });
     }
 }

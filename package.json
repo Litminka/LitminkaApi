@@ -10,7 +10,7 @@
     "build": "npx tsc",
     "start": "npm run build && node dist/index.js",
     "seed": "npx ts-node prisma/seed.ts",
-    "dev": "npx nodemon src/index.ts",
+    "dev": "npx nodemon --inspect src/index.ts",
     "autocheck": "npx ts-node src/queues/autocheck.ts",
     "shikimoriUpdate": "npx ts-node src/queues/shikimoriUpdate.ts"
   },

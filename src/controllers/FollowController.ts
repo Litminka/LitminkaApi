@@ -1,12 +1,7 @@
 import { Response } from "express";
-import { validationResult } from "express-validator";
 import { DeleteFollow, Follow, RequestWithAuth } from "../ts/index";
 import { prisma } from '../db';
-// import KodikApi from "../helper/kodikapi";
-import { Anime_translation } from "@prisma/client";
 import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";
-
-
 
 export default class FollowController {
 

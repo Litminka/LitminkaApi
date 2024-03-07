@@ -22,4 +22,12 @@ const GroupListIdValidator = (): any[] => {
     ];
 };
 
-export { CreateGroupListValidator, GroupListIdValidator, GroupInviteValidator }
+const GroupInviteActionValidator = (): any[] => {
+    return [
+        param("invite_id").notEmpty().bail().isInt().bail().toInt(),
+        body("modifyList").optional().isBoolean().bail().toBoolean(),
+        validationError
+    ];
+}
+
+export { CreateGroupListValidator, GroupListIdValidator, GroupInviteValidator, GroupInviteActionValidator }
