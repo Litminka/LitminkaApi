@@ -9,7 +9,7 @@ export default class KodikApiService {
 
     private async _requestFullAnime(shikimori_id: number): Promise<_KodikAnimeFullRequest> {
         const params = new URLSearchParams({
-            "token": process.env.kodik_api_key!,
+            "token": process.env.KODIK_API_KEY!,
             "shikimori_id": shikimori_id.toString(),
             "with_material_data": "true"
         });
@@ -26,7 +26,7 @@ export default class KodikApiService {
 
     private async _requestAnime(shikimori_id: number): Promise<_KodikAnimeRequest> {
         const params = new URLSearchParams({
-            "token": process.env.kodik_api_key!,
+            "token": process.env.KODIK_API_KEY!,
             "shikimori_id": shikimori_id.toString(),
         });
         const response = await fetch(`${this.baseurl}/search`, {
@@ -123,7 +123,7 @@ export default class KodikApiService {
 
     async getGenres(): Promise<KodikGenresRequest | ServerError> {
         const params = new URLSearchParams({
-            "token": process.env.kodik_api_key!,
+            "token": process.env.KODIK_API_KEY!,
             "genres_type": "shikimori",
         });
         const response = await fetch(`${this.baseurl}/genres`, {
@@ -136,7 +136,7 @@ export default class KodikApiService {
 
     async getTranslationGroups(): Promise<translation[]> {
         const params = new URLSearchParams({
-            "token": process.env.kodik_api_key!,
+            "token": process.env.KODIK_API_KEY!,
             "genres_type": "shikimori",
         });
         const response = await fetch(`${this.baseurl}/translations`, {

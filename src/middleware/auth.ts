@@ -11,7 +11,7 @@ export function auth(req: RequestWithAuth, res: Response, next: NextFunction) {
         }
     });
     const result = token.split(" ")[1];
-    jwt.verify(result, process.env.tokenSecret!, function (err, decoded) {
+    jwt.verify(result, process.env.TOKEN_SECRET!, function (err, decoded) {
         if (<any>err instanceof jwt.TokenExpiredError) {
             return res.status(RequestStatuses.Unauthorized).json({ "error": true, "message": 'Token expired' });
         }

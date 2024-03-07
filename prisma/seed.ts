@@ -47,8 +47,8 @@ async function main() {
         update: {},
         create: {
             email: "admin@admin.ru",
-            login: process.env.rootLogin!,
-            password: await Encrypt.cryptPassword(process.env.rootPass!),
+            login: process.env.ROOT_LOGIN!,
+            password: await Encrypt.cryptPassword(process.env.ROOT_PASS!),
             name: "Admin",
             role: {
                 connect: {

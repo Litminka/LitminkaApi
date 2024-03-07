@@ -20,9 +20,9 @@ export default class ShikimoriController {
                 token: token,
             }
         })
-        const link = `${process.env.app_url}/shikimori/link?token=${token}`;
+        const link = `${process.env.APP_URL}/shikimori/link?token=${token}`;
         return res.status(RequestStatuses.OK).json({
-            link: `https://shikimori.one/oauth/authorize?client_id=${process.env.shikimori_client_id}&redirect_uri=${link}&response_type=code&scope=user_rates`
+            link: `https://shikimori.one/oauth/authorize?client_id=${process.env.SHIKIMORI_CLIENT_ID}&redirect_uri=${link}&response_type=code&scope=user_rates`
         });
     }
 
