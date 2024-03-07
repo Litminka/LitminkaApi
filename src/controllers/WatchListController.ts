@@ -7,25 +7,22 @@ import groupArrSplice from "../helper/groupsplice";
 import KodikApiService from "../services/KodikApiService";
 import AnimeUpdateService from "../services/AnimeUpdateService";
 import { RequestStatuses } from "../ts/enums";
+import { logger } from "../loggerConf"
+
 
 export default class WatchListController {
     public static async getWatchList(req: RequestWithAuth, res: Response): Promise<Object> {
         const { id } = req.auth!;
-        let user;
-        try {
-            user = await prisma.user.findFirstOrThrow({
-                where: { id },
-                include: {
-                    anime_list: {
-                        include: {
-                            anime: true
-                        }
+        const user = await prisma.user.findFirstOrThrow({
+            where: { id },
+            include: {
+                anime_list: {
+                    include: {
+                        anime: true
                     }
                 }
-            });
-        } catch (error) {
-            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
-        }
+            }
+        });
         return res.json(user.anime_list);
     }
 
@@ -33,32 +30,27 @@ export default class WatchListController {
         // TODO: A lot of not optimized loops and methods, rewrite this method
         // Get current user
         const { id } = req.auth!;
-        let user;
-        try {
-            user = await prisma.user.findFirstOrThrow({
-                where: { id },
-                include: {
-                    integration: true,
-                    shikimori_link: true,
-                }
-            });
-        } catch (error) {
-            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
-        }
+        const user = await prisma.user.findFirstOrThrow({
+            where: { id },
+            include: {
+                integration: true,
+                shikimori_link: true,
+            }
+        });
         const shikimoriapi = new ShikimoriApiService(user);
         let animeList = await shikimoriapi.getUserList();
         if (!animeList) return res.status(RequestStatuses.Unauthorized).json({
             message: 'User does not have shikimori integration'
         });
         if ((<ServerError>animeList).reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
-        console.log("Got list");
+        logger.info("Got list");
         const watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
 
         // Get all anime from kodik
         const kodik = new KodikApiService();
         let result = await kodik.getFullBatchAnime(shikimoriAnimeIds);
-        console.log("Got anime from kodik");
+        logger.info("Got anime from kodik");
 
         // Isolate all results that returned nothing
         const kodikIds = result.map(anime => parseInt(anime.shikimori_id));

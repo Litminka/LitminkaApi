@@ -252,3 +252,14 @@ export type followType = {
 }
 
 export type RequestTypes = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export interface LoginUser {
+    password: string,
+    login: string
+}
+
+export interface CreateUser extends LoginUser {
+    email: string,
+    name?: string,
+}
+

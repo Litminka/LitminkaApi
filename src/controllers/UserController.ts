@@ -1,33 +1,16 @@
 import { Request, Response } from "express";
-import { validationResult } from "express-validator";
 import { prisma } from '../db';
-import { Encrypt } from "../helper/encrypt";
-import * as jwt from "jsonwebtoken";
-import { RequestWithAuth } from "../ts/index";
+import { CreateUser, LoginUser, RequestWithAuth } from "../ts/index";
 import { RequestStatuses } from "../ts/enums";
+import UserService from "../services/UserService";
+import ForbiddenError from "../errors/ForbiddenError";
 
 export default class UserController {
     static async createUser(req: Request, res: Response): Promise<Object> {
-        const { email, login, password, name }: { email: string, login: string, password: string, name: string | null } = req.body
-        await prisma.user.create({
-            data: {
-                email,
-                login,
-                password: await Encrypt.cryptPassword(password),
-                name,
-                role: {
-                    connectOrCreate: {
-                        where: {
-                            name: "user"
-                        },
-                        create: {
-                            name: "user"
-                        }
-                    }
-                },
-                integration: { create: {} }
-            }
-        });
+        const { email, login, password, name }: CreateUser = req.body;
+        UserService.create({
+            email, login, password, name
+        })
         return res.json({
             data: {
                 message: "User created successfully"
@@ -36,39 +19,10 @@ export default class UserController {
     }
 
     static async loginUser(req: Request, res: Response): Promise<Object> {
-        const { login, password }: { login: string, password: string } = req.body;
-        const user = await prisma.user.findFirst({
-            select: {
-                id: true,
-                password: true,
-            },
-            where: {
-                OR: [
-                    { login: { equals: login } },
-                    { email: { equals: login } }
-                ]
-            }
-        });
-        if (!user) return res.status(RequestStatuses.Unauthorized).json({
-            data: {
-                error: "Login or password incorrect",
-            }
-        });
-        if (!await Encrypt.comparePassword(password, user.password)) return res.status(401).json({
-            data: {
-                error: "Login or password incorrect",
-            }
-        });
-        const { id } = user;
-        console.log(id);
-        const token = jwt.sign({ id }, process.env.tokenSecret!, { expiresIn: process.env.tokenLife })
-        const refreshToken = jwt.sign({ id }, process.env.tokenRefreshSecret!, { expiresIn: process.env.tokenRefreshLife })
-        await prisma.refreshToken.create({
-            data: {
-                token: refreshToken,
-                user_id: id
-            }
-        });
+        const { login, password }: LoginUser = req.body;
+        
+        const {token, refreshToken} = await UserService.login({login, password});
+
         return res.status(RequestStatuses.OK).json({
             data: {
                 message: "You've successfully logged in",
@@ -101,6 +55,7 @@ export default class UserController {
     }
 
     static async profile(req: RequestWithAuth, res: Response): Promise<Object> {
+        // FIXME: Refactor to middleware
         const { id } = req.auth!;
         const user = await prisma.user.findFirst({
             where: {
@@ -114,14 +69,9 @@ export default class UserController {
                 }
             },
         });
+        if (!user) throw new ForbiddenError('Unauthorized');
+        // END
 
-        // FIXME: Remove sensitive data from this
-
-        if (!user) return res.status(RequestStatuses.Forbidden).json({
-            data: {
-                message: "Unauthorized",
-            }
-        })
         return res.status(RequestStatuses.OK).json({
             data: {
                 message: `Welcome! ${user.login}`,

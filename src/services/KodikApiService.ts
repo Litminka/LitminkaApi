@@ -2,6 +2,7 @@ import fetch, { Headers } from "node-fetch";
 import { ServerError } from "../ts/index";
 import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translations, KodikAnime, translation } from "../ts/kodik";
 import { RequestStatuses } from "../ts/enums";
+import { logger } from "../loggerConf"
 
 export default class KodikApiService {
     baseurl = "https://kodikapi.com"
@@ -99,7 +100,7 @@ export default class KodikApiService {
         try {
             response = await this._requestFullAnime(shikimori_id);
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             return;
         }
         const packedAnime = this._packFullAnime(response);
@@ -112,7 +113,7 @@ export default class KodikApiService {
         try {
             response = await this._requestAnime(shikimori_id);
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             return;
         }
         const packedAnime = this._packAnime(response);
