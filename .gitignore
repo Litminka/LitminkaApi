@@ -3,6 +3,7 @@ node_modules
 .env
 .vscode
 config.json
+nginx.conf
 cert/
 
 # Require to build app
