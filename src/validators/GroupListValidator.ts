@@ -21,6 +21,12 @@ const GroupListIdValidator = (): any[] => {
         validationError
     ];
 };
+const GroupInviteIdValidator = (): any[] => {
+    return [
+        param("invite_id").notEmpty().bail().isInt().bail().toInt(),
+        validationError
+    ]
+}
 
 const GroupInviteActionValidator = (): any[] => {
     return [
@@ -30,4 +36,4 @@ const GroupInviteActionValidator = (): any[] => {
     ];
 }
 
-export { CreateGroupListValidator, GroupListIdValidator, GroupInviteValidator, GroupInviteActionValidator }
+export { CreateGroupListValidator, GroupListIdValidator, GroupInviteValidator, GroupInviteActionValidator, GroupInviteIdValidator }

@@ -1,26 +1,20 @@
-import { Group_list, Group_list_invites, User } from "@prisma/client";
-import { prisma } from "../db";
-import BaseError from "../errors/BaseError";
-import { RequestStatuses } from "../ts/enums";
+import BaseError from "../../errors/BaseError";
+import { RequestStatuses } from "../../ts/enums";
+import { prisma } from "../../db";
+import { User, Group_list, Group_list_invites } from "@prisma/client";
 
 type UserWithGroup = User & {
-    owned_lists: Group_list[]
+    owned_groups: Group_list[]
 }
 
 type UserWithInvites = User & {
-    group_list_invites: Group_list_invites[],
-}
-
-interface CreateGroup {
-    description: string,
-    name: string,
-    user: UserWithGroup
+    group_invites: Group_list_invites[],
 }
 
 interface InviteUser {
     owner: UserWithGroup,
-    idToInvite: number,
-    list_id: number
+    user_id: number,
+    group_id: number
 }
 
 interface InviteAction {
@@ -29,66 +23,32 @@ interface InviteAction {
     modifyList?: boolean
 }
 
-export default class GroupListService {
-    public static async getOwnedGroups(owner_id: number) {
-        return prisma.group_list.findMany({
-            where: { owner_id }
-        });
-    }
-
-    public static async createGroup({ description, name, user }: CreateGroup) {
-        if (user.owned_lists.length >= 10) {
-            throw new BaseError('too_many_groups', {
-                status: RequestStatuses.BadRequest
-            });
-        }
-
-        const group = await prisma.group_list.create({
-            data: {
-                description,
-                name,
-                owner_id: user.id,
-            }
-        })
-
-        prisma.group_list_members.create({
-            data: {
-                group_id: group.id,
-                user_id: user.id,
-                override_list: true, // TODO: add variable to change
-            }
-        })
-
-        return group;
-
-    }
-
+export default class GroupInviteService {
     public static async getUserInvites(user_id: number) {
         return prisma.group_list_invites.findMany({
             where: { user_id }
         })
     }
 
-    // FIXME: Determine if its a list or a group
-    public static async inviteUser({ owner, idToInvite, list_id }: InviteUser) {
-        if (idToInvite === owner.id) {
+    public static async inviteUser({ owner, user_id, group_id }: InviteUser) {
+        if (user_id === owner.id) {
             throw new BaseError('cant_invite_yourself', {
                 status: RequestStatuses.UnprocessableContent
             })
         }
 
-        if (!owner.owned_lists.some(list => list.id === list_id)) {
+        if (!owner.owned_groups.some(group => group.id === group_id)) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
             })
         }
 
-        await prisma.user.findFirstOrThrow({ where: { id: idToInvite } });
+        await prisma.user.findFirstOrThrow({ where: { id: user_id } });
 
         const userInvite = await prisma.group_list_invites.findMany({
             where: {
-                list_id,
-                user_id: idToInvite
+                group_id,
+                user_id
             }
         })
 
@@ -100,8 +60,8 @@ export default class GroupListService {
 
         const member = await prisma.group_list_members.findFirst({
             where: {
-                user_id: idToInvite,
-                group_id: list_id
+                user_id,
+                group_id
             }
         })
 
@@ -112,13 +72,46 @@ export default class GroupListService {
         }
 
         await prisma.group_list_invites.create({
-            data: { list_id, user_id: idToInvite }
+            data: { group_id, user_id }
+        });
+    }
+
+    public static async deleteInvite({ owner, user_id, group_id }: InviteUser) {
+        if (user_id === owner.id) {
+            throw new BaseError('cant_delete_yourself', {
+                status: RequestStatuses.UnprocessableContent
+            })
+        }
+
+        if (!owner.owned_groups.some(group => group.id === group_id)) {
+            throw new BaseError('not_found', {
+                status: RequestStatuses.NotFound
+            })
+        }
+
+        await prisma.user.findFirstOrThrow({ where: { id: user_id } });
+
+        const userInvite = await prisma.group_list_invites.findMany({
+            where: {
+                group_id,
+                user_id
+            }
+        })
+
+        if (userInvite.length < 1) {
+            throw new BaseError('user_not_invited', {
+                status: RequestStatuses.UnprocessableContent
+            })
+        }
+
+        await prisma.group_list_invites.deleteMany({
+            where: { group_id, user_id }
         });
     }
 
     public static async acceptInvite({ user, invite_id, modifyList = false }: InviteAction) {
 
-        const invite = user.group_list_invites.find(invite => invite.id === invite_id);
+        const invite = user.group_invites.find(invite => invite.id === invite_id);
         if (!invite) {
             throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
         }
@@ -127,7 +120,7 @@ export default class GroupListService {
 
         await prisma.group_list_members.create({
             data: {
-                group_id: invite.list_id,
+                group_id: invite.group_id,
                 user_id: user.id,
                 override_list: modifyList
             }
@@ -136,7 +129,8 @@ export default class GroupListService {
     }
 
     public static async denyInvite({ user, invite_id }: InviteAction) {
-        const invite = user.group_list_invites.find(invite => invite.id === invite_id);
+        const invite = user.group_invites.find(invite => invite.id === invite_id);
+
         if (!invite) {
             throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
         }
@@ -144,3 +138,5 @@ export default class GroupListService {
         await prisma.group_list_invites.delete({ where: { id: invite.id } })
     }
 }
+
+export { GroupInviteService as GroupInvitesService }

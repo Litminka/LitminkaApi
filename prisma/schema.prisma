@@ -25,9 +25,9 @@ model User {
   anime_list               Anime_list[]
   follows                  Follow[]
   User_anime_notifications User_anime_notifications[]
-  owned_lists              Group_list[]
-  lists_member             Group_list_members[]
-  group_list_invites       Group_list_invites[]
+  owned_groups             Group_list[]
+  group_member             Group_list_members[]
+  group_invites            Group_list_invites[]
 }
 
 model Role {
@@ -95,7 +95,7 @@ model Anime {
   follows                  Follow[]
   user_anime_notifications User_anime_notifications[]
   anime_notifications      Anime_notifications[]
-  group_anime_list         Group_anime_list[]
+  group_lists              Group_anime_list[]
 }
 
 model Genre {
@@ -158,11 +158,11 @@ model Group_list {
 }
 
 model Group_list_invites {
-  id      Int        @id @default(autoincrement())
-  user    User       @relation(fields: [user_id], references: [id])
-  user_id Int
-  list_id Int
-  list    Group_list @relation(fields: [list_id], references: [id])
+  id       Int        @id @default(autoincrement())
+  user     User       @relation(fields: [user_id], references: [id])
+  user_id  Int
+  group_id Int
+  group    Group_list @relation(fields: [group_id], references: [id])
 }
 
 model Group_list_members {
@@ -179,7 +179,7 @@ model Group_anime_list {
   anime_id         Int
   anime            Anime      @relation(fields: [anime_id], references: [id])
   group_id         Int
-  group_list       Group_list @relation(fields: [group_id], references: [id])
+  group            Group_list @relation(fields: [group_id], references: [id])
   status           String
   is_favorite      Boolean
   watched_episodes Int
