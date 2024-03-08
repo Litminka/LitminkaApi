@@ -10,7 +10,7 @@ export default class TokenController {
             }
         });
         const result = token.split(" ")[1];
-        jwt.verify(result, process.env.tokenRefreshSecret!, function (err, decoded) {
+        jwt.verify(result, process.env.REFRESH_TOKEN_SECRET!, function (err, decoded) {
             if (<any>err instanceof jwt.TokenExpiredError) {
                 return res.status(RequestStatuses.Unauthorized).json({ "error": true, "message": 'Token expired' });
             }
@@ -19,7 +19,7 @@ export default class TokenController {
             }
             const auth = <any>decoded;
             if (!auth) return res.status(RequestStatuses.InternalServerError).json({ "error": true, "message": "Failed to authenticate token" });
-            const token = jwt.sign({ id: auth.id }, process.env.tokenSecret!, { expiresIn: process.env.tokenLife })
+            const token = jwt.sign({ id: auth.id }, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE })
             return res.status(RequestStatuses.OK).json({ data: { token } });
             //TODO: Add check for session in db
         });

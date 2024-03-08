@@ -20,11 +20,11 @@ dotenv.config();
 const app: Express = express();
 const port: string | undefined = process.env.PORT;
 
-if (!process.env.shikimori_agent) throw new Error("No agent specified in ENV");
-if (!process.env.shikimori_client_id) throw new Error("No client id specified in ENV");
-if (!process.env.shikimori_client_secret) throw new Error("No client secret specified in ENV");
-if (!process.env.shikimori_url) throw new Error("Shikimori base url is not specified");
-if (!process.env.app_url) throw new Error("App Url not specified");
+if (!process.env.SHIKIMORI_AGENT) throw new Error("No agent specified in ENV");
+if (!process.env.SHIKIMORI_CLIENT_ID) throw new Error("No client id specified in ENV");
+if (!process.env.SHIKIMORI_CLIENT_SECRET) throw new Error("No client secret specified in ENV");
+if (!process.env.SHIKIMORI_URL) throw new Error("Shikimori base url is not specified");
+if (!process.env.APP_URL) throw new Error("App Url not specified");
 
 
 app.use(helmet());
@@ -57,14 +57,14 @@ app.get("/shikimori_token", (req: Request, res: Response) => {
     logger.debug(`shikimori_token ${req.query}`)
 })
 
-if (process.env.ssl) {
+if (process.env.SSL) {
     http.createServer(app).listen(port, () => {
         logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
     });
 } else {
     const httpsOptions = {
-        key: fs.readFileSync(process.env.ssl_key as string),
-        cert: fs.readFileSync(process.env.ssl_cert as string)
+        key: fs.readFileSync(process.env.SSL_KEY as string),
+        cert: fs.readFileSync(process.env.SSL_CERT as string)
     }
     https.createServer(httpsOptions, app).listen(port, () => {
         logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
