@@ -1,4 +1,3 @@
-import { CreateUser, LoginUser } from "../ts";
 import { prisma } from "../db";
 
 export default class RefreshToken {

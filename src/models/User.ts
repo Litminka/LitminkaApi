@@ -39,6 +39,18 @@ export default class User {
         });
     }
 
+    public static async findUserByIdWithIntegration(id: number){
+        return await prisma.user.findFirstOrThrow({
+            where: {
+                id
+            },
+            include: {
+                integration: true,
+                shikimori_link: true
+            },
+        });
+    }
+
     public static async findUserById(id: number){
         return await prisma.user.findFirst({ where: { id } });
     }
@@ -72,6 +84,21 @@ export default class User {
                 }
             }
         });
+    }
 
+    public static async removeIntegrationById(id: number){
+        await prisma.user.update({
+            where: { id },
+            data: {
+                integration: {
+                    update: {
+                        shikimori_code: null,
+                        shikimori_id: null,
+                        shikimori_refresh_token: null,
+                        shikimori_token: null,
+                    }
+                }
+            }
+        })
     }
 }

@@ -28,4 +28,17 @@ export default class ShikimoriLinkToken {
             where: { token }
         });
     }
+
+    public static async createShikimoriLinkTokenByUserId(token: string, user_id: number){
+        await prisma.shikimori_Link_Token.upsert({
+            where: { user_id },
+            update: {
+                token: token,
+            },
+            create: {
+                user_id,
+                token,
+            }
+        })
+    }
 }
