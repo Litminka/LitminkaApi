@@ -10,27 +10,27 @@ import { RequestStatuses } from "../ts/enums";
 import AnimeUpdateService from "./AnimeUpdateService";
 import KodikApiService from "./KodikApiService";
 import ShikimoriApiService from "./ShikimoriApiService";
-
+import { logger } from "../loggerConf";
 
 export default class WatchListService {
-    
+
     // TODO: A lot of not optimized loops and methods, rewrite this method
-    public static async importListByUserId(id: number){
-        
+    public static async importListByUserId(id: number) {
+
         // Get current user
         const user = await User.findUserByIdWithIntegration(id);
         const shikimoriapi = new ShikimoriApiService(user);
         let animeList = await shikimoriapi.getUserList();
         if (!animeList) throw new UnauthorizedError("User does not have shikimori integration")
         if ((<ServerError>animeList).reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
-        console.log("Got list");
+        logger.info("Got list");
         const watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
 
         // Get all anime from kodik
         const kodik = new KodikApiService();
         let result = await kodik.getFullBatchAnime(shikimoriAnimeIds);
-        console.log("Got anime from kodik");
+        logger.info("Got anime from kodik");
 
         // Isolate all results that returned nothing
         const kodikIds = result.map(anime => parseInt(anime.shikimori_id));
@@ -65,7 +65,7 @@ export default class WatchListService {
         await AnimeList.createUsersWatchList(id, animeInList, watchList);
     }
 
-    public static async addAnimeToListByIdWithParams(user_id: number, anime_id: number, addingParameters: AddToList){
+    public static async addAnimeToListByIdWithParams(user_id: number, anime_id: number, addingParameters: AddToList) {
         const user = await User.findUserById(user_id);
         const animeListEntry = await AnimeList.findWatchListByIds(user.id, anime_id);
         if (animeListEntry) throw new BadRequestError("List entry with this anime already exists");
@@ -73,14 +73,14 @@ export default class WatchListService {
         return await AnimeList.findWatchListByIdsWithAnime(user.id, anime_id);
     }
 
-    public static async removeAnimeFromList(user_id: number, anime_id:number){
+    public static async removeAnimeFromList(user_id: number, anime_id: number) {
         const user = await User.findUserById(user_id);
         const animeListEntry = await AnimeList.findWatchListByIds(user.id, anime_id);
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
         await AnimeList.removeAnimeFromListById(anime_id);
     }
 
-    public static async editAnimeListByIdWithParams(user_id: number, anime_id: number, editParameters: AddToList){
+    public static async editAnimeListByIdWithParams(user_id: number, anime_id: number, editParameters: AddToList) {
         const user = await User.findUserById(user_id);
         const animeListEntry = await AnimeList.findWatchListByIds(user.id, anime_id);
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");

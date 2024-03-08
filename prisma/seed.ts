@@ -76,7 +76,6 @@ async function main() {
     console.dir(user);
     const kodik = new KodikApiService();
     const genres = await kodik.getGenres();
-    // if (genres.reqStatus === 500) return console.log(genres);
     // Test new logger
     if (genres.reqStatus === 500) return logger.error(genres);
     const { results } = genres;
