@@ -9,6 +9,12 @@ export enum AnimeStatuses {
     Ongoing = "ongoing"
 }
 
+export enum NotifyStatuses{
+    AnimeRelease = "anime_released",
+    EpisodeRelease = "episode_released",
+    FinalEpisodeReleased = "final_episode_released"
+}
+
 export enum RequestStatuses {
     //Information responses
     Continue = 100,

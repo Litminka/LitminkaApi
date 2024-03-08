@@ -1,4 +1,4 @@
-import { CreateUser, LoginUser } from "../ts";
+import { CreateUser, FollowAnime, LoginUser, UserNotify } from "../ts";
 import { prisma } from "../db";
 
 export default class User {
@@ -25,6 +25,24 @@ export default class User {
         });
     }
 
+    public static async findUserByShikimoriLinkToken(token: string){
+        return await prisma.user.findFirstOrThrow({
+            where: {
+                shikimori_link: {
+                    token
+                }
+            },
+            include: {
+                integration: true,
+                shikimori_link: true
+            }
+        });
+    }
+
+    public static async findUserById(id: number){
+        return await prisma.user.findFirst({ where: { id } });
+    }
+
     public static async findUserByLogin(login: string) {
         return prisma.user.findFirst({
             select: {
@@ -38,5 +56,22 @@ export default class User {
                 ]
             }
         });
+    }
+
+    public static async followAnime(follow: FollowAnime){
+        const {anime_id, user_id, status, translation_id} = follow
+        await prisma.user.update({
+            where: { id: user_id },
+            data: {
+                follows: {
+                    create: {
+                        status,
+                        anime_id,
+                        translation_id
+                    }
+                }
+            }
+        });
+
     }
 }

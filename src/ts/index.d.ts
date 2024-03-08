@@ -1,7 +1,7 @@
 import { Anime, Anime_translation } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
-import { FollowTypes, RequestStatuses } from "./enums";
+import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
 
 export interface RequestWithAuth extends Request {
     auth?: {
@@ -251,6 +251,17 @@ export type followType = {
     status: string;
 }
 
+export interface Notify{
+    anime_id: number, 
+    status: NotifyStatuses, 
+    group_id?: number, 
+    episode?: number, 
+}
+
+export interface UserNotify extends Notify{
+    user_id: number
+}
+
 export type RequestTypes = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export interface LoginUser {
@@ -263,3 +274,10 @@ export interface CreateUser extends LoginUser {
     name?: string,
 }
 
+export interface FollowAnime{
+    user_id: number,
+    anime_id: number,
+    status: FollowTypes,
+    translation_id? : number
+    translation_group_name? :string
+}
