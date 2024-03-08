@@ -28,12 +28,12 @@ export default class NotificationService {
     }
 
     public static async notifyEpisode(anime_id: number, group_id: number, episode: number) {
-        const notify: Notify =  { anime_id, status: NotifyStatuses.EpisodeRelease, episode }
+        const notify: Notify =  { anime_id, status: NotifyStatuses.EpisodeRelease, episode, group_id }
         return this._notifyEpisode(notify)
     }
 
     public static async notifyFinalEpisode(anime_id: number, group_id: number, episode: number) {
-        const notify: Notify =  { anime_id, status: NotifyStatuses.FinalEpisodeReleased, episode }
+        const notify: Notify =  { anime_id, status: NotifyStatuses.FinalEpisodeReleased, episode, group_id }
         return this._notifyEpisode(notify)
     }
         
