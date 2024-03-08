@@ -1,207 +1,43 @@
-import ShikimoriApiService from "../services/ShikimoriApiService";
-import { Request, Response } from "express";
-import { validationResult } from "express-validator";
-import { prisma } from '../db';
+import { Response } from "express";
 import { AddToList, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts/index";
-import groupArrSplice from "../helper/groupsplice";
-import KodikApiService from "../services/KodikApiService";
-import AnimeUpdateService from "../services/AnimeUpdateService";
-import { RequestStatuses } from "../ts/enums";
-import { logger } from "../loggerConf"
-
+import User from "../models/User";
+import WatchListService from "../services/WatchListService";
 
 export default class WatchListController {
+    // FIXME: get out in middleware
     public static async getWatchList(req: RequestWithAuth, res: Response): Promise<Object> {
         const { id } = req.auth!;
-        const user = await prisma.user.findFirstOrThrow({
-            where: { id },
-            include: {
-                anime_list: {
-                    include: {
-                        anime: true
-                    }
-                }
-            }
-        });
+      
+        const user = await User.getUserByIdAnimeList(id);
+      
         return res.json(user.anime_list);
     }
 
     public static async importList(req: RequestWithAuth, res: Response): Promise<any> {
-        // TODO: A lot of not optimized loops and methods, rewrite this method
-        // Get current user
         const { id } = req.auth!;
-        const user = await prisma.user.findFirstOrThrow({
-            where: { id },
-            include: {
-                integration: true,
-                shikimori_link: true,
-            }
-        });
-        const shikimoriapi = new ShikimoriApiService(user);
-        let animeList = await shikimoriapi.getUserList();
-        if (!animeList) return res.status(RequestStatuses.Unauthorized).json({
-            message: 'User does not have shikimori integration'
-        });
-        if ((<ServerError>animeList).reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
-        logger.info("Got list");
-        const watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
-        const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
-
-        // Get all anime from kodik
-        const kodik = new KodikApiService();
-        let result = await kodik.getFullBatchAnime(shikimoriAnimeIds);
-        logger.info("Got anime from kodik");
-
-        // Isolate all results that returned nothing
-        const kodikIds = result.map(anime => parseInt(anime.shikimori_id));
-        const noResultIds = shikimoriAnimeIds.filter(id => kodikIds.indexOf(id) < 0);
-
-        // Request all isolated ids from shikimori
-        // Splice all ids into groups of 50, so we can batch request anime from shikimori
-        const idsSpliced = groupArrSplice(noResultIds, 50);
-        const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
-            let response = await shikimoriapi.getBatchAnime(batch);
-            if ((<ServerError>response).reqStatus === RequestStatuses.InternalServerError) return res.status(RequestStatuses.InternalServerError).json({ message: "Server error" });
-            return (<ShikimoriAnime[]>response);
-        });
-        let noResultAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
-        noResultAnime = noResultAnime.flat();
-
-        const animeUpdateService = new AnimeUpdateService(shikimoriapi, user);
-        await animeUpdateService.updateGroups(result);
-        let animeInList = await animeUpdateService.updateAnimeKodik(result);
-        const shikimoriUpdate = await animeUpdateService.updateAnimeShikimori(noResultAnime);
-
-        animeInList = animeInList.concat(shikimoriUpdate);
-        for (let i = 0; i < watchList.length; i++) {
-            const listEntry = watchList[i];
-            const res = await prisma.anime_list.updateMany({
-                where: {
-                    AND: {
-                        user_id: id,
-                        anime_id: animeInList.find((anime) => anime.shikimori_id == listEntry.target_id)!.id,
-                    }
-                },
-                data: {
-                    status: listEntry.status,
-                    watched_episodes: listEntry.episodes,
-                    rating: listEntry.score
-                }
-            });
-            // if were updated, remove from array, to prevent inserting
-            // prisma does not have upsert many, so we remove updated titles
-            const { count } = res;
-            if (count > 0) watchList.splice(i--, 1);
-        }
-        await prisma.anime_list.createMany({
-            data: watchList.map((listEntry) => {
-                return {
-                    is_favorite: false,
-                    status: listEntry.status,
-                    watched_episodes: listEntry.episodes,
-                    user_id: id,
-                    anime_id: animeInList.find((anime) => anime.shikimori_id == listEntry.target_id)!.id,
-                    rating: listEntry.score,
-                }
-            })
-        });
+      
+        await WatchListService.importListByUserId(id);
+      
         return res.json({
             message: 'List imported successfully'
         });
     }
 
     public static async addToList(req: RequestWithAuth, res: Response) {
-        const { is_favorite, rating, status, watched_episodes } = req.body as AddToList;
+        const addingParameters = req.body as AddToList
         const { id } = req.auth!;
-        try {
-            await prisma.user.findFirstOrThrow({
-                where: { id },
-            });
-        } catch (error) {
-            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
-        }
-        const animeListEntry = await prisma.anime_list.findFirst({
-            where: {
-                AND: {
-                    user_id: id,
-                    anime_id: req.params.anime_id as unknown as number,
-                }
-            }
-        });
-        if (animeListEntry) return res.status(RequestStatuses.BadRequest).json({
-            error: {
-                anime_id: "List entry with this anime already exists",
-            }
-        });
-        await prisma.anime_list.create({
-            data: {
-                is_favorite,
-                status,
-                watched_episodes,
-                rating,
-                anime_id: req.params.anime_id as unknown as number,
-                user_id: id
-            }
-        });
-        const anime_list = await prisma.anime_list.findMany({
-            where: {
-                AND: {
-                    user_id: id,
-                    anime_id: req.params.anime_id as unknown as number,
-                }
-            },
-            include: {
-                anime: true
-            }
-        })
+        const anime_id: number =  req.params.anime_id as unknown as number;
+        const anime_list = await WatchListService.addAnimeToListByIdWithParams(id, anime_id, addingParameters);
         return res.json({
             data: anime_list
         });
     }
 
     public static async editList(req: RequestWithAuth, res: Response) {
-        const { is_favorite, rating, status, watched_episodes } = req.body as AddToList;
+        const editParameters = req.body as AddToList
         const { id } = req.auth!;
-        try {
-            await prisma.user.findFirstOrThrow({
-                where: { id },
-            });
-        } catch (error) {
-            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
-        }
-        const animeListEntry = await prisma.anime_list.findFirst({
-            where: {
-                AND: {
-                    user_id: id,
-                    anime_id: req.params.anime_id as unknown as number,
-                }
-            }
-        });
-        if (!animeListEntry) return res.status(RequestStatuses.NotFound).json({
-            error: {
-                anime_id: "List entry with this anime doesn't exists",
-            }
-        });
-        await prisma.anime_list.updateMany({
-            where: { anime_id: req.params.anime_id as unknown as number },
-            data: {
-                is_favorite,
-                status,
-                watched_episodes,
-                rating,
-            }
-        });
-        const anime_list = await prisma.anime_list.findMany({
-            where: {
-                AND: {
-                    user_id: id,
-                    anime_id: req.params.anime_id as unknown as number,
-                }
-            },
-            include: {
-                anime: true
-            }
-        })
+        const anime_id: number = req.params.anime_id as unknown as number;
+        const anime_list = await WatchListService.editAnimeListByIdWithParams(id, anime_id, editParameters);;
         return res.json({
             data: anime_list
         });
@@ -209,29 +45,8 @@ export default class WatchListController {
 
     public static async deleteFromList(req: RequestWithAuth, res: Response) {
         const { id } = req.auth!;
-        try {
-            await prisma.user.findFirstOrThrow({
-                where: { id },
-            });
-        } catch (error) {
-            return res.status(RequestStatuses.Forbidden).json({ message: "unauthorized" })
-        }
-        const animeListEntry = await prisma.anime_list.findFirst({
-            where: {
-                AND: {
-                    user_id: id,
-                    anime_id: req.params.anime_id as unknown as number,
-                }
-            }
-        });
-        if (!animeListEntry) return res.status(RequestStatuses.NotFound).json({
-            error: {
-                anime_id: "List entry with this anime doesn't exists",
-            }
-        });
-        await prisma.anime_list.deleteMany({
-            where: { anime_id: req.params.anime_id as unknown as number },
-        });
+        const anime_id = req.params.anime_id as unknown as number;
+        await WatchListService.removeAnimeFromList(id, anime_id);
         return res.json({
             message: "Entry deleted successfully"
         });

@@ -1,3 +1,6 @@
+import Notifications from "../models/Notificatons";
+import { Notify, UserNotify } from "../ts";
+import { NotifyStatuses } from "../ts/enums";
 import { prisma } from "../db";
 import Period from "../helper/period";
 import dayjs from "dayjs";
@@ -8,75 +11,48 @@ interface getUserNotifications {
     is_read: boolean
 }
 
+
 export default class NotificationService {
     constructor() {
 
     }
-
-    async notifyUserRelease(user_id: number, anime_id: number) {
-        return prisma.user_anime_notifications.create({
-            data: {
-                user_id,
-                anime_id,
-                status: "anime_released"
-            }
-        })
+    
+    public static async notifyUserRelease(user_id: number, anime_id: number) {
+        const notify: UserNotify = { user_id, anime_id, status: NotifyStatuses.AnimeRelease }
+        return this._notifyUserEpisode(notify)
     }
 
-    async notifyUserEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
-        return prisma.user_anime_notifications.create({
-            data: {
-                user_id,
-                anime_id,
-                status: "episode_released",
-                group_id,
-                episode,
-            }
-        })
+    public static async notifyUserEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
+        const notify: UserNotify = { user_id, anime_id, status: NotifyStatuses.EpisodeRelease, group_id, episode }
+        return this._notifyUserEpisode(notify)
     }
 
-    async notifyUserFinalEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
-        return prisma.user_anime_notifications.create({
-            data: {
-                user_id,
-                anime_id,
-                status: "final_episode_released",
-                group_id,
-                episode,
-            }
-        })
+    public static async notifyUserFinalEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
+        const notify: UserNotify = { user_id, anime_id, status: NotifyStatuses.FinalEpisodeReleased, group_id, episode }
+        return this._notifyUserEpisode(notify)
     }
 
-    async notifyRelease(anime_id: number) {
-        return prisma.anime_notifications.create({
-            data: {
-                anime_id,
-                status: "anime_released"
-            }
-        })
+    public static async notifyRelease(anime_id: number) {
+        const notify: Notify =  { anime_id, status: NotifyStatuses.AnimeRelease }
+        return this._notifyEpisode(notify)
     }
 
-    async notifyEpisode(anime_id: number, group_id: number, episode: number) {
-        return prisma.anime_notifications.create({
-            data: {
-                anime_id,
-                status: "episode_released",
-                group_id,
-                episode,
-            }
-        })
+    public static async notifyEpisode(anime_id: number, group_id: number, episode: number) {
+        const notify: Notify =  { anime_id, status: NotifyStatuses.EpisodeRelease, episode, group_id }
+        return this._notifyEpisode(notify)
     }
 
-    async notifyFinalEpisode(anime_id: number, group_id: number, episode: number) {
+    public static async notifyFinalEpisode(anime_id: number, group_id: number, episode: number) {
+        const notify: Notify =  { anime_id, status: NotifyStatuses.FinalEpisodeReleased, episode, group_id }
+        return this._notifyEpisode(notify)
+    }
+        
+    private static async _notifyUserEpisode(notify: UserNotify){
+        return Notifications.createUserAnimeNotifications(notify);
+    }
 
-        return prisma.anime_notifications.create({
-            data: {
-                anime_id,
-                status: "final_episode_released",
-                group_id,
-                episode,
-            }
-        })
+    private static async _notifyEpisode(notify: Notify){
+        return Notifications.createAnimeNotifications(notify);
     }
 
     public static async getUserNotifications({ is_read = false, user_id, period }: getUserNotifications) {
