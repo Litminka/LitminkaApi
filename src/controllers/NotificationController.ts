@@ -9,7 +9,7 @@ export default class NotificationController {
     public static async getUserNotifications(req: RequestWithAuth, res: Response) {
         const user_id = req.auth!.id
         const is_read: boolean = req.body.is_read as boolean
-        let created_at = req.body.created_at;
+        const created_at = req.body.created_at;
 
         const notifications = await NotificationService.getUserNotifications({
             is_read, user_id, period: created_at
@@ -19,7 +19,7 @@ export default class NotificationController {
     }
 
     public static async getNotifications(req: RequestWithAuth, res: Response) {
-        let created_at = req.body.created_at;
+        const created_at = req.body.created_at;
 
         const notifications = await NotificationService.getNotifications(Period.getPeriod(created_at))
 
