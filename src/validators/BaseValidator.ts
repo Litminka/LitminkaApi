@@ -1,8 +1,12 @@
-import { ValidationChain, body } from "express-validator";
+import { ValidationChain, body, param } from "express-validator";
 import { validationError } from "../middleware/validationError";
 
-const validateId = (fieldName: string): ValidationChain => {
+const validateBodyId = (fieldName: string): ValidationChain => {
     return body(fieldName).isInt().notEmpty();
+};
+
+const validateParamId = (fieldName: string): ValidationChain => {
+    return param(fieldName).isInt().notEmpty();
 };
 
 const validateArrayId = (fieldName: string): any[] => {
@@ -13,4 +17,4 @@ const validateBool = (fieldName: string): any[] => {
     return [body(fieldName).isBoolean(), validationError];
 };
 
-export { validateId, validateArrayId, validateBool };
+export { validateBodyId, validateParamId, validateArrayId, validateBool };
