@@ -1,6 +1,16 @@
 import Notifications from "../models/Notificatons";
 import { Notify, UserNotify } from "../ts";
 import { NotifyStatuses } from "../ts/enums";
+import { prisma } from "../db";
+import Period from "../helper/period";
+import dayjs from "dayjs";
+
+interface getUserNotifications {
+    period: Date[],
+    user_id: number,
+    is_read: boolean
+}
+
 
 export default class NotificationService {
     constructor() {
@@ -43,5 +53,45 @@ export default class NotificationService {
 
     private static async _notifyEpisode(notify: Notify){
         return Notifications.createAnimeNotifications(notify);
+    }
+
+    public static async getUserNotifications({ is_read = false, user_id, period }: getUserNotifications) {
+        if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
+        period = Period.getPeriod(period)
+        return prisma.user_anime_notifications.findMany({
+            where: {
+                is_read,
+                user_id,
+                created_at: {
+                    lte: period[1],
+                    gte: period[0]
+                }
+            }
+        })
+    }
+
+    public static async getNotifications(period: Date[]) {
+        if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
+        period = Period.getPeriod(period)
+        return prisma.anime_notifications.findMany({
+            where: {
+                created_at: {
+                    gte: period[0],
+                    lte: period[1]
+                }
+            }
+        })
+    }
+
+    public static async readNotifications(ids: number[], user_id: number) {
+        return prisma.user_anime_notifications.updateMany({
+            where: {
+                user_id,
+                id: {
+                    in: ids
+                }
+            },
+            data: { is_read: true }
+        })
     }
 }

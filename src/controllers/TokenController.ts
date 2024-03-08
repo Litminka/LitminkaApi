@@ -6,7 +6,9 @@ export default class TokenController {
     
     public static refreshToken(req: Request, res: Response) {
         const token = req.get("authorization");
+      
         const resToken = TokenService.refreshToken(token)
+        
         return res.status(RequestStatuses.OK).json({ data: { resToken } });
     }
 

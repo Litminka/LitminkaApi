@@ -18,17 +18,19 @@ export default class UserService {
     }
 
     public static async login(userData: LoginUser) {
-        const {login, password} = userData;
+        const { login, password } = userData;
         const user = await User.findUserByLogin(login);
-        
+
         if (!user) throw new UnauthorizedError("Login or password incorrect");
         if (!await Encrypt.comparePassword(password, user.password)) throw new UnauthorizedError("Login or password incorrect");
+
         const { id } = user;
+      
         const token = jwt.sign({ id }, process.env.tokenSecret!, { expiresIn: process.env.tokenLife })
         const refreshToken = jwt.sign({ id }, process.env.tokenRefreshSecret!, { expiresIn: process.env.tokenRefreshLife })
 
-        RefreshToken.create(refreshToken, id);
-        
+        await RefreshToken.create(refreshToken, id);
+
         return {
             token, refreshToken
         }

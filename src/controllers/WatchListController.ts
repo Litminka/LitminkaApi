@@ -7,13 +7,17 @@ export default class WatchListController {
     // FIXME: get out in middleware
     public static async getWatchList(req: RequestWithAuth, res: Response): Promise<Object> {
         const { id } = req.auth!;
+      
         const user = await User.getUserByIdAnimeList(id);
+      
         return res.json(user.anime_list);
     }
 
     public static async importList(req: RequestWithAuth, res: Response): Promise<any> {
         const { id } = req.auth!;
+      
         await WatchListService.importListByUserId(id);
+      
         return res.json({
             message: 'List imported successfully'
         });

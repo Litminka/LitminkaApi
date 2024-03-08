@@ -8,20 +8,24 @@ import { tokenRouter } from './routes/TokenRouter';
 import { watchListRouter } from './routes/WatchListRouter';
 import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/AnimeRouter';
+import { notificationRouter as notificationRouter } from './routes/NotificationRouter';
 import * as fs from 'fs';
 import * as https from 'https';
+import * as http from 'http';
 import { RequestStatuses } from './ts/enums';
 import { wrap } from './middleware/errorHandler';
+import { logger } from './loggerConf'
+
 dotenv.config();
 
 const app: Express = express();
 const port: string | undefined = process.env.PORT;
 
-if (!process.env.shikimori_agent) throw new Error("No agent specified in ENV");
-if (!process.env.shikimori_client_id) throw new Error("No client id specified in ENV");
-if (!process.env.shikimori_client_secret) throw new Error("No client secret specified in ENV");
-if (!process.env.shikimori_url) throw new Error("Shikimori base url is not specified");
-if (!process.env.app_url) throw new Error("App Url not specified");
+if (!process.env.SHIKIMORI_AGENT) throw new Error("No agent specified in ENV");
+if (!process.env.SHIKIMORI_CLIENT_ID) throw new Error("No client id specified in ENV");
+if (!process.env.SHIKIMORI_CLIENT_SECRET) throw new Error("No client secret specified in ENV");
+if (!process.env.SHIKIMORI_URL) throw new Error("Shikimori base url is not specified");
+if (!process.env.APP_URL) throw new Error("App Url not specified");
 
 
 app.use(helmet());
@@ -49,16 +53,22 @@ app.use("/anime", animeRouter);
 app.use("/anime/follow", followRouter);
 app.use("/shikimori", shikimoriRouter);
 app.use("/token", tokenRouter);
+app.use("/notifications", notificationRouter);
 
 app.get("/shikimori_token", (req: Request, res: Response) => {
-    console.log(req.query);
+    logger.debug(`shikimori_token ${req.query}`)
 })
 
-const httpsOptions = {
-    key: fs.readFileSync('./cert/server.key'),
-    cert: fs.readFileSync('./cert/server.cert')
+if (process.env.SSL) {
+    http.createServer(app).listen(port, () => {
+        logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
+    });
+} else {
+    const httpsOptions = {
+        key: fs.readFileSync(process.env.SSL_KEY as string),
+        cert: fs.readFileSync(process.env.SSL_CERT as string)
+    }
+    https.createServer(httpsOptions, app).listen(port, () => {
+        logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
+    });
 }
-
-https.createServer(httpsOptions, app).listen(port, () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-});

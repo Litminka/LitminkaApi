@@ -10,7 +10,7 @@
     "build": "npx tsc",
     "start": "npm run build && node dist/index.js",
     "seed": "npx ts-node prisma/seed.ts",
-    "dev": "npx nodemon src/index.ts",
+    "dev": "npx nodemon --inspect src/index.ts",
     "autocheck": "npx ts-node src/queues/autocheck.ts",
     "shikimoriUpdate": "npx ts-node src/queues/shikimoriUpdate.ts"
   },
@@ -40,7 +40,8 @@
     "helmet": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
     "limiter": "^2.1.0",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "winston": "^3.12.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

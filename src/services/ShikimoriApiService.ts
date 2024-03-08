@@ -12,7 +12,7 @@ interface iShikimoriApi {
     limiter: RateLimiter
 }
 
-const baseUrl = `${process.env.shikimori_url}/api`;
+const baseUrl = `${process.env.SHIKIMORI_URL}/api`;
 export default class ShikimoriApiService implements iShikimoriApi {
     user: User & { integration: Integration | null } | undefined;
     limiter: RateLimiter;
@@ -40,20 +40,20 @@ export default class ShikimoriApiService implements iShikimoriApi {
         }
         const requestBody = new URLSearchParams({
             "grant_type": token ? "authorization_code" : "refresh_token",
-            "client_id": process.env.shikimori_client_id!,
-            "client_secret": process.env.shikimori_client_secret!,
+            "client_id": process.env.SHIKIMORI_CLIENT_ID!,
+            "client_secret": process.env.SHIKIMORI_CLIENT_SECRET!,
         });
         // If token exists, then we assume user has just linked shikimori
         if (token) {
             requestBody.append("code", this.user.integration!.shikimori_code!);
-            requestBody.append("redirect_uri", `${process.env.app_url}/shikimori/link?token=${token!.token}`);
+            requestBody.append("redirect_uri", `${process.env.APP_URL}/shikimori/link?token=${token!.token}`);
         } else {
             requestBody.append("refresh_token", this.user.integration!.shikimori_refresh_token!)
         }
-        const response = await fetch(`${process.env.shikimori_url}/oauth/token`, {
+        const response = await fetch(`${process.env.SHIKIMORI_URL}/oauth/token`, {
             method: "POST",
             headers: {
-                "User-Agent": process.env.shikimori_agent!,
+                "User-Agent": process.env.SHIKIMORI_AGENT!,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: requestBody
@@ -129,7 +129,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             };
             const headers = new Headers();
 
-            headers.append("User-Agent", process.env.shikimori_agent!);
+            headers.append("User-Agent", process.env.SHIKIMORI_AGENT!);
             if (auth) headers.append("Authorization", `Bearer ${this.user!.integration!.shikimori_token}`);
             const options: options = {
                 method, headers
@@ -150,7 +150,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
     public async getProfile(): Promise<ShikimoriWhoAmI | ServerError | false> {
         return this.requestMaker("/users/whoami", "GET", true);
     }
-    
+
     public async getAnimeById(id: number): Promise<ShikimoriAnimeFull | ServerError> {
         return this.requestMaker(`/animes/${id}`, "GET");
     }
