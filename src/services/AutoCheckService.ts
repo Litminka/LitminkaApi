@@ -11,10 +11,8 @@ import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";
 
 export default class AutoCheckService {
     animeUpdateService: AnimeUpdateService;
-    notificationService: NotificationService;
     constructor() {
         this.animeUpdateService = new AnimeUpdateService();
-        this.notificationService = new NotificationService();
     }
 
     async checkAnime(shikimoriAnime: ShikimoriAnime, kodikAnime?: KodikAnimeFull, follow?: followType, anime?: checkAnime) {
@@ -38,10 +36,10 @@ export default class AutoCheckService {
             const changedStatus = anime.status !== status;
             if (changedStatus && anime.status === AnimeStatuses.Announced && status === "ongoing") {
                 // if status changed to ongoing
-                this.notificationService.notifyRelease(anime.id);
+                NotificationService.notifyRelease(anime.id);
                 // notify all followers about it
                 for (const single of follow.info) {
-                    this.notificationService.notifyUserRelease(single.user_id, anime.id);
+                    NotificationService.notifyUserRelease(single.user_id, anime.id);
                     console.log(`Need to notify user ${single.user_id} that ${anime.name} began releasing`)
                     // delete follow from db
                     prisma.follow.deleteMany({
@@ -70,9 +68,9 @@ export default class AutoCheckService {
             const isFinalEpisode = kodikTranslation.episodes_count === anime.max_episodes;
             console.log(`NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`);
             if (isFinalEpisode) {
-                this.notificationService.notifyFinalEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
+                NotificationService.notifyFinalEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
             } else {
-                this.notificationService.notifyEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
+                NotificationService.notifyEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
             }
             // if no one has followed this translation, skip
             if (followedTranslationIds.indexOf(kodikTranslation.id) < 0) continue;
@@ -80,11 +78,11 @@ export default class AutoCheckService {
                 if (single.translation?.group_id !== kodikTranslation.id) continue;
                 // notify users
                 if (!isFinalEpisode) {
-                    this.notificationService.notifyUserEpisode(single.user_id, anime.id, kodikTranslation.id, kodikTranslation.episodes_count)
+                    NotificationService.notifyUserEpisode(single.user_id, anime.id, kodikTranslation.id, kodikTranslation.episodes_count)
                     console.log(`Need to notify user ${single.user_id} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`)
                     continue;
                 }
-                this.notificationService.notifyUserFinalEpisode(
+                NotificationService.notifyUserFinalEpisode(
                     single.user_id,
                     anime.id,
                     kodikTranslation.id,
