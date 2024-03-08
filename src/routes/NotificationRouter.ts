@@ -5,7 +5,7 @@ import { wrap } from '../middleware/errorHandler';
 import { PeriodValidator } from '../validators/PeriodValidator';
 const router = Router();
 
-router.get("/:user_id", [auth, ...PeriodValidator()], wrap(NotificationController.userNotifications))
+router.get("/user", [auth, ...PeriodValidator()], wrap(NotificationController.userNotifications))
 router.get("", [auth, ...PeriodValidator()], wrap(NotificationController.globalNotifications))
 router.post("/is_read", auth, wrap(NotificationController.notificationsIsRead))
 
