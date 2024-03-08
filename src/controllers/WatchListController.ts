@@ -1,12 +1,7 @@
-import { Request, Response } from "express";
-import { prisma } from '../db';
+import { Response } from "express";
 import { AddToList, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts/index";
-import { RequestStatuses } from "../ts/enums";
 import User from "../models/User";
 import WatchListService from "../services/WatchListService";
-import AnimeList from "../models/AnimeList";
-import BadRequestError from "../errors/clienterrors/BadRequestError";
-import NotFoundError from "../errors/clienterrors/NotFoundError";
 
 export default class WatchListController {
     // FIXME: get out in middleware
