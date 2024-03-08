@@ -51,6 +51,21 @@ export default class User {
         });
     }
 
+    public static async findUserByIdWithRolePermission(id: number){
+        return await prisma.user.findFirst({
+            where: {
+                id
+            },
+            include: {
+                role: {
+                    include: {
+                        permissions: true
+                    }
+                }
+            },
+        });
+    }
+
     public static async findUserById(id: number){
         return await prisma.user.findFirst({ where: { id } });
     }
