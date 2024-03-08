@@ -26,8 +26,8 @@ export default class UserService {
 
         const { id } = user;
       
-        const token = jwt.sign({ id }, process.env.tokenSecret!, { expiresIn: process.env.tokenLife })
-        const refreshToken = jwt.sign({ id }, process.env.tokenRefreshSecret!, { expiresIn: process.env.tokenRefreshLife })
+        const token = jwt.sign({ id }, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE })
+        const refreshToken = jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET!, { expiresIn: process.env.REFRESH_TOKEN_LIFE })
 
         await RefreshToken.create(refreshToken, id);
 

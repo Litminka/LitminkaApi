@@ -9,12 +9,12 @@ export default class TokenService{
         if (!token) throw new ForbiddenError("No token provided")
         const result = token.split(" ")[1];
         let resToken;
-        jwt.verify(result, process.env.tokenRefreshSecret!, function (err, decoded) {
+        jwt.verify(result, process.env.REFRESH_TOKEN_SECRET!, function (err, decoded) {
             if (<any>err instanceof jwt.TokenExpiredError) throw new UnauthorizedError("Token expired");
             if (err) throw new InternalServerError("Failed to authenticate token");
             const auth = <any>decoded;
             if (!auth) throw new InternalServerError("Failed to authenticate token");
-            resToken = jwt.sign({ id: auth.id }, process.env.tokenSecret!, { expiresIn: process.env.tokenLife })
+            resToken = jwt.sign({ id: auth.id }, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE })
             
             //TODO: Add check for session in db
         });

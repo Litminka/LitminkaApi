@@ -53,6 +53,6 @@ export default class ShikimoriLinkService{
     public static async generateLinkById(id: number){
         const token: string = crypto.randomBytes(24).toString('hex');
         await ShikimoriLinkToken.createShikimoriLinkTokenByUserId(token,id)
-        return `${process.env.app_url}/shikimori/link?token=${token}`;
+        return `${process.env.APP_URL}/shikimori/link?token=${token}`;
     }
 }

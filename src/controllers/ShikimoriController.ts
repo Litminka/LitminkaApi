@@ -31,7 +31,7 @@ export default class ShikimoriController {
       
         return res.status(RequestStatuses.OK).json({
             message: "Account unlinked",
-            link: `${process.env.shikimori_url}/oauth/applications/${process.env.shikimori_app_id}`,
+            link: `${process.env.SHIKIMORI_URL}/oauth/applications/${process.env.SHIKIMORI_APP_ID}`,
         })
     }
 
