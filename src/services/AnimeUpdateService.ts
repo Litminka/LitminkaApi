@@ -1,10 +1,11 @@
 import { Anime, User } from "@prisma/client";
 import ShikimoriApiService from "./ShikimoriApiService";
 import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../ts/index";
-import { KodikAnime, KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
+import { KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
 import { prisma } from "../db";
-import { cyrillicSlug } from "../helper/cyrillic-slug";
 import { RequestStatuses } from "../ts/enums";
+import AnimeModel from "../models/Anime" ;
+import InternalServerError from "../errors/servererrors/InternalServerError";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -20,122 +21,21 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
     }
 
     async update(anime: Anime): Promise<boolean> {
-        if (!this.shikimoriApi) throw { error: 'No shikimori api specified' };
+        if (!this.shikimoriApi) throw new InternalServerError("No shikimori api specified");
         const resAnime: ShikimoriAnimeFull | ServerError = await this.shikimoriApi.getAnimeById(anime.shikimori_id);
         if (!resAnime) return false;
         if (resAnime.reqStatus === RequestStatuses.InternalServerError || resAnime.reqStatus === RequestStatuses.NotFound) return false;
         const update = resAnime as ShikimoriAnimeFull;
-        await prisma.anime.update({
-            where: {
-                id: anime.id
-            },
-            data: {
-                shikimori_score: parseFloat(update.score),
-                description: update.description,
-                japanese_name: update.japanese ? update.japanese[0] : null,
-                franchise_name: update.franchise,
-                rpa_rating: update.rating,
-                genres: {
-                    connectOrCreate: update.genres.map((genre) => {
-                        const { russian: name } = genre;
-                        return {
-                            where: { name },
-                            create: { name }
-                        }
-                    }),
-                }
-            }
-        });
+        AnimeModel.update(anime.id, update);
         return true;
     }
 
     async updateAnimeShikimoriFull(animeArr: ShikimoriAnimeFull[]) {
-        const shikimoriTransaction = animeArr.map((anime) => {
-            return prisma.anime.upsert({
-                where: {
-                    shikimori_id: anime.id,
-                },
-                create: {
-                    current_episodes: anime.episodes_aired,
-                    max_episodes: anime.episodes,
-                    shikimori_id: anime.id,
-                    english_name: anime.name,
-                    japanese_name: anime.japanese[0] ?? "",
-                    slug: `${anime.id}-${cyrillicSlug(anime.russian ? anime.russian : anime.name)}`,
-                    description: anime.description,
-                    franchise_name: anime.franchise,
-                    genres: {
-                        connectOrCreate: anime.genres!.map(name => {
-                            return {
-                                where: { name: name.russian },
-                                create: { name: name.russian }
-                            }
-                        })
-                    },
-                    rpa_rating: anime.rating,
-                    status: anime.status,
-                    image: anime.image.original,
-                    name: anime.russian,
-                    media_type: anime.kind,
-                    shikimori_score: parseFloat(anime.score),
-                    first_episode_aired: new Date(anime.aired_on),
-                    last_episode_aired: new Date(anime.released_on),
-                },
-                update: {
-                    current_episodes: anime.episodes_aired,
-                    max_episodes: anime.episodes,
-                    status: anime.status,
-                    description: anime.description,
-                    franchise_name: anime.franchise,
-                    media_type: anime.kind,
-                    japanese_name: anime.japanese[0] ?? "",
-                    image: anime.image.original,
-                    shikimori_score: parseFloat(anime.score),
-                    first_episode_aired: new Date(anime.aired_on),
-                    last_episode_aired: new Date(anime.released_on),
-                }
-            });
-        });
-        // Insert shikimori anime
-        const shikimoriUpdate = await prisma.$transaction(shikimoriTransaction);
-        return shikimoriUpdate;
+        return AnimeModel.upsertManyShikimoriFull(animeArr);
     }
 
     async updateAnimeShikimori(animeArr: ShikimoriAnime[]) {
-        const shikimoriTransaction = animeArr.map((anime) => {
-            return prisma.anime.upsert({
-                where: {
-                    shikimori_id: anime.id,
-                },
-                create: {
-                    current_episodes: anime.episodes_aired,
-                    max_episodes: anime.episodes,
-                    shikimori_id: anime.id,
-                    english_name: anime.name,
-                    slug: `${anime.id}-${cyrillicSlug(anime.russian ? anime.russian : anime.name)}`,
-                    status: anime.status,
-                    image: anime.image.original,
-                    name: anime.russian,
-                    media_type: anime.kind,
-                    shikimori_score: parseFloat(anime.score),
-                    first_episode_aired: new Date(anime.aired_on),
-                    last_episode_aired: new Date(anime.released_on),
-                },
-                update: {
-                    current_episodes: anime.episodes_aired,
-                    max_episodes: anime.episodes,
-                    status: anime.status,
-                    image: anime.image.original,
-                    media_type: anime.kind,
-                    shikimori_score: parseFloat(anime.score),
-                    first_episode_aired: new Date(anime.aired_on),
-                    last_episode_aired: new Date(anime.released_on),
-                }
-            });
-        });
-        // Insert shikimori anime
-        const shikimoriUpdate = await prisma.$transaction(shikimoriTransaction);
-        return shikimoriUpdate;
+        return AnimeModel.upsertMany(animeArr);
     }
 
     async updateTranslationGroups(result: KodikAnimeFull[]) {

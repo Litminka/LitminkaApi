@@ -59,7 +59,7 @@ export default class FollowService {
     }
 
     public static async follow(anime_id: number, user_id: number, type: FollowTypes, group_name: string){
-        const anime = await AnimeModel.findAny(anime_id);
+        const anime = await AnimeModel.findWithTranlsations(anime_id);
         if (type === FollowTypes.Follow) {
             const translation = anime.anime_translations.find(anime => anime.group.name == group_name)
             if (translation === undefined) 
@@ -77,7 +77,7 @@ export default class FollowService {
     }
 
     public static async unfollow(anime_id: number, user_id: number, group_name?: string){
-        const anime = await AnimeModel.findAny(anime_id);
+        const anime = await AnimeModel.findWithTranlsations(anime_id);
         let unfollow: FollowAnime = {user_id, anime_id} as FollowAnime;
         if (!group_name) {
             return await FollowModel.removeFollow(unfollow);

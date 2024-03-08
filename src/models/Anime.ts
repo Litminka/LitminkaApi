@@ -1,4 +1,3 @@
-import { Anime } from "@prisma/client";
 import { prisma } from "../db";
 import { cyrillicSlug } from "../helper/cyrillic-slug";
 import { ShikimoriAnime, ShikimoriAnimeFull } from "../ts";
@@ -27,9 +26,8 @@ export default class AnimeModel {
             }
         });
     }
-
        
-    public static async upsertManyFull(animeArr: ShikimoriAnimeFull[]) {
+    public static async upsertManyShikimoriFull(animeArr: ShikimoriAnimeFull[]) {
         const shikimoriTransaction = animeArr.map((anime) => {
             return prisma.anime.upsert({
                 where: {
@@ -118,7 +116,7 @@ export default class AnimeModel {
         return shikimoriUpdate;
     }
 
-    public static async findAny(anime_id: number){
+    public static async findWithTranlsations(anime_id: number){
         return await prisma.anime.findFirstOrThrow({
             where: { id: anime_id },
             include: {
