@@ -128,4 +128,18 @@ export default class AnimeModel {
             }
         })
     }
+
+    public static async findWithTranlsationsAndGenres(anime_id: number){
+        return await prisma.anime.findFirst({
+            where: { id: anime_id },
+            include: {
+                genres: true,
+                anime_translations: {
+                    include: {
+                        group: true
+                    }
+                }
+            }
+        })
+    }
 }
