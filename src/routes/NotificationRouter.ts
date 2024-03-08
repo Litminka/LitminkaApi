@@ -3,7 +3,7 @@ import NotificationController from '../controllers/NotificationController';
 import { auth } from '../middleware/auth';
 import { wrap } from '../middleware/errorHandler';
 import { PeriodValidator } from '../validators/PeriodValidator';
-import { validateArrayId } from '../validators/baseValidator';
+import { validateArrayId } from '../validators/BaseValidator';
 
 const router = Router();
 

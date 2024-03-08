@@ -1,4 +1,6 @@
 import { prisma } from "../db";
+import Period from "../helper/period";
+import dayjs from "dayjs";
 
 interface getUserNotifications {
     period: Date[],
@@ -66,6 +68,7 @@ export default class NotificationService {
     }
 
     async notifyFinalEpisode(anime_id: number, group_id: number, episode: number) {
+
         return prisma.anime_notifications.create({
             data: {
                 anime_id,
@@ -77,6 +80,8 @@ export default class NotificationService {
     }
 
     public static async getUserNotifications({ is_read = false, user_id, period }: getUserNotifications) {
+        if (period !== undefined) period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
+        period = Period.getPeriod(period)
         return prisma.user_anime_notifications.findMany({
             where: {
                 is_read,
@@ -90,6 +95,8 @@ export default class NotificationService {
     }
 
     public static async getNotifications(period: Date[]) {
+        if (period !== undefined) period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
+        period = Period.getPeriod(period)
         return prisma.anime_notifications.findMany({
             where: {
                 created_at: {
