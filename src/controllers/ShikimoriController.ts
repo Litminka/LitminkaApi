@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RequestWithAuth, ServerError, ShikimoriWhoAmI } from "../ts/index";
+import { RequestWithAuth } from "../ts/index";
 import { RequestStatuses } from "../ts/enums";
 import ShikimoriLinkService from "../services/ShikimoriLinkService";
 

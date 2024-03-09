@@ -1,17 +1,9 @@
 import { Response } from "express";
-import { validationResult } from "express-validator";
-import { DeleteFollow, Follow, FollowAnime, RequestWithAuth } from "../ts/index";
-import { prisma } from '../db';
-import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";
-import BaseError from "../errors/BaseError";
-import UnprocessableContentError from "../errors/clienterrors/UnprocessableContentError";
-import NotFoundError from "../errors/clienterrors/NotFoundError";
-import FollowModel from "../models/Follow";
+import { DeleteFollow, Follow, RequestWithAuth } from "../ts/index";
+import { RequestStatuses } from "../ts/enums";
 import User from "../models/User";
 import FollowService from "../services/FollowService";
 import ForbiddenError from "../errors/clienterrors/ForbiddenError";
-import AnimeModel from "../models/Anime";
-import BadRequestError from "../errors/clienterrors/BadRequestError";
 
 export default class FollowController {
 
