@@ -4,6 +4,7 @@ const prisma = new PrismaClient()
 import dotenv from 'dotenv';
 dotenv.config();
 import { Encrypt } from "../src/helper/encrypt";
+import capitalize from "../src/helper/capitalize";
 import KodikApiService from "../src/services/KodikApiService";
 async function main() {
     const adminRole = await prisma.role.upsert({
@@ -82,10 +83,10 @@ async function main() {
     results.forEach(async genre => {
         await prisma.genre.upsert({
             where: {
-                name: genre.title
+                name: capitalize(genre.title)
             },
             create: {
-                name: genre.title
+                name: capitalize(genre.title)
             },
             update: {}
         });
