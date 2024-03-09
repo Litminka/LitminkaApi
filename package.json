@@ -31,7 +31,7 @@
     "@prisma/client": "^5.10.2",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.0",
+    "body-parser": "^1.20.2",
     "bullmq": "^3.6.2",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",

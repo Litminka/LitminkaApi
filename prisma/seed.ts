@@ -62,8 +62,8 @@ async function main() {
         update: {},
         create: {
             email: "user@user.ru",
-            login: "User"!,
-            password: "password"!,
+            login: "User",
+            password: await Encrypt.cryptPassword("password"),
             name: "user",
             role: {
                 connect: {

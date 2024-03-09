@@ -2,14 +2,15 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 const helmet = require("helmet");
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
+
 import { userRouter } from './routes/UserRouter';
 import { shikimoriRouter } from './routes/ShikimoriRouter';
 import { tokenRouter } from './routes/TokenRouter';
 import { watchListRouter } from './routes/WatchListRouter';
 import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/AnimeRouter';
+import { groupListRouter } from './routes/GroupListRouter';
 import { notificationRouter as notificationRouter } from './routes/NotificationRouter';
-// import { searchRouter } from './routes/SearchRouter';
 import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
@@ -50,6 +51,7 @@ app.get('/', wrap(helloWorld));
 
 app.use("/users", userRouter);
 app.use("/watch-list", watchListRouter);
+app.use("/group-list", groupListRouter);
 app.use("/anime", animeRouter);
 app.use("/anime/follow", followRouter);
 app.use("/shikimori", shikimoriRouter);

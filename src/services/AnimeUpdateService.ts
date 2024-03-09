@@ -59,9 +59,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         const groupInDBUpdates = [...inDbGroupIds].map(id => {
             const translation = translations.get(id);
             prisma.group.updateMany({
-                where: {
-                    id,
-                },
+                where: { id },
                 data: {
                     id: translation!.id,
                     type: translation!.type,
@@ -90,7 +88,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             if (!animeSlugTitle) {
                 animeSlugTitle = material_data.title_en;
             }
-            const slug = `${anime.shikimori_id}-${animeSlugTitle}`;
+            const slug = `${anime.shikimori_id}-${cyrillicSlug(animeSlugTitle)}`;
             return prisma.anime.upsert({
                 where: {
                     shikimori_id: parseInt(anime.shikimori_id),

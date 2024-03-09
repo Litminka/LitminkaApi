@@ -219,6 +219,10 @@ export interface AddToList {
     is_favorite: boolean;
 }
 
+export interface AddWithAnime extends AddToList {
+    anime_id: number
+}
+
 export interface Follow {
     group_name: string;
     type: FollowTypes.Follow | FollowTypes.Announcement

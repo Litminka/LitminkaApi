@@ -1,12 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { validationResult } from "express-validator";
-import { prisma } from "../db";
-import ShikimoriApiService from "../services/ShikimoriApiService";
-import AnimeUpdateService from "../services/AnimeUpdateService";
-import { RequestWithAuth, ServerError, ShikimoriAnimeFull } from "../ts/index";
-import { RequestStatuses } from "../ts/enums";
-import AnimeModel from "../models/Anime";
-import User from "../models/User";
+import { RequestWithAuth } from "../ts/index";
 import NotFoundError from "../errors/clienterrors/NotFoundError";
 import AnimeService from "../services/AnimeService";
 

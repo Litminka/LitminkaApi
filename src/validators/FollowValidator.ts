@@ -18,5 +18,11 @@ const UnFollowValidation = (): any[] => {
     ];
 };
 
+const validateId = (fieldName: string): any[] => {
+    return [
+        body(fieldName).notEmpty().isInt(),
+    ]
+}
+
 
 export { FollowValidation, UnFollowValidation };

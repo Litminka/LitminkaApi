@@ -1,8 +1,8 @@
 import { Response } from "express";
-import { AddToList, RequestWithAuth, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts/index";
+import { AddToList, RequestWithAuth } from "../ts/index";
 import User from "../models/User";
 import WatchListService from "../services/WatchListService";
-import { importWatchListQueue } from "../queues/watchlistimporter";
+import { importWatchListQueue } from "../queues/watchListImporter";
 
 export default class WatchListController {
     // FIXME: get out in middleware
