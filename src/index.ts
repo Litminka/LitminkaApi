@@ -9,6 +9,7 @@ import { watchListRouter } from './routes/WatchListRouter';
 import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/AnimeRouter';
 import { notificationRouter as notificationRouter } from './routes/NotificationRouter';
+// import { searchRouter } from './routes/SearchRouter';
 import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
@@ -54,21 +55,31 @@ app.use("/anime/follow", followRouter);
 app.use("/shikimori", shikimoriRouter);
 app.use("/token", tokenRouter);
 app.use("/notifications", notificationRouter);
+// app.use("/search", searchRouter);
 
 app.get("/shikimori_token", (req: Request, res: Response) => {
     logger.debug(`shikimori_token ${req.query}`)
 })
 
-if (process.env.SSL) {
-    http.createServer(app).listen(port, () => {
-        logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
-    });
-} else {
-    const httpsOptions = {
-        key: fs.readFileSync(process.env.SSL_KEY as string),
-        cert: fs.readFileSync(process.env.SSL_CERT as string)
-    }
-    https.createServer(httpsOptions, app).listen(port, () => {
-        logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
-    });
+switch (process.env.SSL) {
+    case '0':
+    case 'false':
+    case 'False':
+        http.createServer(app).listen(port, () => {
+            logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
+        });
+        break;
+    case '1':
+    case 'true':
+    case 'True':
+        const httpsOptions = {
+            key: fs.readFileSync(process.env.SSL_KEY as string),
+            cert: fs.readFileSync(process.env.SSL_CERT as string)
+        }
+        https.createServer(httpsOptions, app).listen(port, () => {
+            logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
+        });
+        break;
+    default:
+        throw new Error("SSL parameter must be bool")
 }
