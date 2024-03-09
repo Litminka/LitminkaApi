@@ -162,7 +162,7 @@ model Group_list_invites {
   user     User       @relation(fields: [user_id], references: [id])
   user_id  Int
   group_id Int
-  group    Group_list @relation(fields: [group_id], references: [id])
+  group    Group_list @relation(fields: [group_id], references: [id], onDelete: Cascade)
 }
 
 model Group_list_members {
@@ -170,7 +170,7 @@ model Group_list_members {
   user          User       @relation(fields: [user_id], references: [id])
   user_id       Int
   group_id      Int
-  group         Group_list @relation(fields: [group_id], references: [id])
+  group         Group_list @relation(fields: [group_id], references: [id], onDelete: Cascade)
   override_list Boolean    @default(false)
 }
 
@@ -179,7 +179,7 @@ model Group_anime_list {
   anime_id         Int
   anime            Anime      @relation(fields: [anime_id], references: [id])
   group_id         Int
-  group            Group_list @relation(fields: [group_id], references: [id])
+  group            Group_list @relation(fields: [group_id], references: [id], onDelete: Cascade)
   status           String
   is_favorite      Boolean
   watched_episodes Int

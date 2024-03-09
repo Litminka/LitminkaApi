@@ -18,6 +18,13 @@ interface CreateGroup {
     user: UserWithGroup
 }
 
+interface UpdateGroup {
+    description?: string,
+    name?: string,
+    user: UserWithGroup,
+    group_id: number
+}
+
 
 
 export default class GroupListService {
@@ -27,7 +34,7 @@ export default class GroupListService {
         });
     }
 
-   
+
 
     public static async createGroup({ description, name, user }: CreateGroup) {
         if (user.owned_groups.length >= 10) {
@@ -56,6 +63,35 @@ export default class GroupListService {
 
     }
 
+    public static async deleteGroup(id: number, owner_id: number) {
+
+        const group = await prisma.group_list.findFirstOrThrow({
+            where: { id }
+        })
+
+        if (group.owner_id !== owner_id) {
+            throw new BaseError("not_an_owner", { status: RequestStatuses.Forbidden });
+        }
+
+        await prisma.group_list.delete({
+            where: { id }
+        });
+    }
     
+
+    public static async updateGroup({ description, name, user, group_id }: UpdateGroup) {
+
+        if (!user.owned_groups.some(group => group.id === group_id)) {
+            throw new BaseError("not_an_owner", { status: RequestStatuses.Forbidden });
+        }
+
+        return prisma.group_list.update({
+            where: { id: group_id },
+            data: {
+                description,
+                name
+            }
+        })
+    }
 
 }

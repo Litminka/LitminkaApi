@@ -36,7 +36,7 @@ export default class GroupMemberController {
 
         await GroupMemberService.leaveGroup(id, group_id);
 
-        return res.status(RequestStatuses.OK).json({message: "you_left_the_group"});
+        return res.status(RequestStatuses.OK).json({ message: "you_left_the_group" });
     }
 
     public static async updateState(req: RequestWithAuth, res: Response) {
@@ -49,11 +49,20 @@ export default class GroupMemberController {
 
         await GroupMemberService.updateState({ user_id: id, group_id, modifyList });
 
-        return res.status(RequestStatuses.OK).json({message: "member_updated"});
+        return res.status(RequestStatuses.OK).json({ message: "member_updated" });
     }
 
-    public static async kickUser() {
+    public static async kickUser(req: RequestWithAuth, res: Response) {
+        const { id }: { id: number } = req.auth!;
+        const user = await prisma.user.findFirst({ where: { id }, include: { owned_groups: true } });
+        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
 
+        const group_id = req.params.group_id as unknown as number;
+        const kick_id = req.body.user_id as unknown as number;
+
+        await GroupMemberService.kickUser({ user, group_id, kick_id });
+
+        return res.status(RequestStatuses.OK).json({ message: "user_kicked" });
     }
 
 }
