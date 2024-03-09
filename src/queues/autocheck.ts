@@ -28,15 +28,12 @@ const worker = new Worker("autocheck", async (job: Job) => {
     // send notification
     // update title
 
-    // todo: update kodik translations groups
-
-
     logger.info("started a job");
     logger.info("updating translations");
     const kodikApi = new KodikApiService()
     const translations = await kodikApi.getTranslationGroups();
     for (const translation of translations) {
-        prisma.group.upsert({
+        await prisma.group.upsert({
             where: {
                 id: translation.id,
             },
