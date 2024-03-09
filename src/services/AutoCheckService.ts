@@ -8,13 +8,12 @@ import AnimeUpdateService from "./AnimeUpdateService";
 import NotificationService from "./NotificationService";
 import { prisma } from "../db";
 import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";
+import { logger } from "../loggerConf"
 
 export default class AutoCheckService {
     animeUpdateService: AnimeUpdateService;
-    notificationService: NotificationService;
     constructor() {
         this.animeUpdateService = new AnimeUpdateService();
-        this.notificationService = new NotificationService();
     }
 
     async checkAnime(shikimoriAnime: ShikimoriAnime, kodikAnime?: KodikAnimeFull, follow?: followType, anime?: checkAnime) {
@@ -26,11 +25,11 @@ export default class AutoCheckService {
         if (!haveDbAnime) {
             if (haveKodik) {
                 this.animeUpdateService.updateAnimeKodik([kodikAnime]);
-                console.log(`New anime found ${kodikAnime.title}`)
+                logger.info(`New anime found ${kodikAnime.title}`)
                 return;
             }
             this.animeUpdateService.updateAnimeShikimori([shikimoriAnime]);
-            console.log(`New anime found ${shikimoriAnime.name}`)
+            logger.info(`New anime found ${shikimoriAnime.name}`)
             return;
         }
 
@@ -38,11 +37,13 @@ export default class AutoCheckService {
             const changedStatus = anime.status !== status;
             if (changedStatus && anime.status === AnimeStatuses.Announced && status === "ongoing") {
                 // if status changed to ongoing
-                this.notificationService.notifyRelease(anime.id);
+                NotificationService.notifyRelease(anime.id);
                 // notify all followers about it
                 for (const single of follow.info) {
-                    this.notificationService.notifyUserRelease(single.user_id, anime.id);
-                    console.log(`Need to notify user ${single.user_id} that ${anime.name} began releasing`)
+                  
+                    NotificationService.notifyUserRelease(single.user_id, anime.id);
+                    logger.info(`Need to notify user ${single.user_id} that ${anime.name} began releasing`)
+                  
                     // delete follow from db
                     prisma.follow.deleteMany({
                         where: {
@@ -68,11 +69,11 @@ export default class AutoCheckService {
             if (kodikTranslation === undefined) continue;
             if (kodikTranslation.episodes_count === translation.current_episodes) continue;
             const isFinalEpisode = kodikTranslation.episodes_count === anime.max_episodes;
-            console.log(`NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`);
+            logger.info(`NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`);
             if (isFinalEpisode) {
-                this.notificationService.notifyFinalEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
+                NotificationService.notifyFinalEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
             } else {
-                this.notificationService.notifyEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
+                NotificationService.notifyEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
             }
             // if no one has followed this translation, skip
             if (followedTranslationIds.indexOf(kodikTranslation.id) < 0) continue;
@@ -80,11 +81,13 @@ export default class AutoCheckService {
                 if (single.translation?.group_id !== kodikTranslation.id) continue;
                 // notify users
                 if (!isFinalEpisode) {
-                    this.notificationService.notifyUserEpisode(single.user_id, anime.id, kodikTranslation.id, kodikTranslation.episodes_count)
-                    console.log(`Need to notify user ${single.user_id} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`)
+
+                    NotificationService.notifyUserEpisode(single.user_id, anime.id, kodikTranslation.id, kodikTranslation.episodes_count)
+                    logger.info(`Need to notify user ${single.user_id} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`)
+
                     continue;
                 }
-                this.notificationService.notifyUserFinalEpisode(
+                NotificationService.notifyUserFinalEpisode(
                     single.user_id,
                     anime.id,
                     kodikTranslation.id,
@@ -99,7 +102,7 @@ export default class AutoCheckService {
                         ]
                     }
                 })
-                console.log(`Need to notify user ${single.user_id} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`)
+                logger.info(`Need to notify user ${single.user_id} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`)
             }
         }
 
@@ -132,7 +135,7 @@ export default class AutoCheckService {
                 page = 0;
                 continue;
             }
-            console.log(`Getting base anime from shikimori, page:${page}, season:${seasonString}`);
+            logger.info(`Getting base anime from shikimori, page:${page}, season:${seasonString}`);
             checkAnime.push(...shikimoriAnime);
             if (shikimoriAnime.length == 0 || shikimoriAnime.length < 50) break
             page += 1;
@@ -144,7 +147,7 @@ export default class AutoCheckService {
         const user: undefined = undefined; // No user is required
         const shikimoriApi = new ShikimoriApiService(user);
         const idsSpliced = groupArrSplice(ids, 50);
-        console.log("Getting anime from shikimori")
+        logger.info("Getting anime from shikimori")
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
             let response = await shikimoriApi.getBatchAnime(batch);
             if ((<ServerError>response).reqStatus === RequestStatuses.InternalServerError) throw new Error("Shikimori 500");

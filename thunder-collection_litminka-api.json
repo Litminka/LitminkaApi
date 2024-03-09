@@ -147,35 +147,15 @@
             "tests": []
         },
         {
-            "_id": "b2612927-63fa-4ba5-8242-5595361dc135",
-            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
-            "containerId": "4e3788df-74bb-4178-aa53-a496410e24f3",
+            "_id": "6d819636-82ae-4a2e-91c2-3a5d41b1e190",
+            "colId": "5e7b16b5-a1e6-4ec2-bef8-2279bbd52a2b",
+            "containerId": "8729fe83-44db-4bc2-8a70-074703449882",
             "name": "login",
-            "url": "users/login",
+            "url": "/users/login",
             "method": "POST",
-            "sortNum": 20000,
-            "created": "2022-07-10T14:14:57.244Z",
-            "modified": "2024-03-09T13:58:23.213Z",
-            "headers": [],
-            "params": [],
-            "body": {
-                "type": "json",
-                "raw": "{\n    \"login\": \"Test4\",\n    \"password\": \"test123\"\n}",
-                "form": []
-            },
-            "reqType": "post",
-            "tests": []
-        },
-        {
-            "_id": "0aa8b4e3-c421-458f-a716-df0cd8f50eb5",
-            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
-            "containerId": "708d4ad9-b90b-450e-a332-bcb3b70e942b",
-            "name": "Accept Invite",
-            "url": "group-list/invites/9/accept",
-            "method": "POST",
-            "sortNum": 20000,
-            "created": "2024-03-07T14:10:41.035Z",
-            "modified": "2024-03-09T13:53:00.192Z",
+            "sortNum": 40000,
+            "created": "2023-05-07T10:32:13.196Z",
+            "modified": "2023-05-07T10:32:43.852Z",
             "headers": [],
             "params": [],
             "body": {

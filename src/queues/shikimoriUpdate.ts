@@ -8,6 +8,7 @@ import groupArrSplice from '../helper/groupsplice';
 import { ServerError, ShikimoriAnimeFull } from '../ts';
 import AnimeUpdateService from '../services/AnimeUpdateService';
 import { RequestStatuses } from '../ts/enums';
+import { logger } from "../loggerConf"
 
 const shikimoriCheckQueue = new Queue("shikimoriUpdate", {
     connection: {
@@ -42,12 +43,12 @@ const worker = new Worker("shikimoriUpdate", async (job: Job) => {
             throw error;
         }
         shikimoriAnimeFull.push(req as ShikimoriAnimeFull);
-        console.log(`Requesting anime ${single.name} from shikimori`)
+        logger.info(`Requesting anime ${single.name} from shikimori`)
     }
     const animeUpdateService = new AnimeUpdateService(shikimoriApi, undefined);
-    console.log("all anime requested, updating")
+    logger.info("all anime requested, updating")
     await animeUpdateService.updateAnimeShikimoriFull(shikimoriAnimeFull);
-    console.log("finished");
+    logger.info("finished");
     return "finished";
 
 }, {

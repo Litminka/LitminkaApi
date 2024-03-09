@@ -1,125 +1,48 @@
 import { Response } from "express";
-import { DeleteFollow, Follow, RequestWithAuth } from "../ts/index";
+import { validationResult } from "express-validator";
+import { DeleteFollow, Follow, FollowAnime, RequestWithAuth } from "../ts/index";
 import { prisma } from '../db';
 import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";
+import BaseError from "../errors/BaseError";
+import UnprocessableContentError from "../errors/clienterrors/UnprocessableContentError";
+import NotFoundError from "../errors/clienterrors/NotFoundError";
+import FollowModel from "../models/Follow";
+import User from "../models/User";
+import FollowService from "../services/FollowService";
+import ForbiddenError from "../errors/clienterrors/ForbiddenError";
+import AnimeModel from "../models/Anime";
+import BadRequestError from "../errors/clienterrors/BadRequestError";
 
 export default class FollowController {
 
+    // FIXME: Refactor to middleware
     public static async follow(req: RequestWithAuth, res: Response) {
         const { group_name, type } = req.body as Follow;
         const { id }: { id: number } = req.auth!;
-        const user = await prisma.user.findFirst({ where: { id }, });
-        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
+        const user = await User.findUserById(id);
+        if (!user) throw new ForbiddenError("Unauthorized");
         const anime_id: number = req.params.anime_id as unknown as number;
-        const anime = await prisma.anime.findFirstOrThrow({
-            where: { id: anime_id },
-            include: {
-                anime_translations: {
-                    include: {
-                        group: true
-                    }
-                }
-            }
-        })
 
-        if (type === FollowTypes.Follow) {
-            const translation = anime.anime_translations.find(anime => anime.group.name == group_name)
-            if (translation === undefined) return res.status(RequestStatuses.UnprocessableContent).json({ error: "This anime doesn't have given group" })
-            if (anime.current_episodes >= anime.max_episodes && anime.current_episodes === translation.current_episodes) {
-                return res.status(RequestStatuses.UnprocessableContent).json({ message: "Can't follow non ongoing anime" });
-            }
-            const follow = await prisma.follow.findFirst({
-                where: {
-                    anime_id,
-                    user_id: id,
-                    translation: {
-                        group: {
-                            name: translation.group.name
-                        }
-                    }
-                }
-            });
-            if (follow) return res.status(RequestStatuses.UnprocessableContent).json({ error: "This anime is already followed as \"follow\"" })
-            await prisma.user.update({
-                where: { id },
-                data: {
-                    follows: {
-                        create: {
-                            status: FollowTypes.Follow,
-                            anime_id: anime.id,
-                            translation_id: translation.id,
-                        }
-                    }
-                }
-            });
-        }
-        if (type === FollowTypes.Announcement) {
-            if (anime.status !== AnimeStatuses.Announced) return res.status(RequestStatuses.UnprocessableContent).json({ message: "Can't follow non announced anime" });
-            const follow = await prisma.follow.findFirst({
-                where: {
-                    anime_id,
-                    user_id: id,
-                    status: FollowTypes.Announcement
-                }
-            })
-            if (follow) return res.status(RequestStatuses.UnprocessableContent).json({ error: "This anime is already followed as \"announcement\"" });
-            await prisma.user.update({
-                where: { id },
-                data: {
-                    follows: {
-                        create: {
-                            status: FollowTypes.Announcement,
-                            anime_id: anime.id,
-                        }
-                    }
-                }
-            });
-        }
+        await FollowService.follow(anime_id, user.id, type, group_name )
+
         return res.status(RequestStatuses.OK).json({
             message: "Anime followed successfully"
         })
     }
 
+    
+    // FIXME: Refactor to middleware
     public static async unfollow(req: RequestWithAuth, res: Response) {
         const { group_name } = req.body as DeleteFollow;
         const { id }: { id: number } = req.auth!;
-        const user = await prisma.user.findFirst({ where: { id }, });
-        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
+        const user = await User.findUserById(id);
+        if (!user) throw new ForbiddenError("Unauthorized");
         const anime_id: number = req.params.anime_id as unknown as number;
-        let anime;
-        try {
-            anime = await prisma.anime.findFirstOrThrow({
-                where: { id: anime_id },
-                include: {
-                    anime_translations: {
-                        include: {
-                            group: true
-                        }
-                    }
-                }
-            })
-        } catch (error) {
-            return res.status(RequestStatuses.NotFound).json({ message: "This anime doesn't exist" });
-        }
 
-        if (!group_name) {
-            prisma.follow.deleteMany({
-                where: {
-                    user_id: user.id,
-                    anime_id: anime.id
-                }
-            })
-            return res.status(RequestStatuses.OK).json({ message: "Unfollowed" });
-        }
-        const translation = anime.anime_translations.find(anime => anime.group.name == group_name);
-        if (translation === undefined) return res.status(RequestStatuses.UnprocessableContent).json({ error: "This anime doesn't have given group" })
-        await prisma.follow.deleteMany({
-            where: {
-                user_id: user.id,
-                anime_id: anime.id,
-                translation_id: translation.id
-            }
-        })
-        return res.status(RequestStatuses.OK).json({ message: "Translation unfollowed" });
+        await FollowService.unfollow(anime_id, user.id, group_name)
+        
+        return res.status(RequestStatuses.OK).json({ 
+            message: "Anime unfollowed successfully" 
+        });
     }
 }

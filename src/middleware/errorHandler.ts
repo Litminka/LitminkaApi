@@ -10,7 +10,7 @@ export function wrap(method: Function) {
         try {
             await method(req, res, next);
         } catch (err: any) {
-
+            
             if (err instanceof BaseError) return renderError(res, err, err.status);
 
             if (err instanceof PrismaClientKnownRequestError) return renderError(res, err, RequestStatuses.NotFound);
