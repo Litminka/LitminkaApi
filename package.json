@@ -12,7 +12,8 @@
     "seed": "npx ts-node prisma/seed.ts",
     "dev": "npx nodemon --inspect src/index.ts",
     "autocheck": "npx ts-node src/queues/autocheck.ts",
-    "shikimoriUpdate": "npx ts-node src/queues/shikimoriUpdate.ts"
+    "shikimoriUpdate": "npx ts-node src/queues/shikimoriUpdate.ts",
+    "watchlistimporter": "npx ts-node src/queues/watchListImporter.ts"
   },
   "repository": {
     "type": "git",
