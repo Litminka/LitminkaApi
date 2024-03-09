@@ -125,6 +125,7 @@ export default class KodikApiService {
         const params = new URLSearchParams({
             "token": process.env.KODIK_API_KEY!,
             "genres_type": "shikimori",
+            "types": "anime"
         });
         const response = await fetch(`${this.baseurl}/genres`, {
             method: "POST",
