@@ -2,7 +2,7 @@
 import { Queue, Worker, Job } from 'bullmq';
 import { prisma } from "../db";
 import { Anime } from '@prisma/client';
-import ShikimoriApiService from '../services/ShikimoriApiService';
+import ShikimoriApiService from '../services/shikimori/ShikimoriApiService';
 import { ServerError, ShikimoriAnimeFull } from '../ts';
 import AnimeUpdateService from '../services/AnimeUpdateService';
 import { RequestStatuses } from '../ts/enums';
