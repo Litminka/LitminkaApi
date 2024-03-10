@@ -7,8 +7,8 @@ import dayjs from "dayjs";
 
 interface getUserNotifications {
     period: Date[],
-    user_id: number,
-    is_read: boolean
+    userId: number,
+    isRead: boolean
 }
 
 
@@ -17,33 +17,33 @@ export default class NotificationService {
 
     }
 
-    public static async notifyUserRelease(user_id: number, anime_id: number) {
-        const notify: UserNotify = { user_id, anime_id, status: NotifyStatuses.AnimeRelease }
+    public static async notifyUserRelease(userId: number, animeId: number) {
+        const notify: UserNotify = { userId, animeId, status: NotifyStatuses.AnimeRelease }
         return this._notifyUserEpisode(notify)
     }
 
-    public static async notifyUserEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
-        const notify: UserNotify = { user_id, anime_id, status: NotifyStatuses.EpisodeRelease, group_id, episode }
+    public static async notifyUserEpisode(userId: number, animeId: number, groupId: number, episode: number) {
+        const notify: UserNotify = { userId, animeId, status: NotifyStatuses.EpisodeRelease, groupId, episode }
         return this._notifyUserEpisode(notify)
     }
 
-    public static async notifyUserFinalEpisode(user_id: number, anime_id: number, group_id: number, episode: number) {
-        const notify: UserNotify = { user_id, anime_id, status: NotifyStatuses.FinalEpisodeReleased, group_id, episode }
+    public static async notifyUserFinalEpisode(userId: number, animeId: number, groupId: number, episode: number) {
+        const notify: UserNotify = { userId, animeId, status: NotifyStatuses.FinalEpisodeReleased, groupId, episode }
         return this._notifyUserEpisode(notify)
     }
 
-    public static async notifyRelease(anime_id: number) {
-        const notify: Notify = { anime_id, status: NotifyStatuses.AnimeRelease }
+    public static async notifyRelease(animeId: number) {
+        const notify: Notify = { animeId, status: NotifyStatuses.AnimeRelease }
         return this._notifyEpisode(notify)
     }
 
-    public static async notifyEpisode(anime_id: number, group_id: number, episode: number) {
-        const notify: Notify = { anime_id, status: NotifyStatuses.EpisodeRelease, episode, group_id }
+    public static async notifyEpisode(animeId: number, groupId: number, episode: number) {
+        const notify: Notify = { animeId, status: NotifyStatuses.EpisodeRelease, episode, groupId }
         return this._notifyEpisode(notify)
     }
 
-    public static async notifyFinalEpisode(anime_id: number, group_id: number, episode: number) {
-        const notify: Notify = { anime_id, status: NotifyStatuses.FinalEpisodeReleased, episode, group_id }
+    public static async notifyFinalEpisode(animeId: number, groupId: number, episode: number) {
+        const notify: Notify = { animeId, status: NotifyStatuses.FinalEpisodeReleased, episode, groupId }
         return this._notifyEpisode(notify)
     }
 
@@ -55,14 +55,14 @@ export default class NotificationService {
         return Notifications.createAnimeNotifications(notify);
     }
 
-    public static async getUserNotifications({ is_read = false, user_id, period }: getUserNotifications) {
+    public static async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {
         if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
         period = Period.getPeriod(period)
-        return prisma.user_anime_notifications.findMany({
+        return prisma.userAnimeNotifications.findMany({
             where: {
-                is_read,
-                user_id,
-                created_at: {
+                isRead,
+                userId,
+                createdAt: {
                     lte: period[1],
                     gte: period[0]
                 }
@@ -73,25 +73,25 @@ export default class NotificationService {
     public static async getNotifications(period: Date[]) {
         if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
         period = Period.getPeriod(period)
-        return prisma.anime_notifications.findMany({
+        return prisma.animeNotifications.findMany({
             where: {
-                created_at: {
-                    lte: period[1],
-                    gte: period[0]
+                createdAt: {
+                    gte: period[0],
+                    lte: period[1]
                 }
             }
         })
     }
 
-    public static async readNotifications(ids: number[], user_id: number) {
-        return prisma.user_anime_notifications.updateMany({
+    public static async readNotifications(ids: number[], userId: number) {
+        return prisma.userAnimeNotifications.updateMany({
             where: {
-                user_id,
+                userId,
                 id: {
                     in: ids
                 }
             },
-            data: { is_read: true }
+            data: { isRead: true }
         })
     }
 }

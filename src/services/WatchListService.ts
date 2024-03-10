@@ -55,8 +55,8 @@ export default class WatchListService {
         animeInList = animeInList.concat(shikimoriUpdate);
         for (let i = 0; i < watchList.length; i++) {
             const listEntry = watchList[i];
-            const anime_id = animeInList.find((anime) => anime.shikimori_id == listEntry.target_id)!.id;
-            const res = await AnimeList.updateUsersWatchList(id, anime_id, listEntry);
+            const animeId = animeInList.find((anime) => anime.shikimoriId == listEntry.target_id)!.id;
+            const res = await AnimeList.updateUsersWatchList(id, animeId, listEntry);
             // if were updated, remove from array, to prevent inserting
             // prisma does not have upsert many, so we remove updated titles
             const { count } = res;
@@ -65,26 +65,26 @@ export default class WatchListService {
         await AnimeList.createUsersWatchList(id, animeInList, watchList);
     }
 
-    public static async addAnimeToListByIdWithParams(user_id: number, anime_id: number, addingParameters: AddToList) {
-        const user = await User.findUserById(user_id);
-        const animeListEntry = await AnimeList.findWatchListByIds(user.id, anime_id);
+    public static async addAnimeToListByIdWithParams(userId: number, animeId: number, addingParameters: AddToList) {
+        const user = await User.findUserById(userId);
+        const animeListEntry = await AnimeList.findWatchListByIds(user.id, animeId);
         if (animeListEntry) throw new BadRequestError("List entry with this anime already exists");
-        await AnimeList.addAnimeToListByIds(user.id, anime_id, addingParameters)
-        return await AnimeList.findWatchListByIdsWithAnime(user.id, anime_id);
+        await AnimeList.addAnimeToListByIds(user.id, animeId, addingParameters)
+        return await AnimeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 
-    public static async removeAnimeFromList(user_id: number, anime_id: number) {
-        const user = await User.findUserById(user_id);
-        const animeListEntry = await AnimeList.findWatchListByIds(user.id, anime_id);
+    public static async removeAnimeFromList(userId: number, animeId: number) {
+        const user = await User.findUserById(userId);
+        const animeListEntry = await AnimeList.findWatchListByIds(user.id, animeId);
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
-        await AnimeList.removeAnimeFromListById(anime_id);
+        await AnimeList.removeAnimeFromListById(animeId);
     }
 
-    public static async editAnimeListByIdWithParams(user_id: number, anime_id: number, editParameters: AddToList) {
-        const user = await User.findUserById(user_id);
-        const animeListEntry = await AnimeList.findWatchListByIds(user.id, anime_id);
+    public static async editAnimeListByIdWithParams(userId: number, animeId: number, editParameters: AddToList) {
+        const user = await User.findUserById(userId);
+        const animeListEntry = await AnimeList.findWatchListByIds(user.id, animeId);
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
-        await AnimeList.updateAnimeListByAnimeId(anime_id, editParameters)
-        return await AnimeList.findWatchListByIdsWithAnime(user.id, anime_id);
+        await AnimeList.updateAnimeListByAnimeId(animeId, editParameters)
+        return await AnimeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 }

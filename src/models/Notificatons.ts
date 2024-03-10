@@ -3,25 +3,25 @@ import { prisma } from "../db";
 
 export default class Notifications {
     public static async createUserAnimeNotifications(notify: UserNotify){
-        const {user_id, anime_id, status, group_id, episode} = notify;
-        return prisma.user_anime_notifications.create({
+        const {userId, animeId, status, groupId, episode} = notify;
+        return prisma.userAnimeNotifications.create({
             data: {
-                user_id, 
-                anime_id,
+                userId, 
+                animeId,
                 status,
-                group_id,
+                groupId,
                 episode,
             }
         })
     }
 
     public static async createAnimeNotifications(notify: Notify){
-        const {anime_id, status, group_id, episode} = notify
-        return prisma.anime_notifications.create({
+        const {animeId, status, groupId, episode} = notify
+        return prisma.animeNotifications.create({
             data: {
-                anime_id,
+                animeId,
                 status,
-                group_id,
+                groupId,
                 episode,
             }
         })

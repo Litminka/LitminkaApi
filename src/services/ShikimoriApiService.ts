@@ -1,4 +1,4 @@
-import { User, Integration } from "@prisma/client";
+import { User, Integration, Prisma } from "@prisma/client";
 import fetch, { Headers } from "node-fetch";
 import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/index";
 import { prisma } from '../db';
@@ -28,10 +28,10 @@ export default class ShikimoriApiService implements iShikimoriApi {
     private async getToken(): Promise<boolean> {
         let token = null;
         if (!this.user) return false;
-        if (this.user.integration!.shikimori_refresh_token === null) {
-            token = await prisma.shikimori_Link_Token.findFirst({
+        if (this.user.integration!.shikimoriRefreshToken === null) {
+            token = await prisma.shikimoriLinkToken.findFirst({
                 where: {
-                    user_id: this.user.id
+                    userId: this.user.id
                 },
                 select: {
                     token: true,
@@ -45,10 +45,10 @@ export default class ShikimoriApiService implements iShikimoriApi {
         });
         // If token exists, then we assume user has just linked shikimori
         if (token) {
-            requestBody.append("code", this.user.integration!.shikimori_code!);
+            requestBody.append("code", this.user.integration!.shikimoriCode!);
             requestBody.append("redirect_uri", `${process.env.APP_URL}/shikimori/link?token=${token!.token}`);
         } else {
-            requestBody.append("refresh_token", this.user.integration!.shikimori_refresh_token!)
+            requestBody.append("refresh_token", this.user.integration!.shikimoriRefreshToken!)
         }
         const response = await fetch(`${process.env.SHIKIMORI_URL}/oauth/token`, {
             method: "POST",
@@ -72,24 +72,27 @@ export default class ShikimoriApiService implements iShikimoriApi {
         if (status === RequestStatuses.BadRequest) {
             await prisma.integration.update({
                 where: {
-                    user_id: this.user.id
+                    userId: this.user.id
                 },
                 data: {
-                    shikimori_token: null,
-                    shikimori_refresh_token: null,
-                    shikimori_id: null,
-                    shikimori_code: null,
+                    shikimoriToken: null,
+                    shikimoriRefreshToken: null,
+                    shikimoriId: null,
+                    shikimoriCode: null,
                 }
             });
             return false;
         }
         const data: any = await response.json();
-        const integrationBody: any = { shikimori_token: data.access_token }
+        const integrationBody = {
+            shikimoriToken: data.access_token,
+            shikimoriRefreshToken: undefined
+        } satisfies Prisma.IntegrationUpdateInput;
         // If user doesn't have a refresh token, add it
-        if (token) integrationBody.shikimori_refresh_token = data.refresh_token;
+        if (token) integrationBody.shikimoriRefreshToken = data.refresh_token;
         this.user.integration = await prisma.integration.update({
             where: {
-                user_id: this.user.integration!.user_id
+                userId: this.user.integration!.userId
             },
             data: integrationBody
         });
@@ -114,8 +117,8 @@ export default class ShikimoriApiService implements iShikimoriApi {
     private async requestMaker(url: string, method: RequestTypes, auth = false, requestData = null) {
         if (auth) {
             if (!this.user) return false;
-            if (this.user.integration === null || this.user.integration.shikimori_code === null) return false;
-            if (this.user.integration.shikimori_token === null) {
+            if (this.user.integration === null || this.user.integration.shikimoriCode === null) return false;
+            if (this.user.integration.shikimoriToken === null) {
                 const result = await this.getToken();
                 if (result === false) return false;
             };
@@ -130,7 +133,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             const headers = new Headers();
 
             headers.append("User-Agent", process.env.SHIKIMORI_AGENT!);
-            if (auth) headers.append("Authorization", `Bearer ${this.user!.integration!.shikimori_token}`);
+            if (auth) headers.append("Authorization", `Bearer ${this.user!.integration!.shikimoriToken}`);
             const options: options = {
                 method, headers
             };
@@ -157,8 +160,8 @@ export default class ShikimoriApiService implements iShikimoriApi {
 
     public async getUserList(): Promise<ShikimoriWatchList[] | ServerError | false> {
         if (!this.user) return false;
-        if (this.user.integration!.shikimori_id === null) return false;
-        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimori_id}&target_type=Anime`, "GET");
+        if (this.user.integration!.shikimoriId === null) return false;
+        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimoriId}&target_type=Anime`, "GET");
     }
 
     public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[] | ServerError> {

@@ -1,37 +1,36 @@
 import { prisma } from "../db";
-import { FollowAnime, ShikimoriWhoAmI } from "../ts";
 
 export default class Integration {
     
     public static async findByShikimoriId(id: number){
         return await prisma.integration.findFirst({
             where: {
-                shikimori_id: id
+                shikimoriId: id
             }
         });
     }
 
-    public static async updateUserShikimoriId(user_id: number, shikimori_id: number){
+    public static async updateUserShikimoriId(userId: number, shikimoriId: number){
         await prisma.integration.update({
             where: {
-                user_id
+                userId
             },
             data: {
-                shikimori_id
+                shikimoriId
             }
         });
     }
 
-    public static async clear(user_id: number){
+    public static async clear(userId: number){
         await prisma.integration.update({
             where: {
-                user_id
+                userId
             },
             data: {
-                shikimori_code: null,
-                shikimori_token: null,
-                shikimori_refresh_token: null,
-                shikimori_id: null,
+                shikimoriCode: null,
+                shikimoriToken: null,
+                shikimoriRefreshToken: null,
+                shikimoriId: null,
             }
         });
     }

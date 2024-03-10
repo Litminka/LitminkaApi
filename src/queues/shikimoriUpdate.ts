@@ -1,10 +1,8 @@
 
 import { Queue, Worker, Job } from 'bullmq';
 import { prisma } from "../db";
-import { KodikAnimeFull, checkAnime } from '../ts/kodik';
 import { Anime } from '@prisma/client';
 import ShikimoriApiService from '../services/ShikimoriApiService';
-import groupArrSplice from '../helper/groupsplice';
 import { ServerError, ShikimoriAnimeFull } from '../ts';
 import AnimeUpdateService from '../services/AnimeUpdateService';
 import { RequestStatuses } from '../ts/enums';
@@ -22,10 +20,10 @@ const worker = new Worker("shikimoriUpdate", async (job: Job) => {
         where: {
             OR: [
                 {
-                    franchise_name: null
+                    franchiseName: null
                 },
                 {
-                    japanese_name: null,
+                    japaneseName: null,
                 }
             ]
         }
@@ -37,7 +35,7 @@ const worker = new Worker("shikimoriUpdate", async (job: Job) => {
     const shikimoriApi = new ShikimoriApiService();
     const shikimoriAnimeFull: ShikimoriAnimeFull[] = []
     for (const single of anime) {
-        const req = await shikimoriApi.getAnimeById(single.shikimori_id);
+        const req = await shikimoriApi.getAnimeById(single.shikimoriId);
         const error = req as ServerError;
         if (error.reqStatus === RequestStatuses.InternalServerError) {
             throw error;

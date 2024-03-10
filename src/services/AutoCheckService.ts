@@ -40,18 +40,16 @@ export default class AutoCheckService {
                 NotificationService.notifyRelease(anime.id);
                 // notify all followers about it
                 for (const single of follow.info) {
-                  
-                    NotificationService.notifyUserRelease(single.user_id, anime.id);
-                    logger.info(`Need to notify user ${single.user_id} that ${anime.name} began releasing`)
-                  
+
+                    NotificationService.notifyUserRelease(single.userId, anime.id);
+                    logger.info(`Need to notify user ${single.userId} that ${anime.name} began releasing`)
+
                     // delete follow from db
                     prisma.follow.deleteMany({
                         where: {
-                            AND: [
-                                { anime_id: anime.id, },
-                                { user_id: single.user_id }
-                            ]
-                        }
+                            animeId: anime.id,
+                            userId: single.userId
+                        },
                     })
                 }
             }
@@ -62,13 +60,13 @@ export default class AutoCheckService {
 
         let followedTranslationIds: number[] = []
         if (haveFollow && follow.status === FollowTypes.Follow) {
-            followedTranslationIds = follow.info.map(single => single.translation!.group_id);
+            followedTranslationIds = follow.info.map(single => single.translation!.groupId);
         }
-        for (const translation of anime.anime_translations) {
-            const kodikTranslation = kodikAnime.translations.find(kodikTranslation => translation.group_id === kodikTranslation.id)
+        for (const translation of anime.animeTranslations) {
+            const kodikTranslation = kodikAnime.translations.find(kodikTranslation => translation.groupId === kodikTranslation.id)
             if (kodikTranslation === undefined) continue;
-            if (kodikTranslation.episodes_count === translation.current_episodes) continue;
-            const isFinalEpisode = kodikTranslation.episodes_count === anime.max_episodes;
+            if (kodikTranslation.episodes_count === translation.currentEpisodes) continue;
+            const isFinalEpisode = kodikTranslation.episodes_count === anime.maxEpisodes;
             logger.info(`NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`);
             if (isFinalEpisode) {
                 NotificationService.notifyFinalEpisode(anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
@@ -78,31 +76,30 @@ export default class AutoCheckService {
             // if no one has followed this translation, skip
             if (followedTranslationIds.indexOf(kodikTranslation.id) < 0) continue;
             for (const single of follow!.info) {
-                if (single.translation?.group_id !== kodikTranslation.id) continue;
+                if (single.translation?.groupId !== kodikTranslation.id) continue;
                 // notify users
                 if (!isFinalEpisode) {
 
-                    NotificationService.notifyUserEpisode(single.user_id, anime.id, kodikTranslation.id, kodikTranslation.episodes_count)
-                    logger.info(`Need to notify user ${single.user_id} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`)
+                    NotificationService.notifyUserEpisode(single.userId, anime.id, kodikTranslation.id, kodikTranslation.episodes_count)
+                    logger.info(`Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`)
 
                     continue;
                 }
                 NotificationService.notifyUserFinalEpisode(
-                    single.user_id,
+                    single.userId,
                     anime.id,
                     kodikTranslation.id,
                     kodikTranslation.episodes_count
                 );
                 prisma.follow.deleteMany({
                     where: {
-                        AND: [
-                            { anime_id: anime.id, },
-                            { translation_id: translation.id, },
-                            { user_id: single.user_id }
-                        ]
+                        animeId: anime.id,
+                        translationId: translation.id,
+                        userId: single.userId
+
                     }
                 })
-                logger.info(`Need to notify user ${single.user_id} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`)
+                logger.info(`Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`)
             }
         }
 

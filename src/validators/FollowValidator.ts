@@ -3,17 +3,17 @@ import { validationError } from "../middleware/validationError";
 
 const FollowValidation = (): any[] => {
     return [
+        param("animeId").bail().isInt().bail().toInt(),
         body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
-        body("group_name").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail(),
-        param("anime_id").notEmpty().bail().isInt().bail().toInt(),
+        body("groupName").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail(),
         validationError
     ];
 };
 
 const UnFollowValidation = (): any[] => {
     return [
-        body("group_name").optional().isString().bail(),
-        param("anime_id").notEmpty().bail().isInt().bail().toInt(),
+        param("animeId").bail().isInt().bail().toInt(),
+        body("groupName").optional().isString().bail(),
         validationError,
     ];
 };

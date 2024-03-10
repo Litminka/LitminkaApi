@@ -1,91 +1,88 @@
-import { Anime } from "@prisma/client";
+import { Anime, Prisma } from "@prisma/client";
 import { prisma } from "../db";
 import { AddToList, ShikimoriAnime, ShikimoriAnimeFull, ShikimoriWatchList } from "../ts";
 
-export default class AnimeList{
-    public static async updateUsersWatchList(user_id:number, anime_id: number, listEntry: ShikimoriWatchList){
-        return await prisma.anime_list.updateMany({
+export default class AnimeList {
+    public static async updateUsersWatchList(userId: number, animeId: number, listEntry: ShikimoriWatchList) {
+        return await prisma.animeList.updateMany({
             where: {
                 AND: {
-                    user_id,
-                    anime_id,
+                    userId,
+                    animeId,
                 }
             },
             data: {
                 status: listEntry.status,
-                watched_episodes: listEntry.episodes,
+                watchedEpisodes: listEntry.episodes,
                 rating: listEntry.score
             }
         });
     }
 
-    public static async createUsersWatchList(user_id: number, animeInList: Anime[], watchList: ShikimoriWatchList[]){
-        await prisma.anime_list.createMany({
+    public static async createUsersWatchList(userId: number, animeInList: Anime[], watchList: ShikimoriWatchList[]) {
+        await prisma.animeList.createMany({
             data: watchList.map((listEntry) => {
                 return {
-                    is_favorite: false,
+                    isFavorite: false,
                     status: listEntry.status,
-                    watched_episodes: listEntry.episodes,
-                    user_id,
-                    anime_id: animeInList.find((anime) => anime.shikimori_id == listEntry.target_id)!.id,
+                    watchedEpisodes: listEntry.episodes,
+                    userId,
+                    animeId: animeInList.find((anime) => anime.shikimoriId == listEntry.target_id)!.id,
                     rating: listEntry.score,
-                }
+                } satisfies Prisma.AnimeListCreateManyInput
             })
         });
     }
 
-    public static async addAnimeToListByIds(user_id: number, anime_id: number, parameters: AddToList){
-        const { is_favorite, rating, status, watched_episodes } = parameters as AddToList;
-        await prisma.anime_list.create({
+    public static async addAnimeToListByIds(userId: number, animeId: number, parameters: AddToList) {
+        const { isFavorite, rating, status, watchedEpisodes } = parameters as AddToList;
+        await prisma.animeList.create({
             data: {
-                is_favorite,
+                isFavorite,
                 status,
-                watched_episodes,
+                watchedEpisodes,
                 rating,
-                anime_id,
-                user_id
+                animeId,
+                userId
             }
         });
     }
 
-    public static async updateAnimeListByAnimeId(anime_id:number, parameters: AddToList){
-        const { is_favorite, rating, status, watched_episodes } = parameters as AddToList;
-        await prisma.anime_list.updateMany({
-            where: { anime_id},
+    public static async updateAnimeListByAnimeId(animeId: number, parameters: AddToList) {
+        const { isFavorite, rating, status, watchedEpisodes } = parameters as AddToList;
+        await prisma.animeList.updateMany({
+            where: { animeId },
             data: {
-                is_favorite,
+                isFavorite,
                 status,
-                watched_episodes,
+                watchedEpisodes,
                 rating,
             }
         });
     }
 
-    public static async findWatchListByIds(user_id: number, anime_id: number){
-        return await prisma.anime_list.findFirst({
+    public static async findWatchListByIds(userId: number, animeId: number) {
+        return await prisma.animeList.findFirst({
             where: {
                 AND: {
-                    user_id,
-                    anime_id
+                    userId,
+                    animeId
                 }
             }
         });
     }
 
-    public static async removeAnimeFromListById(anime_id:number){
-        await prisma.anime_list.deleteMany({
-            where: { anime_id },
+    public static async removeAnimeFromListById(animeId: number) {
+        await prisma.animeList.deleteMany({
+            where: { animeId },
         });
 
     }
 
-    public static async findWatchListByIdsWithAnime(user_id: number, anime_id: number){
-        return await prisma.anime_list.findFirst({
+    public static async findWatchListByIdsWithAnime(userId: number, animeId: number) {
+        return await prisma.animeList.findFirst({
             where: {
-                AND: {
-                    user_id,
-                    anime_id
-                }
+                userId, animeId
             },
             include: {
                 anime: true

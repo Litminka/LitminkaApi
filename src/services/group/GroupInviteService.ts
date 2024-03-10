@@ -1,54 +1,54 @@
 import BaseError from "../../errors/BaseError";
 import { RequestStatuses } from "../../ts/enums";
 import { prisma } from "../../db";
-import { User, Group_list, Group_list_invites } from "@prisma/client";
+import { User, GroupList, GroupListInvites } from "@prisma/client";
 
 type UserWithGroup = User & {
-    owned_groups: Group_list[]
+    ownedGroups: GroupList[]
 }
 
 type UserWithInvites = User & {
-    group_invites: Group_list_invites[],
+    groupInvites: GroupListInvites[],
 }
 
 interface InviteUser {
     owner: UserWithGroup,
-    user_id: number,
-    group_id: number
+    userId: number,
+    groupId: number
 }
 
 interface InviteAction {
     user: UserWithInvites,
-    invite_id: number,
+    inviteId: number,
     modifyList?: boolean
 }
 
 export default class GroupInviteService {
-    public static async getUserInvites(user_id: number) {
-        return prisma.group_list_invites.findMany({
-            where: { user_id }
+    public static async getUserInvites(userId: number) {
+        return prisma.groupListInvites.findMany({
+            where: { userId }
         })
     }
 
-    public static async inviteUser({ owner, user_id, group_id }: InviteUser) {
-        if (user_id === owner.id) {
+    public static async inviteUser({ owner, userId, groupId }: InviteUser) {
+        if (userId === owner.id) {
             throw new BaseError('cant_invite_yourself', {
                 status: RequestStatuses.UnprocessableContent
             })
         }
 
-        if (!owner.owned_groups.some(group => group.id === group_id)) {
+        if (!owner.ownedGroups.some(group => group.id === groupId)) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
             })
         }
 
-        await prisma.user.findFirstOrThrow({ where: { id: user_id } });
+        await prisma.user.findFirstOrThrow({ where: { id: userId } });
 
-        const userInvite = await prisma.group_list_invites.findMany({
+        const userInvite = await prisma.groupListInvites.findMany({
             where: {
-                group_id,
-                user_id
+                groupId,
+                userId
             }
         })
 
@@ -58,10 +58,10 @@ export default class GroupInviteService {
             })
         }
 
-        const member = await prisma.group_list_members.findFirst({
+        const member = await prisma.groupListMembers.findFirst({
             where: {
-                user_id,
-                group_id
+                userId,
+                groupId
             }
         })
 
@@ -71,30 +71,30 @@ export default class GroupInviteService {
             })
         }
 
-        await prisma.group_list_invites.create({
-            data: { group_id, user_id }
+        await prisma.groupListInvites.create({
+            data: { groupId, userId }
         });
     }
 
-    public static async deleteInvite({ owner, user_id, group_id }: InviteUser) {
-        if (user_id === owner.id) {
+    public static async deleteInvite({ owner, userId, groupId }: InviteUser) {
+        if (userId === owner.id) {
             throw new BaseError('cant_delete_yourself', {
                 status: RequestStatuses.UnprocessableContent
             })
         }
 
-        if (!owner.owned_groups.some(group => group.id === group_id)) {
+        if (!owner.ownedGroups.some(group => group.id === groupId)) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
             })
         }
 
-        await prisma.user.findFirstOrThrow({ where: { id: user_id } });
+        await prisma.user.findFirstOrThrow({ where: { id: userId } });
 
-        const userInvite = await prisma.group_list_invites.findMany({
+        const userInvite = await prisma.groupListInvites.findMany({
             where: {
-                group_id,
-                user_id
+                groupId,
+                userId
             }
         })
 
@@ -104,38 +104,38 @@ export default class GroupInviteService {
             })
         }
 
-        await prisma.group_list_invites.deleteMany({
-            where: { group_id, user_id }
+        await prisma.groupListInvites.deleteMany({
+            where: { groupId, userId }
         });
     }
 
-    public static async acceptInvite({ user, invite_id, modifyList = false }: InviteAction) {
+    public static async acceptInvite({ user, inviteId, modifyList = false }: InviteAction) {
 
-        const invite = user.group_invites.find(invite => invite.id === invite_id);
+        const invite = user.groupInvites.find(invite => invite.id === inviteId);
         if (!invite) {
             throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
         }
 
-        await prisma.group_list_invites.delete({ where: { id: invite.id } })
+        await prisma.groupListInvites.delete({ where: { id: invite.id } })
 
-        await prisma.group_list_members.create({
+        await prisma.groupListMembers.create({
             data: {
-                group_id: invite.group_id,
-                user_id: user.id,
-                override_list: modifyList
+                groupId: invite.groupId,
+                userId: user.id,
+                overrideList: modifyList
             }
         })
 
     }
 
-    public static async denyInvite({ user, invite_id }: InviteAction) {
-        const invite = user.group_invites.find(invite => invite.id === invite_id);
+    public static async denyInvite({ user, inviteId }: InviteAction) {
+        const invite = user.groupInvites.find(invite => invite.id === inviteId);
 
         if (!invite) {
             throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
         }
 
-        await prisma.group_list_invites.delete({ where: { id: invite.id } })
+        await prisma.groupListInvites.delete({ where: { id: invite.id } })
     }
 }
 
