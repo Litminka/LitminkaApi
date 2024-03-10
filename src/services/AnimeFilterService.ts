@@ -24,7 +24,7 @@ export class AnimeFilterSelector {
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
         return prisma.anime.findMany({
             where: byGenre(),
-            select: { id: true, english_name: true, name: true, slug: true }
+            select: { id: true, englishName: true, name: true, slug: true }
         })
     }
 }
