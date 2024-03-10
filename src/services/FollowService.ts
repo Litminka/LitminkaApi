@@ -1,4 +1,4 @@
-import { Anime_translation } from "@prisma/client";
+import { AnimeTranslation } from "@prisma/client";
 import { FollowAnime, followType, info } from "../ts/index";
 import { AnimeStatuses, FollowTypes } from "../ts/enums";
 import FollowModel from "../models/Follow";
@@ -7,10 +7,10 @@ import User from "../models/User";
 import AnimeModel from "../models/Anime";
 type follows = {
     anime: {
-        shikimori_id: number;
+        shikimoriId: number;
     };
-    translation?: Anime_translation | null;
-    user_id: number;
+    translation?: AnimeTranslation | null;
+    userId: number;
     status: string;
 }[]
 
@@ -20,68 +20,68 @@ export default class FollowService {
     public getFollowsMap(follows: follows): Map<number, followType> {
         const followsMap = new Map<number, followType>()
         for (const follow of follows) {
-            if (followsMap.has(follow.anime.shikimori_id)) {
-                const element = followsMap.get(follow.anime.shikimori_id);
-                const { translation, user_id } = follow;
+            if (followsMap.has(follow.anime.shikimoriId)) {
+                const element = followsMap.get(follow.anime.shikimoriId);
+                const { translation, userId } = follow;
                 if (translation) {
-                    element!.info.push({    
+                    element!.info.push({
                         translation,
-                        user_id
+                        userId
                     });
                     continue;
                 }
                 element!.info.push({
-                    user_id
+                    userId
                 });
                 continue;
             }
-            const { anime, user_id, status, translation } = follow;
+            const { anime, userId, status, translation } = follow;
             const info: info = {
-                user_id
+                userId
             }
             if (translation) info.translation = translation
             const newFollow: followType = {
                 anime, info: [info], status,
             }
-            followsMap.set(follow.anime.shikimori_id, newFollow);
+            followsMap.set(follow.anime.shikimoriId, newFollow);
         }
         return followsMap;
     }
 
-    private static async followUpdate(status: FollowTypes, anime_id: number, user_id: number, translation_id?: number, translation_group_name? :string ){
-        const followAnime: FollowAnime = {anime_id, user_id, status, translation_id, translation_group_name}
+    private static async followUpdate(status: FollowTypes, animeId: number, userId: number, translationId?: number, translationGroupName?: string) {
+        const followAnime: FollowAnime = { animeId, userId, status, translationId, translationGroupName }
         const follow = await FollowModel.findFollow(followAnime)
         if (follow) throw new UnprocessableContentError(`This anime is already followed as \"${status}\"`);
         await User.followAnime(followAnime);
     }
 
-    public static async follow(anime_id: number, user_id: number, type: FollowTypes, group_name: string){
-        const anime = await AnimeModel.findWithTranlsations(anime_id);
+    public static async follow(animeId: number, userId: number, type: FollowTypes, groupName: string) {
+        const anime = await AnimeModel.findWithTranlsations(animeId);
         if (type === FollowTypes.Follow) {
-            const translation = anime.anime_translations.find(anime => anime.group.name == group_name)
-            if (translation === undefined) 
+            const translation = anime.animeTranslations.find(anime => anime.group.name == groupName)
+            if (translation === undefined)
                 throw new UnprocessableContentError("This anime doesn't have given group");
-            if (anime.current_episodes >= anime.max_episodes && anime.current_episodes === translation.current_episodes) {
+            if (anime.currentEpisodes >= anime.maxEpisodes && anime.currentEpisodes === translation.currentEpisodes) {
                 throw new UnprocessableContentError("Can't follow non ongoing anime");
             }
-            await FollowService.followUpdate(FollowTypes.Follow, anime.id, user_id, translation.id, translation.group.name);
+            await FollowService.followUpdate(FollowTypes.Follow, anime.id, userId, translation.id, translation.group.name);
         }
         if (type === FollowTypes.Announcement) {
             if (anime.status !== AnimeStatuses.Announced)
                 throw new UnprocessableContentError("Can't follow non announced anime");
-            await FollowService.followUpdate(FollowTypes.Announcement, anime.id, user_id);
+            await FollowService.followUpdate(FollowTypes.Announcement, anime.id, userId);
         }
     }
 
-    public static async unfollow(anime_id: number, user_id: number, group_name?: string){
-        const anime = await AnimeModel.findWithTranlsations(anime_id);
-        let unfollow: FollowAnime = {user_id, anime_id} as FollowAnime;
-        if (!group_name) {
+    public static async unfollow(animeId: number, userId: number, groupName?: string) {
+        const anime = await AnimeModel.findWithTranlsations(animeId);
+        let unfollow: FollowAnime = { userId, animeId } as FollowAnime;
+        if (!groupName) {
             return await FollowModel.removeFollow(unfollow);
         }
-        const translation = anime.anime_translations.find(anime => anime.group.name == group_name);
+        const translation = anime.animeTranslations.find(anime => anime.group.name == groupName);
         if (translation === undefined) throw new UnprocessableContentError("This anime doesn't have given group");
-        unfollow.translation_id = translation.id;
+        unfollow.translationId = translation.id;
         return await FollowModel.removeFollow(unfollow)
     }
 

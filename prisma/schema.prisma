@@ -208,5 +208,5 @@ model AnimeNotifications {
   episode    Int?
   groupId    Int?
   group      Group?   @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  created_at DateTime @default(now())
+  createdAt DateTime @default(now())
 }

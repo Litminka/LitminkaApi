@@ -1,4 +1,4 @@
-import { Anime, Anime_translation } from "@prisma/client";
+import { Anime, AnimeTranslation } from "@prisma/client";
 import { animeKind, animeStatus, pgCapitalizedRating } from ".";
 import { RequestStatuses } from "./enums";
 
@@ -138,7 +138,7 @@ export type translation = {
 };
 
 export type checkAnime = (Anime & {
-    anime_translations: Anime_translation[];
+    animeTranslations: AnimeTranslation[];
 });
 
 export type translations = {

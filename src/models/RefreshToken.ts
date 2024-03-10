@@ -5,7 +5,7 @@ export default class RefreshToken {
         prisma.refreshToken.create({
             data: {
                 token: refreshToken,
-                user_id: id
+                userId: id
             }
         });
     }

@@ -1,39 +1,39 @@
-import { Group_list, Group_list_members } from "@prisma/client"
+import { GroupList, GroupListMembers } from "@prisma/client"
 import { prisma } from "../../db"
 import BaseError from "../../errors/BaseError"
 import { AddWithAnime } from "../../ts"
 import { RequestStatuses } from "../../ts/enums"
 
 interface AddToGroupList {
-    user_id: number,
-    group_id: number,
+    userId: number,
+    groupId: number,
     data: AddWithAnime
 }
 
 interface DeleteFromGroupList {
-    user_id: number,
-    group_id: number,
-    anime_id: number
+    userId: number,
+    groupId: number,
+    animeId: number
 }
 
-type GroupWithMembers = Group_list & {
-    members: Group_list_members[]
+type GroupWithMembers = GroupList & {
+    members: GroupListMembers[]
 }
 
 export default class GroupAnimeListService {
-    public static async get(user_id: number, group_id: number) {
-        await prisma.group_list_members.findFirstOrThrow({
+    public static async get(userId: number, groupId: number) {
+        await prisma.groupListMembers.findFirstOrThrow({
             where: {
                 AND: {
-                    group_id,
-                    user_id
+                    groupId,
+                    userId
                 }
             }
         })
 
-        return await prisma.group_anime_list.findMany({
+        return await prisma.groupAnimeList.findMany({
             where: {
-                group_id
+                groupId
             },
             include: {
                 anime: true,
@@ -41,11 +41,11 @@ export default class GroupAnimeListService {
         })
     }
 
-    public static async add({ user_id, group_id, data }: AddToGroupList) {
-        const group = await prisma.group_list.findFirstOrThrow({
+    public static async add({ userId, groupId, data }: AddToGroupList) {
+        const group = await prisma.groupList.findFirstOrThrow({
             where: {
-                id: group_id,
-                owner_id: user_id
+                id: groupId,
+                ownerId: userId
             },
             include: {
                 list: true,
@@ -53,30 +53,30 @@ export default class GroupAnimeListService {
             }
         })
 
-        if (group.list.some(list => list.anime_id == data.anime_id)) {
+        if (group.list.some(list => list.animeId == data.animeId)) {
             throw new BaseError('anime_already_in_list', { status: RequestStatuses.UnprocessableContent });
         }
 
         await GroupAnimeListService.updateMembers(group, data);
 
-        const { anime_id, is_favorite, rating, status, watched_episodes } = data;
-        return await prisma.group_anime_list.create({
+        const { animeId, isFavorite, rating, status, watchedEpisodes } = data;
+        return await prisma.groupAnimeList.create({
             data: {
-                group_id,
-                anime_id,
-                is_favorite,
+                groupId,
+                animeId,
+                isFavorite,
                 rating,
                 status,
-                watched_episodes
+                watchedEpisodes
             }
         })
     }
 
-    public static async update({ user_id, group_id, data }: AddToGroupList) {
-        const group = await prisma.group_list.findFirstOrThrow({
+    public static async update({ userId, groupId, data }: AddToGroupList) {
+        const group = await prisma.groupList.findFirstOrThrow({
             where: {
-                id: group_id,
-                owner_id: user_id
+                id: groupId,
+                ownerId: userId
             },
             include: {
                 list: true,
@@ -84,34 +84,34 @@ export default class GroupAnimeListService {
             }
         })
 
-        if (!group.list.some(list => list.anime_id == data.anime_id)) {
+        if (!group.list.some(list => list.animeId == data.animeId)) {
             throw new BaseError('no_anime_in_list', { status: RequestStatuses.UnprocessableContent });
         }
 
         await GroupAnimeListService.updateMembers(group, data);
 
-        const { anime_id, is_favorite, rating, status, watched_episodes } = data;
-        await prisma.group_anime_list.updateMany({
+        const { animeId, isFavorite, rating, status, watchedEpisodes } = data;
+        await prisma.groupAnimeList.updateMany({
             where: {
-                anime_id, group_id
+                animeId, groupId
             },
             data: {
-                group_id,
-                is_favorite,
+                groupId,
+                isFavorite,
                 rating,
                 status,
-                watched_episodes
+                watchedEpisodes
             }
         })
 
 
     }
 
-    public static async delete({ user_id, group_id, anime_id }: DeleteFromGroupList) {
-        const group = await prisma.group_list.findFirstOrThrow({
+    public static async delete({ userId, groupId, animeId }: DeleteFromGroupList) {
+        const group = await prisma.groupList.findFirstOrThrow({
             where: {
-                id: group_id,
-                owner_id: user_id
+                id: groupId,
+                ownerId: userId
             },
             include: {
                 list: true,
@@ -119,23 +119,23 @@ export default class GroupAnimeListService {
             }
         })
 
-        if (!group.list.some(list => list.anime_id == anime_id)) {
+        if (!group.list.some(list => list.animeId == animeId)) {
             throw new BaseError('no_anime_in_list', { status: RequestStatuses.UnprocessableContent });
         }
 
-        await prisma.group_anime_list.deleteMany({
+        await prisma.groupAnimeList.deleteMany({
             where: {
-                anime_id, group_id
+                animeId, groupId
             }
         })
 
-        const members = group.members.filter(member => member.override_list);
-        const memberIds = members.map(user => user.user_id)
+        const members = group.members.filter(member => member.overrideList);
+        const memberIds = members.map(user => user.userId)
 
-        await prisma.anime_list.deleteMany({
+        await prisma.animeList.deleteMany({
             where: {
-                anime_id,
-                user_id: {
+                animeId,
+                userId: {
                     in: memberIds
                 }
             }
@@ -143,45 +143,45 @@ export default class GroupAnimeListService {
     }
 
     private static async updateMembers(group: GroupWithMembers, data: AddWithAnime) {
-        const { anime_id, is_favorite, rating, status, watched_episodes } = data;
-        const members = group.members.filter(member => member.override_list);
-        const memberIds = members.map(user => user.user_id)
+        const { animeId, isFavorite, rating, status, watchedEpisodes } = data;
+        const members = group.members.filter(member => member.overrideList);
+        const memberIds = members.map(user => user.userId)
 
-        const membersListEntries = await prisma.anime_list.findMany({
+        const membersListEntries = await prisma.animeList.findMany({
             where: {
-                user_id: {
+                userId: {
                     in: memberIds,
                 },
-                anime_id
+                animeId
             }
         })
-        const membersWithListEntries: number[] = membersListEntries.map(list => list.user_id);
+        const membersWithListEntries: number[] = membersListEntries.map(list => list.userId);
         const membersWithoutListEntries: number[] = memberIds.filter(id => membersWithListEntries.indexOf(id) === -1);
 
-        await prisma.anime_list.updateMany({
+        await prisma.animeList.updateMany({
             where: {
-                anime_id,
-                user_id: {
+                animeId,
+                userId: {
                     in: membersWithListEntries
                 }
             },
             data: {
-                is_favorite,
+                isFavorite,
                 rating,
                 status,
-                watched_episodes
+                watchedEpisodes
             }
         })
 
         for (const id of membersWithoutListEntries) {
-            await prisma.anime_list.create({
+            await prisma.animeList.create({
                 data: {
-                    anime_id,
-                    is_favorite,
+                    animeId,
+                    isFavorite,
                     status,
-                    watched_episodes,
+                    watchedEpisodes,
                     rating,
-                    user_id: id
+                    userId: id
                 }
             })
         }

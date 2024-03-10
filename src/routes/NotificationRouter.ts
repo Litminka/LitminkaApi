@@ -8,7 +8,7 @@ const router = Router();
 
 // Private methods
 router.use(auth)
-router.get("/user", [...PeriodValidator(), validateBool('is_read')], wrap(NotificationController.getUserNotifications))
+router.get("/user", [...PeriodValidator(), validateBool('isRead')], wrap(NotificationController.getUserNotifications))
 router.get("", ...PeriodValidator(), wrap(NotificationController.getNotifications))
 router.post("/read", ...validateArrayId('id'), wrap(NotificationController.readNotifications))
 

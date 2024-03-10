@@ -1,30 +1,30 @@
-import { User, Group_list } from "@prisma/client";
+import { User, GroupList } from "@prisma/client";
 import { prisma } from "../../db";
 import BaseError from "../../errors/BaseError";
 import { RequestStatuses } from "../../ts/enums";
 
 
 interface EditMember {
-    user_id: number,
-    group_id: number,
+    userId: number,
+    groupId: number,
     modifyList?: boolean
 }
 
 type UserWithGroup = User & {
-    owned_groups: Group_list[]
+    ownedGroups: GroupList[]
 }
 
 interface KickUser {
     user: UserWithGroup,
-    group_id: number,
-    kick_id: number
+    groupId: number,
+    kickId: number
 }
 
 export default class GroupMemberService {
-    public static async getMemberGroup(user_id: number) {
+    public static async getMemberGroup(userId: number) {
 
-        return prisma.group_list_members.findMany({
-            where: { user_id },
+        return prisma.groupListMembers.findMany({
+            where: { userId },
             include: {
                 group: true,
             }
@@ -32,76 +32,76 @@ export default class GroupMemberService {
 
     }
 
-    public static async getGroupMembers(user_id: number, group_id: number) {
+    public static async getGroupMembers(userId: number, groupId: number) {
 
-        await prisma.group_list_members.findFirstOrThrow({
+        await prisma.groupListMembers.findFirstOrThrow({
             where: {
-                user_id, group_id
+                userId, groupId
             }
         });
 
-        return prisma.group_list.findMany({
-            where: { id: group_id },
+        return prisma.groupList.findMany({
+            where: { id: groupId },
             include: {
                 members: true,
             }
         });
     }
 
-    public static async leaveGroup(user_id: number, group_id: number) {
+    public static async leaveGroup(userId: number, groupId: number) {
 
-        const group = await prisma.group_list.findFirstOrThrow({
+        const group = await prisma.groupList.findFirstOrThrow({
             where: {
-                id: group_id,
+                id: groupId,
             },
             include: {
                 members: true
             }
         })
 
-        if (group.owner_id === user_id) throw new BaseError("cant_leave_if_owner", { status: RequestStatuses.UnprocessableContent });
+        if (group.ownerId === userId) throw new BaseError("cant_leave_if_owner", { status: RequestStatuses.UnprocessableContent });
 
-        if (!group.members.some(member => member.user_id === user_id)) {
+        if (!group.members.some(member => member.userId === userId)) {
             throw new BaseError("you_are_not_a_member", {
                 status: RequestStatuses.UnprocessableContent
             });
         }
 
-        await prisma.group_list_members.deleteMany({
+        await prisma.groupListMembers.deleteMany({
             where: {
-                group_id, user_id
+                groupId, userId
             }
         })
     }
 
-    public static async updateState({ user_id, group_id, modifyList }: EditMember) {
+    public static async updateState({ userId, groupId, modifyList }: EditMember) {
 
-        await prisma.group_list_members.findFirstOrThrow({
+        await prisma.groupListMembers.findFirstOrThrow({
             where: {
-                user_id, group_id
+                userId, groupId
             }
         })
 
-        return await prisma.group_list_members.updateMany({
+        return await prisma.groupListMembers.updateMany({
             where: {
-                group_id, user_id
+                groupId, userId
             },
             data: {
-                override_list: modifyList
+                overrideList: modifyList
             }
         })
     }
 
-    public static async kickUser({ user, group_id, kick_id }: KickUser) {
-        if (user.id === kick_id) throw new BaseError("cant_kick_yourself", { status: RequestStatuses.UnprocessableContent });
+    public static async kickUser({ user, groupId, kickId }: KickUser) {
+        if (user.id === kickId) throw new BaseError("cant_kick_yourself", { status: RequestStatuses.UnprocessableContent });
 
-        if (!user.owned_groups.some(group => group.id === group_id)) {
+        if (!user.ownedGroups.some(group => group.id === groupId)) {
             throw new BaseError("not_an_owner", { status: RequestStatuses.Forbidden });
         }
 
-        await prisma.group_list_members.deleteMany({
+        await prisma.groupListMembers.deleteMany({
             where: {
-                group_id, user_id: kick_id
+                groupId, userId: kickId
             }
         })
     }

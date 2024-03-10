@@ -11,7 +11,7 @@ export default class WatchListController {
 
         const user = await User.getUserByIdAnimeList(id);
 
-        return res.json(user.anime_list);
+        return res.json(user.animeList);
     }
 
     public static async importList(req: RequestWithAuth, res: Response): Promise<any> {
@@ -30,27 +30,27 @@ export default class WatchListController {
     public static async addToList(req: RequestWithAuth, res: Response) {
         const addingParameters = req.body as AddToList
         const { id } = req.auth!;
-        const anime_id: number = req.params.anime_id as unknown as number;
-        const anime_list = await WatchListService.addAnimeToListByIdWithParams(id, anime_id, addingParameters);
+        const animeId: number = req.params.animeId as unknown as number;
+        const animeList = await WatchListService.addAnimeToListByIdWithParams(id, animeId, addingParameters);
         return res.json({
-            data: anime_list
+            data: animeList
         });
     }
 
     public static async editList(req: RequestWithAuth, res: Response) {
         const editParameters = req.body as AddToList
         const { id } = req.auth!;
-        const anime_id: number = req.params.anime_id as unknown as number;
-        const anime_list = await WatchListService.editAnimeListByIdWithParams(id, anime_id, editParameters);;
+        const animeId: number = req.params.animeId as unknown as number;
+        const animeList = await WatchListService.editAnimeListByIdWithParams(id, animeId, editParameters);;
         return res.json({
-            data: anime_list
+            data: animeList
         });
     }
 
     public static async deleteFromList(req: RequestWithAuth, res: Response) {
         const { id } = req.auth!;
-        const anime_id = req.params.anime_id as unknown as number;
-        await WatchListService.removeAnimeFromList(id, anime_id);
+        const animeId = req.params.animeId as unknown as number;
+        await WatchListService.removeAnimeFromList(id, animeId);
         return res.json({
             message: "Entry deleted successfully"
         });

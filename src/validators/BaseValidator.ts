@@ -6,7 +6,7 @@ const validateBodyId = (fieldName: string): ValidationChain => {
 };
 
 const validateParamId = (fieldName: string): ValidationChain => {
-    return param(fieldName).isInt().notEmpty();
+    return param(fieldName).isInt().notEmpty().toInt();
 };
 
 const validateArrayId = (fieldName: string): any[] => {

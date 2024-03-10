@@ -2,7 +2,7 @@ import { prisma } from "../db";
 
 export default class ShikimoriLinkToken {
     public static async updateWithCode(token: string, code: string) {
-        await prisma.shikimori_Link_Token.update({
+        await prisma.shikimoriLinkToken.update({
             where: { token },
             data: {
                 user: {
@@ -10,10 +10,10 @@ export default class ShikimoriLinkToken {
                         integration: {
                             upsert: {
                                 create: {
-                                    shikimori_code: code
+                                    shikimoriCode: code
                                 },
                                 update: {
-                                    shikimori_code: code
+                                    shikimoriCode: code
                                 }
                             }
                         }
@@ -24,19 +24,19 @@ export default class ShikimoriLinkToken {
     }
 
     public static async removeToken(token: string){
-        await prisma.shikimori_Link_Token.delete({
+        await prisma.shikimoriLinkToken.delete({
             where: { token }
         });
     }
 
-    public static async createShikimoriLinkTokenByUserId(token: string, user_id: number){
-        await prisma.shikimori_Link_Token.upsert({
-            where: { user_id },
+    public static async createShikimoriLinkTokenByUserId(token: string, userId: number){
+        await prisma.shikimoriLinkToken.upsert({
+            where: { userId },
             update: {
                 token: token,
             },
             create: {
-                user_id,
+                userId,
                 token,
             }
         })

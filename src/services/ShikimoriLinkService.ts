@@ -1,4 +1,3 @@
-import ForbiddenError from "../errors/clienterrors/ForbiddenError";
 import UnauthorizedError from "../errors/clienterrors/UnauthorizedError";
 import ShikimoriLinkToken from "../models/ShikimoriLinkToken";
 import User from "../models/User";

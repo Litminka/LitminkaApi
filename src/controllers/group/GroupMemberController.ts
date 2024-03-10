@@ -20,9 +20,9 @@ export default class GroupMemberController {
         const user = await prisma.user.findFirst({ where: { id } });
         if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
 
-        const group_id = req.params.group_id as unknown as number;
+        const groupId = req.params.groupId as unknown as number;
 
-        const result = await GroupMemberService.getGroupMembers(id, group_id);
+        const result = await GroupMemberService.getGroupMembers(id, groupId);
 
         return res.status(RequestStatuses.OK).json(result);
     }
@@ -32,9 +32,9 @@ export default class GroupMemberController {
         const user = await prisma.user.findFirst({ where: { id } });
         if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
 
-        const group_id = req.params.group_id as unknown as number;
+        const groupId = req.params.groupId as unknown as number;
 
-        await GroupMemberService.leaveGroup(id, group_id);
+        await GroupMemberService.leaveGroup(id, groupId);
 
         return res.status(RequestStatuses.OK).json({ message: "you_left_the_group" });
     }
@@ -44,23 +44,23 @@ export default class GroupMemberController {
         const user = await prisma.user.findFirst({ where: { id } });
         if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
 
-        const group_id = req.params.group_id as unknown as number;
+        const groupId = req.params.groupId as unknown as number;
         const modifyList = req.body.modifyList as unknown as boolean;
 
-        await GroupMemberService.updateState({ user_id: id, group_id, modifyList });
+        await GroupMemberService.updateState({ userId: id, groupId, modifyList });
 
         return res.status(RequestStatuses.OK).json({ message: "member_updated" });
     }
 
     public static async kickUser(req: RequestWithAuth, res: Response) {
         const { id }: { id: number } = req.auth!;
-        const user = await prisma.user.findFirst({ where: { id }, include: { owned_groups: true } });
+        const user = await prisma.user.findFirst({ where: { id }, include: { ownedGroups: true } });
         if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
 
-        const group_id = req.params.group_id as unknown as number;
-        const kick_id = req.body.user_id as unknown as number;
+        const groupId = req.params.groupId as unknown as number;
+        const kickId = req.body.userId as unknown as number;
 
-        await GroupMemberService.kickUser({ user, group_id, kick_id });
+        await GroupMemberService.kickUser({ user, groupId, kickId });
 
         return res.status(RequestStatuses.OK).json({ message: "user_kicked" });
     }

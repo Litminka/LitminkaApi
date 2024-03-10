@@ -1,4 +1,4 @@
-import { Anime, User } from "@prisma/client";
+import { Anime, Prisma, User } from "@prisma/client";
 import ShikimoriApiService from "./ShikimoriApiService";
 import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../ts/index";
 import { KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
@@ -23,7 +23,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
 
     async update(anime: Anime): Promise<boolean> {
         if (!this.shikimoriApi) throw new InternalServerError("No shikimori api specified");
-        const resAnime: ShikimoriAnimeFull | ServerError = await this.shikimoriApi.getAnimeById(anime.shikimori_id);
+        const resAnime: ShikimoriAnimeFull | ServerError = await this.shikimoriApi.getAnimeById(anime.shikimoriId);
         if (!resAnime) return false;
         if (resAnime.reqStatus === RequestStatuses.InternalServerError || resAnime.reqStatus === RequestStatuses.NotFound) return false;
         const update = resAnime as ShikimoriAnimeFull;
@@ -92,31 +92,31 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             const slug = `${anime.shikimori_id}-${cyrillicSlug(animeSlugTitle)}`;
             return prisma.anime.upsert({
                 where: {
-                    shikimori_id: parseInt(anime.shikimori_id),
+                    shikimoriId: parseInt(anime.shikimori_id),
                 },
                 create: {
                     slug,
-                    current_episodes: material_data.episodes_aired,
-                    max_episodes: material_data.episodes_total,
-                    shikimori_id: parseInt(anime.shikimori_id),
-                    english_name: material_data.title_en,
+                    currentEpisodes: material_data.episodes_aired,
+                    maxEpisodes: material_data.episodes_total,
+                    shikimoriId: parseInt(anime.shikimori_id),
+                    englishName: material_data.title_en,
                     status: material_data.anime_status,
                     image: material_data.poster_url,
                     name: material_data.anime_title,
-                    media_type: material_data.anime_kind,
-                    shikimori_score: material_data.shikimori_rating,
-                    first_episode_aired: new Date(material_data.aired_at),
-                    kodik_link: anime.link,
-                    rpa_rating: material_data.rating_mpaa,
+                    mediaType: material_data.anime_kind,
+                    shikimoriScore: material_data.shikimori_rating,
+                    firstEpisodeAired: new Date(material_data.aired_at),
+                    kodikLink: anime.link,
+                    rpaRating: material_data.rating_mpaa,
                     description: material_data.anime_description,
-                    last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null,
-                    anime_translations: {
+                    lastEpisodeAired: material_data.released_at ? new Date(material_data.released_at) : null,
+                    animeTranslations: {
                         createMany: {
                             data: anime.translations.map(translation => {
                                 return {
-                                    group_id: translation.id,
-                                    current_episodes: translation.episodes_count ?? 0,
-                                }
+                                    groupId: translation.id,
+                                    currentEpisodes: translation.episodes_count ?? 0,
+                                } satisfies Prisma.AnimeTranslationCreateManyAnimeInput
                             })
                         }
                     },
@@ -130,17 +130,17 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     }
                 },
                 update: {
-                    current_episodes: material_data.episodes_aired,
-                    max_episodes: material_data.episodes_total,
+                    currentEpisodes: material_data.episodes_aired,
+                    maxEpisodes: material_data.episodes_total,
                     status: material_data.anime_status,
-                    rpa_rating: material_data.rating_mpaa,
-                    kodik_link: anime.link,
-                    media_type: material_data.anime_kind,
+                    rpaRating: material_data.rating_mpaa,
+                    kodikLink: anime.link,
+                    mediaType: material_data.anime_kind,
                     description: material_data.anime_description,
                     image: material_data.poster_url,
-                    shikimori_score: material_data.shikimori_rating,
-                    first_episode_aired: new Date(material_data.aired_at),
-                    last_episode_aired: material_data.released_at ? new Date(material_data.released_at) : null
+                    shikimoriScore: material_data.shikimori_rating,
+                    firstEpisodeAired: new Date(material_data.aired_at),
+                    lastEpisodeAired: material_data.released_at ? new Date(material_data.released_at) : null
                 }
             });
         });
@@ -151,23 +151,23 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
 
     async updateTranslations(anime: KodikAnimeFull, animeDB: checkAnime) {
         for (const translation of anime.translations) {
-            const update = await prisma.anime_translation.updateMany({
+            const update = await prisma.animeTranslation.updateMany({
                 where: {
                     AND: {
-                        anime_id: animeDB.id,
-                        group_id: translation.id,
+                        animeId: animeDB.id,
+                        groupId: translation.id,
                     }
                 },
                 data: {
-                    current_episodes: translation.episodes_count,
+                    currentEpisodes: translation.episodes_count,
                 }
             })
             if (update) continue;
-            prisma.anime_translation.create({
+            prisma.animeTranslation.create({
                 data: {
-                    anime_id: animeDB.id,
-                    group_id: translation.id,
-                    current_episodes: translation.episodes_count,
+                    animeId: animeDB.id,
+                    groupId: translation.id,
+                    currentEpisodes: translation.episodes_count,
                 }
             });
         }

@@ -6,31 +6,31 @@ import NotificationService from "../services/NotificationService";
 
 export default class NotificationController {
     public static async getUserNotifications(req: RequestWithAuth, res: Response): Promise<Object> {
-        const user_id = req.auth!.id
-        const is_read: boolean = req.body.is_read as boolean
-        const created_at = req.body.created_at;
+        const userId = req.auth!.id
+        const isRead: boolean = req.body.isRead as boolean
+        const createdAt = req.body.createdAt;
 
         const notifications = await NotificationService.getUserNotifications({
-            is_read, user_id, period: created_at
+            isRead, userId, period: createdAt
         })
 
         return res.json(notifications)
     }
 
     public static async getNotifications(req: RequestWithAuth, res: Response): Promise<Object> {
-        const created_at = req.body.created_at;
+        const createdAt = req.body.createdAt;
 
-        const notifications = await NotificationService.getNotifications(Period.getPeriod(created_at))
+        const notifications = await NotificationService.getNotifications(Period.getPeriod(createdAt))
 
         return res.json(notifications)
     }
 
     public static async readNotifications(req: RequestWithAuth, res: Response) {
         const ids: number[] = req.body.id
-        const user_id: number = req.auth!.id
+        const userId: number = req.auth!.id
 
-        await NotificationService.readNotifications(ids, user_id)
+        await NotificationService.readNotifications(ids, userId)
 
-        return res.status(RequestStatuses.OK).json({ message: "Notifications readed" })
+        return res.status(RequestStatuses.OK).json({ message: "notifications_read" })
     }
 }

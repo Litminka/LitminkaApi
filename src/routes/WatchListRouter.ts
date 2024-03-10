@@ -9,7 +9,7 @@ const router = Router();
 router.use(auth)
 router.get("/", wrap(WatchListController.getWatchList));
 router.post("/import", wrap(WatchListController.importList));
-router.post("/:anime_id", ...addToWatchListValidation(), wrap(WatchListController.addToList));
-router.patch("/:anime_id", ...editWatchListValidation(), wrap(WatchListController.editList));
-router.delete("/:anime_id", ...deleteFromWatchListValidation(), wrap(WatchListController.deleteFromList));
+router.post("/:animeId", ...addToWatchListValidation(), wrap(WatchListController.addToList));
+router.patch("/:animeId", ...editWatchListValidation(), wrap(WatchListController.editList));
+router.delete("/:animeId", ...deleteFromWatchListValidation(), wrap(WatchListController.deleteFromList));
 export { router as watchListRouter };

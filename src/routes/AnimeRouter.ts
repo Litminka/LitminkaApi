@@ -6,6 +6,6 @@ import { wrap } from '../middleware/errorHandler';
 import { validateParamId } from '../validators/BaseValidator';
 const router = Router();
 
-router.get("/:anime_id", [validateParamId('anime_id'), optionalAuth, validationNotFound], wrap(AnimeController.getSingleAnime)
+router.get("/:animeId", [validateParamId('animeId'), optionalAuth, validationNotFound], wrap(AnimeController.getSingleAnime)
 );
 export { router as animeRouter };
