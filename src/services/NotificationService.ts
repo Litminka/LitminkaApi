@@ -1,7 +1,6 @@
-import Notifications from "../models/Notificatons";
 import { Notify, UserNotify } from "../ts";
 import { NotifyStatuses } from "../ts/enums";
-import { prisma } from "../db";
+import prisma from "../db";
 import Period from "../helper/period";
 import dayjs from "dayjs";
 
@@ -48,11 +47,11 @@ export default class NotificationService {
     }
 
     private static async _notifyUserEpisode(notify: UserNotify) {
-        return Notifications.createUserAnimeNotifications(notify);
+        return prisma.userAnimeNotifications.createUserAnimeNotifications(notify);
     }
 
     private static async _notifyEpisode(notify: Notify) {
-        return Notifications.createAnimeNotifications(notify);
+        return prisma.animeNotifications.createAnimeNotifications(notify);
     }
 
     public static async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {

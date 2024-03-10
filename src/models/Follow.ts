@@ -1,33 +1,36 @@
-import { prisma } from "../db";
+import { Prisma } from "@prisma/client";
+import prisma from "../db";
 import { FollowAnime } from "../ts";
 
-export default class FollowModel {
-    
-    public static async findFollow(follow: FollowAnime){
-        const {animeId, userId, status, translationGroupName} = follow;
-        
-        return await prisma.follow.findFirst({
-            where: {
-                animeId,
-                userId,
-                status,
-                translation: {
-                    group: {
-                        name: translationGroupName
+const extention = Prisma.defineExtension({
+    name: "FollowModel",
+    model: {
+        follow: {
+            async findFollow({ animeId, userId, status, translationGroupName }: FollowAnime) {
+                return await prisma.follow.findFirst({
+                    where: {
+                        animeId,
+                        userId,
+                        status,
+                        translation: {
+                            group: {
+                                name: translationGroupName
+                            }
+                        }
                     }
-                }
+                })
+            },
+            async removeFollow({ animeId, userId, translationId }: FollowAnime) {
+                await prisma.follow.deleteMany({
+                    where: {
+                        userId,
+                        animeId,
+                        translationId
+                    }
+                })
             }
-        })
+        }
     }
+});
 
-    public static async removeFollow(follow: FollowAnime){
-        const {animeId, userId, translationId} = follow;
-        await prisma.follow.deleteMany({
-            where: {
-                userId,
-                animeId,
-                translationId
-            }
-        })
-    }
-}
+export { extention as FollowExt }

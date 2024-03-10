@@ -3,14 +3,13 @@ import NotFoundError from "../errors/clienterrors/NotFoundError";
 import UnauthorizedError from "../errors/clienterrors/UnauthorizedError";
 import InternalServerError from "../errors/servererrors/InternalServerError";
 import groupArrSplice from "../helper/groupsplice";
-import AnimeList from "../models/AnimeList";
-import User from "../models/User";
 import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts";
 import { RequestStatuses } from "../ts/enums";
 import AnimeUpdateService from "./AnimeUpdateService";
 import KodikApiService from "./KodikApiService";
 import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 import { logger } from "../loggerConf";
+import prisma from "../db";
 
 export default class WatchListService {
 
@@ -18,7 +17,7 @@ export default class WatchListService {
     public static async importListByUserId(id: number) {
 
         // Get current user
-        const user = await User.findUserByIdWithIntegration(id);
+        const user = await prisma.user.findUserByIdWithIntegration(id);
         const shikimoriapi = new ShikimoriApiService(user);
         let animeList = await shikimoriapi.getUserList();
         if (!animeList) throw new UnauthorizedError("User does not have shikimori integration")
@@ -56,35 +55,35 @@ export default class WatchListService {
         for (let i = 0; i < watchList.length; i++) {
             const listEntry = watchList[i];
             const animeId = animeInList.find((anime) => anime.shikimoriId == listEntry.target_id)!.id;
-            const res = await AnimeList.updateUsersWatchList(id, animeId, listEntry);
+            const res = await prisma.animeList.updateUsersWatchList(id, animeId, listEntry);
             // if were updated, remove from array, to prevent inserting
             // prisma does not have upsert many, so we remove updated titles
             const { count } = res;
             if (count > 0) watchList.splice(i--, 1);
         }
-        await AnimeList.createUsersWatchList(id, animeInList, watchList);
+        await prisma.animeList.createUsersWatchList(id, animeInList, watchList);
     }
 
     public static async addAnimeToListByIdWithParams(userId: number, animeId: number, addingParameters: AddToList) {
-        const user = await User.findUserById(userId);
-        const animeListEntry = await AnimeList.findWatchListByIds(user.id, animeId);
+        const user = await prisma.user.findUserById(userId);
+        const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
         if (animeListEntry) throw new BadRequestError("List entry with this anime already exists");
-        await AnimeList.addAnimeToListByIds(user.id, animeId, addingParameters)
-        return await AnimeList.findWatchListByIdsWithAnime(user.id, animeId);
+        await prisma.animeList.addAnimeToListByIds(user.id, animeId, addingParameters)
+        return await prisma.animeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 
     public static async removeAnimeFromList(userId: number, animeId: number) {
-        const user = await User.findUserById(userId);
-        const animeListEntry = await AnimeList.findWatchListByIds(user.id, animeId);
+        const user = await prisma.user.findUserById(userId);
+        const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
-        await AnimeList.removeAnimeFromListById(animeId);
+        await prisma.animeList.removeAnimeFromListById(animeId);
     }
 
     public static async editAnimeListByIdWithParams(userId: number, animeId: number, editParameters: AddToList) {
-        const user = await User.findUserById(userId);
-        const animeListEntry = await AnimeList.findWatchListByIds(user.id, animeId);
+        const user = await prisma.user.findUserById(userId);
+        const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
-        await AnimeList.updateAnimeListByAnimeId(animeId, editParameters)
-        return await AnimeList.findWatchListByIdsWithAnime(user.id, animeId);
+        await prisma.animeList.updateAnimeListByAnimeId(animeId, editParameters)
+        return await prisma.animeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 }

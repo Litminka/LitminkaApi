@@ -6,7 +6,7 @@ import { ShikimoriAnime, followType, ServerError } from "../ts/index";
 import { KodikAnimeFull, checkAnime } from "../ts/kodik";
 import AnimeUpdateService from "./AnimeUpdateService";
 import NotificationService from "./NotificationService";
-import { prisma } from "../db";
+import prisma from "../db";
 import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";
 import { logger } from "../loggerConf"
 

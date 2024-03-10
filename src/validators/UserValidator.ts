@@ -1,4 +1,4 @@
-import { prisma } from '../db';
+import prisma from '../db';
 import { body } from "express-validator";
 import { validationError } from '../middleware/validationError';
 

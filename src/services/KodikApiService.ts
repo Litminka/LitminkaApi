@@ -1,4 +1,4 @@
-import fetch, { Headers } from "node-fetch";
+import fetch from "node-fetch";
 import { ServerError } from "../ts/index";
 import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translations, KodikAnime, translation } from "../ts/kodik";
 import { RequestStatuses } from "../ts/enums";

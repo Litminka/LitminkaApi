@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AddWithAnime, RequestWithAuth } from "../../ts";
 import { RequestStatuses } from "../../ts/enums";
-import { prisma } from "../../db";
+import prisma from "../../db";
 import GroupAnimeListService from "../../services/group/GroupAnimeListService";
 
 export default class GroupAnimeListController {

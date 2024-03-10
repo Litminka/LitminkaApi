@@ -1,7 +1,7 @@
 import { User, Integration, Prisma } from "@prisma/client";
 import fetch, { Headers } from "node-fetch";
 import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../../ts/index";
-import { prisma } from "../../db";
+import prisma from "../../db";
 import { shikiRateLimiter } from "../../shikiRateLimiter";
 import { RateLimiter } from "limiter";
 import { RequestStatuses } from "../../ts/enums";

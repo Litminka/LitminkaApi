@@ -1,10 +1,8 @@
 import { AnimeTranslation } from "@prisma/client";
 import { FollowAnime, followType, info } from "../ts/index";
 import { AnimeStatuses, FollowTypes } from "../ts/enums";
-import FollowModel from "../models/Follow";
 import UnprocessableContentError from "../errors/clienterrors/UnprocessableContentError";
-import User from "../models/User";
-import AnimeModel from "../models/Anime";
+import prisma from "../db";
 type follows = {
     anime: {
         shikimoriId: number;
@@ -50,13 +48,13 @@ export default class FollowService {
 
     private static async followUpdate(status: FollowTypes, animeId: number, userId: number, translationId?: number, translationGroupName?: string) {
         const followAnime: FollowAnime = { animeId, userId, status, translationId, translationGroupName }
-        const follow = await FollowModel.findFollow(followAnime)
+        const follow = await prisma.follow.findFollow(followAnime)
         if (follow) throw new UnprocessableContentError(`This anime is already followed as \"${status}\"`);
-        await User.followAnime(followAnime);
+        await prisma.user.followAnime(followAnime);
     }
 
     public static async follow(animeId: number, userId: number, type: FollowTypes, groupName: string) {
-        const anime = await AnimeModel.findWithTranlsations(animeId);
+        const anime = await prisma.anime.findWithTranlsations(animeId);
         if (type === FollowTypes.Follow) {
             const translation = anime.animeTranslations.find(anime => anime.group.name == groupName)
             if (translation === undefined)
@@ -74,15 +72,15 @@ export default class FollowService {
     }
 
     public static async unfollow(animeId: number, userId: number, groupName?: string) {
-        const anime = await AnimeModel.findWithTranlsations(animeId);
+        const anime = await prisma.anime.findWithTranlsations(animeId);
         let unfollow: FollowAnime = { userId, animeId } as FollowAnime;
         if (!groupName) {
-            return await FollowModel.removeFollow(unfollow);
+            return await prisma.follow.removeFollow(unfollow);
         }
         const translation = anime.animeTranslations.find(anime => anime.group.name == groupName);
         if (translation === undefined) throw new UnprocessableContentError("This anime doesn't have given group");
         unfollow.translationId = translation.id;
-        return await FollowModel.removeFollow(unfollow)
+        return await prisma.follow.removeFollow(unfollow)
     }
 
 }

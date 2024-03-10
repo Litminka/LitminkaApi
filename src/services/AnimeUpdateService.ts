@@ -2,9 +2,8 @@ import { Anime, Prisma, User } from "@prisma/client";
 import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../ts/index";
 import { KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
-import { prisma } from "../db";
+import prisma from "../db";
 import { RequestStatuses } from "../ts/enums";
-import AnimeModel from "../models/Anime";
 import InternalServerError from "../errors/servererrors/InternalServerError";
 import { cyrillicSlug } from "../helper/cyrillic-slug";
 
@@ -27,16 +26,16 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         if (!resAnime) return false;
         if (resAnime.reqStatus === RequestStatuses.InternalServerError || resAnime.reqStatus === RequestStatuses.NotFound) return false;
         const update = resAnime as ShikimoriAnimeFull;
-        AnimeModel.update(anime.id, update);
+        prisma.anime.updateShikimori(anime.id, update);
         return true;
     }
 
     async updateAnimeShikimoriFull(animeArr: ShikimoriAnimeFull[]) {
-        return AnimeModel.upsertManyShikimoriFull(animeArr);
+        return prisma.anime.upsertManyShikimoriFull(animeArr);
     }
 
     async updateAnimeShikimori(animeArr: ShikimoriAnime[]) {
-        return AnimeModel.upsertMany(animeArr);
+        return prisma.anime.upsertMany(animeArr);
     }
 
     async updateTranslationGroups(result: KodikAnimeFull[]) {
