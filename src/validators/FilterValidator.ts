@@ -4,11 +4,11 @@ import dayjs from "dayjs";
 
 const genresValidator = (fieldName: string): any[] => {
     return [body(fieldName).optional().isArray().bail(),
-    body(`${fieldName}.*`).isInt(), validationError];
+    body(`${fieldName}.*`).isInt()];
 };
 const yearsValidator = (): any[] => {
     return [body("years").optional().isArray().bail(),
-    body("years.*").isInt({ min: 1917, max: dayjs().year() }), validationError];
+    body("years.*").isInt({ min: 1917, max: dayjs().year() })];
 };
 
 const seasonsValidator = (): any[] => {
@@ -19,17 +19,16 @@ const seasonsValidator = (): any[] => {
             "spring",
             "summer",
             "fall"
-        ]),
-        validationError];
+        ])];
 };
 
 
 const nameValidator = (): any[] => {
-    return [body("name").optional().isString(), validationError];
+    return [body("name").optional().isString()];
 };
 
 const episodeValidator = (): any[] => {
-    return [body("episode").optional().isInt(), validationError];
+    return [body("episode").optional().isInt()];
 };
 
 const statusesValidator = (): any[] => {
@@ -38,7 +37,7 @@ const statusesValidator = (): any[] => {
         "ongoing",
         "released",
         "anons"
-    ]), validationError];
+    ])];
 };
 
 const rpaRatingsValidator = (): any[] => {
@@ -49,7 +48,7 @@ const rpaRatingsValidator = (): any[] => {
         "PG-13",
         "R",
         "R+"
-    ]), validationError];
+    ])];
 };
 
 const mediaTypesValidator = (): any[] => {
@@ -61,7 +60,7 @@ const mediaTypesValidator = (): any[] => {
         "ona",
         "ova",
         "movie",
-    ]), validationError];
+    ])];
 };
 
 export { genresValidator, yearsValidator, seasonsValidator, nameValidator, episodeValidator, statusesValidator, rpaRatingsValidator, mediaTypesValidator };
