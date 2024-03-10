@@ -85,3 +85,9 @@ export enum RequestStatuses {
     NotExtended = 510,
     NetowkrAuthenticationRequired = 511
 }
+
+export enum RequestAuthTypes {
+    Auth,
+    Optional,
+    None
+}
