@@ -2,25 +2,19 @@ import { body } from "express-validator";
 import { validationError } from "../middleware/validationError";
 import dayjs from "dayjs";
 
-const genresValidator = (): any[] => {
-    return [body("genres").optional().isArray().bail(),
-    body("genres.*").isInt(), validationError];
+const genresValidator = (fieldName: string): any[] => {
+    return [body(fieldName).optional().isArray().bail(),
+    body(`${fieldName}.*`).isInt(), validationError];
 };
 const yearsValidator = (): any[] => {
     return [body("years").optional().isArray().bail(),
     body("years.*").isInt({ min: 1917, max: dayjs().year() }), validationError];
 };
 
-const periodValidator = (): any[] => {
-    return [body("period").optional().isArray({ min: 2, max: 2 }).bail(),
-    body("period.*").isDate(), validationError];
-};
-
 const seasonsValidator = (): any[] => {
     return [
         body("seasons").optional().isArray().bail(),
-        // FIXME: Not working with that method
-        body("seasons.*").isString().contains([
+        body("seasons.*").isString().isIn([
             "winter",
             "spring",
             "summer",
@@ -28,6 +22,7 @@ const seasonsValidator = (): any[] => {
         ]),
         validationError];
 };
+
 
 const nameValidator = (): any[] => {
     return [body("name").optional().isString(), validationError];
@@ -39,8 +34,7 @@ const episodeValidator = (): any[] => {
 
 const statusesValidator = (): any[] => {
     return [body("statuses").optional().isArray().bail(),
-    // FIXME: Not working with that method
-    body("statuses.*").isString().contains([
+    body("statuses.*").isString().isIn([
         "ongoing",
         "released",
         "anons"
@@ -49,8 +43,7 @@ const statusesValidator = (): any[] => {
 
 const rpaRatingsValidator = (): any[] => {
     return [body("rpaRatings").optional().isArray().bail(),
-    // FIXME: Not working with that method
-    body("rpaRatings.*").isString().contains([
+    body("rpaRatings.*").isString().isIn([
         "G",
         "PG",
         "PG-13",
@@ -61,8 +54,7 @@ const rpaRatingsValidator = (): any[] => {
 
 const mediaTypesValidator = (): any[] => {
     return [body("mediaTypes").optional().isArray().bail(),
-    // FIXME: Not working with that method
-    body("mediaTypes.*").isString().contains([
+    body("mediaTypes.*").isString().isIn([
         "tv",
         "tv_special",
         "special",
@@ -70,6 +62,6 @@ const mediaTypesValidator = (): any[] => {
         "ova",
         "movie",
     ]), validationError];
-}
+};
 
-export { genresValidator, yearsValidator, periodValidator, seasonsValidator, nameValidator, episodeValidator, statusesValidator, rpaRatingsValidator, mediaTypesValidator };
+export { genresValidator, yearsValidator, seasonsValidator, nameValidator, episodeValidator, statusesValidator, rpaRatingsValidator, mediaTypesValidator };

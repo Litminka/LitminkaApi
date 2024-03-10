@@ -4,22 +4,24 @@ import {
     genresValidator,
     yearsValidator,
     seasonsValidator,
-    periodValidator,
     nameValidator,
     episodeValidator,
     statusesValidator,
     rpaRatingsValidator,
     mediaTypesValidator
 } from "../validators/FilterValidator";
+import { softPeriodValidator } from '../validators/PeriodValidator';
 import SearchController from '../controllers/SearchController';
+
 const router = Router();
 
 router.get("/anime",
     [
         ...
-        genresValidator(),
+        genresValidator("includeGenres"),
+        genresValidator("excludeGenres"),
         yearsValidator(),
-        periodValidator(),
+        softPeriodValidator("period"),
         seasonsValidator(),
         nameValidator(),
         episodeValidator(),

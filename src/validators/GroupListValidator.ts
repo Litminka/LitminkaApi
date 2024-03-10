@@ -6,14 +6,14 @@ interface minmax {
     max?: number
 }
 
-const CreateGroupListValidator = (): any[] => {
+const createGroupListValidator = (): any[] => {
     return [
         body("name").notEmpty().bail().isString().bail(),
         body("description").notEmpty().bail().isString().bail(),
         validationError
     ];
 };
-const GroupInviteValidator = (): any[] => {
+const groupInviteValidator = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
         body("userId").isInt().bail().toInt(),
@@ -21,46 +21,37 @@ const GroupInviteValidator = (): any[] => {
     ];
 };
 
-const GroupListIdValidator = (): any[] => {
+const groupListIdValidator = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
         validationError
     ];
 };
 
-const GroupListIdWithUserIdValidator = (): any[] => {
+const groupListIdWithUserIdValidator = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
         body("userId").isInt().bail().toInt(),
         validationError
     ];
-}
+};
 
-const UpdateGroupListValidator = (): any[] => {
-    return [
-        param("groupId").isInt().bail().toInt(),
-        body("name").optional().notEmpty().bail().isString().bail(),
-        body("description").optional().notEmpty().bail().isString().bail(),
-        validationError
-    ];
-}
-
-const GroupInviteIdValidator = (): any[] => {
+const groupInviteIdValidator = (): any[] => {
     return [
         param("inviteId").isInt().bail().toInt(),
         validationError
     ]
-}
+};
 
-const GroupInviteActionValidator = (): any[] => {
+const groupInviteActionValidator = (): any[] => {
     return [
         param("inviteId").isInt().bail().toInt(),
         body("modifyList").optional().isBoolean().bail().toBoolean(),
         validationError
     ];
-}
+};
 
-const AddToGroupListValidator = (): any[] => {
+const addToGroupListValidator = (): any[] => {
     const watchedRange: minmax = { min: 0 };
     return [
         param("groupId").isInt().bail().toInt(),
@@ -77,6 +68,6 @@ const AddToGroupListValidator = (): any[] => {
         body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean(),
         validationError
     ]
-}
+};
 
-export { CreateGroupListValidator, GroupListIdValidator, GroupInviteValidator, GroupInviteActionValidator, GroupInviteIdValidator, AddToGroupListValidator, GroupListIdWithUserIdValidator }
+export { createGroupListValidator, groupListIdValidator, groupInviteValidator, groupInviteActionValidator, groupInviteIdValidator, addToGroupListValidator, groupListIdWithUserIdValidator }
