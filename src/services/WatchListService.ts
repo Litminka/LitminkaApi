@@ -9,7 +9,7 @@ import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../t
 import { RequestStatuses } from "../ts/enums";
 import AnimeUpdateService from "./AnimeUpdateService";
 import KodikApiService from "./KodikApiService";
-import ShikimoriApiService from "./ShikimoriApiService";
+import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 import { logger } from "../loggerConf";
 
 export default class WatchListService {

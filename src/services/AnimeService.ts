@@ -3,10 +3,10 @@ import NotFoundError from "../errors/clienterrors/NotFoundError";
 import AnimeModel from "../models/Anime";
 import User from "../models/User";
 import AnimeUpdateService from "./AnimeUpdateService";
-import ShikimoriApiService from "./ShikimoriApiService";
+import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 
 export default class AnimeService {
-    public static async getSingleAnime(userId: number, animeId: number){
+    public static async getSingleAnime(userId: number, animeId: number) {
         const user = await User.findUserByIdWithIntegration(userId);
         let anime = await AnimeModel.findWithTranlsationsAndGenres(animeId);
         if (!anime) throw new NotFoundError("This anime doesn't exist");

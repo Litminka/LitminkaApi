@@ -1,5 +1,5 @@
 import { Anime, Prisma, User } from "@prisma/client";
-import ShikimoriApiService from "./ShikimoriApiService";
+import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../ts/index";
 import { KodikAnimeFull, checkAnime, translation } from "../ts/kodik";
 import { prisma } from "../db";
