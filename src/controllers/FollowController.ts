@@ -1,9 +1,9 @@
 import { Response } from "express";
 import { DeleteFollow, Follow, RequestWithAuth } from "../ts/index";
 import { RequestStatuses } from "../ts/enums";
-import User from "../models/User";
 import FollowService from "../services/FollowService";
 import ForbiddenError from "../errors/clienterrors/ForbiddenError";
+import prisma from "../db";
 
 export default class FollowController {
 
@@ -11,7 +11,7 @@ export default class FollowController {
     public static async follow(req: RequestWithAuth, res: Response) {
         const { groupName, type } = req.body as Follow;
         const { id }: { id: number } = req.auth!;
-        const user = await User.findUserById(id);
+        const user = await prisma.user.findUserById(id);
         if (!user) throw new ForbiddenError("Unauthorized");
         const animeId: number = req.params.animeId as unknown as number;
 
@@ -27,7 +27,7 @@ export default class FollowController {
     public static async unfollow(req: RequestWithAuth, res: Response) {
         const { groupName } = req.body as DeleteFollow;
         const { id }: { id: number } = req.auth!;
-        const user = await User.findUserById(id);
+        const user = await prisma.user.findUserById(id);
         if (!user) throw new ForbiddenError("Unauthorized");
         const animeId: number = req.params.animeId as unknown as number;
 

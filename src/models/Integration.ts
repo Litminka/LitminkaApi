@@ -1,37 +1,42 @@
-import { prisma } from "../db";
+import { Prisma } from "@prisma/client";
+import prisma from "../db";
 
-export default class Integration {
-    
-    public static async findByShikimoriId(id: number){
-        return await prisma.integration.findFirst({
-            where: {
-                shikimoriId: id
-            }
-        });
-    }
-
-    public static async updateUserShikimoriId(userId: number, shikimoriId: number){
-        await prisma.integration.update({
-            where: {
-                userId
+const extention = Prisma.defineExtension({
+    name: "ItegrationModel",
+    model: {
+        integration: {
+            async findByShikimoriId(id: number) {
+                return await prisma.integration.findFirst({
+                    where: {
+                        shikimoriId: id
+                    }
+                });
             },
-            data: {
-                shikimoriId
-            }
-        });
-    }
-
-    public static async clear(userId: number){
-        await prisma.integration.update({
-            where: {
-                userId
+            async updateUserShikimoriId(userId: number, shikimoriId: number) {
+                await prisma.integration.update({
+                    where: {
+                        userId
+                    },
+                    data: {
+                        shikimoriId
+                    }
+                });
             },
-            data: {
-                shikimoriCode: null,
-                shikimoriToken: null,
-                shikimoriRefreshToken: null,
-                shikimoriId: null,
+            async clear(userId: number) {
+                await prisma.integration.update({
+                    where: {
+                        userId
+                    },
+                    data: {
+                        shikimoriCode: null,
+                        shikimoriToken: null,
+                        shikimoriRefreshToken: null,
+                        shikimoriId: null,
+                    }
+                });
             }
-        });
+        }
     }
-}
+})
+
+export { extention as IntegrationExt }

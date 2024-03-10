@@ -1,6 +1,6 @@
 import { body, param } from "express-validator";
 import { validationError } from "../middleware/validationError";
-import { prisma } from "../db";
+import prisma from "../db";
 interface minmax {
     min: number,
     max?: number
