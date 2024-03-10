@@ -16,7 +16,7 @@ export default class NotificationService {
     constructor() {
 
     }
-    
+
     public static async notifyUserRelease(user_id: number, anime_id: number) {
         const notify: UserNotify = { user_id, anime_id, status: NotifyStatuses.AnimeRelease }
         return this._notifyUserEpisode(notify)
@@ -33,25 +33,25 @@ export default class NotificationService {
     }
 
     public static async notifyRelease(anime_id: number) {
-        const notify: Notify =  { anime_id, status: NotifyStatuses.AnimeRelease }
+        const notify: Notify = { anime_id, status: NotifyStatuses.AnimeRelease }
         return this._notifyEpisode(notify)
     }
 
     public static async notifyEpisode(anime_id: number, group_id: number, episode: number) {
-        const notify: Notify =  { anime_id, status: NotifyStatuses.EpisodeRelease, episode, group_id }
+        const notify: Notify = { anime_id, status: NotifyStatuses.EpisodeRelease, episode, group_id }
         return this._notifyEpisode(notify)
     }
 
     public static async notifyFinalEpisode(anime_id: number, group_id: number, episode: number) {
-        const notify: Notify =  { anime_id, status: NotifyStatuses.FinalEpisodeReleased, episode, group_id }
+        const notify: Notify = { anime_id, status: NotifyStatuses.FinalEpisodeReleased, episode, group_id }
         return this._notifyEpisode(notify)
     }
-        
-    private static async _notifyUserEpisode(notify: UserNotify){
+
+    private static async _notifyUserEpisode(notify: UserNotify) {
         return Notifications.createUserAnimeNotifications(notify);
     }
 
-    private static async _notifyEpisode(notify: Notify){
+    private static async _notifyEpisode(notify: Notify) {
         return Notifications.createAnimeNotifications(notify);
     }
 
@@ -76,8 +76,8 @@ export default class NotificationService {
         return prisma.anime_notifications.findMany({
             where: {
                 created_at: {
-                    gte: period[0],
-                    lte: period[1]
+                    lte: period[1],
+                    gte: period[0]
                 }
             }
         })

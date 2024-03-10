@@ -11,6 +11,7 @@ import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/AnimeRouter';
 import { groupListRouter } from './routes/GroupListRouter';
 import { notificationRouter as notificationRouter } from './routes/NotificationRouter';
+import { searchRouter } from './routes/SearchRouter';
 import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
@@ -57,7 +58,7 @@ app.use("/anime/follow", followRouter);
 app.use("/shikimori", shikimoriRouter);
 app.use("/token", tokenRouter);
 app.use("/notifications", notificationRouter);
-// app.use("/search", searchRouter);
+app.use("/search", searchRouter);
 
 app.get("/shikimori_token", (req: Request, res: Response) => {
     logger.debug(`shikimori_token ${req.query}`)

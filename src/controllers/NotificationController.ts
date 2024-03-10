@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { RequestWithAuth } from "../ts";
-import Period from "../helper/period";
 import { RequestStatuses } from "../ts/enums";
+import Period from "../helper/period";
 import NotificationService from "../services/NotificationService";
 
 export default class NotificationController {
