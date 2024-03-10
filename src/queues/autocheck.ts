@@ -1,6 +1,6 @@
 
 import { Queue, Worker, Job } from 'bullmq';
-import { prisma } from "../db";
+import prisma from "../db";
 import AutoCheckService from '../services/AutoCheckService';
 import FollowService from '../services/FollowService';
 import { KodikAnimeFull, checkAnime } from '../ts/kodik';

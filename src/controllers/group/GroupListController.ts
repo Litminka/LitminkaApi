@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { RequestWithAuth } from "../../ts";
 import { RequestStatuses } from "../../ts/enums";
-import { prisma } from "../../db";
+import prisma from "../../db";
 import GroupListService from "../../services/group/GroupListService";
 
 export default class GroupListController {

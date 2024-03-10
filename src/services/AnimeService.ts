@@ -1,14 +1,12 @@
-
 import NotFoundError from "../errors/clienterrors/NotFoundError";
-import AnimeModel from "../models/Anime";
-import User from "../models/User";
 import AnimeUpdateService from "./AnimeUpdateService";
 import ShikimoriApiService from "./ShikimoriApiService";
+import prisma from "../db";
 
 export default class AnimeService {
-    public static async getSingleAnime(userId: number, animeId: number){
-        const user = await User.findUserByIdWithIntegration(userId);
-        let anime = await AnimeModel.findWithTranlsationsAndGenres(animeId);
+    public static async getSingleAnime(userId: number, animeId: number) {
+        const user = await prisma.user.findUserByIdWithIntegration(userId);
+        let anime = await prisma.anime.findWithTranlsationsAndGenres(animeId);
         if (!anime) throw new NotFoundError("This anime doesn't exist");
         if (!user) return anime;
         // TODO: add user role checking, and setting check to allow shikimori requests only to specific users
@@ -17,7 +15,7 @@ export default class AnimeService {
         const animeUpdateService = new AnimeUpdateService(shikimoriApi, user);
         const updated = await animeUpdateService.update(anime);
         if (updated) {
-            anime = await AnimeModel.findWithTranlsationsAndGenres(animeId);
+            anime = await prisma.anime.findWithTranlsationsAndGenres(animeId);
         }
         return anime;
     }
