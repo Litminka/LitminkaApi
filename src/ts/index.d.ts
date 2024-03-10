@@ -1,4 +1,4 @@
-import { Anime, Anime_translation } from "@prisma/client";
+import { Anime, AnimeTranslation } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
@@ -214,22 +214,22 @@ interface studio {
 
 export interface AddToList {
     status: watchListStatus;
-    watched_episodes: number;
+    watchedEpisodes: number;
     rating: number;
-    is_favorite: boolean;
+    isFavorite: boolean;
 }
 
 export interface AddWithAnime extends AddToList {
-    anime_id: number
+    animeId: number
 }
 
 export interface Follow {
-    group_name: string;
+    groupName: string;
     type: FollowTypes.Follow | FollowTypes.Announcement
 }
 
 export interface DeleteFollow {
-    group_name?: string
+    groupName?: string
 }
 
 export interface options {
@@ -244,26 +244,26 @@ export interface ServerError {
 }
 
 export type info = {
-    translation?: Anime_translation,
-    user_id: number
+    translation?: AnimeTranslation,
+    userId: number
 }
 export type followType = {
     anime: {
-        shikimori_id: number;
+        shikimoriId: number;
     };
     info: info[]
     status: string;
 }
 
-export interface Notify{
-    anime_id: number, 
-    status: NotifyStatuses, 
-    group_id?: number, 
-    episode?: number, 
+export interface Notify {
+    animeId: number,
+    status: NotifyStatuses,
+    groupId?: number,
+    episode?: number,
 }
 
-export interface UserNotify extends Notify{
-    user_id: number
+export interface UserNotify extends Notify {
+    userId: number
 }
 
 export type RequestTypes = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -278,10 +278,10 @@ export interface CreateUser extends LoginUser {
     name?: string,
 }
 
-export interface FollowAnime{
-    user_id: number,
-    anime_id: number,
+export interface FollowAnime {
+    userId: number,
+    animeId: number,
     status: FollowTypes,
-    translation_id? : number
-    translation_group_name? :string
+    translationId?: number
+    translationGroupName?: string
 }

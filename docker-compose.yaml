@@ -38,4 +38,4 @@ services:
         published: 443
     volumes:
       - ./cert:/etc/nginx/ssl:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf/nginx.conf:/etc/nginx/nginx.conf:ro

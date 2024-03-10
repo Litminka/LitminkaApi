@@ -57,10 +57,10 @@ const worker = new Worker("autocheck", async (job: Job) => {
         },
         select: {
             status: true,
-            user_id: true,
+            userId: true,
             anime: {
                 select: {
-                    shikimori_id: true
+                    shikimoriId: true
                 }
             },
             translation: true
@@ -75,10 +75,10 @@ const worker = new Worker("autocheck", async (job: Job) => {
         },
         select: {
             status: true,
-            user_id: true,
+            userId: true,
             anime: {
                 select: {
-                    shikimori_id: true
+                    shikimoriId: true
                 }
             }
         },
@@ -112,16 +112,16 @@ const worker = new Worker("autocheck", async (job: Job) => {
     const ids = [...followIds, ...announcementsIds, ...defaultAnime.map(anime => anime.id)];
     const anime = await prisma.anime.findMany({
         where: {
-            shikimori_id: {
+            shikimoriId: {
                 in: ids
             }
         },
         include: {
-            anime_translations: true
+            animeTranslations: true
         }
     });
     const animeMap = new Map<number, checkAnime>();
-    for (const anim of anime) animeMap.set(anim.shikimori_id, anim);
+    for (const anim of anime) animeMap.set(anim.shikimoriId, anim);
 
     const checkedIds: number[] = [];
     for (const anime of [...defaultAnime, ...followedAnime, ...announcedAnime]) {
