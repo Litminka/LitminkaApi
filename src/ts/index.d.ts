@@ -1,12 +1,20 @@
-import { Anime, AnimeTranslation } from "@prisma/client";
+import { Anime, AnimeTranslation, User } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
 
 export interface RequestWithAuth extends Request {
     auth?: {
+        user: undefined;
         id: number;
     };
+}
+
+export interface RequestWithUser extends Request {
+    auth: {
+        user: User,
+        id: number
+    }
 }
 
 export interface ShikimoriWhoAmI {

@@ -3,10 +3,9 @@ import FollowController from '../controllers/FollowController';
 import { auth } from '../middleware/auth';
 import { FollowValidation, UnFollowValidation } from '../validators/FollowValidator';
 import { wrap } from '../middleware/errorHandler';
+import FollowAnimeRequest from '../requests/FollowAnimeRequest';
 const router = Router();
 
-// Private methods
-router.use(auth)
-router.post("/:animeId", ...FollowValidation(), wrap(FollowController.follow));
+router.post("/:animeId", new FollowAnimeRequest().send(), wrap(FollowController.follow));
 router.delete("/:animeId", ...UnFollowValidation(), wrap(FollowController.unfollow));
 export { router as followRouter };
