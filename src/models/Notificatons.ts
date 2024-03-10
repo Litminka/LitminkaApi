@@ -2,11 +2,10 @@ import { Notify, UserNotify } from "../ts";
 import { prisma } from "../db";
 
 export default class Notifications {
-    public static async createUserAnimeNotifications(notify: UserNotify){
-        const {userId, animeId, status, groupId, episode} = notify;
+    public static async createUserAnimeNotifications({ userId, animeId, status, groupId, episode }: UserNotify) {
         return prisma.userAnimeNotifications.create({
             data: {
-                userId, 
+                userId,
                 animeId,
                 status,
                 groupId,
@@ -15,8 +14,7 @@ export default class Notifications {
         })
     }
 
-    public static async createAnimeNotifications(notify: Notify){
-        const {animeId, status, groupId, episode} = notify
+    public static async createAnimeNotifications({ animeId, status, groupId, episode }: Notify) {
         return prisma.animeNotifications.create({
             data: {
                 animeId,
