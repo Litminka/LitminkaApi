@@ -2,7 +2,6 @@ import { Group_list, Group_list_invites, User } from "@prisma/client";
 import { prisma } from "../../db";
 import BaseError from "../../errors/BaseError";
 import { RequestStatuses } from "../../ts/enums";
-import { group } from "console";
 
 type UserWithGroup = User & {
     owned_groups: Group_list[]
