@@ -7,18 +7,21 @@ import GroupMemberController from "../controllers/group/GroupMemberController";
 import GroupAnimeListController from "../controllers/group/GroupAnimeListController";
 import { deleteFromWatchListValidation } from "../validators/WatchListValidator";
 import CreateGroupRequest from "../requests/group/CreateGroupRequest";
+import DeleteGroupRequest from "../requests/group/DeleteGroupRequest";
+import UpdateGroupRequest from "../requests/group/UpdateGroupRequest";
+import OwnedGroupRequest from "../requests/group/OwnedGroupsRequest";
 
 const router = Router();
 
 router.post('/', new CreateGroupRequest().send(), wrap(GroupListController.createGroup));
-router.get('/owned', wrap(GroupListController.getOwnedGroups));
+router.get('/owned', new OwnedGroupRequest().send(), wrap(GroupListController.getOwnedGroups));
 router.get('/member', wrap(GroupMemberController.getMemberGroup));
 
 const groupIdRouter = Router({ mergeParams: true });
 router.use('/:groupId', groupIdRouter);
 
-groupIdRouter.delete('/', GroupListIdValidator(), wrap(GroupListController.deleteGroup));
-groupIdRouter.patch('/', GroupListIdValidator(), wrap(GroupListController.updateGroup));
+groupIdRouter.delete('/', new DeleteGroupRequest().send(), wrap(GroupListController.deleteGroup));
+groupIdRouter.patch('/', new UpdateGroupRequest().send(), wrap(GroupListController.updateGroup));
 
 groupIdRouter.post('/invite', GroupInviteValidator(), wrap(GroupInviteController.inviteUser));
 groupIdRouter.delete('/invite', GroupInviteValidator(), wrap(GroupInviteController.deleteInvite));

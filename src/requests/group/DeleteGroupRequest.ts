@@ -1,9 +1,9 @@
 import prisma from "../../db";
 import { RequestAuthTypes } from "../../ts/enums";
 import Request from "../Request";
-import { CreateGroupListValidator } from "../../validators/GroupListValidator";
+import { GroupListIdValidator } from "../../validators/GroupListValidator";
 
-export default class CreateGroupRequest extends Request {
+export default class DeleteGroupRequest extends Request {
 
     /**
      * Define auth type for this request
@@ -17,7 +17,7 @@ export default class CreateGroupRequest extends Request {
      *  @returns Prisma User Variant
      */
     protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
+        return await prisma.user.findUserById(userId);
     }
 
     /**
@@ -25,6 +25,6 @@ export default class CreateGroupRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return CreateGroupListValidator();
+        return GroupListIdValidator();
     }
 }

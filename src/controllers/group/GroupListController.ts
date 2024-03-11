@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { RequestWithAuth, RequestWithUserOwnedGrous } from "../../ts";
+import { RequestWithAuth, RequestWithUser, RequestWithUserOwnedGrous } from "../../ts";
 import { RequestStatuses } from "../../ts/enums";
 import prisma from "../../db";
 import GroupListService from "../../services/group/GroupListService";
@@ -25,11 +25,8 @@ export default class GroupListController {
         return res.status(RequestStatuses.OK).json(result);
     }
 
-    public static async deleteGroup(req: RequestWithAuth, res: Response) {
-        const { id }: { id: number } = req.auth!;
-        const user = await prisma.user.findFirst({ where: { id } });
-        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
-
+    public static async deleteGroup(req: RequestWithUser, res: Response) {
+        const user = req.auth.user;
         const groupId = req.params.groupId as unknown as number;
 
         await GroupListService.deleteGroup(groupId, user.id);
@@ -37,11 +34,8 @@ export default class GroupListController {
         return res.status(RequestStatuses.OK).json({ message: "group_deleted" });
     }
 
-    public static async updateGroup(req: RequestWithAuth, res: Response) {
-        const { id }: { id: number } = req.auth!;
-        const user = await prisma.user.findFirst({ where: { id }, include: { ownedGroups: true } });
-        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
-
+    public static async updateGroup(req: RequestWithUserOwnedGrous, res: Response) {
+        const user = req.auth.user;
         const groupId = req.params.groupId as unknown as number;
         const { description, name } = req.body;
 
