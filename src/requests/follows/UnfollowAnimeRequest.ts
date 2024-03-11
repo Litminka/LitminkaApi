@@ -1,15 +1,16 @@
 import { param, body } from "express-validator";
-import prisma from "../db";
-import { RequestAuthTypes } from "../ts/enums";
-import Request from "./Request";
+import prisma from "../../db";
+import { RequestAuthTypes } from "../../ts/enums";
+import Request from "../Request";
+import { UnFollowValidation } from "../../validators/FollowValidator";
 
-export default class FollowAnimeRequest extends Request {
+export default class UnFollowAnimeRequest extends Request {
 
     /**
      * Define auth type for this request
      */
     protected authType = RequestAuthTypes.Auth;
-    
+
     /**
      *  if authType is not None 
      *  Define prisma user request for this method
@@ -25,10 +26,6 @@ export default class FollowAnimeRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return [
-            param("animeId").bail().isInt().bail().toInt(),
-            body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
-            body("groupName").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail(),
-        ]
+        return UnFollowValidation()
     }
 }

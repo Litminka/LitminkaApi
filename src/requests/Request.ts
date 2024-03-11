@@ -4,6 +4,7 @@ import { validationError } from "../middleware/validationError";
 import { auth } from "../middleware/auth";
 import { optionalAuth } from "../middleware/optionalAuth";
 import { RequestWithAuth } from "../ts";
+import { checkExact } from "express-validator";
 
 export default class Request {
 
@@ -78,6 +79,7 @@ export default class Request {
         return [
             ...this.getAuthMethod(),
             ...this.rules(),
+            checkExact([], { message: 'Additional fields are not allowed' }),
             validationError
         ]
     }

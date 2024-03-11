@@ -1,17 +1,16 @@
 import { Router } from "express";
 import { wrap } from "../middleware/errorHandler";
-import { auth } from "../middleware/auth";
 import GroupListController from "../controllers/group/GroupListController";
-import { AddToGroupListValidator, CreateGroupListValidator, GroupInviteActionValidator, GroupInviteValidator, GroupListIdValidator, GroupListIdWithUserIdValidator } from "../validators/GroupListValidator";
+import { AddToGroupListValidator, GroupInviteActionValidator, GroupInviteValidator, GroupListIdValidator, GroupListIdWithUserIdValidator } from "../validators/GroupListValidator";
 import GroupInviteController from "../controllers/group/GroupInviteController";
 import GroupMemberController from "../controllers/group/GroupMemberController";
 import GroupAnimeListController from "../controllers/group/GroupAnimeListController";
 import { deleteFromWatchListValidation } from "../validators/WatchListValidator";
+import CreateGroupRequest from "../requests/group/CreateGroupRequest";
 
 const router = Router();
-router.use(auth)
 
-router.post('/', CreateGroupListValidator(), wrap(GroupListController.createGroup));
+router.post('/', new CreateGroupRequest().send(), wrap(GroupListController.createGroup));
 router.get('/owned', wrap(GroupListController.getOwnedGroups));
 router.get('/member', wrap(GroupMemberController.getMemberGroup));
 

@@ -1,4 +1,4 @@
-import { Anime, AnimeTranslation, User } from "@prisma/client";
+import { Anime, AnimeTranslation, Group, GroupList, User } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
@@ -13,6 +13,15 @@ export interface RequestWithAuth extends Request {
 export interface RequestWithUser extends Request {
     auth: {
         user: User,
+        id: number
+    }
+}
+
+export interface RequestWithUserOwnedGrous extends Request {
+    auth: {
+        user: User & {
+            ownedGroups: GroupList[]
+        },
         id: number
     }
 }

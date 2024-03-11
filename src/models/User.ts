@@ -81,6 +81,9 @@ const extention = Prisma.defineExtension({
             async findUserById(id: number) {
                 return await prisma.user.findFirstOrThrow({ where: { id } });
             },
+            async findUserWithOwnedGroups(id: number) {
+                return await prisma.user.findFirstOrThrow({ where: { id }, include: { ownedGroups: true } });
+            },
             async findUserByLogin(login: string) {
                 return prisma.user.findFirst({
                     select: {

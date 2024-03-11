@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { RequestWithAuth } from "../../ts";
+import { RequestWithAuth, RequestWithUserOwnedGrous } from "../../ts";
 import { RequestStatuses } from "../../ts/enums";
 import prisma from "../../db";
 import GroupListService from "../../services/group/GroupListService";
@@ -16,11 +16,8 @@ export default class GroupListController {
         return res.status(RequestStatuses.OK).json(result);
     }
 
-    public static async createGroup(req: RequestWithAuth, res: Response) {
-        const { id }: { id: number } = req.auth!;
-        const user = await prisma.user.findFirst({ where: { id }, include: { ownedGroups: true } });
-        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
-
+    public static async createGroup(req: RequestWithUserOwnedGrous, res: Response) {
+        const user = req.auth.user;
         const { description, name } = req.body;
 
         const result = await GroupListService.createGroup({ description, name, user });
