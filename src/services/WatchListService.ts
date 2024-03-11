@@ -48,8 +48,8 @@ export default class WatchListService {
         noResultAnime = noResultAnime.flat();
 
         // remove all nasty stuff from watchlist, no pron for you >:)
-        const noResultAnimeIds = new Set(noResultAnime.map(anime => anime.id));
-        watchList = watchList.filter(list => noResultAnimeIds.has(list.id));
+        const allIds = new Set([...kodikIds, ...noResultAnime.map(anime => anime.id)]);
+        watchList = watchList.filter(list => allIds.has(list.target_id));
 
         const animeUpdateService = new AnimeUpdateService(shikimoriapi, user);
         await animeUpdateService.updateGroups(result);
