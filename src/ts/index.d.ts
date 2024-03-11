@@ -1,4 +1,4 @@
-import { Anime, AnimeTranslation, Group, GroupList, User } from "@prisma/client";
+import { Anime, AnimeTranslation, Group, GroupList, Permission, Role, User } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
@@ -13,6 +13,19 @@ export interface RequestWithAuth extends Request {
 export interface RequestWithUser extends Request {
     auth: {
         user: User,
+        id: number
+    }
+}
+
+interface RoleWithPermissions extends Role {
+    permissions: Permission[]
+}
+
+export interface RequestWithUserPermissions extends Request {
+    auth: {
+        user: User & {
+            role: RoleWithPermissions
+        },
         id: number
     }
 }

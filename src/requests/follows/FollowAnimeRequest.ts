@@ -1,5 +1,5 @@
 import prisma from "../../db";
-import { RequestAuthTypes } from "../../ts/enums";
+import { Permissions, RequestAuthTypes } from "../../ts/enums";
 import Request from "../Request";
 import { FollowValidation } from "../../validators/FollowValidator";
 
@@ -9,6 +9,8 @@ export default class FollowAnimeRequest extends Request {
      * Define auth type for this request
      */
     protected authType = RequestAuthTypes.Auth;
+
+    protected permissions: string[] = [Permissions.ManageAnime];
 
     /**
      *  if authType is not None 

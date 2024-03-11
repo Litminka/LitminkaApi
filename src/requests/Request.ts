@@ -1,17 +1,23 @@
-import { RequestAuthTypes, RequestStatuses } from "../ts/enums";
+import { Permissions, RequestAuthTypes, RequestStatuses } from "../ts/enums";
 import { NextFunction, Response } from "express";
 import { validationError } from "../middleware/validationError";
 import { auth } from "../middleware/auth";
 import { optionalAuth } from "../middleware/optionalAuth";
-import { RequestWithAuth } from "../ts";
+import { RequestWithAuth, RequestWithUserPermissions } from "../ts";
 import { checkExact } from "express-validator";
 
 export default class Request {
 
     protected authType: RequestAuthTypes;
 
+    /**
+     * define permissons for this request
+     */
+    protected permissions: string[];
+
     constructor() {
         this.authType = RequestAuthTypes.None;
+        this.permissions = []
     }
     /**
      * define validation rules for this request
@@ -46,7 +52,7 @@ export default class Request {
     private async constructOptionalAuthMiddleware(req: RequestWithAuth, res: Response, next: NextFunction) {
         const { id }: { id: number } = req.auth!;
         if (typeof id === "undefined") {
-            next();
+            return next();
         }
         const user = await this.auth(id);
 
@@ -58,7 +64,7 @@ export default class Request {
         next();
     }
 
-    protected getAuthMethod() {
+    private getAuthMethod() {
         const middleware: any = [];
         if (this.authType === RequestAuthTypes.Auth) {
             middleware.push(auth)
@@ -72,12 +78,31 @@ export default class Request {
         return middleware
     }
 
+    private checkPermissions(req: RequestWithUserPermissions, res: Response, next: NextFunction) {
+        if (this.permissions.length < 1) return next();
+
+        if (req.auth.user.role === undefined || req.auth.user.role.permissions === undefined) {
+            return res.status(RequestStatuses.Forbidden).json({ message: "no_permissions" })
+        }
+
+        const permissionNames = req.auth.user.role.permissions.map(perm => perm.name);
+
+        const hasPermissions = this.permissions.every(permission => permissionNames.includes(permission));
+
+        if (hasPermissions) {
+            return next();
+        }
+
+        return res.status(RequestStatuses.Forbidden).json({ message: "no_permissions" })
+    }
+
     /**
      * return final set of middlewares
      */
     public send() {
         return [
             ...this.getAuthMethod(),
+            this.checkPermissions.bind(this),
             ...this.rules(),
             checkExact([], { message: 'Additional fields are not allowed' }),
             validationError
