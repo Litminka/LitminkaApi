@@ -6,6 +6,8 @@ import { ShikimoriWhoAmI } from "../ts";
 import UnprocessableContentError from "../errors/clienterrors/UnprocessableContentError";
 import crypto from "crypto";
 import prisma from "../db";
+import ForbiddenError from "../errors/clienterrors/ForbiddenError";
+import BadRequestError from "../errors/clienterrors/BadRequestError";
 
 export default class ShikimoriLinkService {
     public static async link(token: any, code: any) {
@@ -16,6 +18,8 @@ export default class ShikimoriLinkService {
             throw new UnauthorizedError("Query param token must be string")
         }
         const user = await prisma.user.findUserByShikimoriLinkToken(token);
+        if (user.integration?.shikimoriId) throw new BadRequestError("User already has shikimori integration");
+
         const shikimoriapi = new ShikimoriApiService(user);
         const profile = await shikimoriapi.getProfile();
         if (!profile) throw new UnauthorizedError("User does not have shikimori integration")
@@ -23,7 +27,7 @@ export default class ShikimoriLinkService {
         if (profile.reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
 
         const integrated = await prisma.integration.findByShikimoriId((<ShikimoriWhoAmI>profile).id)
-        // fix if user integrated another account
+        // fix if user integrated this shikimori account on another user account
         if (integrated) {
             await prisma.integration.clear(user.id);
             throw new UnprocessableContentError("Account already linked");
@@ -48,6 +52,9 @@ export default class ShikimoriLinkService {
     }
 
     public static async generateLinkById(id: number) {
+        const user = await prisma.user.findUserByIdWithIntegration(id)
+        if (user.integration?.shikimoriId) throw new BadRequestError("User already has shikimori integration");
+
         const token: string = crypto.randomBytes(24).toString('hex');
         await prisma.shikimoriLinkToken.createShikimoriLinkTokenByUserId(token, id)
         return `${process.env.APP_URL}/shikimori/link?token=${token}`;

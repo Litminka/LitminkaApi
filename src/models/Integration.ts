@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../db";
 
 const extention = Prisma.defineExtension({
-    name: "ItegrationModel",
+    name: "IntegrationModel",
     model: {
         integration: {
             async findByShikimoriId(id: number) {
