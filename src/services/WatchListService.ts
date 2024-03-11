@@ -23,12 +23,13 @@ export default class WatchListService {
         if (!animeList) throw new UnauthorizedError("User does not have shikimori integration")
         if ((<ServerError>animeList).reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
         logger.info("Got list");
-        const watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
+        let watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
 
         // Get all anime from kodik
         const kodik = new KodikApiService();
         let result = await kodik.getFullBatchAnime(shikimoriAnimeIds);
+
         logger.info("Got anime from kodik");
 
         // Isolate all results that returned nothing
@@ -45,6 +46,10 @@ export default class WatchListService {
         });
         let noResultAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
         noResultAnime = noResultAnime.flat();
+
+        // remove all nasty stuff from watchlist, no pron for you >:)
+        const noResultAnimeIds = new Set(noResultAnime.map(anime => anime.id));
+        watchList = watchList.filter(list => noResultAnimeIds.has(list.id));
 
         const animeUpdateService = new AnimeUpdateService(shikimoriapi, user);
         await animeUpdateService.updateGroups(result);

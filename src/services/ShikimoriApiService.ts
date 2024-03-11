@@ -161,15 +161,15 @@ export default class ShikimoriApiService implements iShikimoriApi {
     public async getUserList(): Promise<ShikimoriWatchList[] | ServerError | false> {
         if (!this.user) return false;
         if (this.user.integration!.shikimoriId === null) return false;
-        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimoriId}&target_type=Anime`, "GET");
+        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimoriId}&target_type=Anime&censored=true`, "GET");
     }
 
     public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[] | ServerError> {
         const animeIds = ids.join(",");
-        return this.requestMaker(`/animes?ids=${animeIds}&limit=50`, "GET");
+        return this.requestMaker(`/animes?ids=${animeIds}&limit=50&censored=true`, "GET");
     }
 
     public async getSeasonAnimeByPage(page: number, season: string): Promise<ShikimoriAnime[] | ServerError> {
-        return this.requestMaker(`/animes?limit=50&season=${season}&page=${page}`, "GET");
+        return this.requestMaker(`/animes?limit=50&season=${season}&page=${page}&censored=true`, "GET");
     }
 }
