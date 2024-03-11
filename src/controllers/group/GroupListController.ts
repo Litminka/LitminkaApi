@@ -1,24 +1,31 @@
 import { Response } from "express";
-import { RequestWithAuth, RequestWithUser, RequestWithUserOwnedGrous } from "../../ts";
+import { RequestWithUser, RequestWithUserOwnedGrous } from "../../ts";
 import { RequestStatuses } from "../../ts/enums";
-import prisma from "../../db";
 import GroupListService from "../../services/group/GroupListService";
+
+interface createGroup {
+    description: string,
+    name: string,
+}
+
+interface updateGroup {
+    description?: string,
+    name?: string
+}
 
 export default class GroupListController {
 
-    public static async getOwnedGroups(req: RequestWithAuth, res: Response) {
-        const { id }: { id: number } = req.auth!;
-        const user = await prisma.user.findFirst({ where: { id }, include: { ownedGroups: true } });
-        if (!user) return res.status(RequestStatuses.Forbidden).json({ errors: "unauthorized" });
+    public static async getOwnedGroups(req: RequestWithUserOwnedGrous, res: Response) {
+        const user = req.auth.user;
 
-        const result = await GroupListService.getOwnedGroups(id);
+        const result = await GroupListService.getOwnedGroups(user.id);
 
         return res.status(RequestStatuses.OK).json(result);
     }
 
     public static async createGroup(req: RequestWithUserOwnedGrous, res: Response) {
         const user = req.auth.user;
-        const { description, name } = req.body;
+        const { description, name } = req.body as createGroup;
 
         const result = await GroupListService.createGroup({ description, name, user });
 
@@ -37,7 +44,7 @@ export default class GroupListController {
     public static async updateGroup(req: RequestWithUserOwnedGrous, res: Response) {
         const user = req.auth.user;
         const groupId = req.params.groupId as unknown as number;
-        const { description, name } = req.body;
+        const { description, name } = req.body as updateGroup;
 
         const result = await GroupListService.updateGroup({ description, name, user, groupId });
 
