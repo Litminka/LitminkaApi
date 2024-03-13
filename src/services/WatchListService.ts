@@ -10,6 +10,8 @@ import KodikApiService from "./KodikApiService";
 import ShikimoriApiService from "./ShikimoriApiService";
 import { logger } from "../loggerConf";
 import prisma from "../db";
+import { ShikimoriAnimeWithRelation, ShikimoriGraphAnime } from "../ts/shikimori";
+import { translations } from "../ts/kodik";
 
 export default class WatchListService {
 
@@ -70,15 +72,59 @@ export default class WatchListService {
     }
 
     public static async importListV2(id: number) {
-        const user = await prisma.user.findUserByIdWithIntegration(id);
-        const shikimoriapi = new ShikimoriApiService(user);
-        const watchList = await shikimoriapi.getUserList();
 
-        logger.info("Got list");
-        const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
-        const batched = groupArrSplice(shikimoriAnimeIds, 50);
-        const shikimoriData = await shikimoriapi.getBatchGraphAnime(batched[0]);
-        console.log(shikimoriData.data.animes[0]);
+        const user = await prisma.user.findUserByIdWithIntegration(id);
+        const shikimoriApi = new ShikimoriApiService(user);
+        const kodikApi = new KodikApiService();
+
+        const watchList = await shikimoriApi.getUserList();
+        logger.info(`Got list of user ID:${user.id}:${user.login}`);
+
+        const watchListAnimeIds: number[] = watchList.map((anime) => anime.target_id);
+        const groupedIds = groupArrSplice(watchListAnimeIds, 50);
+
+        let batchNumber = 0;
+        const shikimoriMap = new Map<number, ShikimoriGraphAnime>();
+        const translations = new Map<number, translations>();
+        const noTranslations = new Set<number>();
+        for (const batch of groupedIds) {
+            batchNumber++;
+            logger.info(`Requesting anime from watchList, batch:${batchNumber}`);
+            const shikimoriData = await shikimoriApi.getBatchGraphAnime(batch);
+            for (const anime of shikimoriData.data.animes) {
+                shikimoriMap.set(Number(anime.id), anime);
+                for (const relation of anime.related) {
+                    if (relation.anime == null) continue;
+                    const id = Number(relation.anime.id);
+
+                    if (shikimoriMap.has(id)) continue; // prefer anime with relations
+                    
+                    shikimoriMap.set(id, relation.anime);
+                    
+                    if (noTranslations.has(id)) continue;
+
+                    noTranslations.add(id);
+                }
+            }
+            const kodikData = await kodikApi.getBatchAnime(batch);
+            for (const kodikAnime of kodikData) {
+                if (kodikAnime.translations.length < 1) console.log("empty anime")
+                translations.set(Number(kodikAnime.shikimori_id), kodikAnime.translations);
+            }
+        }
+        
+        batchNumber = 0;
+        const translationBatch = groupArrSplice([...noTranslations], 50);
+        for (const batch of translationBatch) {
+            logger.info(`Requesting additional translations from kodik, batch:${batchNumber}`);
+            const kodikData = await kodikApi.getBatchAnime(batch);
+            for (const kodikAnime of kodikData) {
+                translations.set(Number(kodikAnime.shikimori_id), kodikAnime.translations);
+            }
+            batchNumber++;
+        }
+
+        console.log(watchList.length,shikimoriMap.size, translations.size);
     }
 
     public static async addAnimeToListByIdWithParams(userId: number, animeId: number, addingParameters: AddToList) {

@@ -1,6 +1,6 @@
 export interface ShikimoriGraphAnimeRequest {
     data: {
-        animes: ShikimoriGraphAnime[]
+        animes: ShikimoriAnimeWithRelation[]
     }
 }
 
@@ -28,7 +28,7 @@ export interface ShikimoriGraphAnime {
 }
 
 export interface ShikimoriAnimeWithRelation extends ShikimoriGraphAnime {
-    related: ShikimoriAnimeWithRelation[]
+    related: ShikimoriRelation[]
 }
 
 type genreKind = "demographic" | "genre" | "theme"
