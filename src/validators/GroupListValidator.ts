@@ -11,14 +11,14 @@ export const CreateGroupListValidator = (): any[] => {
         body("description").notEmpty().bail().isString().bail(),
     ];
 };
-export const GroupInviteValidator = (): any[] => {
+export const GroupInviteValidation = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
         body("userId").isInt().bail().toInt(),
     ];
 };
 
-export const GroupListIdValidator = (): any[] => {
+export const GroupListIdValidation = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
     ];
@@ -45,14 +45,14 @@ export const GroupInviteIdValidator = (): any[] => {
     ]
 }
 
-export const GroupInviteActionValidator = (): any[] => {
+export const GroupInviteActionValidation = (): any[] => {
     return [
         param("inviteId").isInt().bail().toInt(),
         body("modifyList").optional().isBoolean().bail().toBoolean(),
     ];
 }
 
-export const AddToGroupListValidator = (): any[] => {
+export const AddToGroupListValidation = (): any[] => {
     const watchedRange: minmax = { min: 0 };
     return [
         param("groupId").isInt().bail().toInt(),
