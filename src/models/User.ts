@@ -28,7 +28,7 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
-            async getUserByIdAnimeList(id: number) {
+            async findUserByIdWithAnimeList(id: number) {
                 return await prisma.user.findFirstOrThrow({
                     where: { id },
                     include: {
@@ -89,6 +89,9 @@ const extention = Prisma.defineExtension({
             },
             async findUserWithOwnedGroups(id: number) {
                 return await prisma.user.findFirstOrThrow({ where: { id }, include: { ownedGroups: true } });
+            },
+            async findUserWithGroupInvites(id: number) {
+                return await prisma.user.findFirstOrThrow({ where: { id }, include: { groupInvites: true } });
             },
             async findUserByLogin(login: string) {
                 return prisma.user.findFirst({
