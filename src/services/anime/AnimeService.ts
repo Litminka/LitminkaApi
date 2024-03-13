@@ -1,7 +1,7 @@
-import NotFoundError from "../errors/clienterrors/NotFoundError";
+import NotFoundError from "../../errors/clienterrors/NotFoundError";
 import AnimeUpdateService from "./AnimeUpdateService";
-import ShikimoriApiService from "./shikimori/ShikimoriApiService";
-import prisma from "../db";
+import ShikimoriApiService from "../shikimori/ShikimoriApiService";
+import prisma from "../../db";
 
 export default class AnimeService {
     public static async getSingleAnime(userId: number, animeId: number) {

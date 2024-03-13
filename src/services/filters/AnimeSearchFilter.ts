@@ -5,15 +5,16 @@ import Period from "../../helper/period";
 import dayjs from "dayjs";
 
 interface IAnimeFilterService {
-    years?: Date[], // WIP
-    period?: Date[], // Complete
-    seasons?: string[], // WIP
+    name?: string, // Complete
     includeGenres?: number[], // Complete
     excludeGenres?: number[], // Complete
-    name?: string, // Complete
     statuses?: string[], // Complete
     rpaRatings?: string[], // Complete
-    mediaTypes?: string[] // Complete
+    mediaTypes?: string[], // Complete
+    seasons?: string[], // WIP
+    period?: Date[], // Complete
+    isCensored: boolean,
+    banInRussia: boolean
 }
 
 export default class AnimeFilterService {

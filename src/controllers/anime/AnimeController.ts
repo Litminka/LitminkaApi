@@ -1,8 +1,8 @@
 import { Response } from "express";
 import { validationResult } from "express-validator";
-import { RequestWithAuth } from "../ts/index";
-import NotFoundError from "../errors/clienterrors/NotFoundError";
-import AnimeService from "../services/AnimeService";
+import { RequestWithAuth } from "../../ts/index";
+import NotFoundError from "../../errors/clienterrors/NotFoundError";
+import AnimeService from "../../services/anime/AnimeService";
 
 
 export default class AnimeController {
