@@ -1,18 +1,22 @@
 import { User, Integration, Prisma } from "@prisma/client";
-import fetch from "node-fetch";
-import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/index";
+import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/index";
 import prisma from '../db';
 import { shikiRateLimiter } from "../shikiRateLimiter";
 import { RateLimiter } from "limiter";
 import { RequestStatuses } from "../ts/enums";
 import axios, { AxiosHeaders } from "axios";
 import BadRequestError from "../errors/clienterrors/BadRequestError";
-import { ShikimoriGraphAnime, ShikimoriGraphAnimeRequest } from "../ts/shikimori";
+import { ShikimoriGraphAnimeRequest } from "../ts/shikimori";
+import { getAnimeWithRelationsQuery } from "../ts/shikimoriGraphQLRequests";
 interface iShikimoriApi {
     user: User & {
         integration: Integration | null
     } | undefined,
     limiter: RateLimiter
+}
+
+axios.defaults.validateStatus = (status) => {
+    return (status >= 400 && status <= 499) || (status >= 200 && status <= 299)
 }
 
 const baseUrl = `${process.env.SHIKIMORI_URL}/api`;
@@ -59,9 +63,6 @@ export default class ShikimoriApiService implements iShikimoriApi {
             headers: {
                 "User-Agent": process.env.SHIKIMORI_AGENT!,
                 'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            validateStatus: (status) => {
-                return (status >= 400 && status <= 499) || (status >= 200 && status <= 299);
             },
             data: requestBody
         });
@@ -150,9 +151,6 @@ export default class ShikimoriApiService implements iShikimoriApi {
                 method: method,
                 data,
                 headers: headers,
-                validateStatus: (status) => {
-                    return (status >= 400 && status <= 499) || (status >= 200 && status <= 299)
-                }
             });
 
             const { status } = response;
@@ -208,9 +206,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
     }
 
     public async getBatchGraphAnime(ids: number[]): Promise<ShikimoriGraphAnimeRequest> {
-        // TODO: hide this monstrosity
-        // TODO: add types to this request
-        const query = `query($ids: String) { animes(ids: $ids, limit: 50) {id name russian licenseNameRu english japanese kind rating score status episodes episodesAired airedOn { year month day date } releasedOn { year month day date } season isCensored description genres { id name russian kind } franchise poster { id originalUrl mainUrl } related { id relationRu anime { id name russian licenseNameRu english japanese kind rating score status episodes episodesAired airedOn { year month day date } releasedOn { year month day date } genres { id name russian kind } season isCensored description franchise poster { id originalUrl mainUrl } } } } }`;
+        const query = getAnimeWithRelationsQuery;
         const animeIds = ids.join(",");
         return this.requestMaker(`/graphql`, "POST", false, {
             operationName: null,
