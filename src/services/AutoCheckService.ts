@@ -122,11 +122,7 @@ export default class AutoCheckService {
         let seasonString = prevSeasonString;
         let page = 0;
         do {
-            const anime = await shikimoriApi.getSeasonAnimeByPage(page, seasonString);
-            if (!anime) throw new Error("Admin account not linked");
-            const error = anime as ServerError;
-            if (error.reqStatus === RequestStatuses.InternalServerError) throw new Error("Shikimori 500");
-            const shikimoriAnime = anime as ShikimoriAnime[];
+            const shikimoriAnime = await shikimoriApi.getSeasonAnimeByPage(page, seasonString);
             if ((shikimoriAnime.length == 0 || shikimoriAnime.length < 50) && seasonString != currentSeasonString) {
                 seasonString = currentSeasonString
                 page = 0;
@@ -147,8 +143,7 @@ export default class AutoCheckService {
         logger.info("Getting anime from shikimori")
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
             let response = await shikimoriApi.getBatchAnime(batch);
-            if ((<ServerError>response).reqStatus === RequestStatuses.InternalServerError) throw new Error("Shikimori 500");
-            return (<ShikimoriAnime[]>response);
+            return response;
         });
         let followedAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
         followedAnime = followedAnime.flat();

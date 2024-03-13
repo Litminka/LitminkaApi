@@ -2,7 +2,12 @@ import { Worker, Job } from 'bullmq';
 import WatchListService from '../services/WatchListService';
 
 const worker = new Worker("importWatchList", async (job: Job) => {
-    await WatchListService.importListByUserId(job.data.id);
+    try {
+        await WatchListService.importListV2(job.data.id);
+    } catch (error) {
+        console.error(error);
+    }
+    console.log('я обосрався')
 }, {
     connection: {
         host: process.env.REDIS_HOST,

@@ -14,14 +14,16 @@ import prisma from "../db";
 export default class WatchListService {
 
     // TODO: A lot of not optimized loops and methods, rewrite this method
+    /**
+     * @deprecated
+     * @param id 
+     */
     public static async importListByUserId(id: number) {
 
         // Get current user
         const user = await prisma.user.findUserByIdWithIntegration(id);
         const shikimoriapi = new ShikimoriApiService(user);
         let animeList = await shikimoriapi.getUserList();
-        if (!animeList) throw new UnauthorizedError("User does not have shikimori integration")
-        if ((<ServerError>animeList).reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
         logger.info("Got list");
         let watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
@@ -40,9 +42,7 @@ export default class WatchListService {
         // Splice all ids into groups of 50, so we can batch request anime from shikimori
         const idsSpliced = groupArrSplice(noResultIds, 50);
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
-            let response = await shikimoriapi.getBatchAnime(batch);
-            if ((<ServerError>response).reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
-            return (<ShikimoriAnime[]>response);
+            return await shikimoriapi.getBatchAnime(batch);
         });
         let noResultAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
         noResultAnime = noResultAnime.flat();
@@ -67,6 +67,18 @@ export default class WatchListService {
             if (count > 0) watchList.splice(i--, 1);
         }
         await prisma.animeList.createUsersWatchList(id, animeInList, watchList);
+    }
+
+    public static async importListV2(id: number) {
+        const user = await prisma.user.findUserByIdWithIntegration(id);
+        const shikimoriapi = new ShikimoriApiService(user);
+        const watchList = await shikimoriapi.getUserList();
+
+        logger.info("Got list");
+        const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
+        const batched = groupArrSplice(shikimoriAnimeIds, 50);
+        const shikimoriData = await shikimoriapi.getBatchGraphAnime(batched[0]);
+        console.log(shikimoriData.data.animes[0]);
     }
 
     public static async addAnimeToListByIdWithParams(userId: number, animeId: number, addingParameters: AddToList) {

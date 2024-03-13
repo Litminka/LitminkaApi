@@ -2,6 +2,7 @@ import { Anime, AnimeTranslation, User } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
+import { AxiosHeaders } from "axios";
 
 export interface RequestWithAuth extends Request {
     auth?: {
@@ -242,7 +243,6 @@ export interface DeleteFollow {
 
 export interface options {
     method: string;
-    headers: Headers;
     body?: any;
 }
 
