@@ -1,15 +1,17 @@
 import { Router } from 'express';
 import WatchListController from '../controllers/WatchListController';
-import { auth } from '../middleware/auth';
-import { addToWatchListValidation, editWatchListValidation, deleteFromWatchListValidation } from '../validators/WatchListValidator';
 import { wrap } from '../middleware/errorHandler';
+import AddToWatchListRequest from '../requests/watchList/AddToWatchListRequest';
+import EditWatchListRequest from '../requests/watchList/EditWatchListRequest';
+import DeleteFromWatchListRequest from '../requests/watchList/DeleteFromWatchListValidation';
+import ImportWatchListRequest from '../requests/watchList/ImportWatchListRequest';
+import GetWatchListRequest from '../requests/watchList/GetWatchListRequest';
 const router = Router();
 
 // Private methods
-router.use(auth)
-router.get("/", wrap(WatchListController.getWatchList));
-router.post("/import", wrap(WatchListController.importList));
-router.post("/:animeId", ...addToWatchListValidation(), wrap(WatchListController.addToList));
-router.patch("/:animeId", ...editWatchListValidation(), wrap(WatchListController.editList));
-router.delete("/:animeId", ...deleteFromWatchListValidation(), wrap(WatchListController.deleteFromList));
+router.get("/", new GetWatchListRequest().send(), wrap(WatchListController.getWatchList));
+router.post("/import", new ImportWatchListRequest().send(), wrap(WatchListController.importList));
+router.post("/:animeId", new AddToWatchListRequest().send(), wrap(WatchListController.addToList));
+router.patch("/:animeId", new EditWatchListRequest().send(), wrap(WatchListController.editList));
+router.delete("/:animeId", new DeleteFromWatchListRequest().send(), wrap(WatchListController.deleteFromList));
 export { router as watchListRouter };

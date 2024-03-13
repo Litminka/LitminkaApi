@@ -1,4 +1,4 @@
-import { Anime, AnimeTranslation, User } from "@prisma/client";
+import { Anime, AnimeList, AnimeTranslation, Group, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
@@ -14,6 +14,58 @@ export interface RequestWithUser extends Request {
     auth: {
         user: User,
         id: number
+    }
+}
+
+interface RoleWithPermissions extends Role {
+    permissions: Permission[]
+}
+
+export interface RequestWithUserPermissions extends Request {
+    auth: {
+        user: User & {
+            role: RoleWithPermissions
+        },
+        id: number
+    }
+}
+
+export interface RequestWithUserOwnedGroups extends Request {
+    auth: {
+        user: User & {
+            ownedGroups: GroupList[]
+        },
+        id: number
+    }
+}
+
+export interface RequestWithUserGroupInvites extends Request {
+    auth: {
+        user: User & {
+            groupInvites: GroupListInvites[]
+        },
+        id: number
+    }
+}
+
+export interface RequestWithTokenAndCode extends Request {
+    query: {
+        token: string,
+        code: string
+    }
+}
+
+export interface RequestUserWithIntegration extends Request {
+    auth: {
+        user: UserWithIntegration
+    }
+}
+
+export interface RequestWithUserAnimeList extends Request {
+    auth: {
+        user: User & {
+            animeList: AnimeList | null
+        }
     }
 }
 
@@ -292,4 +344,8 @@ export interface FollowAnime {
     status: FollowTypes,
     translationId?: number
     translationGroupName?: string
+}
+
+export type UserWithIntegration = User & {
+    integration: Integration | null
 }

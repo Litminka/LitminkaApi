@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { CreateUser, LoginUser, RequestWithAuth } from "../ts/index";
+import { CreateUser, LoginUser, RequestWithAuth, RequestWithUserPermissions } from "../ts/index";
 import { RequestStatuses } from "../ts/enums";
 import UserService from "../services/UserService";
 import ForbiddenError from "../errors/clienterrors/ForbiddenError";
-import prisma from "../db";
 
 export default class UserController {
     static async createUser(req: Request, res: Response): Promise<Object> {
@@ -32,10 +31,9 @@ export default class UserController {
         });
     }
 
-    static async profile(req: RequestWithAuth, res: Response): Promise<Object> {
+    static async profile(req: RequestWithUserPermissions, res: Response): Promise<Object> {
         // FIXME: Refactor to middleware
-        const { id } = req.auth!;
-        const user = await prisma.user.findUserByIdWithRolePermission(id)
+        const user = req.auth.user;
         if (!user) throw new ForbiddenError('Unauthorized');
 
         return res.status(RequestStatuses.OK).json({
