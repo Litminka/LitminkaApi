@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { RequestWithUser, RequestWithUserOwnedGrous } from "../../ts";
+import { RequestWithUser, RequestWithUserOwnedGroups } from "../../ts";
 import { RequestStatuses } from "../../ts/enums";
 import GroupListService from "../../services/group/GroupListService";
 
@@ -15,7 +15,7 @@ interface updateGroup {
 
 export default class GroupListController {
 
-    public static async getOwnedGroups(req: RequestWithUserOwnedGrous, res: Response) {
+    public static async getOwnedGroups(req: RequestWithUserOwnedGroups, res: Response) {
         const user = req.auth.user;
 
         const result = await GroupListService.getOwnedGroups(user.id);
@@ -23,7 +23,7 @@ export default class GroupListController {
         return res.status(RequestStatuses.OK).json(result);
     }
 
-    public static async createGroup(req: RequestWithUserOwnedGrous, res: Response) {
+    public static async createGroup(req: RequestWithUserOwnedGroups, res: Response) {
         const user = req.auth.user;
         const { description, name } = req.body as createGroup;
 
@@ -41,7 +41,7 @@ export default class GroupListController {
         return res.status(RequestStatuses.OK).json({ message: "group_deleted" });
     }
 
-    public static async updateGroup(req: RequestWithUserOwnedGrous, res: Response) {
+    public static async updateGroup(req: RequestWithUserOwnedGroups, res: Response) {
         const user = req.auth.user;
         const groupId = req.params.groupId as unknown as number;
         const { description, name } = req.body as updateGroup;

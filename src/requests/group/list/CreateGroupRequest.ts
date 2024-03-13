@@ -1,14 +1,8 @@
-import prisma from "../../db";
-import { RequestAuthTypes } from "../../ts/enums";
-import Request from "../Request";
-import { UpdateGroupListValidator } from "../../validators/GroupListValidator";
+import prisma from "../../../db";
+import { CreateGroupListValidator } from "../../../validators/GroupListValidator";
+import AuthRequest from "../../AuthRequest";
 
-export default class UpdateGroupRequest extends Request {
-
-    /**
-     * Define auth type for this request
-     */
-    protected authType = RequestAuthTypes.Auth;
+export default class CreateGroupRequest extends AuthRequest {
 
     /**
      *  if authType is not None 
@@ -25,6 +19,6 @@ export default class UpdateGroupRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return UpdateGroupListValidator();
+        return CreateGroupListValidator();
     }
 }

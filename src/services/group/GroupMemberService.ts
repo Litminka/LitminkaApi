@@ -2,6 +2,7 @@ import { User, GroupList } from "@prisma/client";
 import prisma from "../../db";
 import BaseError from "../../errors/BaseError";
 import { RequestStatuses } from "../../ts/enums";
+import UnprocessableContentError from "../../errors/clienterrors/UnprocessableContentError";
 
 
 interface EditMember {
@@ -93,7 +94,7 @@ export default class GroupMemberService {
     }
 
     public static async kickUser({ user, groupId, kickId }: KickUser) {
-        if (user.id === kickId) throw new BaseError("cant_kick_yourself", { status: RequestStatuses.UnprocessableContent });
+        if (user.id === kickId) throw new UnprocessableContentError("cant_kick_yourself");
 
         if (!user.ownedGroups.some(group => group.id === groupId)) {
             throw new BaseError("not_an_owner", { status: RequestStatuses.Forbidden });
