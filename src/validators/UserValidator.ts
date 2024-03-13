@@ -2,7 +2,7 @@ import prisma from '../db';
 import { body } from "express-validator";
 import { validationError } from '../middleware/validationError';
 
-const registrationValidation = (): any[] => {
+const RegistrationValidation = (): any[] => {
     return [
         body("login").bail().notEmpty().bail().custom(async value => {
             const user = await prisma.user.findFirst({
@@ -25,17 +25,15 @@ const registrationValidation = (): any[] => {
                 throw new Error('Password confirmation does not match password');
             }
             return true;
-        }),
-        validationError
+        })
     ];
 };
 
-const loginValidation = (): any[] => {
+const LoginValidation = (): any[] => {
     return [
         body("login").notEmpty().isString(),
-        body("password").notEmpty().isString(),
-        validationError
+        body("password").notEmpty().isString()
     ];
 };
 
-export { registrationValidation, loginValidation };
+export { RegistrationValidation, LoginValidation };
