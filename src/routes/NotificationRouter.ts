@@ -1,15 +1,14 @@
 import { Router } from 'express';
 import NotificationController from '../controllers/NotificationController';
-import { auth } from '../middleware/auth';
 import { wrap } from '../middleware/errorHandler';
-import { softPeriodValidator } from '../validators/PeriodValidator';
-import { validateBodyArrayId, validateBodyBool } from '../validators/BaseValidator';
+import GetUserNotificationsRequest from '../requests/notifications/GetUserNotificationsRequest';
+import GetNotificationsRequest from '../requests/notifications/GetNotificationsRequest';
+import ReadNotificationsRequest from '../requests/notifications/ReadNotificationsRequest';
 const router = Router();
 
 // Private methods
-router.use(auth)
-router.get("/user", [...softPeriodValidator("createdAt"), validateBodyBool("isRead")], wrap(NotificationController.getUserNotifications))
-router.get("", ...softPeriodValidator("createdAt"), wrap(NotificationController.getNotifications))
-router.post("/read", ...validateBodyArrayId("id"), wrap(NotificationController.readNotifications))
+router.get("/user", new GetUserNotificationsRequest().send(), wrap(NotificationController.getUserNotifications))
+router.get("", new GetNotificationsRequest().send(), wrap(NotificationController.getNotifications))
+router.post("/read", new ReadNotificationsRequest().send(), wrap(NotificationController.readNotifications))
 
-export { router as notificationRouter }
+export { router as notificationRouter } 

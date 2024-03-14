@@ -9,7 +9,7 @@ export enum AnimeStatuses {
     Ongoing = "ongoing"
 }
 
-export enum NotifyStatuses{
+export enum NotifyStatuses {
     AnimeRelease = "anime_released",
     EpisodeRelease = "episode_released",
     FinalEpisodeReleased = "final_episode_released"
@@ -90,4 +90,10 @@ export enum RequestAuthTypes {
     Auth,
     Optional,
     None
+}
+
+export enum Permissions {
+    ManageAnime = "manage_anime",
+    ViewLists = "view_lists",
+    SyncShikimori = "sync_shikimori"
 }

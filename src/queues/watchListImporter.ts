@@ -1,20 +1,10 @@
-import { Queue, Worker, Job } from 'bullmq';
-import WatchListService from '../services/WatchListService';
+import { Queue } from 'bullmq';
 
-const importWatchListQueue = new Queue("importWatchListImport", {
+export const importWatchListQueue = new Queue("importWatchList", {
     connection: {
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT!),
     }
 });
 
-const worker = new Worker("importWatchListImport", async (job: Job) => {
-    await WatchListService.importListByUserId(job.data.id);
-}, {
-    connection: {
-        host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT!),
-    }
-});
 
-export { importWatchListQueue }

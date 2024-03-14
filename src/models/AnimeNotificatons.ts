@@ -15,6 +15,16 @@ const extention = Prisma.defineExtension({
                         episode,
                     }
                 })
+            },
+            async getNotifications(period: Date[]) {
+                return prisma.animeNotifications.findMany({
+                    where: {
+                        createdAt: {
+                            gte: period[0],
+                            lte: period[1]
+                        }
+                    }
+                })
             }
         }
     }

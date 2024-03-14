@@ -4,12 +4,11 @@ import prisma from "../db";
 import Period from "../helper/period";
 import dayjs from "dayjs";
 
-interface getUserNotifications {
+export interface getUserNotifications {
     period: Date[],
     userId: number,
     isRead: boolean
 }
-
 
 export default class NotificationService {
     constructor() {
@@ -57,40 +56,16 @@ export default class NotificationService {
     public static async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {
         if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
         period = Period.getPeriod(period)
-        return prisma.userAnimeNotifications.findMany({
-            where: {
-                isRead,
-                userId,
-                createdAt: {
-                    lte: period[1],
-                    gte: period[0]
-                }
-            }
-        })
+        return prisma.userAnimeNotifications.getUserNotifications({isRead, userId, period})
     }
 
     public static async getNotifications(period: Date[]) {
         if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
         period = Period.getPeriod(period)
-        return prisma.animeNotifications.findMany({
-            where: {
-                createdAt: {
-                    gte: period[0],
-                    lte: period[1]
-                }
-            }
-        })
+        return prisma.animeNotifications.getNotifications(period);
     }
 
     public static async readNotifications(ids: number[], userId: number) {
-        return prisma.userAnimeNotifications.updateMany({
-            where: {
-                userId,
-                id: {
-                    in: ids
-                }
-            },
-            data: { isRead: true }
-        })
+        return prisma.userAnimeNotifications.readNotifications(ids, userId);
     }
 }
