@@ -7,7 +7,7 @@ export default class ShikimoriController {
     static async generateLink(req: RequestUserWithIntegration, res: Response): Promise<Object> {
         const user = req.auth.user;
       
-        const link = await ShikimoriLinkService.generateLinkById(user.id);
+        const link = await ShikimoriLinkService.generateLink(user);
       
         return res.status(RequestStatuses.OK).json({
             link: `${process.env.SHIKIMORI_URL}/oauth/authorize?client_id=${process.env.SHIKIMORI_CLIENT_ID}&redirect_uri=${link}&response_type=code&scope=user_rates`
@@ -27,7 +27,7 @@ export default class ShikimoriController {
     static async unlink(req: RequestUserWithIntegration, res: Response) {
         const user = req.auth.user;
       
-        await ShikimoriLinkService.unlink(user.id)
+        ShikimoriLinkService.unlink(user)
       
         return res.status(RequestStatuses.OK).json({
             message: "Account unlinked",

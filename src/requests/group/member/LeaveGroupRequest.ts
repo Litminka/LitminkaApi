@@ -1,5 +1,5 @@
 import AuthRequest from "../../AuthRequest";
-import { GroupListIdValidation } from "../../../validators/GroupListValidator";
+import { GroupListIdValidator } from "../../../validators/GroupListValidator";
 
 export default class LeaveGroupRequest extends AuthRequest {
 
@@ -8,6 +8,6 @@ export default class LeaveGroupRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupListIdValidation();
+        return GroupListIdValidator();
     }
 }

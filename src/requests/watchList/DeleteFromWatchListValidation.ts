@@ -1,4 +1,4 @@
-import { DeleteFromWatchListValidation, EditWatchListValidation } from "../../validators/WatchListValidator";
+import { DeleteFromWatchListValidation } from "../../validators/WatchListValidator";
 import AuthRequest from "../AuthRequest";
 
 export default class DeleteFromWatchListRequest extends AuthRequest {

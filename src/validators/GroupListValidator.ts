@@ -31,7 +31,7 @@ export const GroupListIdWithUserIdValidator = (): any[] => {
     ];
 };
 
-const UpdateGroupListValidator = (): any[] => {
+export const UpdateGroupListValidator = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
         body("name").optional().notEmpty().bail().isString().bail(),
@@ -39,7 +39,7 @@ const UpdateGroupListValidator = (): any[] => {
     ];
 }
 
-const GroupInviteIdValidator = (): any[] => {
+export const GroupInviteIdValidator = (): any[] => {
     return [
         param("inviteId").isInt().bail().toInt(),
     ]

@@ -103,7 +103,7 @@ export default class Request {
         return [
             ...this.getAuthMethod(),
             this.checkPermissions.bind(this),
-            ...this.rules(),
+            ...(this.rules().flat()),
             checkExact([], { message: 'Additional fields are not allowed' }),
             validationError
         ]

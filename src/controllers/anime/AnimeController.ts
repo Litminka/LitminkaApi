@@ -1,20 +1,17 @@
 import { Response } from "express";
-import { validationResult } from "express-validator";
-import { RequestWithAuth } from "../../ts/index";
-import NotFoundError from "../../errors/clienterrors/NotFoundError";
+import { RequestUserWithIntegration } from "../../ts/index";
 import AnimeService from "../../services/anime/AnimeService";
+import { RequestStatuses } from "../../ts/enums";
 
 
 export default class AnimeController {
-    public static async getSingleAnime(req: RequestWithAuth, res: Response) {
-        const result = validationResult(req);
-        if (!result.isEmpty()) throw new NotFoundError("This anime doesn't exist");
-        const userId: number = req.auth?.id as number;
+    public static async getSingleAnime(req: RequestUserWithIntegration, res: Response) {
+        const user = req.auth.user;
         const animeId: number = req.params.animeId as unknown as number;
 
-        const anime = await AnimeService.getSingleAnime(userId, animeId);
+        const anime = await AnimeService.getSingleAnime(animeId, user);
 
-        return res.json({
+        return res.status(RequestStatuses.OK).json({
             body: anime
         });
     }
