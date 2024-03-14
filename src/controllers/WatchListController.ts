@@ -4,10 +4,8 @@ import WatchListService from "../services/WatchListService";
 import { importWatchListQueue } from "../queues/watchListImporter";
 
 export default class WatchListController {
-    // FIXME: get out in middleware
     public static async getWatchList(req: RequestWithUserAnimeList, res: Response): Promise<Object> {
         const user = req.auth.user;
-
         return res.json(user.animeList);
     }
 

@@ -1,5 +1,5 @@
 import AuthRequest from "../../AuthRequest";
 
-export class GetInvitesRequest extends AuthRequest{
+export default class GetInvitesRequest extends AuthRequest {
 
 }

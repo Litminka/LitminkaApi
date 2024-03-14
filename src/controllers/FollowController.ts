@@ -17,7 +17,6 @@ export default class FollowController {
         })
     }
 
-    // FIXME: Refactor to middleware
     public static async unfollow(req: RequestWithUser, res: Response) {
 
         const user = req.auth.user;

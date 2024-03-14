@@ -1,8 +1,8 @@
 import { Response } from "express";
 import { RequestWithUser } from "../ts";
 import Period from "../helper/period";
-import { RequestStatuses } from "../ts/enums";
 import NotificationService from "../services/NotificationService";
+import { RequestStatuses } from "../ts/enums";
 
 export default class NotificationController {
     public static async getUserNotifications(req: RequestWithUser, res: Response): Promise<Object> {

@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { RequestStatuses } from "../ts/enums";
-import ShikimoriLinkService from "../services/ShikimoriLinkService";
+import ShikimoriLinkService from "../services/shikimori/ShikimoriLinkService";
 import { RequestUserWithIntegration, RequestWithTokenAndCode } from "../ts";
 
 export default class ShikimoriController {
@@ -16,9 +16,9 @@ export default class ShikimoriController {
 
     static async link(req: RequestWithTokenAndCode, res: Response): Promise<Object> {
         const { token, code } = req.query;
-      
+
         await ShikimoriLinkService.link(token, code);
-      
+
         return res.status(RequestStatuses.OK).json({
             message: "Account linked!"
         })
@@ -27,7 +27,7 @@ export default class ShikimoriController {
     static async unlink(req: RequestUserWithIntegration, res: Response) {
         const user = req.auth.user;
       
-        await ShikimoriLinkService.unlink(user)
+        ShikimoriLinkService.unlink(user)
       
         return res.status(RequestStatuses.OK).json({
             message: "Account unlinked",
