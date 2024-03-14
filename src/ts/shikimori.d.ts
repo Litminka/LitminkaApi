@@ -8,7 +8,7 @@ export interface ShikimoriGraphAnime {
     id: string,
     name: string,
     russian: string | null,
-    licenseNameRu: string,
+    licenseNameRu: string | null,
     english: string | null,
     japanese: string | null,
     kind: animeKind,
@@ -29,6 +29,10 @@ export interface ShikimoriGraphAnime {
 
 export interface ShikimoriAnimeWithRelation extends ShikimoriGraphAnime {
     related: ShikimoriRelation[]
+}
+
+export interface ShikimoriAnimeOptionalRelation extends ShikimoriGraphAnime {
+    related?: ShikimoriRelation[]
 }
 
 type genreKind = "demographic" | "genre" | "theme"

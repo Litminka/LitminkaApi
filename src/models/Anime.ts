@@ -1,7 +1,9 @@
-import { Prisma } from "@prisma/client";
+import { Anime, Prisma } from "@prisma/client";
 import prisma from "../db";
 import { cyrillicSlug } from "../helper/cyrillic-slug";
 import { ShikimoriAnime, ShikimoriAnimeFull } from "../ts";
+import { ShikimoriGraphAnime, ShikimoriRelation } from "../ts/shikimori";
+import { KodikAnime } from "../ts/kodik";
 
 const extention = Prisma.defineExtension({
     name: "AnimeModel",
@@ -141,6 +143,52 @@ const extention = Prisma.defineExtension({
                         }
                     }
                 })
+            },
+            async getBatchAnimeShikimori(shikimoriIds: number[]) {
+                return prisma.anime.findMany({
+                    where: {
+                        shikimoriId: {
+                            in: shikimoriIds
+                        }
+                    }
+                });
+            },
+            async updateFromShikimoriGraph(shikimori: ShikimoriGraphAnime, relation?: ShikimoriRelation[], kodikAnime?: KodikAnime, anime?: Anime) {
+                let hasRelation = false;
+                if (relation !== undefined) hasRelation = true;
+                let name = shikimori.russian ?? shikimori.name;
+                const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
+
+                await prisma.anime.update({
+                    where: {
+                        shikimoriId: Number(shikimori.id),
+                    },
+                    data: {
+                        slug,
+                        name: shikimori.name,
+                        japaneseName: shikimori.japanese,
+                        image: shikimori.poster?.originalUrl,
+                        description: shikimori.description,
+                        franchiseName: shikimori.franchise,
+                        maxEpisodes: shikimori.episodes,
+                        currentEpisodes: shikimori.episodesAired,
+                        shikimoriScore: shikimori.score ?? 0,
+                        mediaType: shikimori.kind,
+                        rpaRating: shikimori.rating,
+                        status: shikimori.status!,
+                        firstEpisodeAired: new Date(shikimori.airedOn.date ?? ''),
+                        lastEpisodeAired: new Date(shikimori.releasedOn.date ?? ''),
+                        banned: anime?.banned ?? shikimori.licenseNameRu != null,
+                        censored: anime?.censored ?? shikimori.isCensored,
+                    }
+                });
+
+            },
+            async createFromShikimoriGraph() {
+
+            },
+            async createRelations() {
+
             }
         }
     }

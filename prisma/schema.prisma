@@ -89,6 +89,8 @@ model Anime {
   shikimoriScore         Float
   franchiseName          String?
   kodikLink              String?
+  censored               Boolean                  @default(false)
+  banned                 Boolean                  @default(false)
   genres                 Genre[]
   animeTranslations      AnimeTranslation[]
   animeLists             AnimeList[]
@@ -201,12 +203,12 @@ model UserAnimeNotifications {
 }
 
 model AnimeNotifications {
-  id         Int      @id @default(autoincrement())
-  animeId    Int
-  anime      Anime    @relation(fields: [animeId], references: [id])
-  status     String
-  episode    Int?
-  groupId    Int?
-  group      Group?   @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
+  animeId   Int
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  status    String
+  episode   Int?
+  groupId   Int?
+  group     Group?   @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   createdAt DateTime @default(now())
 }
