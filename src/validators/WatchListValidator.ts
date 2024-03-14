@@ -1,11 +1,10 @@
 import prisma from '../db';
 import { body, param } from "express-validator";
-import { validationError } from '../middleware/validationError';
 interface minmax {
     min: number,
     max?: number
 }
-const addToWatchListValidation = (): any[] => {
+export const AddToWatchListValidation = (): any[] => {
     const watchedRange: minmax = { min: 0 };
     return [
         param("animeId").notEmpty().isInt().bail().toInt().custom(async value => {
@@ -19,11 +18,10 @@ const addToWatchListValidation = (): any[] => {
         body("status").notEmpty().bail().isString().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
         body("watchedEpisodes").notEmpty().bail().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
         body("rating").notEmpty().bail().isInt({ min: 0, max: 10 }),
-        body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean(),
-        validationError
+        body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean()
     ]
 };
-const editWatchListValidation = (): any[] => {
+export const EditWatchListValidation = (): any[] => {
 
     const watchedRange: minmax = { min: 0 };
     return [
@@ -37,21 +35,18 @@ const editWatchListValidation = (): any[] => {
         body("status").notEmpty().bail().isString().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
         body("watchedEpisodes").notEmpty().bail().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
         body("rating").notEmpty().bail().isInt({ min: 0, max: 10 }),
-        body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean(),
-        validationError
+        body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean()
     ]
 };
 
-const deleteFromWatchListValidation = (): any[] => {
+export const DeleteFromWatchListValidation = (): any[] => {
     return [
         param("animeId").notEmpty().isInt().bail().toInt().custom(async value => {
             const anime = await prisma.anime.findFirst({
                 where: { id: value }
             });
             if (!anime) throw new Error("Anime doesn't exist");
-        }),
-        validationError
+        })
     ]
 }
 // TODO: Add custom messages to this validator
-export { addToWatchListValidation, editWatchListValidation, deleteFromWatchListValidation }

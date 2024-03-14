@@ -1,13 +1,13 @@
 import { User, Integration, Prisma } from "@prisma/client";
-import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../ts/index";
-import prisma from '../db';
-import { shikiRateLimiter } from "../shikiRateLimiter";
+import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "../../ts/index";
+import prisma from '../../db';
+import { shikiRateLimiter } from "../../shikiRateLimiter";
 import { RateLimiter } from "limiter";
-import { RequestStatuses } from "../ts/enums";
+import { RequestStatuses } from "../../ts/enums";
 import axios, { AxiosHeaders } from "axios";
-import BadRequestError from "../errors/clienterrors/BadRequestError";
-import { ShikimoriGraphAnimeRequest } from "../ts/shikimori";
-import { getAnimeWithRelationsQuery } from "../ts/shikimoriGraphQLRequests";
+import BadRequestError from "../../errors/clienterrors/BadRequestError";
+import { ShikimoriGraphAnimeRequest } from "../../ts/shikimori";
+import { getAnimeWithRelationsQuery } from "../../ts/shikimoriGraphQLRequests";
 interface iShikimoriApi {
     user: User & {
         integration: Integration | null

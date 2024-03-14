@@ -6,7 +6,6 @@ const FollowValidation = (): any[] => {
         param("animeId").bail().isInt().bail().toInt(),
         body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
         body("groupName").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail(),
-        validationError
     ];
 };
 
@@ -14,15 +13,7 @@ const UnFollowValidation = (): any[] => {
     return [
         param("animeId").bail().isInt().bail().toInt(),
         body("groupName").optional().isString().bail(),
-        validationError,
     ];
 };
-
-const validateId = (fieldName: string): any[] => {
-    return [
-        body(fieldName).notEmpty().isInt(),
-    ]
-}
-
 
 export { FollowValidation, UnFollowValidation };
