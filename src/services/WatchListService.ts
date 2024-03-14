@@ -1,7 +1,7 @@
 import BadRequestError from "../errors/clienterrors/BadRequestError";
 import NotFoundError from "../errors/clienterrors/NotFoundError";
 import groupArrSplice from "../helper/groupsplice";
-import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts";
+import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "../ts";
 import { RequestStatuses } from "../ts/enums";
 import AnimeUpdateService from "./anime/AnimeUpdateService";
 import KodikApiService from "./KodikApiService";
@@ -20,9 +20,10 @@ export default class WatchListService {
      * @deprecated prefer using importListV2
      * @param id 
      */
-    public static async importListByUser(user: UserWithIntegration) {
+    public static async importListByUser(id: number) {
 
         // Get current user
+        const user = await prisma.user.findUserByIdWithIntegration(id);
         const shikimoriapi = new ShikimoriApiService(user);
         let animeList = await shikimoriapi.getUserList();
         logger.info("Got list");
