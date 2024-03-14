@@ -5,7 +5,7 @@ import InternalServerError from "../errors/servererrors/InternalServerError";
 import groupArrSplice from "../helper/groupsplice";
 import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList } from "../ts";
 import { RequestStatuses } from "../ts/enums";
-import AnimeUpdateService from "./AnimeUpdateService";
+import AnimeUpdateService from "./anime/AnimeUpdateService";
 import KodikApiService from "./KodikApiService";
 import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 import { logger } from "../loggerConf";

@@ -1,10 +1,9 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../../db";
-import { logger } from "../../loggerConf";
 import Period from "../../helper/period";
 import dayjs from "dayjs";
 
-interface IAnimeFilterService {
+export interface IAnimeFilters {
     name?: string, // Complete
     includeGenres?: number[], // Complete
     excludeGenres?: number[], // Complete
@@ -13,11 +12,16 @@ interface IAnimeFilterService {
     mediaTypes?: string[], // Complete
     seasons?: string[], // WIP
     period?: Date[], // Complete
-    isCensored: boolean,
-    banInRussia: boolean
+    isCensored: boolean, //WIP
+    banInRussia: boolean, //WIP
 }
 
-export default class AnimeFilterService {
+export interface IAnimeFilterQuery {
+    page?: string,
+    pageLimit?: string
+}
+
+export default class AnimeSearchFilter {
 
     private static byInGenre(arg?: number[]) {
         const filter = arg?.map(genre => { return { genres: { some: { id: genre } } } })
@@ -41,15 +45,13 @@ export default class AnimeFilterService {
     }
 
     private static byName(arg?: string) {
-        return (arg !== undefined) ? [{ name: { contains: arg } }] : []
-    }
-
-    private static byEnglishName(arg?: string) {
-        return (arg !== undefined) ? [{ englishName: { contains: arg } }] : []
-    }
-
-    private static byFranchiseName(arg?: string) {
-        return (arg !== undefined) ? [{ franchiseName: { contains: arg } }] : []
+        return (arg !== undefined) ? {
+            OR: [
+                { name: { contains: arg } },
+                { englishName: { contains: arg } },
+                { franchiseName: { contains: arg } },
+            ]
+        } : []
     }
 
     private static byPeriod(arg?: Date[]) {
@@ -58,14 +60,18 @@ export default class AnimeFilterService {
                 return Period.getPeriod([dayjs("1970-01-01").toDate(), dayjs().toDate()])
             return Period.getPeriod(arg)
         })(arg)
-        return [{
-            firstEpisodeAired: { gte: period[0] },
-            lastEpisodeAired: { lte: period[1], }
-        }]
-
+        return {
+            OR: [
+                {
+                    firstEpisodeAired: { gte: period[0] },
+                    lastEpisodeAired: { lte: period[1] }
+                },
+                { lastEpisodeAired: { equals: dayjs("1970-01-01 00:00:00.000").toDate() } },
+            ]
+        }
     }
 
-    public static async filterSelector(filterIn: IAnimeFilterService) {
+    public static async filterSelector(filterIn: IAnimeFilters, query: IAnimeFilterQuery) {
         const filters = {
             AND: [
                 this.byInGenre(filterIn.includeGenres),
@@ -74,13 +80,8 @@ export default class AnimeFilterService {
                 this.byRpaRating(filterIn.rpaRatings),
                 this.byStatus(filterIn.statuses),
                 this.byPeriod(filterIn.period),
-            ].flat().filter(filter => filter),
-            OR: [
-                { lastEpisodeAired: { gte: dayjs("1970-01-01 00:00:00.000").toDate() } },
                 this.byName(filterIn.name),
-                this.byEnglishName(filterIn.name),
-                this.byFranchiseName(filterIn.name),
-            ].flat().filter(filter => filter)
+            ].flat().filter(filter => filter),
         }
 
         const { filter } = {
@@ -89,14 +90,11 @@ export default class AnimeFilterService {
                     if (filter === undefined) return []
                     return filter
                 }),
-                OR: filters.OR.flatMap(filter => {
-                    if (filter === undefined) return []
-                    return filter
-                })
             })
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
-
         return prisma.anime.findMany({
+            take: Number(query.pageLimit),
+            skip: (Number(query.page) - 1) * Number(query.pageLimit),
             where: filter(),
             select: {
                 firstEpisodeAired: true,

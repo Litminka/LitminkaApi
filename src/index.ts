@@ -9,7 +9,7 @@ import { tokenRouter } from './routes/TokenRouter';
 import { watchListRouter } from './routes/WatchListRouter';
 import { followRouter } from './routes/FollowRouter';
 import { animeRouter } from './routes/anime/AnimeRouter';
-import { searchRouter } from './routes/anime/AnimeSearchRouter';
+import { animeSearchRouter as searchRouter } from './routes/SearchRouter';
 import { groupListRouter } from './routes/GroupListRouter';
 import { notificationRouter as notificationRouter } from './routes/NotificationRouter';
 import * as fs from 'fs';

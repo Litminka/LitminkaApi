@@ -2,7 +2,12 @@ import { body } from "express-validator";
 
 const genresValidator = (fieldName: string): any[] => {
     return [body(fieldName).optional().isArray().bail(),
-    body(`${fieldName}.*`).isInt()];
+    body(`${fieldName}.*`).isInt()
+    ];
+};
+
+const nameValidator = (fieldName: string): any[] => {
+    return [body(fieldName).optional().isString()];
 };
 
 const seasonsValidator = (fieldName: string): any[] => {
@@ -14,11 +19,6 @@ const seasonsValidator = (fieldName: string): any[] => {
             "summer",
             "fall"
         ])];
-};
-
-
-const nameValidator = (fieldName: string): any[] => {
-    return [body(fieldName).optional().isString()];
 };
 
 const statusesValidator = (fieldName: string): any[] => {
