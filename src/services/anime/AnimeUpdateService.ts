@@ -4,7 +4,7 @@ import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "@/ts/index";
 import { KodikAnimeFull, checkAnime, translation } from "@/ts/kodik";
 import prisma from "@/db";
 import { RequestStatuses } from "@/ts/enums";
-import InternalServerError from "@/errors/servererrors/InternalServerError";
+import InternalServerError from "@errors/servererrors/InternalServerError";
 import { cyrillicSlug } from "@/helper/cyrillic-slug";
 
 interface iAnimeUpdateService {

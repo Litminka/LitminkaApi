@@ -1,4 +1,4 @@
-import NotFoundError from "@/errors/clienterrors/NotFoundError";
+import NotFoundError from "@errors/clienterrors/NotFoundError";
 import AnimeUpdateService from "@services/anime/AnimeUpdateService";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import prisma from "@/db";

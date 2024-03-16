@@ -1,7 +1,7 @@
-import BadRequestError from "@/errors/clienterrors/BadRequestError";
-import NotFoundError from "@/errors/clienterrors/NotFoundError";
-import UnauthorizedError from "@/errors/clienterrors/UnauthorizedError";
-import InternalServerError from "@/errors/servererrors/InternalServerError";
+import BadRequestError from "@errors/clienterrors/BadRequestError";
+import NotFoundError from "@errors/clienterrors/NotFoundError";
+import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
+import InternalServerError from "@errors/servererrors/InternalServerError";
 import groupArrSplice from "@/helper/groupsplice";
 import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "@/ts";
 import { RequestStatuses } from "@/ts/enums";

@@ -1,5 +1,5 @@
 import prisma from "@/db";
-import UnauthorizedError from "@/errors/clienterrors/UnauthorizedError";
+import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
 import { Encrypt } from "@/helper/encrypt";
 import { CreateUser, LoginUser } from "@/ts";
 import * as jwt from "jsonwebtoken";

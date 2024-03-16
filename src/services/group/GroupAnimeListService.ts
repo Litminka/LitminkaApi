@@ -1,6 +1,6 @@
 import { GroupList, GroupListMembers } from "@prisma/client"
 import prisma from "@/db"
-import BaseError from "@/errors/BaseError"
+import BaseError from "@errors/BaseError"
 import { AddWithAnime } from "@/ts"
 import { RequestStatuses } from "@/ts/enums"
 

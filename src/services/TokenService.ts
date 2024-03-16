@@ -1,7 +1,7 @@
-import ForbiddenError from "@/errors/clienterrors/ForbiddenError";
+import ForbiddenError from "@errors/clienterrors/ForbiddenError";
 import * as jwt from "jsonwebtoken";
-import UnauthorizedError from "@/errors/clienterrors/UnauthorizedError";
-import InternalServerError from "@/errors/servererrors/InternalServerError";
+import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
+import InternalServerError from "@errors/servererrors/InternalServerError";
 
 export default class TokenService {
 

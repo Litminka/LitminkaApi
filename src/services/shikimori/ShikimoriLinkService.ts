@@ -1,13 +1,13 @@
-import UnauthorizedError from "@/errors/clienterrors/UnauthorizedError";
+import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import { RequestStatuses } from "@/ts/enums";
-import InternalServerError from "@/errors/servererrors/InternalServerError";
+import InternalServerError from "@errors/servererrors/InternalServerError";
 import { ShikimoriWhoAmI, UserWithIntegration } from "@/ts";
-import UnprocessableContentError from "@/errors/clienterrors/UnprocessableContentError";
+import UnprocessableContentError from "@errors/clienterrors/UnprocessableContentError";
 import crypto from "crypto";
 import prisma from "@/db";
-import ForbiddenError from "@/errors/clienterrors/ForbiddenError";
-import BadRequestError from "@/errors/clienterrors/BadRequestError";
+import ForbiddenError from "@errors/clienterrors/ForbiddenError";
+import BadRequestError from "@errors/clienterrors/BadRequestError";
 
 export default class ShikimoriLinkService {
     public static async link(token: string, code: string) {
