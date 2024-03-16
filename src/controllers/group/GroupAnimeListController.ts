@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { AddWithAnime, RequestWithUserOwnedGroups } from "../../ts";
-import { RequestStatuses } from "../../ts/enums";
-import GroupAnimeListService from "../../services/group/GroupAnimeListService";
+import { AddWithAnime, RequestWithUserOwnedGroups } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
+import GroupAnimeListService from "@services/group/GroupAnimeListService";
 
 export default class GroupAnimeListController {
 

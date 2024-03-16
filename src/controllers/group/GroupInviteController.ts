@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { RequestWithUser, RequestWithUserGroupInvites, RequestWithUserOwnedGroups } from "../../ts";
-import { RequestStatuses } from "../../ts/enums";
-import GroupInviteService from "../../services/group/GroupInviteService";
+import { RequestWithUser, RequestWithUserGroupInvites, RequestWithUserOwnedGroups } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
+import GroupInviteService from "@services/group/GroupInviteService";
 
 export default class GroupInviteController {
     public static async getInvites(req: RequestWithUser, res: Response) {

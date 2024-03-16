@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList } from "../ts/index";
-import WatchListService from "../services/WatchListService";
-import { importWatchListQueue } from "../queues/watchListImporter";
+import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList } from "@/ts/index";
+import WatchListService from "@services/WatchListService";
+import { importWatchListQueue } from "@/queues/watchListImporter";
 
 export default class WatchListController {
     public static async getWatchList(req: RequestWithUserAnimeList, res: Response): Promise<Object> {
