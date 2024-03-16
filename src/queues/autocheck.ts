@@ -1,12 +1,12 @@
 
 import { Queue, Worker, Job } from 'bullmq';
-import prisma from "../db";
-import AutoCheckService from '../services/AutoCheckService';
-import FollowService from '../services/FollowService';
-import { KodikAnimeFull, checkAnime } from '../ts/kodik';
-import KodikApiService from '../services/KodikApiService';
-import { FollowTypes } from '../ts/enums';
-import { logger } from "../loggerConf"
+import prisma from "@/db";
+import AutoCheckService from '@services/AutoCheckService';
+import FollowService from '@services/FollowService';
+import { KodikAnimeFull, checkAnime } from '@/ts/kodik';
+import KodikApiService from '@services/KodikApiService';
+import { FollowTypes } from '@/ts/enums';
+import { logger } from "@/loggerConf"
 
 const autoCheckQueue = new Queue("autocheck", {
     connection: {
