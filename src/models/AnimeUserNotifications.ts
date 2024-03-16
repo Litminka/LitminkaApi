@@ -1,7 +1,7 @@
-import { UserNotify } from "../ts";
-import prisma from "../db";
+import { UserNotify } from "@/ts";
+import prisma from "@/db";
 import { Prisma } from "@prisma/client";
-import { getUserNotifications } from "../services/NotificationService";
+import { getUserNotifications } from "@services/NotificationService";
 
 const extention = Prisma.defineExtension({
     name: "UserNotificationModel",
