@@ -6,8 +6,8 @@ import { RateLimiter } from "limiter";
 import { RequestStatuses } from "../../ts/enums";
 import axios, { AxiosHeaders } from "axios";
 import BadRequestError from "../../errors/clienterrors/BadRequestError";
-import { ShikimoriGraphAnimeRequest } from "../../ts/shikimori";
-import { getAnimeWithRelationsQuery } from "../../ts/shikimoriGraphQLRequests";
+import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest } from "../../ts/shikimori";
+import { getAnimeBySeasonQuery, getAnimeWithRelationsQuery, getAnimeWithoutRelationQuery } from "../../ts/shikimoriGraphQLRequests";
 interface iShikimoriApi {
     user: User & {
         integration: Integration | null
@@ -213,6 +213,30 @@ export default class ShikimoriApiService implements iShikimoriApi {
             query,
             variables: {
                 ids: animeIds
+            }
+        });
+    }
+
+    public async getBatchGraphAnimeWithouRelation(ids: number[]): Promise<ShikimoriGraphAnimeWithoutRelationRequest[]> {
+        const query = getAnimeWithoutRelationQuery;
+        const animeIds = ids.join(",");
+        return this.requestMaker(`/graphql`, "POST", false, {
+            operationName: null,
+            query,
+            variables: {
+                ids: animeIds
+            }
+        });
+    }
+
+    public async getGraphAnimeBySeason(page: number, season: string): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        const query = getAnimeBySeasonQuery;
+        return this.requestMaker(`/graphql`, "POST", false, {
+            operationName: null,
+            query,
+            variables: {
+                season,
+                page
             }
         });
     }

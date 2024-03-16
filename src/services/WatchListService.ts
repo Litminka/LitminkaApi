@@ -15,7 +15,6 @@ import { User } from "@prisma/client";
 
 export default class WatchListService {
 
-    // TODO: A lot of not optimized loops and methods, rewrite this method
     /**
      * @deprecated prefer using importListV2
      * @param id 

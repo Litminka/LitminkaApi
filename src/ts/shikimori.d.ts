@@ -4,6 +4,12 @@ export interface ShikimoriGraphAnimeRequest {
     }
 }
 
+export interface ShikimoriGraphAnimeWithoutRelationRequest {
+    data: {
+        animes: ShikimoriGraphAnime[]
+    }
+}
+
 export interface ShikimoriGraphAnime {
     id: string,
     name: string,

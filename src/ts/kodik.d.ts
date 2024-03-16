@@ -137,7 +137,7 @@ export type translation = {
     type: "voice" | "subtitles";
 };
 
-export type checkAnime = (Anime & {
+export type animeWithTranslation = (Anime & {
     animeTranslations: AnimeTranslation[];
 });
 
