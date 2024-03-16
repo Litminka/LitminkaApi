@@ -2,7 +2,7 @@ import { param, body } from "express-validator";
 import prisma from "@/db";
 import { RequestAuthTypes } from "@/ts/enums";
 import Request from "@requests/Request";
-import { UnFollowValidation } from "@validators/FollowValidator";
+import { UnFollowValidator } from "@validators/FollowValidator";
 
 export default class UnFollowAnimeRequest extends Request {
 
@@ -26,6 +26,6 @@ export default class UnFollowAnimeRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return UnFollowValidation()
+        return UnFollowValidator()
     }
 }

@@ -1,6 +1,6 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupListIdValidation } from "@validators/GroupListValidator";
+import { GroupListIdValidator } from "@validators/GroupListValidator";
 
 export default class GetGroupAnimeListRequest extends AuthRequest {
 
@@ -19,6 +19,6 @@ export default class GetGroupAnimeListRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupListIdValidation();
+        return GroupListIdValidator();
     }
 }

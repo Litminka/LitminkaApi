@@ -1,7 +1,7 @@
 import prisma from '@/db';
 import { body } from "express-validator";
 
-export const RegistrationValidation = (): any[] => {
+export const RegistrationValidator = (): any[] => {
     return [
         body("login").bail().notEmpty().bail().custom(async value => {
             const user = await prisma.user.findFirst({
@@ -28,7 +28,7 @@ export const RegistrationValidation = (): any[] => {
     ];
 };
 
-export const LoginValidation = (): any[] => {
+export const LoginValidator = (): any[] => {
     return [
         body("login").notEmpty().isString(),
         body("password").notEmpty().isString()

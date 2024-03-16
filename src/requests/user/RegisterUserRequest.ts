@@ -1,4 +1,4 @@
-import { RegistrationValidation } from "@validators/UserValidator";
+import { RegistrationValidator } from "@validators/UserValidator";
 import Request from "@requests/Request";
 
 export default class RegisterUserRequest extends Request {
@@ -8,6 +8,6 @@ export default class RegisterUserRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return RegistrationValidation();
+        return RegistrationValidator();
     }
 }

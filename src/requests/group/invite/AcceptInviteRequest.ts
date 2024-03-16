@@ -1,6 +1,6 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupInviteActionValidation } from "@validators/GroupListValidator";
+import { GroupInviteActionValidator } from "@validators/GroupListValidator";
 
 export default class AcceptInviteRequest extends AuthRequest {
 
@@ -19,6 +19,6 @@ export default class AcceptInviteRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupInviteActionValidation();
+        return GroupInviteActionValidator();
     }
 }

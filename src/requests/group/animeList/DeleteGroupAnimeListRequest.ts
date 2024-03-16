@@ -1,7 +1,7 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupListIdValidation } from "@validators/GroupListValidator";
-import { DeleteFromWatchListValidation } from "@validators/WatchListValidator";
+import { GroupListIdValidator } from "@validators/GroupListValidator";
+import { DeleteFromWatchListValidator } from "@validators/WatchListValidator";
 
 export default class DeleteGroupAnimeListRequest extends AuthRequest {
 
@@ -20,6 +20,6 @@ export default class DeleteGroupAnimeListRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return [...GroupListIdValidation(), ...DeleteFromWatchListValidation()];
+        return [...GroupListIdValidator(), ...DeleteFromWatchListValidator()];
     }
 }

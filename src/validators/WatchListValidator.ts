@@ -4,7 +4,7 @@ interface minmax {
     min: number,
     max?: number
 }
-export const AddToWatchListValidation = (): any[] => {
+export const AddToWatchListValidator = (): any[] => {
     const watchedRange: minmax = { min: 0 };
     return [
         param("animeId").notEmpty().isInt().bail().toInt().custom(async value => {
@@ -21,7 +21,7 @@ export const AddToWatchListValidation = (): any[] => {
         body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean()
     ]
 };
-export const EditWatchListValidation = (): any[] => {
+export const EditWatchListValidator = (): any[] => {
 
     const watchedRange: minmax = { min: 0 };
     return [
@@ -39,7 +39,7 @@ export const EditWatchListValidation = (): any[] => {
     ]
 };
 
-export const DeleteFromWatchListValidation = (): any[] => {
+export const DeleteFromWatchListValidator = (): any[] => {
     return [
         param("animeId").notEmpty().isInt().bail().toInt().custom(async value => {
             const anime = await prisma.anime.findFirst({
