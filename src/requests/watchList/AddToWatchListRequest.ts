@@ -1,4 +1,4 @@
-import { AddToWatchListValidation } from "@validators/WatchListValidator";
+import { AddToWatchListValidator } from "@validators/WatchListValidator";
 import AuthRequest from "@requests/AuthRequest";
 
 
@@ -9,6 +9,6 @@ export default class AddToWatchListRequest extends AuthRequest {
     * @returns ValidationChain
     */
     protected rules(): any[] {
-        return AddToWatchListValidation();
+        return AddToWatchListValidator();
     }
 }

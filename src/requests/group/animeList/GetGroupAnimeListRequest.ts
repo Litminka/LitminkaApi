@@ -1,7 +1,7 @@
-import { GetFilteredWatchListValidation } from "@validators/WatchListValidator";
+import { GetFilteredWatchListValidator } from "@validators/WatchListValidator";
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupListIdValidation } from "@validators/GroupListValidator";
+import { GroupListIdValidator,  } from "@validators/GroupListValidator";
 
 export default class GetGroupAnimeListRequest extends AuthRequest {
 
@@ -21,8 +21,8 @@ export default class GetGroupAnimeListRequest extends AuthRequest {
      */
     protected rules(): any[] {
         return [
-            GroupListIdValidation(),
-            GetFilteredWatchListValidation()
+            GroupListIdValidator(),
+            GetFilteredWatchListValidator()
         ];
     }
 }

@@ -1,7 +1,7 @@
 import { validateParamId } from "@validators/BaseValidator";
 import { body } from "express-validator";
 
-export const AnimeValidation = (): any[] => {
+export const AnimeValidator = (): any[] => {
     return [
         validateParamId('animeId')
     ]

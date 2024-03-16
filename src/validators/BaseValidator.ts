@@ -1,5 +1,5 @@
 import { ValidationChain, body, param, query } from "express-validator";
-import { validationError } from "@/middleware/validationError";
+import { validatorError } from "@/middleware/validatorError";
 
 
 export const validateBodyId = (fieldName: string): ValidationChain => {
@@ -18,7 +18,7 @@ export const validateBodyArrayId = (fieldName: string): any[] => {
 };
 
 export const validateBodyBool = (fieldName: string): any[] => {
-    return [body(fieldName).isBoolean(), validationError];
+    return [body(fieldName).isBoolean(), validatorError];
 };
 
 interface IvalidateParamInt {

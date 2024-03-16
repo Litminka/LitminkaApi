@@ -1,5 +1,5 @@
 import AuthRequest from "@requests/AuthRequest";
-import { GroupListIdValidation } from "@validators/GroupListValidator";
+import { GroupListIdValidator } from "@validators/GroupListValidator";
 
 export default class GetGroupMembersRequest extends AuthRequest {
 
@@ -8,6 +8,6 @@ export default class GetGroupMembersRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupListIdValidation();
+        return GroupListIdValidator();
     }
 }

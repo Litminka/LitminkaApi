@@ -1,4 +1,4 @@
-import { DeleteFromWatchListValidation } from "@validators/WatchListValidator";
+import { DeleteFromWatchListValidator } from "@validators/WatchListValidator";
 import AuthRequest from "@requests/AuthRequest";
 
 export default class DeleteFromWatchListRequest extends AuthRequest {
@@ -8,6 +8,6 @@ export default class DeleteFromWatchListRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return DeleteFromWatchListValidation();
+        return DeleteFromWatchListValidator();
     }
 }

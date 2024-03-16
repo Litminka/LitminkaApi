@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { RequestStatuses } from '@/ts/enums';
-export function validationNotFound(req: Request, res: Response, next: NextFunction) {
+export function validatorError(req: Request, res: Response, next: NextFunction) {
     const result = validationResult(req);
-    if (!result.isEmpty()) return res.status(RequestStatuses.NotFound).json({ errors: result.array() });
+    if (!result.isEmpty()) return res.status(RequestStatuses.UnprocessableContent).json({ errors: result.array() });
     next()
 }

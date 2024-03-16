@@ -1,4 +1,4 @@
-import { EditWatchListValidation } from "@validators/WatchListValidator";
+import { EditWatchListValidator } from "@validators/WatchListValidator";
 import AuthRequest from "@requests/AuthRequest";
 
 export default class EditWatchListRequest extends AuthRequest {
@@ -8,6 +8,6 @@ export default class EditWatchListRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return EditWatchListValidation();
+        return EditWatchListValidator();
     }
 }
