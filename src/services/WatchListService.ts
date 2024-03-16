@@ -3,7 +3,7 @@ import NotFoundError from "../errors/clienterrors/NotFoundError";
 import UnauthorizedError from "../errors/clienterrors/UnauthorizedError";
 import InternalServerError from "../errors/servererrors/InternalServerError";
 import groupArrSplice from "../helper/groupsplice";
-import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "../ts";
+import { AddToList, ListFilters, ServerError, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "../ts";
 import { RequestStatuses } from "../ts/enums";
 import AnimeUpdateService from "./AnimeUpdateService";
 import KodikApiService from "./KodikApiService";
@@ -82,5 +82,9 @@ export default class WatchListService {
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
         await prisma.animeList.updateAnimeListByAnimeId(animeId, editParameters)
         return await prisma.animeList.findWatchListByIdsWithAnime(user.id, animeId);
+    }
+
+    public static async getFilteredWatchList(user: User, filters: ListFilters){
+        return await prisma.animeList.findFilteredWatchList(user.id, filters);
     }
 }

@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList } from "../ts/index";
+import { AddToList, ListFilters, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList, watchListStatus } from "../ts/index";
 import WatchListService from "../services/WatchListService";
 import { importWatchListQueue } from "../queues/watchListImporter";
 
@@ -7,8 +7,13 @@ export default class WatchListController {
     // FIXME: get out in middleware
     public static async getWatchList(req: RequestWithUserAnimeList, res: Response): Promise<Object> {
         const user = req.auth.user;
+        const statuses: watchListStatus[] = req.body.statuses as watchListStatus[];
+        const ratings: number[] = req.body.ratings as number[];
+        const isFavorite: boolean = req.body.isFavorite as boolean;
 
-        return res.json(user.animeList);
+        const filteredWatchList = await WatchListService.getFilteredWatchList(user, {statuses, ratings, isFavorite} as ListFilters)
+       
+        return res.json(filteredWatchList);
     }
 
     public static async importList(req: RequestUserWithIntegration, res: Response): Promise<any> {
@@ -38,7 +43,7 @@ export default class WatchListController {
         const editParameters = req.body as AddToList
         const user = req.auth.user;
         const animeId: number = req.params.animeId as unknown as number;
-        const animeList = await WatchListService.editAnimeListWithParams(user, animeId, editParameters);;
+        const animeList = await WatchListService.editAnimeListWithParams(user, animeId, editParameters);
         return res.json({
             data: animeList
         });
@@ -52,4 +57,16 @@ export default class WatchListController {
             message: "Entry deleted successfully"
         });
     }
+
+    /*
+    public static async getFilteredWatchList(req: RequestWithUserAnimeList, res: Response){
+        const user = req.auth.user;
+        const statuses: watchListStatus[] = req.body.statuses as watchListStatus[];
+        const rating: number = req.body.rating as number
+        const isFavorite: boolean = req.body.isFavorite as boolean;
+
+        const filteredWatchList = await WatchListService.getFilteredWatchList(user, {statuses, rating, isFavorite} as ListFilters)
+
+        return res.json(filteredWatchList);
+    }*/
 }
