@@ -35,12 +35,8 @@ const worker = new Worker("shikimoriUpdate", async (job: Job) => {
     const shikimoriApi = new ShikimoriApiService();
     const shikimoriAnimeFull: ShikimoriAnimeFull[] = []
     for (const single of anime) {
-        const req = await shikimoriApi.getAnimeById(single.shikimoriId);
-        const error = req as ServerError;
-        if (error.reqStatus === RequestStatuses.InternalServerError) {
-            throw error;
-        }
-        shikimoriAnimeFull.push(req as ShikimoriAnimeFull);
+        const anime = await shikimoriApi.getAnimeById(single.shikimoriId);
+        shikimoriAnimeFull.push(anime);
         logger.info(`Requesting anime ${single.name} from shikimori`)
     }
     const animeUpdateService = new AnimeUpdateService(shikimoriApi, undefined);

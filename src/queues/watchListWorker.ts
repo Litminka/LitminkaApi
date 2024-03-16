@@ -1,8 +1,18 @@
+import { logger } from '@/loggerConf';
 import { Job, Worker } from "bullmq";
 import WatchListService from "@services/WatchListService";
 
 const worker = new Worker("importWatchList", async (job: Job) => {
-    await WatchListService.importListByUser(job.data.user);
+    const started = Date.now();
+    try {
+        await WatchListService.importListV2(job.data.id);
+    } catch (error) {
+        logger.error("ImportList has failed! Error" + error);
+        throw (error);
+    }
+    const finished = Date.now();
+    logger.info(`Finished in: ${(finished - started) / 1000} seconds`)
+    console.log('я обосрався')
 }, {
     connection: {
         host: process.env.REDIS_HOST,

@@ -1,10 +1,14 @@
 import { User, Integration, Prisma } from "@prisma/client";
-import fetch, { Headers } from "node-fetch";
-import { options, ShikimoriWhoAmI, RequestTypes, ServerError, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "@/ts/index";
+import axios, { AxiosHeaders } from "axios";
+import BadRequestError from "../../errors/clienterrors/BadRequestError";
+import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest } from "@/ts/shikimori";
+import { getAnimeBySeasonQuery, getAnimeWithRelationsQuery, getAnimeWithoutRelationQuery } from "@/ts/shikimoriGraphQLRequests";
+import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "@/ts/index";
 import prisma from "@/db";
 import { shikiRateLimiter } from "@/shikiRateLimiter";
 import { RateLimiter } from "limiter";
 import { RequestStatuses } from "@/ts/enums";
+
 interface iShikimoriApi {
     user: User & {
         integration: Integration | null
@@ -12,10 +16,15 @@ interface iShikimoriApi {
     limiter: RateLimiter
 }
 
+axios.defaults.validateStatus = (status) => {
+    return (status >= 400 && status <= 499) || (status >= 200 && status <= 299)
+}
+
 const baseUrl = `${process.env.SHIKIMORI_URL}/api`;
 export default class ShikimoriApiService implements iShikimoriApi {
     user: User & { integration: Integration | null } | undefined;
     limiter: RateLimiter;
+
     constructor(user: User & { integration: Integration | null } | undefined = undefined) {
         this.user = user;
         this.limiter = shikiRateLimiter;
@@ -50,13 +59,13 @@ export default class ShikimoriApiService implements iShikimoriApi {
         } else {
             requestBody.append("refresh_token", this.user.integration!.shikimoriRefreshToken!)
         }
-        const response = await fetch(`${process.env.SHIKIMORI_URL}/oauth/token`, {
+        const response = await axios(`${process.env.SHIKIMORI_URL}/oauth/token`, {
             method: "POST",
             headers: {
                 "User-Agent": process.env.SHIKIMORI_AGENT!,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: requestBody
+            data: requestBody
         });
         const { status } = response;
         // Sloppy protection against multiple requests
@@ -83,7 +92,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             });
             return false;
         }
-        const data: any = await response.json();
+        const data: any = await response.data;
         const integrationBody = {
             shikimoriToken: data.access_token,
             shikimoriRefreshToken: undefined
@@ -114,62 +123,122 @@ export default class ShikimoriApiService implements iShikimoriApi {
      * @returns ServerError object if request fails
      * @returns false is request is unable to be made due to auth requirement
      */
-    private async requestMaker(url: string, method: RequestTypes, auth = false, requestData = null) {
+    private async requestMaker(url: string, method: RequestTypes, auth = false, data?: Object) {
         if (auth) {
-            if (!this.user) return false;
-            if (this.user.integration === null || this.user.integration.shikimoriCode === null) return false;
+            if (!this.user) throw new BadRequestError("no_shikimori_integration");
+            if (this.user.integration === null || this.user.integration.shikimoriCode === null) throw new BadRequestError("no_shikimori_integration");
             if (this.user.integration.shikimoriToken === null) {
                 const result = await this.getToken();
-                if (result === false) return false;
+                if (result === false) throw new BadRequestError("no_shikimori_integration");
             };
         }
+
         let requestStatus: number = RequestStatuses.OK;
         do {
             await this.limiter.removeTokens(1);
             if (requestStatus === RequestStatuses.Unauthorized && auth) {
                 const result = await this.getToken();
-                if (!result) return false;
+                if (!result) throw new BadRequestError("no_shikimori_integration");
             };
-            const headers = new Headers();
 
-            headers.append("User-Agent", process.env.SHIKIMORI_AGENT!);
-            if (auth) headers.append("Authorization", `Bearer ${this.user!.integration!.shikimoriToken}`);
-            const options: options = {
-                method, headers
-            };
-            if (method !== "GET") options.body = requestData;
-            const response = await fetch(`${baseUrl}${url}`, options);
+            const headers = new AxiosHeaders();
+
+            headers.set("User-Agent", process.env.SHIKIMORI_AGENT!);
+            headers.set("Content-Type", "application/json",);
+
+            if (auth) headers.set("Authorization", `Bearer ${this.user!.integration!.shikimoriToken}`);
+
+            const response = await axios(`${baseUrl}${url}`, {
+                method: method,
+                data,
+                headers: headers,
+            });
+
             const { status } = response;
-            if (status === RequestStatuses.InternalServerError) return { status: RequestStatuses.InternalServerError, message: "Server error" };
+
             if (status !== RequestStatuses.TooManyRequests) {
-                const data: any = await response.json();
+                const data: any = response.data;
                 data.reqStatus = status;
                 if (status !== RequestStatuses.Unauthorized) return data;
             }
+
             requestStatus = status;
-        } while (requestStatus === RequestStatuses.Unauthorized || requestStatus === RequestStatuses.TooManyRequests);
+        } while (requestStatus === RequestStatuses.Unauthorized
+            || requestStatus === RequestStatuses.TooManyRequests);
     }
 
-    public async getProfile(): Promise<ShikimoriWhoAmI | ServerError | false> {
+    public async getProfile(): Promise<ShikimoriWhoAmI> {
         return this.requestMaker("/users/whoami", "GET", true);
     }
 
-    public async getAnimeById(id: number): Promise<ShikimoriAnimeFull | ServerError> {
+    public async getUserList(): Promise<ShikimoriWatchList[]> {
+        if (!this.user) throw new BadRequestError("no_shikimori_integration");
+        if (this.user.integration!.shikimoriId === null) throw new BadRequestError("no_shikimori_integration");
+        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimoriId}&target_type=Anime&censored=true`, "GET");
+    }
+
+    /**
+     * @deprecated
+     * @param id 
+     * @returns 
+     */
+    public async getAnimeById(id: number): Promise<ShikimoriAnimeFull> {
         return this.requestMaker(`/animes/${id}`, "GET");
     }
 
-    public async getUserList(): Promise<ShikimoriWatchList[] | ServerError | false> {
-        if (!this.user) return false;
-        if (this.user.integration!.shikimoriId === null) return false;
-        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimoriId}&target_type=Anime`, "GET");
-    }
-
-    public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[] | ServerError> {
+    /**
+     * @deprecated
+     * @param ids 
+     * @returns 
+     */
+    public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[]> {
         const animeIds = ids.join(",");
-        return this.requestMaker(`/animes?ids=${animeIds}&limit=50`, "GET");
+        return this.requestMaker(`/animes?ids=${animeIds}&limit=50&censored=true`, "GET");
     }
 
-    public async getSeasonAnimeByPage(page: number, season: string): Promise<ShikimoriAnime[] | ServerError> {
-        return this.requestMaker(`/animes?limit=50&season=${season}&page=${page}`, "GET");
+    /**
+     * @deprecated
+     * @param page 
+     * @param season 
+     * @returns 
+     */
+    public async getSeasonAnimeByPage(page: number, season: string): Promise<ShikimoriAnime[]> {
+        return this.requestMaker(`/animes?limit=50&season=${season}&page=${page}&censored=true`, "GET");
+    }
+
+    public async getBatchGraphAnime(ids: number[]): Promise<ShikimoriGraphAnimeRequest> {
+        const query = getAnimeWithRelationsQuery;
+        const animeIds = ids.join(",");
+        return this.requestMaker(`/graphql`, "POST", false, {
+            operationName: null,
+            query,
+            variables: {
+                ids: animeIds
+            }
+        });
+    }
+
+    public async getBatchGraphAnimeWithouRelation(ids: number[]): Promise<ShikimoriGraphAnimeWithoutRelationRequest[]> {
+        const query = getAnimeWithoutRelationQuery;
+        const animeIds = ids.join(",");
+        return this.requestMaker(`/graphql`, "POST", false, {
+            operationName: null,
+            query,
+            variables: {
+                ids: animeIds
+            }
+        });
+    }
+
+    public async getGraphAnimeBySeason(page: number, season: string): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        const query = getAnimeBySeasonQuery;
+        return this.requestMaker(`/graphql`, "POST", false, {
+            operationName: null,
+            query,
+            variables: {
+                season,
+                page
+            }
+        });
     }
 }

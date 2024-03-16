@@ -18,7 +18,7 @@ export default class WatchListController {
     public static async importList(req: RequestUserWithIntegration, res: Response): Promise<any> {
         const user = req.auth.user;
 
-        importWatchListQueue.add("importWatchList", { user }, {
+        importWatchListQueue.add("importWatchList", { id: user.id }, {
             removeOnComplete: 10,
             removeOnFail: 100
         })

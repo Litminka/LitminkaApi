@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { AnimeRelationExt } from '@models/AnimeRelations';
 import { FollowExt } from '@models/Follow'
 import { AnimeExt } from '@models/Anime';
 import { IntegrationExt } from '@models/Integration';
@@ -20,6 +21,7 @@ const prismaClientSingleton = () => {
         .$extends(RefreshTokenExt)
         .$extends(ShikimoriLinkTokenExt)
         .$extends(UserExt)
+        .$extends(AnimeRelationExt)
 }
 
 declare global {

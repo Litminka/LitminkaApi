@@ -2,13 +2,15 @@ import { getPreviousSeasonStart, getCurrentSeasonEnd, getSeason } from "@/helper
 import groupArrSplice from "@/helper/groupsplice";
 import KodikApiService from "@services/KodikApiService";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
-import { ShikimoriAnime, followType, ServerError } from "@/ts/index";
-import { KodikAnimeFull, checkAnime } from "@/ts/kodik";
+import { ShikimoriAnime, followType } from "@/ts/index";
+import { KodikAnimeFull, animeWithTranslation } from "@/ts/kodik";
 import AnimeUpdateService from "@services/anime/AnimeUpdateService";
 import NotificationService from "@services/NotificationService";
 import prisma from "@/db";
 import { AnimeStatuses, FollowTypes, RequestStatuses } from "@/ts/enums";
 import { logger } from "@/loggerConf"
+import { ShikimoriGraphAnime } from "@/ts/shikimori";
+
 
 export default class AutoCheckService {
     animeUpdateService: AnimeUpdateService;
@@ -16,19 +18,14 @@ export default class AutoCheckService {
         this.animeUpdateService = new AnimeUpdateService();
     }
 
-    async checkAnime(shikimoriAnime: ShikimoriAnime, kodikAnime?: KodikAnimeFull, follow?: followType, anime?: checkAnime) {
+    async checkAnime(shikimoriAnime: ShikimoriGraphAnime, kodikAnime?: KodikAnimeFull, follow?: followType, anime?: animeWithTranslation) {
         const { status } = shikimoriAnime;
         const haveKodik = kodikAnime !== undefined;
         const haveDbAnime = anime !== undefined;
         const haveFollow = follow !== undefined;
         // if we have no anime in db, create it and exit
         if (!haveDbAnime) {
-            if (haveKodik) {
-                this.animeUpdateService.updateAnimeKodik([kodikAnime]);
-                logger.info(`New anime found ${kodikAnime.title}`)
-                return;
-            }
-            this.animeUpdateService.updateAnimeShikimori([shikimoriAnime]);
+            this.animeUpdateService.createShikimoriGraphAnime(shikimoriAnime, kodikAnime);
             logger.info(`New anime found ${shikimoriAnime.name}`)
             return;
         }
@@ -55,7 +52,7 @@ export default class AutoCheckService {
             }
         }
         if (!haveKodik) {
-            return this.animeUpdateService.updateAnimeShikimori([shikimoriAnime]);
+            return this.animeUpdateService.updateShikimoriGraphAnime(shikimoriAnime, anime, kodikAnime);
         }
 
         let followedTranslationIds: number[] = []
@@ -91,7 +88,7 @@ export default class AutoCheckService {
                     kodikTranslation.id,
                     kodikTranslation.episodes_count
                 );
-                prisma.follow.deleteMany({
+                await prisma.follow.deleteMany({
                     where: {
                         animeId: anime.id,
                         translationId: translation.id,
@@ -104,15 +101,15 @@ export default class AutoCheckService {
         }
 
         // update anime and translations
-        this.animeUpdateService.updateAnimeKodik([kodikAnime]);
-        this.animeUpdateService.updateTranslations(kodikAnime, anime);
+        await this.animeUpdateService.updateShikimoriGraphAnime(shikimoriAnime, anime, kodikAnime);
+        await this.animeUpdateService.updateTranslations(kodikAnime, anime);
 
     }
 
-    async getDefaultAnime(): Promise<ShikimoriAnime[]> {
+    async getDefaultAnime(): Promise<ShikimoriGraphAnime[]> {
         const user: undefined = undefined; // No user is required
         const shikimoriApi = new ShikimoriApiService(user);
-        const checkAnime: ShikimoriAnime[] = [];
+        const checkAnime: ShikimoriGraphAnime[] = [];
         const date = new Date();
         const prevSeasonStart = getPreviousSeasonStart(date);
         const currentSeasonEnd = getCurrentSeasonEnd(date)
@@ -120,16 +117,13 @@ export default class AutoCheckService {
         const prevSeasonString = `${getSeason(prevSeasonStart)}_${prevSeasonStart.getFullYear()}`;
         const currentSeasonString = `${getSeason(currentSeasonEnd)}_${currentSeasonEnd.getFullYear()}`;
         let seasonString = prevSeasonString;
-        let page = 0;
+        let page = 1;
         do {
-            const anime = await shikimoriApi.getSeasonAnimeByPage(page, seasonString);
-            if (!anime) throw new Error("Admin account not linked");
-            const error = anime as ServerError;
-            if (error.reqStatus === RequestStatuses.InternalServerError) throw new Error("Shikimori 500");
-            const shikimoriAnime = anime as ShikimoriAnime[];
+            const shikimoriAnimeRequest = await shikimoriApi.getGraphAnimeBySeason(page, seasonString);
+            const shikimoriAnime = shikimoriAnimeRequest.data.animes;
             if ((shikimoriAnime.length == 0 || shikimoriAnime.length < 50) && seasonString != currentSeasonString) {
                 seasonString = currentSeasonString
-                page = 0;
+                page = 1;
                 continue;
             }
             logger.info(`Getting base anime from shikimori, page:${page}, season:${seasonString}`);
@@ -146,16 +140,15 @@ export default class AutoCheckService {
         const idsSpliced = groupArrSplice(ids, 50);
         logger.info("Getting anime from shikimori")
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
-            let response = await shikimoriApi.getBatchAnime(batch);
-            if ((<ServerError>response).reqStatus === RequestStatuses.InternalServerError) throw new Error("Shikimori 500");
-            return (<ShikimoriAnime[]>response);
+            let response = await shikimoriApi.getBatchGraphAnime(batch);
+            return response.data.animes;
         });
-        let followedAnime: ShikimoriAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
+        let followedAnime: ShikimoriGraphAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
         followedAnime = followedAnime.flat();
         return followedAnime;
     }
 
-    async getKodikAnime(anime: ShikimoriAnime[]): Promise<KodikAnimeFull[]> {
+    async getKodikAnime(anime: ShikimoriGraphAnime[]): Promise<KodikAnimeFull[]> {
         const kodikApi = new KodikApiService();
         const animeIds: number[][] = groupArrSplice(anime.map(a => a.id), 10);
         const animeResult: KodikAnimeFull[] = [];

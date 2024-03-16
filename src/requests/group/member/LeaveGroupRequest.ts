@@ -1,6 +1,7 @@
 import AuthRequest from "@requests/AuthRequest";
 import { GroupListIdValidator } from "@validators/GroupListValidator";
 
+
 export default class LeaveGroupRequest extends AuthRequest {
 
     /**

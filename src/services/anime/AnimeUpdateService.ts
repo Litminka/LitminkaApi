@@ -1,11 +1,12 @@
 import { Anime, Prisma, User } from "@prisma/client";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "@/ts/index";
-import { KodikAnimeFull, checkAnime, translation } from "@/ts/kodik";
+import { KodikAnime, KodikAnimeFull, animeWithTranslation, translation } from "@/ts/kodik";
 import prisma from "@/db";
 import { RequestStatuses } from "@/ts/enums";
 import InternalServerError from "@errors/servererrors/InternalServerError";
 import { cyrillicSlug } from "@/helper/cyrillic-slug";
+import { ShikimoriGraphAnime } from "@/ts/shikimori";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -20,6 +21,11 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         this.user = user;
     }
 
+    /**
+     * @deprecated
+     * @param anime 
+     * @returns 
+     */
     async update(anime: Anime): Promise<boolean> {
         if (!this.shikimoriApi) throw new InternalServerError("No shikimori api specified");
         const resAnime: ShikimoriAnimeFull | ServerError = await this.shikimoriApi.getAnimeById(anime.shikimoriId);
@@ -30,10 +36,28 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         return true;
     }
 
+    /**
+     * @deprecated
+     * @param animeArr 
+     * @returns 
+     */
     async updateAnimeShikimoriFull(animeArr: ShikimoriAnimeFull[]) {
         return prisma.anime.upsertManyShikimoriFull(animeArr);
     }
 
+    async createShikimoriGraphAnime(shikimoriAnime: ShikimoriGraphAnime, kodikAnime?: KodikAnime) {
+        return prisma.anime.createFromShikimoriGraph(shikimoriAnime, false, kodikAnime);
+    }
+
+    async updateShikimoriGraphAnime(shikimoriAnime: ShikimoriGraphAnime, dbAnime: Anime, kodikAnime?: KodikAnime) {
+        return prisma.anime.updateFromShikimoriGraph(shikimoriAnime, false, dbAnime, kodikAnime)
+    }
+
+    /**
+     * @deprecated
+     * @param animeArr 
+     * @returns 
+     */
     async updateAnimeShikimori(animeArr: ShikimoriAnime[]) {
         return prisma.anime.upsertMany(animeArr);
     }
@@ -80,8 +104,12 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         await Promise.all([...groupInDBUpdates])
     }
 
+    /**
+     * @deprecated try not to update anime through kodik, if possible
+     * @param result 
+     * @returns 
+     */
     async updateAnimeKodik(result: KodikAnimeFull[]) {
-        await this.updateTranslationGroups(result);
         const listTransaction = result.map((anime) => {
             const { material_data } = anime;
             let animeSlugTitle = material_data.anime_title;
@@ -148,7 +176,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         return animeInList;
     }
 
-    async updateTranslations(anime: KodikAnimeFull, animeDB: checkAnime) {
+    async updateTranslations(anime: KodikAnimeFull, animeDB: animeWithTranslation) {
         for (const translation of anime.translations) {
             const update = await prisma.animeTranslation.updateMany({
                 where: {
@@ -161,8 +189,8 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     currentEpisodes: translation.episodes_count,
                 }
             })
-            if (update) continue;
-            prisma.animeTranslation.create({
+            if (update.count) continue;
+            await prisma.animeTranslation.create({
                 data: {
                     animeId: animeDB.id,
                     groupId: translation.id,

@@ -300,7 +300,6 @@ export interface DeleteFollow {
 
 export interface options {
     method: string;
-    headers: Headers;
     body?: any;
 }
 

@@ -77,7 +77,7 @@ export default class KodikApiService {
         };
         const translations: translations = []
         for (const res of results) {
-            let episodes = res.episodes_count;
+            let episodes = res.episodes_count ?? 1;
 
             translations.push({
                 episodes_count: episodes,
