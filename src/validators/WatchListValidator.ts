@@ -1,4 +1,4 @@
-import prisma from '@litminka/db';
+import prisma from '@/db';
 import { body, param } from "express-validator";
 interface minmax {
     min: number,

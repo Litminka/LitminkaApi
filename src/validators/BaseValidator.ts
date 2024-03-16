@@ -1,5 +1,5 @@
 import { ValidationChain, body, param, query } from "express-validator";
-import { validationError } from "@litminka/middleware/validationError";
+import { validationError } from "@/middleware/validationError";
 
 
 export const validateBodyId = (fieldName: string): ValidationChain => {

@@ -6,9 +6,9 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
 
-import { RequestStatuses } from '@litminka/ts/enums';
-import { wrap } from '@litminka/middleware/errorHandler';
-import { logger } from '@litminka/loggerConf'
+import { RequestStatuses } from '@/ts/enums';
+import { wrap } from '@/middleware/errorHandler';
+import { logger } from '@/loggerConf'
 
 import { userRouter } from '@routes/UserRouter';
 import { shikimoriRouter } from '@routes/ShikimoriRouter';

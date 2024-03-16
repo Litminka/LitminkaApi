@@ -1,5 +1,5 @@
 import { body, param } from "express-validator";
-import prisma from "@litminka/db";
+import prisma from "@/db";
 interface minmax {
     min: number,
     max?: number

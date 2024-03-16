@@ -1,6 +1,6 @@
 import { Anime, AnimeTranslation } from "@prisma/client";
-import { animeKind, animeStatus, pgCapitalizedRating } from "@litminka/ts";
-import { RequestStatuses } from "@litminka/ts/enums";
+import { animeKind, animeStatus, pgCapitalizedRating } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
 
 export interface _KodikAnimeRequest {
     time: string;

@@ -1,7 +1,7 @@
 import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
-import { FollowTypes, NotifyStatuses, RequestStatuses } from "@litminka/ts/enums";
+import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
 
 export interface RequestWithAuth extends Request {
     auth?: {
