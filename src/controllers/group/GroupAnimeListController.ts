@@ -7,12 +7,14 @@ export default class GroupAnimeListController {
 
     public static async get(req: RequestWithUserOwnedGroups, res: Response) {
         const user = req.auth.user
-
         const groupId = req.params.groupId as unknown as number;
+        const statuses: watchListStatus[] = req.body.statuses as watchListStatus[];
+        const ratings: number[] = req.body.ratings as number[];
+        const isFavorite: boolean = req.body.isFavorite as boolean;
 
-        const result = await GroupAnimeListService.get(user.id, groupId);
+        const filteredGroupAnimeList = await GroupAnimeListService.get(user.id, groupId, {statuses, ratings, isFavorite} as ListFilters)
 
-        return res.status(RequestStatuses.OK).json(result);
+        return res.status(RequestStatuses.OK).json(filteredGroupAnimeList);
     }
 
     public static async add(req: RequestWithUserOwnedGroups, res: Response) {
