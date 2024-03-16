@@ -5,6 +5,7 @@ node_modules
 config.json
 nginx.conf
 cert/
+coverage/
 
 # Require to build app
 dist
