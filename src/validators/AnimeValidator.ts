@@ -1,4 +1,4 @@
-import { validateParamId } from "./BaseValidator";
+import { validateParamId } from "@validators/BaseValidator";
 import { body } from "express-validator";
 
 export const AnimeValidation = (): any[] => {

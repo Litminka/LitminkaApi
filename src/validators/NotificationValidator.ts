@@ -1,5 +1,5 @@
-import { validateBodyArrayId, validateBodyBool } from "./BaseValidator";
-import { softPeriodValidator } from "./PeriodValidator";
+import { validateBodyArrayId, validateBodyBool } from "@validators/BaseValidator";
+import { softPeriodValidator } from "@validators/PeriodValidator";
 
 export const ReadNotificationsValidation = (): any[] => {
     return [

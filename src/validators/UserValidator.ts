@@ -1,8 +1,7 @@
 import prisma from '../db';
 import { body } from "express-validator";
-import { validationError } from '../middleware/validationError';
 
-const RegistrationValidation = (): any[] => {
+export const RegistrationValidation = (): any[] => {
     return [
         body("login").bail().notEmpty().bail().custom(async value => {
             const user = await prisma.user.findFirst({
@@ -29,11 +28,9 @@ const RegistrationValidation = (): any[] => {
     ];
 };
 
-const LoginValidation = (): any[] => {
+export const LoginValidation = (): any[] => {
     return [
         body("login").notEmpty().isString(),
         body("password").notEmpty().isString()
     ];
 };
-
-export { RegistrationValidation, LoginValidation };
