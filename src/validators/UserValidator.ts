@@ -1,4 +1,4 @@
-import prisma from '../db';
+import prisma from '@/db';
 import { body } from "express-validator";
 
 export const RegistrationValidation = (): any[] => {
