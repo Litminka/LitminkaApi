@@ -1,15 +1,15 @@
-import BadRequestError from "../errors/clienterrors/BadRequestError";
-import NotFoundError from "../errors/clienterrors/NotFoundError";
-import UnauthorizedError from "../errors/clienterrors/UnauthorizedError";
-import InternalServerError from "../errors/servererrors/InternalServerError";
-import groupArrSplice from "../helper/groupsplice";
-import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "../ts";
-import { RequestStatuses } from "../ts/enums";
-import AnimeUpdateService from "./anime/AnimeUpdateService";
-import KodikApiService from "./KodikApiService";
-import ShikimoriApiService from "./shikimori/ShikimoriApiService";
-import { logger } from "../loggerConf";
-import prisma from "../db";
+import BadRequestError from "@/errors/clienterrors/BadRequestError";
+import NotFoundError from "@/errors/clienterrors/NotFoundError";
+import UnauthorizedError from "@/errors/clienterrors/UnauthorizedError";
+import InternalServerError from "@/errors/servererrors/InternalServerError";
+import groupArrSplice from "@/helper/groupsplice";
+import { AddToList, ServerError, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
+import AnimeUpdateService from "@services/anime/AnimeUpdateService";
+import KodikApiService from "@services/KodikApiService";
+import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
+import { logger } from "@/loggerConf";
+import prisma from "@/db";
 import { User } from "@prisma/client";
 
 export default class WatchListService {

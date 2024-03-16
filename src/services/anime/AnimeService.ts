@@ -1,11 +1,11 @@
-import NotFoundError from "../../errors/clienterrors/NotFoundError";
-import AnimeUpdateService from "./AnimeUpdateService";
-import ShikimoriApiService from "../shikimori/ShikimoriApiService";
-import prisma from "../../db";
-import { UserWithIntegration } from "../../ts";
+import NotFoundError from "@/errors/clienterrors/NotFoundError";
+import AnimeUpdateService from "@services/anime/AnimeUpdateService";
+import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
+import prisma from "@/db";
+import { UserWithIntegration } from "@/ts";
 
 export default class AnimeService {
-    public static async getSingleAnime(animeId: number, user: UserWithIntegration ) {
+    public static async getSingleAnime(animeId: number, user: UserWithIntegration) {
 
         let anime = await prisma.anime.findWithTranlsationsAndGenres(animeId);
         if (!anime) throw new NotFoundError("This anime doesn't exist");
