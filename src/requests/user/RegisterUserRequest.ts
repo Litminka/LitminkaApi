@@ -1,5 +1,5 @@
-import { RegistrationValidation } from "../../validators/UserValidator";
-import Request from "../Request";
+import { RegistrationValidation } from "@validators/UserValidator";
+import Request from "@requests/Request";
 
 export default class RegisterUserRequest extends Request {
 

@@ -1,6 +1,6 @@
-import prisma from "../db";
-import { RequestAuthTypes } from "../ts/enums";
-import Request from "./Request";
+import prisma from "@/db";
+import { RequestAuthTypes } from "@/ts/enums";
+import Request from "@requests/Request";
 
 
 export default class OptionalRequest extends Request {

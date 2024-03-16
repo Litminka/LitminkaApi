@@ -1,8 +1,8 @@
 import { AnimeTranslation } from "@prisma/client";
-import { FollowAnime, followType, info } from "../ts/index";
-import { AnimeStatuses, FollowTypes } from "../ts/enums";
-import UnprocessableContentError from "../errors/clienterrors/UnprocessableContentError";
-import prisma from "../db";
+import { FollowAnime, followType, info } from "@/ts/index";
+import { AnimeStatuses, FollowTypes } from "@/ts/enums";
+import UnprocessableContentError from "@errors/clienterrors/UnprocessableContentError";
+import prisma from "@/db";
 type follows = {
     anime: {
         shikimoriId: number;
@@ -61,7 +61,7 @@ export default class FollowService {
                 throw new UnprocessableContentError("This anime doesn't have given group");
             if (anime.status == AnimeStatuses.Released && translation.currentEpisodes >= anime.maxEpisodes)
                 throw new UnprocessableContentError("Can't follow released anime");
-            if (anime.currentEpisodes >= anime.maxEpisodes && anime.currentEpisodes === translation.currentEpisodes) 
+            if (anime.currentEpisodes >= anime.maxEpisodes && anime.currentEpisodes === translation.currentEpisodes)
                 throw new UnprocessableContentError("Can't follow non ongoing anime");
             await FollowService.followUpdate(FollowTypes.Follow, anime.id, userId, translation.id, translation.group.name);
         }

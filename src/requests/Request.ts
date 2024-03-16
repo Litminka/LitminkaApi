@@ -1,9 +1,9 @@
-import { Permissions, RequestAuthTypes, RequestStatuses } from "../ts/enums";
+import { Permissions, RequestAuthTypes, RequestStatuses } from "@/ts/enums";
 import { NextFunction, Response } from "express";
-import { validationError } from "../middleware/validationError";
-import { auth } from "../middleware/auth";
-import { optionalAuth } from "../middleware/optionalAuth";
-import { RequestWithAuth, RequestWithUserPermissions } from "../ts";
+import { validationError } from "@/middleware/validationError";
+import { auth } from "@/middleware/auth";
+import { optionalAuth } from "@/middleware/optionalAuth";
+import { RequestWithAuth, RequestWithUserPermissions } from "@/ts";
 import { checkExact } from "express-validator";
 
 export default class Request {

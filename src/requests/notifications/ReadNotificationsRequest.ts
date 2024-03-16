@@ -1,5 +1,5 @@
-import { ReadNotificationsValidation } from "../../validators/NotificationValidator";
-import AuthRequest from "../AuthRequest";
+import { ReadNotificationsValidation } from "@validators/NotificationValidator";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class ReadNotificationsRequest extends AuthRequest {
 

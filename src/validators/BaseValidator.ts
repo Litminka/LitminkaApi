@@ -1,23 +1,23 @@
 import { ValidationChain, body, param, query } from "express-validator";
-import { validationError } from "../middleware/validationError";
+import { validationError } from "@/middleware/validationError";
 
 
-const validateBodyId = (fieldName: string): ValidationChain => {
+export const validateBodyId = (fieldName: string): ValidationChain => {
     return body(fieldName).isInt().notEmpty().bail();
 };
 
-const validateParamId = (fieldName: string): ValidationChain => {
+export const validateParamId = (fieldName: string): ValidationChain => {
     return param(fieldName).isInt().notEmpty().toInt();
 };
 
-const validateBodyArrayId = (fieldName: string): any[] => {
+export const validateBodyArrayId = (fieldName: string): any[] => {
     return [
         body(fieldName).toArray().isArray({ min: 1 }),
         body(`${fieldName}.*`).isInt()
     ]
 };
 
-const validateBodyBool = (fieldName: string): any[] => {
+export const validateBodyBool = (fieldName: string): any[] => {
     return [body(fieldName).isBoolean(), validationError];
 };
 
@@ -28,7 +28,7 @@ interface IvalidateParamInt {
     intParams: object,
 }
 
-const validateQueryInt = ({
+export const validateQueryInt = ({
     fieldName,
     defValue,
     intParams = { min: 0 },
@@ -41,5 +41,3 @@ const validateQueryInt = ({
             .withMessage(message),
     ];
 };
-
-export { validateBodyId, validateParamId, validateBodyArrayId, validateBodyBool, validateQueryInt };

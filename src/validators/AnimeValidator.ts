@@ -1,4 +1,4 @@
-import { validateParamId } from "./BaseValidator";
+import { validateParamId } from "@validators/BaseValidator";
 import { body } from "express-validator";
 
 export const AnimeValidation = (): any[] => {
@@ -7,17 +7,17 @@ export const AnimeValidation = (): any[] => {
     ]
 };
 
-const genresValidator = (fieldName: string): any[] => {
+export const genresValidator = (fieldName: string): any[] => {
     return [body(fieldName).optional().isArray().bail(),
     body(`${fieldName}.*`).isInt()
     ];
 };
 
-const nameValidator = (fieldName: string): any[] => {
+export const nameValidator = (fieldName: string): any[] => {
     return [body(fieldName).optional().isString()];
 };
 
-const seasonsValidator = (fieldName: string): any[] => {
+export const seasonsValidator = (fieldName: string): any[] => {
     return [
         body(fieldName).optional().isArray().bail(),
         body(`${fieldName}.*`).isString().isIn([
@@ -28,7 +28,7 @@ const seasonsValidator = (fieldName: string): any[] => {
         ])];
 };
 
-const statusesValidator = (fieldName: string): any[] => {
+export const statusesValidator = (fieldName: string): any[] => {
     return [body(fieldName).optional().isArray().bail(),
     body(`${fieldName}.*`).isString().isIn([
         "ongoing",
@@ -37,7 +37,7 @@ const statusesValidator = (fieldName: string): any[] => {
     ])];
 };
 
-const rpaRatingsValidator = (fieldName: string): any[] => {
+export const rpaRatingsValidator = (fieldName: string): any[] => {
     return [body(fieldName).optional().isArray().bail(),
     body(`${fieldName}.*`).isString().isIn([
         "G",
@@ -49,7 +49,7 @@ const rpaRatingsValidator = (fieldName: string): any[] => {
     ])];
 };
 
-const mediaTypesValidator = (fieldName: string): any[] => {
+export const mediaTypesValidator = (fieldName: string): any[] => {
     return [body(fieldName).optional().isArray().bail(),
     body(`${fieldName}.*`).isString().isIn([
         "tv",
@@ -60,5 +60,3 @@ const mediaTypesValidator = (fieldName: string): any[] => {
         "movie",
     ])];
 };
-
-export { genresValidator, seasonsValidator, nameValidator, statusesValidator, rpaRatingsValidator, mediaTypesValidator, AnimeValidation };

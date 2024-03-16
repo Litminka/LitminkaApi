@@ -1,4 +1,4 @@
-import { logger } from "../loggerConf"
+import { logger } from "@/loggerConf"
 import dayjs from "dayjs"
 
 export default class Period {
