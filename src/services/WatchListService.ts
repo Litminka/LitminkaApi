@@ -1,10 +1,7 @@
 import BadRequestError from "@errors/clienterrors/BadRequestError";
 import NotFoundError from "@errors/clienterrors/NotFoundError";
-import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
-import InternalServerError from "@errors/servererrors/InternalServerError";
 import groupArrSplice from "@/helper/groupsplice";
-import { AddToList, ListFilters, ServerError, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration }  from "@/ts";
-import { RequestStatuses } from "@/ts/enums";
+import { AddToList, ListFilters, ShikimoriAnime, ShikimoriWatchList}  from "@/ts";
 import AnimeUpdateService from "@services/anime/AnimeUpdateService";
 import KodikApiService from "@services/KodikApiService";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
@@ -12,7 +9,7 @@ import { ShikimoriAnimeOptionalRelation, ShikimoriAnimeWithRelation } from "@/ts
 import { KodikAnime } from "@/ts/kodik";
 import { logger } from "@/loggerConf";
 import prisma from "@/db";
-import { User } from "@prisma/client";
+import { User, Anime } from "@prisma/client";
 
 export default class WatchListService {
 

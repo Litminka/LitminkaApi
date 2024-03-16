@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { AddWithAnime, RequestWithUserOwnedGroups } from "@/ts";
+import { AddWithAnime, ListFilters, RequestWithUserOwnedGroups, watchListStatus } from "@/ts";
 import { RequestStatuses } from "@/ts/enums";
 import GroupAnimeListService from "@services/group/GroupAnimeListService";
 

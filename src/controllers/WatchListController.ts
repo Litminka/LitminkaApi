@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList } from "@/ts/index";
+import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList, watchListStatus, ListFilters } from "@/ts/index";
 import WatchListService from "@services/WatchListService";
 import { importWatchListQueue } from "@/queues/watchListImporter";
 

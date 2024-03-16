@@ -50,7 +50,7 @@ export const DeleteFromWatchListValidator = (): any[] => {
     ]
 }
 
-export const GetFilteredWatchListValidation = (): any[] => {
+export const GetFilteredWatchListValidator = (): any[] => {
     return [
         body("statuses").optional().toArray(),
         body("statuses.*").notEmpty().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),

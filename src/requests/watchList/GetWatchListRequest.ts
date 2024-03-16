@@ -1,5 +1,5 @@
 
-import { GetFilteredWatchListValidation } from "@validators/WatchListValidator";
+import { GetFilteredWatchListValidator } from "@validators/WatchListValidator";
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
 
@@ -20,6 +20,6 @@ export default class GetWatchListRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GetFilteredWatchListValidation();
+        return GetFilteredWatchListValidator();
     }
 }
