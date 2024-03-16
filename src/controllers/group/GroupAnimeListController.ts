@@ -14,8 +14,6 @@ export default class GroupAnimeListController {
 
         const filteredGroupAnimeList = await GroupAnimeListService.get(user.id, groupId, {statuses, ratings, isFavorite} as ListFilters)
 
-        //const result = await GroupAnimeListService.get(user.id, groupId);
-
         return res.status(RequestStatuses.OK).json(filteredGroupAnimeList);
     }
 
