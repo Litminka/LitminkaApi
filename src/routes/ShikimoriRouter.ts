@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import ShikimoriController from '../controllers/ShikimoriController';
-import { wrap } from '../middleware/errorHandler';
-import ShikimoriUnlinkRequest from '../requests/shikimoriLink/ShikimoriUnlinkRequest';
-import GetShikimoriLinkRequest from '../requests/shikimoriLink/GetShikimoriLinkRequest';
-import GetShikimoriProfileRequest from '../requests/shikimoriLink/GetShikimoriProfileRequest';
-import ShikimoriLinkRequest from '../requests/shikimoriLink/ShikimoriLinkRequest';
+import ShikimoriController from '@controllers/ShikimoriController';
+import { wrap } from '@/middleware/errorHandler';
+import ShikimoriUnlinkRequest from '@requests/shikimoriLink/ShikimoriUnlinkRequest';
+import GetShikimoriLinkRequest from '@requests/shikimoriLink/GetShikimoriLinkRequest';
+import GetShikimoriProfileRequest from '@requests/shikimoriLink/GetShikimoriProfileRequest';
+import ShikimoriLinkRequest from '@requests/shikimoriLink/ShikimoriLinkRequest';
 const router = Router();
 
 // Public methods

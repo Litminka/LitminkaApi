@@ -1,11 +1,12 @@
+
 import { Anime, Prisma } from "@prisma/client";
-import prisma from "../db";
-import { cyrillicSlug } from "../helper/cyrillic-slug";
-import { ShikimoriAnime, ShikimoriAnimeFull } from "../ts";
-import { ShikimoriGraphAnime, ShikimoriRelation } from "../ts/shikimori";
-import { KodikAnime } from "../ts/kodik";
-import capitalize from "../helper/capitalize";
-import { config } from "../config";
+import { KodikAnime } from "@/ts/kodik";
+import capitalize from "@helper/capitalize";
+import { config } from "@/config";
+import prisma from "@/db";
+import { cyrillicSlug } from "@/helper/cyrillic-slug";
+import { ShikimoriAnime, ShikimoriAnimeFull } from "@/ts";
+import { ShikimoriGraphAnime, ShikimoriRelation } from "@/ts/shikimori";
 
 const extention = Prisma.defineExtension({
     name: "AnimeModel",

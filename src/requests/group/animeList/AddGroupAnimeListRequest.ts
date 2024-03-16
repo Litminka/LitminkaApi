@@ -1,6 +1,6 @@
-import AuthRequest from "../../AuthRequest";
-import prisma from "../../../db";
-import { AddToGroupListValidation } from "../../../validators/GroupListValidator";
+import AuthRequest from "@requests/AuthRequest";
+import prisma from "@/db";
+import { AddToGroupListValidator } from "@validators/GroupListValidator";
 
 export default class AddGroupAnimeListRequest extends AuthRequest {
 
@@ -13,12 +13,12 @@ export default class AddGroupAnimeListRequest extends AuthRequest {
     protected async auth(userId: number): Promise<any> {
         return await prisma.user.findUserWithOwnedGroups(userId);
     }
-    
+
     /**
      * define validation rules for this request
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return AddToGroupListValidation();
+        return AddToGroupListValidator();
     }
 }

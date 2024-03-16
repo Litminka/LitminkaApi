@@ -1,5 +1,7 @@
-import prisma from "../../db";
-import AuthRequest from "../AuthRequest";
+
+import { GetFilteredWatchListValidation } from "@validators/WatchListValidator";
+import prisma from "@/db";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class GetWatchListRequest extends AuthRequest {
 
@@ -10,6 +12,14 @@ export default class GetWatchListRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserByIdWithAnimeList(userId);
+        return await prisma.user.findUserById(userId);
+    }
+
+    /**
+     * define validation rules for this request
+     * @returns ValidationChain
+     */
+    protected rules(): any[] {
+        return GetFilteredWatchListValidation();
     }
 }

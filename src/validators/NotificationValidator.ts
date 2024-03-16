@@ -1,21 +1,21 @@
-import { validateBodyArrayId, validateBodyBool } from "./BaseValidator";
-import { softPeriodValidator } from "./PeriodValidator";
+import { validateBodyArrayId, validateBodyBool } from "@validators/BaseValidator";
+import { softPeriodValidator } from "@validators/PeriodValidator";
 
-export const ReadNotificationsValidation = (): any[] => {
+export const ReadNotificationsValidator = (): any[] => {
     return [
         validateBodyArrayId('id')
     ]
 };
 
-export const GetNotificationsValidation = (): any[] => {
+export const GetNotificationsValidator = (): any[] => {
     return [
-        softPeriodValidator("period")
+        softPeriodValidator('period')
     ]
 };
 
-export const GetUserNotificationsValidation = (): any[] => {
+export const GetUserNotificationsValidator = (): any[] => {
     return [
-        softPeriodValidator("period"),
+        softPeriodValidator('period'),
         validateBodyBool('isRead')
     ]
 };

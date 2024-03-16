@@ -1,15 +1,16 @@
-import { getPreviousSeasonStart, getCurrentSeasonEnd, getSeason } from "../helper/animeseason";
-import groupArrSplice from "../helper/groupsplice";
-import KodikApiService from "./KodikApiService";
-import ShikimoriApiService from "./shikimori/ShikimoriApiService";
-import { ShikimoriAnime, followType } from "../ts/index";
-import { KodikAnimeFull, animeWithTranslation } from "../ts/kodik";
-import AnimeUpdateService from "./anime/AnimeUpdateService";
-import NotificationService from "./NotificationService";
-import prisma from "../db";
-import { AnimeStatuses, FollowTypes } from "../ts/enums";
-import { logger } from "../loggerConf"
-import { ShikimoriGraphAnime } from "../ts/shikimori";
+import { getPreviousSeasonStart, getCurrentSeasonEnd, getSeason } from "@/helper/animeseason";
+import groupArrSplice from "@/helper/groupsplice";
+import KodikApiService from "@services/KodikApiService";
+import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
+import { ShikimoriAnime, followType } from "@/ts/index";
+import { KodikAnimeFull, animeWithTranslation } from "@/ts/kodik";
+import AnimeUpdateService from "@services/anime/AnimeUpdateService";
+import NotificationService from "@services/NotificationService";
+import prisma from "@/db";
+import { AnimeStatuses, FollowTypes, RequestStatuses } from "@/ts/enums";
+import { logger } from "@/loggerConf"
+import { ShikimoriGraphAnime } from "@/ts/shikimori";
+
 
 export default class AutoCheckService {
     animeUpdateService: AnimeUpdateService;

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import AnimeSearchFilter, { IAnimeFilterQuery, IAnimeFilters } from "../../services/filters/AnimeSearchFilter";
+import AnimeSearchFilter, { IAnimeFilterQuery, IAnimeFilters } from "@services/filters/AnimeSearchFilter";
 import { matchedData } from "express-validator";
 
 export default class SearchController {

@@ -1,6 +1,6 @@
-import { Worker, Job } from 'bullmq';
-import WatchListService from '../services/WatchListService';
-import { logger } from '../loggerConf';
+import { logger } from '@/loggerConf';
+import { Job, Worker } from "bullmq";
+import WatchListService from "@services/WatchListService";
 
 const worker = new Worker("importWatchList", async (job: Job) => {
     const started = Date.now();

@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client'
-import { FollowExt } from './models/Follow'
-import { AnimeExt } from './models/Anime';
-import { IntegrationExt } from './models/Integration';
-import { AnimeNotificationExt } from './models/AnimeNotificatons';
-import { UserNotificationExt } from './models/AnimeUserNotifications';
-import { AnimeListExt } from './models/AnimeList';
-import { RefreshTokenExt } from './models/RefreshToken';
-import { ShikimoriLinkTokenExt } from './models/ShikimoriLinkToken';
-import { UserExt } from './models/User';
-import { AnimeRelationExt } from './models/AnimeRelations';
+import { AnimeRelationExt } from '@models/AnimeRelations';
+import { FollowExt } from '@models/Follow'
+import { AnimeExt } from '@models/Anime';
+import { IntegrationExt } from '@models/Integration';
+import { AnimeNotificationExt } from '@models/AnimeNotificatons';
+import { UserNotificationExt } from '@models/AnimeUserNotifications';
+import { AnimeListExt } from '@models/AnimeList';
+import { RefreshTokenExt } from '@models/RefreshToken';
+import { ShikimoriLinkTokenExt } from '@models/ShikimoriLinkToken';
+import { UserExt } from '@models/User';
 
 const prismaClientSingleton = () => {
     return new PrismaClient()

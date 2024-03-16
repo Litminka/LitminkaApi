@@ -1,5 +1,5 @@
-import { RequestAuthTypes } from "../ts/enums";
-import Request from "./Request";
+import { RequestAuthTypes } from "@/ts/enums";
+import Request from "@requests/Request";
 import {
     genresValidator,
     seasonsValidator,
@@ -7,9 +7,9 @@ import {
     statusesValidator,
     rpaRatingsValidator,
     mediaTypesValidator
-} from "../validators/AnimeValidator";
-import { softPeriodValidator } from "../validators/PeriodValidator";
-import { validateQueryInt } from "../validators/BaseValidator";
+} from "@validators/AnimeValidator";
+import { softPeriodValidator } from "@validators/PeriodValidator";
+import { validateQueryInt } from "@validators/BaseValidator";
 
 export default class SearchAnimeRequest extends Request {
 

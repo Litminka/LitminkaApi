@@ -1,7 +1,7 @@
-import { Notify, UserNotify } from "../ts";
-import { NotifyStatuses } from "../ts/enums";
-import prisma from "../db";
-import Period from "../helper/period";
+import { Notify, UserNotify } from "@/ts";
+import { NotifyStatuses } from "@/ts/enums";
+import prisma from "@/db";
+import Period from "@/helper/period";
 import dayjs from "dayjs";
 
 export interface getUserNotifications {
@@ -56,7 +56,7 @@ export default class NotificationService {
     public static async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {
         if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
         period = Period.getPeriod(period)
-        return prisma.userAnimeNotifications.getUserNotifications({isRead, userId, period})
+        return prisma.userAnimeNotifications.getUserNotifications({ isRead, userId, period })
     }
 
     public static async getNotifications(period: Date[]) {

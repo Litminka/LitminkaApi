@@ -6,6 +6,8 @@ dotenv.config();
 import { Encrypt } from "../src/helper/encrypt";
 import capitalize from "../src/helper/capitalize";
 import KodikApiService from "../src/services/KodikApiService";
+import { KodikGenresRequest } from '../src/ts/kodik';
+
 async function main() {
     const adminRole = await prisma.role.upsert({
         where: { name: "admin" },
@@ -79,7 +81,7 @@ async function main() {
     const genres = await kodik.getGenres();
     // Test new logger
     if (genres.reqStatus === 500) return logger.error(genres);
-    const { results } = genres;
+    const { results } = genres as KodikGenresRequest;
     results.forEach(async genre => {
         await prisma.genre.upsert({
             where: {

@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../../db";
-import Period from "../../helper/period";
+import prisma from "@/db";
+import Period from "@/helper/period";
 import dayjs from "dayjs";
 
 export interface IAnimeFilters {

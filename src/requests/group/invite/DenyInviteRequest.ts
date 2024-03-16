@@ -1,6 +1,6 @@
-import AuthRequest from "../../AuthRequest";
-import prisma from "../../../db";
-import { GroupInviteActionValidation } from "../../../validators/GroupListValidator";
+import AuthRequest from "@requests/AuthRequest";
+import prisma from "@/db";
+import { GroupInviteActionValidator } from "@validators/GroupListValidator";
 
 export default class DenyInviteRequest extends AuthRequest {
 
@@ -13,12 +13,12 @@ export default class DenyInviteRequest extends AuthRequest {
     protected async auth(userId: number): Promise<any> {
         return await prisma.user.findUserWithGroupInvites(userId);
     }
-    
+
     /**
      * define validation rules for this request
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupInviteActionValidation();
+        return GroupInviteActionValidator();
     }
 }

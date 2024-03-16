@@ -1,5 +1,5 @@
-import prisma from "../../../db";
-import AuthRequest from "../../AuthRequest";
+import prisma from "@/db";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class OwnedGroupRequest extends AuthRequest {
 

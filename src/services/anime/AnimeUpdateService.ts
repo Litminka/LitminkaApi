@@ -1,12 +1,12 @@
 import { Anime, Prisma, User } from "@prisma/client";
-import ShikimoriApiService from "../shikimori/ShikimoriApiService";
-import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "../../ts/index";
-import { KodikAnime, KodikAnimeFull, animeWithTranslation, translation } from "../../ts/kodik";
-import prisma from "../../db";
-import { RequestStatuses } from "../../ts/enums";
-import InternalServerError from "../../errors/servererrors/InternalServerError";
-import { cyrillicSlug } from "../../helper/cyrillic-slug";
-import { ShikimoriGraphAnime } from "../../ts/shikimori";
+import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
+import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "@/ts/index";
+import { KodikAnime, KodikAnimeFull, animeWithTranslation, translation } from "@/ts/kodik";
+import prisma from "@/db";
+import { RequestStatuses } from "@/ts/enums";
+import InternalServerError from "@errors/servererrors/InternalServerError";
+import { cyrillicSlug } from "@/helper/cyrillic-slug";
+import { ShikimoriGraphAnime } from "@/ts/shikimori";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined

@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import * as jwt from "jsonwebtoken";
-import { RequestWithAuth } from '../ts/index';
-import { RequestStatuses } from '../ts/enums';
+import { RequestWithAuth } from '@/ts/index';
+import { RequestStatuses } from '@/ts/enums';
 
 export function auth(req: RequestWithAuth, res: Response, next: NextFunction) {
     const token = req.get("authorization");

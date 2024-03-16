@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { RequestUserWithIntegration } from "../../ts/index";
-import AnimeService from "../../services/anime/AnimeService";
-import { RequestStatuses } from "../../ts/enums";
+import { RequestUserWithIntegration } from "@/ts/index";
+import AnimeService from "@services/anime/AnimeService";
+import { RequestStatuses } from "@/ts/enums";
 
 
 export default class AnimeController {
