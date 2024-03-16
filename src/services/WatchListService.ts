@@ -8,7 +8,7 @@ import KodikApiService from "./KodikApiService";
 import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 import { logger } from "../loggerConf";
 import prisma from "../db";
-import { ShikimoriAnimeOptionalRelation } from "../ts/shikimori";
+import { ShikimoriAnimeOptionalRelation, ShikimoriAnimeWithRelation } from "../ts/shikimori";
 import { KodikAnime } from "../ts/kodik";
 import { Anime } from "@prisma/client";
 import { User } from "@prisma/client";
@@ -68,7 +68,7 @@ export default class WatchListService {
             const { count } = res;
             if (count > 0) watchList.splice(i--, 1);
         }
-        await prisma.animeList.createUsersWatchList(user.id, animeInList, watchList);
+        await prisma.animeList.createUserWatchList(user.id, animeInList, watchList);
     }
 
     public static async importListV2(id: number) {
@@ -131,7 +131,8 @@ export default class WatchListService {
         }
 
         const shikimoriBatchIds: number[][] = groupArrSplice([...shikimoriMap.keys()], 100);
-        ;
+        const writeRelations = new Map<number, ShikimoriAnimeWithRelation>();
+        const shikimoriDBAnimeMap = new Map<number, number>();
         for (const batch of shikimoriBatchIds) {
 
             const animeBatch = await prisma.anime.getBatchAnimeShikimori(batch);
@@ -146,10 +147,34 @@ export default class WatchListService {
                 const anime = animeMap.get(id);
 
                 if (anime !== undefined) {
-                    await prisma.anime.updateFromShikimoriGraph(shikimoriAnime!, shikimoriAnime!.related, kodikAnime, anime);
+
+                    if (!anime.hasRelation &&
+                        shikimoriAnime!.related !== undefined
+                        && shikimoriAnime!.related.length > 0) {
+                        writeRelations.set(id, shikimoriAnime! as ShikimoriAnimeWithRelation);
+                    }
+
+                    let hasRelation = false;
+                    if (shikimoriAnime!.related?.length) {
+                        hasRelation = true;
+                    }
+                    await prisma.anime.updateFromShikimoriGraph(shikimoriAnime!, hasRelation, anime, kodikAnime);
+                    shikimoriDBAnimeMap.set(Number(shikimoriAnime!.id), anime.id)
+                    continue;
                 }
+
+                const related = shikimoriAnime?.related;
+                let hasRelation = false;
+                if (related && related.length > 0) {
+                    hasRelation = true;
+                }
+                const newAnime = await prisma.anime.createFromShikimoriGraph(shikimoriAnime!, hasRelation, kodikAnime);
+                shikimoriDBAnimeMap.set(Number(shikimoriAnime!.id), newAnime.id)
+                if (hasRelation) writeRelations.set(id, shikimoriAnime! as ShikimoriAnimeWithRelation);
             }
         }
+        await prisma.animeRelation.createFromShikimoriMap(writeRelations);
+        await prisma.animeList.createUserWatchListByMap(user.id, shikimoriDBAnimeMap, watchList);
 
         console.log(watchList.length, shikimoriMap.size, kodikMap.size);
     }

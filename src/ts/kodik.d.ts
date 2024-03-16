@@ -142,7 +142,10 @@ export type checkAnime = (Anime & {
 });
 
 export type translations = {
-    id: number;
+    /**
+     * id of the group
+     */
+    id: number 
     title: string;
     type: "voice" | "subtitles";
     episodes_count: number;

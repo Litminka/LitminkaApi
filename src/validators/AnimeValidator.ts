@@ -1,7 +1,7 @@
 import { validateParamId } from "./BaseValidator";
 import { body } from "express-validator";
 
-export const AnimeValidation = (): any[] => {
+export const AnimeValidator = (): any[] => {
     return [
         validateParamId('animeId')
     ]
@@ -61,4 +61,4 @@ const mediaTypesValidator = (fieldName: string): any[] => {
     ])];
 };
 
-export { genresValidator, seasonsValidator, nameValidator, statusesValidator, rpaRatingsValidator, mediaTypesValidator, AnimeValidation };
+export { genresValidator, seasonsValidator, nameValidator, statusesValidator, rpaRatingsValidator, mediaTypesValidator };

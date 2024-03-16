@@ -73,7 +73,7 @@ model ShikimoriLinkToken {
 model Anime {
   id                     Int                      @id @default(autoincrement())
   shikimoriId            Int                      @unique
-  image                  String
+  image                  String?
   japaneseName           String?
   englishName            String?
   name                   String?
@@ -91,6 +91,7 @@ model Anime {
   kodikLink              String?
   censored               Boolean                  @default(false)
   banned                 Boolean                  @default(false)
+  hasRelation            Boolean                  @default(false)
   genres                 Genre[]
   animeTranslations      AnimeTranslation[]
   animeLists             AnimeList[]
@@ -98,6 +99,17 @@ model Anime {
   userAnimeNotifications UserAnimeNotifications[]
   animeNotifications     AnimeNotifications[]
   groupLists             GroupAnimeList[]
+  relations              AnimeRelation[]          @relation(name: "animeRelation")
+  relatesTo              AnimeRelation[]          @relation(name: "relatedAnimeRelation")
+}
+
+model AnimeRelation {
+  id           Int    @id @default(autoincrement())
+  animeId      Int
+  relatedTo    Int
+  name         String
+  relatedAnime Anime  @relation(fields: [animeId], references: [shikimoriId], name: "animeRelation")
+  anime        Anime  @relation(fields: [relatedTo], references: [shikimoriId], name: "relatedAnimeRelation")
 }
 
 model Genre {

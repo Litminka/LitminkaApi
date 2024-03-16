@@ -3,7 +3,8 @@ export const getAnimeWithRelationsQuery = `query($ids: String) {
         id 
         name 
         russian 
-        licenseNameRu 
+        licenseNameRu
+        licensors 
         english 
         japanese 
         kind 
@@ -27,7 +28,8 @@ export const getAnimeWithRelationsQuery = `query($ids: String) {
                 id 
                 name 
                 russian 
-                licenseNameRu 
+                licenseNameRu
+                licensors 
                 english 
                 japanese 
                 kind 

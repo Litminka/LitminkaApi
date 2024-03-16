@@ -9,6 +9,7 @@ export interface ShikimoriGraphAnime {
     name: string,
     russian: string | null,
     licenseNameRu: string | null,
+    licensors: string[],
     english: string | null,
     japanese: string | null,
     kind: animeKind,

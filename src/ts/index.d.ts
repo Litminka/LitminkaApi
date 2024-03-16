@@ -1,8 +1,6 @@
-import { Anime, AnimeList, AnimeTranslation, Group, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
+import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
 import { Request } from "express";
-import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
-import { AxiosHeaders } from "axios";
 
 export interface RequestWithAuth extends Request {
     auth?: {

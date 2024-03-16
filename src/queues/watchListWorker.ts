@@ -8,6 +8,7 @@ const worker = new Worker("importWatchList", async (job: Job) => {
         await WatchListService.importListV2(job.data.id);
     } catch (error) {
         logger.error("ImportList has failed! Error" + error);
+        throw (error);
     }
     const finished = Date.now();
     logger.info(`Finished in: ${(finished - started) / 1000} seconds`)

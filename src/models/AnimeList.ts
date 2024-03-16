@@ -19,7 +19,13 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
-            async createUsersWatchList(userId: number, animeInList: Anime[], watchList: ShikimoriWatchList[]) {
+            /**
+             * @deprecated prefer using createUserWatchListByMap instead
+             * @param userId 
+             * @param dbAnime 
+             * @param watchList 
+             */
+            async createUserWatchList(userId: number, dbAnime: Anime[], watchList: ShikimoriWatchList[]) {
                 await prisma.animeList.createMany({
                     data: watchList.map((listEntry) => {
                         return {
@@ -27,7 +33,21 @@ const extention = Prisma.defineExtension({
                             status: listEntry.status,
                             watchedEpisodes: listEntry.episodes,
                             userId,
-                            animeId: animeInList.find((anime) => anime.shikimoriId == listEntry.target_id)!.id,
+                            animeId: dbAnime.find((anime) => anime.shikimoriId == listEntry.target_id)!.id,
+                            rating: listEntry.score,
+                        } satisfies Prisma.AnimeListCreateManyInput
+                    })
+                });
+            },
+            async createUserWatchListByMap(userId: number, animeMap: Map<number, number>, watchList: ShikimoriWatchList[]) {
+                await prisma.animeList.createMany({
+                    data: watchList.map((listEntry) => {
+                        return {
+                            isFavorite: false,
+                            status: listEntry.status,
+                            watchedEpisodes: listEntry.episodes,
+                            userId,
+                            animeId: animeMap.get(Number(listEntry.target_id))!,
                             rating: listEntry.score,
                         } satisfies Prisma.AnimeListCreateManyInput
                     })

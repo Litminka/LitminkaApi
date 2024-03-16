@@ -8,6 +8,7 @@ import { AnimeListExt } from './models/AnimeList';
 import { RefreshTokenExt } from './models/RefreshToken';
 import { ShikimoriLinkTokenExt } from './models/ShikimoriLinkToken';
 import { UserExt } from './models/User';
+import { AnimeRelationExt } from './models/AnimeRelations';
 
 const prismaClientSingleton = () => {
     return new PrismaClient()
@@ -20,6 +21,7 @@ const prismaClientSingleton = () => {
         .$extends(RefreshTokenExt)
         .$extends(ShikimoriLinkTokenExt)
         .$extends(UserExt)
+        .$extends(AnimeRelationExt)
 }
 
 declare global {
