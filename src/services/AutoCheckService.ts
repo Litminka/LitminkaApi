@@ -1,10 +1,10 @@
 import { getPreviousSeasonStart, getCurrentSeasonEnd, getSeason } from "../helper/animeseason";
 import groupArrSplice from "../helper/groupsplice";
 import KodikApiService from "./KodikApiService";
-import ShikimoriApiService from "./ShikimoriApiService";
+import ShikimoriApiService from "./shikimori/ShikimoriApiService";
 import { ShikimoriAnime, followType, ServerError } from "../ts/index";
 import { KodikAnimeFull, checkAnime } from "../ts/kodik";
-import AnimeUpdateService from "./AnimeUpdateService";
+import AnimeUpdateService from "./anime/AnimeUpdateService";
 import NotificationService from "./NotificationService";
 import prisma from "../db";
 import { AnimeStatuses, FollowTypes, RequestStatuses } from "../ts/enums";

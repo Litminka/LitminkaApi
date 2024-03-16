@@ -4,7 +4,7 @@ import prisma from "../db";
 import { Anime } from '@prisma/client';
 import ShikimoriApiService from '../services/shikimori/ShikimoriApiService';
 import { ServerError, ShikimoriAnimeFull } from '../ts';
-import AnimeUpdateService from '../services/AnimeUpdateService';
+import AnimeUpdateService from '../services/anime/AnimeUpdateService';
 import { RequestStatuses } from '../ts/enums';
 import { logger } from "../loggerConf"
 

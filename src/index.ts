@@ -1,4 +1,4 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Express, Request, Response } from 'express';
 const helmet = require("helmet");
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
