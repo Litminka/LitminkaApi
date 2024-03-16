@@ -1,5 +1,5 @@
-import { EditWatchListValidation } from "../../validators/WatchListValidator";
-import AuthRequest from "../AuthRequest";
+import { EditWatchListValidation } from "@validators/WatchListValidator";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class EditWatchListRequest extends AuthRequest {
 

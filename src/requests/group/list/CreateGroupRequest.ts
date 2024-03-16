@@ -1,6 +1,6 @@
-import prisma from "../../../db";
-import { CreateGroupListValidator } from "../../../validators/GroupListValidator";
-import AuthRequest from "../../AuthRequest";
+import prisma from "@/db";
+import { CreateGroupListValidator } from "@validators/GroupListValidator";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class CreateGroupRequest extends AuthRequest {
 

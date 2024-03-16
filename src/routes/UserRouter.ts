@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import UserController from "../controllers/UserController";
-import { wrap } from '../middleware/errorHandler';
-import RegisterUserRequest from '../requests/user/RegisterUserRequest';
-import LoginUserRequest from '../requests/user/LoginUserRequest';
-import GetUserProfileRequest from '../requests/user/GetUserProfileRequest';
+import UserController from "@controllers/UserController";
+import { wrap } from '@/middleware/errorHandler';
+import RegisterUserRequest from '@requests/user/RegisterUserRequest';
+import LoginUserRequest from '@requests/user/LoginUserRequest';
+import GetUserProfileRequest from '@requests/user/GetUserProfileRequest';
 const router = Router();
 
 // Public methods

@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../db";
-import { cyrillicSlug } from "../helper/cyrillic-slug";
-import { ShikimoriAnime, ShikimoriAnimeFull } from "../ts";
+import prisma from "@/db";
+import { cyrillicSlug } from "@/helper/cyrillic-slug";
+import { ShikimoriAnime, ShikimoriAnimeFull } from "@/ts";
 
 const extention = Prisma.defineExtension({
     name: "AnimeModel",

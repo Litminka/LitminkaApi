@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { CreateUser, LoginUser, RequestWithAuth, RequestWithUserPermissions } from "../ts/index";
-import { RequestStatuses } from "../ts/enums";
-import UserService from "../services/UserService";
-import ForbiddenError from "../errors/clienterrors/ForbiddenError";
+import { CreateUser, LoginUser, RequestWithAuth, RequestWithUserPermissions } from "@/ts/index";
+import { RequestStatuses } from "@/ts/enums";
+import UserService from "@services/UserService";
+import ForbiddenError from "@errors/clienterrors/ForbiddenError";
 
 export default class UserController {
     static async createUser(req: Request, res: Response): Promise<Object> {
@@ -19,8 +19,8 @@ export default class UserController {
 
     static async loginUser(req: Request, res: Response): Promise<Object> {
         const { login, password }: LoginUser = req.body;
-        
-        const {token, refreshToken} = await UserService.login({login, password});
+
+        const { token, refreshToken } = await UserService.login({ login, password });
 
         return res.status(RequestStatuses.OK).json({
             data: {

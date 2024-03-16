@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { RequestWithUser, RequestWithUserOwnedGroups } from "../../ts";
-import { RequestStatuses } from "../../ts/enums";
-import GroupMemberService from "../../services/group/GroupMemberService";
+import { RequestWithUser, RequestWithUserOwnedGroups } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
+import GroupMemberService from "@services/group/GroupMemberService";
 
 export default class GroupMemberController {
     public static async getMemberGroup(req: RequestWithUser, res: Response) {

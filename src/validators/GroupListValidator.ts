@@ -1,5 +1,5 @@
 import { body, param } from "express-validator";
-import prisma from "../db";
+import prisma from "@/db";
 interface minmax {
     min: number,
     max?: number
@@ -29,7 +29,7 @@ export const GroupListIdWithUserIdValidator = (): any[] => {
         param("groupId").isInt().bail().toInt(),
         body("userId").isInt().bail().toInt(),
     ];
-}
+};
 
 export const UpdateGroupListValidator = (): any[] => {
     return [
@@ -43,14 +43,14 @@ export const GroupInviteIdValidator = (): any[] => {
     return [
         param("inviteId").isInt().bail().toInt(),
     ]
-}
+};
 
 export const GroupInviteActionValidation = (): any[] => {
     return [
         param("inviteId").isInt().bail().toInt(),
         body("modifyList").optional().isBoolean().bail().toBoolean(),
     ];
-}
+};
 
 export const AddToGroupListValidation = (): any[] => {
     const watchedRange: minmax = { min: 0 };
@@ -68,5 +68,5 @@ export const AddToGroupListValidation = (): any[] => {
         body("rating").notEmpty().bail().isInt({ min: 0, max: 10 }),
         body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean(),
     ]
-}
+};
 

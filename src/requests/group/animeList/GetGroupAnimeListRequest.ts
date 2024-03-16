@@ -1,7 +1,7 @@
-import AuthRequest from "../../AuthRequest";
-import prisma from "../../../db";
-import { GroupListIdValidation } from "../../../validators/GroupListValidator";
-import { GetFilteredWatchListValidation } from "../../../validators/WatchListValidator";
+import { GetFilteredWatchListValidation } from "@validators/WatchListValidator";
+import AuthRequest from "@requests/AuthRequest";
+import prisma from "@/db";
+import { GroupListIdValidation } from "@validators/GroupListValidator";
 
 export default class GetGroupAnimeListRequest extends AuthRequest {
 
@@ -14,7 +14,7 @@ export default class GetGroupAnimeListRequest extends AuthRequest {
     protected async auth(userId: number): Promise<any> {
         return await prisma.user.findUserWithOwnedGroups(userId);
     }
-    
+
     /**
      * define validation rules for this request
      * @returns ValidationChain

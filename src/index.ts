@@ -1,22 +1,24 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Express, Request, Response } from 'express';
 const helmet = require("helmet");
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
-
-import { userRouter } from './routes/UserRouter';
-import { shikimoriRouter } from './routes/ShikimoriRouter';
-import { tokenRouter } from './routes/TokenRouter';
-import { watchListRouter } from './routes/WatchListRouter';
-import { followRouter } from './routes/FollowRouter';
-import { animeRouter } from './routes/AnimeRouter';
-import { groupListRouter } from './routes/GroupListRouter';
-import { notificationRouter as notificationRouter } from './routes/NotificationRouter';
 import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
-import { RequestStatuses } from './ts/enums';
-import { wrap } from './middleware/errorHandler';
-import { logger } from './loggerConf'
+
+import { RequestStatuses } from '@/ts/enums';
+import { wrap } from '@/middleware/errorHandler';
+import { logger } from '@/loggerConf'
+
+import { userRouter } from '@routes/UserRouter';
+import { shikimoriRouter } from '@routes/ShikimoriRouter';
+import { tokenRouter } from '@routes/TokenRouter';
+import { watchListRouter } from '@routes/WatchListRouter';
+import { followRouter } from '@routes/FollowRouter';
+import { animeRouter } from '@routes/anime/AnimeRouter';
+import { animeSearchRouter } from '@routes/SearchRouter';
+import { groupListRouter } from '@routes/GroupListRouter';
+import { notificationRouter } from '@routes/NotificationRouter';
 
 dotenv.config();
 
@@ -57,7 +59,7 @@ app.use("/anime/follow", followRouter);
 app.use("/shikimori", shikimoriRouter);
 app.use("/token", tokenRouter);
 app.use("/notifications", notificationRouter);
-// app.use("/search", searchRouter);
+app.use("/search", animeSearchRouter);
 
 app.get("/shikimori_token", (req: Request, res: Response) => {
     logger.debug(`shikimori_token ${req.query}`)

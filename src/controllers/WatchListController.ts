@@ -1,10 +1,9 @@
 import { Response } from "express";
-import { AddToList, ListFilters, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList, watchListStatus } from "../ts/index";
-import WatchListService from "../services/WatchListService";
-import { importWatchListQueue } from "../queues/watchListImporter";
+import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList } from "@/ts/index";
+import WatchListService from "@services/WatchListService";
+import { importWatchListQueue } from "@/queues/watchListImporter";
 
 export default class WatchListController {
-    // FIXME: get out in middleware
     public static async getWatchList(req: RequestWithUserAnimeList, res: Response): Promise<Object> {
         const user = req.auth.user;
         const statuses: watchListStatus[] = req.body.statuses as watchListStatus[];
@@ -57,16 +56,4 @@ export default class WatchListController {
             message: "Entry deleted successfully"
         });
     }
-
-    /*
-    public static async getFilteredWatchList(req: RequestWithUserAnimeList, res: Response){
-        const user = req.auth.user;
-        const statuses: watchListStatus[] = req.body.statuses as watchListStatus[];
-        const rating: number = req.body.rating as number
-        const isFavorite: boolean = req.body.isFavorite as boolean;
-
-        const filteredWatchList = await WatchListService.getFilteredWatchList(user, {statuses, rating, isFavorite} as ListFilters)
-
-        return res.json(filteredWatchList);
-    }*/
 }

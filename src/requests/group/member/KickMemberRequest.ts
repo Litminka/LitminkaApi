@@ -1,6 +1,6 @@
-import AuthRequest from "../../AuthRequest";
-import prisma from "../../../db";
-import { GroupListIdWithUserIdValidator } from "../../../validators/GroupListValidator";
+import AuthRequest from "@requests/AuthRequest";
+import prisma from "@/db";
+import { GroupListIdWithUserIdValidator } from "@validators/GroupListValidator";
 
 export default class KickMemberRequest extends AuthRequest {
 
@@ -13,7 +13,7 @@ export default class KickMemberRequest extends AuthRequest {
     protected async auth(userId: number): Promise<any> {
         return await prisma.user.findUserWithOwnedGroups(userId);
     }
-    
+
     /**
      * define validation rules for this request
      * @returns ValidationChain

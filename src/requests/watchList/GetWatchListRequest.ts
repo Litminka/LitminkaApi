@@ -1,6 +1,7 @@
-import prisma from "../../db";
-import { GetFilteredWatchListValidation } from "../../validators/WatchListValidator";
-import AuthRequest from "../AuthRequest";
+
+import { GetFilteredWatchListValidation } from "@validators/WatchListValidator";
+import prisma from "@/db";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class GetWatchListRequest extends AuthRequest {
 

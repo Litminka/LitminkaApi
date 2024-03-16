@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
-import { ServerError } from "../ts/index";
-import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translations, KodikAnime, translation } from "../ts/kodik";
-import { RequestStatuses } from "../ts/enums";
-import { logger } from "../loggerConf"
+import { ServerError } from "@/ts/index";
+import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translations, KodikAnime, translation } from "@/ts/kodik";
+import { RequestStatuses } from "@/ts/enums";
+import { logger } from "@/loggerConf"
 
 export default class KodikApiService {
     baseurl = "https://kodikapi.com"

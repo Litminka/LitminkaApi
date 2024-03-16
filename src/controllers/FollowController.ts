@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { DeleteFollow, Follow, RequestWithAuth, RequestWithUser } from "../ts/index";
-import { RequestStatuses } from "../ts/enums";
-import FollowService from "../services/FollowService";
+import { DeleteFollow, Follow, RequestWithAuth, RequestWithUser } from "@/ts/index";
+import { RequestStatuses } from "@/ts/enums";
+import FollowService from "@services/FollowService";
 
 export default class FollowController {
 
@@ -17,13 +17,12 @@ export default class FollowController {
         })
     }
 
-    // FIXME: Refactor to middleware
     public static async unfollow(req: RequestWithUser, res: Response) {
 
         const user = req.auth.user;
         const { groupName } = req.body as DeleteFollow;
         const animeId: number = req.params.animeId as unknown as number;
-        
+
         await FollowService.unfollow(animeId, user.id, groupName)
 
         return res.status(RequestStatuses.OK).json({
