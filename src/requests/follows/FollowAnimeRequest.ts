@@ -1,7 +1,7 @@
-import prisma from "../../db";
-import { Permissions, RequestAuthTypes } from "../../ts/enums";
-import Request from "../Request";
-import { FollowValidation } from "../../validators/FollowValidator";
+import prisma from "@/db";
+import { Permissions, RequestAuthTypes } from "@/ts/enums";
+import Request from "@requests/Request";
+import { FollowValidation } from "@validators/FollowValidator";
 
 export default class FollowAnimeRequest extends Request {
 

@@ -1,6 +1,6 @@
-import AuthRequest from "../../AuthRequest";
-import prisma from "../../../db";
-import { GroupInviteValidation } from "../../../validators/GroupListValidator";
+import AuthRequest from "@requests/AuthRequest";
+import prisma from "@/db";
+import { GroupInviteValidation } from "@validators/GroupListValidator";
 
 export default class DeleteInviteRequest extends AuthRequest {
 
@@ -13,7 +13,7 @@ export default class DeleteInviteRequest extends AuthRequest {
     protected async auth(userId: number): Promise<any> {
         return await prisma.user.findUserWithOwnedGroups(userId);
     }
-    
+
     /**
      * define validation rules for this request
      * @returns ValidationChain

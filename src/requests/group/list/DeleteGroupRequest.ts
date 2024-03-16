@@ -1,5 +1,5 @@
-import { GroupListIdValidation } from "../../../validators/GroupListValidator";
-import AuthRequest from "../../AuthRequest";
+import { GroupListIdValidation } from "@validators/GroupListValidator";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class DeleteGroupRequest extends AuthRequest {
 

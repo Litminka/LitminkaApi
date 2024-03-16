@@ -1,5 +1,5 @@
-import AuthRequest from "../../AuthRequest";
-import { GroupListIdValidation } from "../../../validators/GroupListValidator";
+import AuthRequest from "@requests/AuthRequest";
+import { GroupListIdValidation } from "@validators/GroupListValidator";
 
 export default class UpdateMemberStateRequest extends AuthRequest {
 

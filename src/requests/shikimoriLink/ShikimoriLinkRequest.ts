@@ -1,5 +1,5 @@
-import { ShikimoriLinkValidation } from "../../validators/ShikimoriValidator";
-import Request from "../Request";
+import { ShikimoriLinkValidation } from "@validators/ShikimoriValidator";
+import Request from "@requests/Request";
 
 export default class ShikimoriLinkRequest extends Request {
 
