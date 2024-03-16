@@ -96,6 +96,12 @@ export interface ShikimoriWhoAmI {
     locale: string;
 }
 
+export interface ListFilters{
+    statuses?: watchListStatus[],
+    ratings?: number[],
+    isFavorite?: boolean
+}
+
 type watchListStatus =
     | "planned"
     | "watching"

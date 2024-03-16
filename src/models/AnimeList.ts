@@ -83,6 +83,27 @@ const extention = Prisma.defineExtension({
                         anime: true
                     }
                 });
+            },
+            async findFilteredWatchList(userId:number, filters: ListFilters){
+                const { statuses, ratings, isFavorite } = filters as ListFilters;
+                const statusFilter = {
+                    in: statuses
+                }
+                const ratingFilter = {
+                    gte: ratings ? ratings[0] : 1,
+                    lte: ratings ? ratings[1] : 10
+                }
+                return await prisma.animeList.findMany({
+                    where: {
+                        userId, 
+                        rating: ratings === undefined ? undefined : ratingFilter, 
+                        isFavorite, 
+                        status: statuses === undefined ? undefined : statusFilter
+                    },
+                    include: {
+                        anime: true
+                    }
+                });
             }
         }
     }
