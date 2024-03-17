@@ -1,5 +1,5 @@
-import { CreateUser, FollowAnime, LoginUser, UserNotify } from "../ts";
-import prisma from "../db";
+import { CreateUser, FollowAnime, LoginUser, UserNotify } from "@/ts";
+import prisma from "@/db";
 import { Prisma } from "@prisma/client";
 
 const extention = Prisma.defineExtension({
@@ -79,13 +79,15 @@ const extention = Prisma.defineExtension({
                 });
             },
             async findUserById(id: number) {
-                return await prisma.user.findFirstOrThrow({ where: { id }, include: {
-                    role: {
-                        include: {
-                            permissions: true
+                return await prisma.user.findFirstOrThrow({
+                    where: { id }, include: {
+                        role: {
+                            include: {
+                                permissions: true
+                            }
                         }
                     }
-                } });
+                });
             },
             async findUserWithOwnedGroups(id: number) {
                 return await prisma.user.findFirstOrThrow({ where: { id }, include: { ownedGroups: true } });

@@ -1,13 +1,13 @@
-import UnauthorizedError from "../errors/clienterrors/UnauthorizedError";
-import ShikimoriApiService from "./ShikimoriApiService";
-import { RequestStatuses } from "../ts/enums";
-import InternalServerError from "../errors/servererrors/InternalServerError";
-import { ShikimoriWhoAmI, UserWithIntegration } from "../ts";
-import UnprocessableContentError from "../errors/clienterrors/UnprocessableContentError";
+import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
+import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
+import { RequestStatuses } from "@/ts/enums";
+import InternalServerError from "@errors/servererrors/InternalServerError";
+import { ShikimoriWhoAmI, UserWithIntegration } from "@/ts";
+import UnprocessableContentError from "@errors/clienterrors/UnprocessableContentError";
 import crypto from "crypto";
-import prisma from "../db";
-import ForbiddenError from "../errors/clienterrors/ForbiddenError";
-import BadRequestError from "../errors/clienterrors/BadRequestError";
+import prisma from "@/db";
+import ForbiddenError from "@errors/clienterrors/ForbiddenError";
+import BadRequestError from "@errors/clienterrors/BadRequestError";
 
 export default class ShikimoriLinkService {
     public static async link(token: string, code: string) {
@@ -18,7 +18,7 @@ export default class ShikimoriLinkService {
         }
         const user = await prisma.user.findUserByShikimoriLinkToken(token);
         if (user.integration?.shikimoriId) throw new BadRequestError("User already has shikimori integration");
-      
+
         const shikimoriapi = new ShikimoriApiService(user);
         const profile = await shikimoriapi.getProfile();
         if (!profile) throw new UnauthorizedError("User does not have shikimori integration")
@@ -47,7 +47,7 @@ export default class ShikimoriLinkService {
         if (profile.reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
         return profile;
     }
-  
+
     public static async generateLink(user: UserWithIntegration) {
 
         if (user.integration?.shikimoriId) throw new BadRequestError("User already has shikimori integration");

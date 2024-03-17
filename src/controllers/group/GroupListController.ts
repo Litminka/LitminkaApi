@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { RequestWithUser, RequestWithUserOwnedGroups } from "../../ts";
-import { RequestStatuses } from "../../ts/enums";
-import GroupListService from "../../services/group/GroupListService";
+import { RequestWithUser, RequestWithUserOwnedGroups } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
+import GroupListService from "@services/group/GroupListService";
 
 interface createGroup {
     description: string,

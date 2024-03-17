@@ -1,5 +1,5 @@
-import { ShikimoriLinkValidation } from "../../validators/ShikimoriValidator";
-import Request from "../Request";
+import { ShikimoriLinkValidator } from "@validators/ShikimoriValidator";
+import Request from "@requests/Request";
 
 export default class ShikimoriLinkRequest extends Request {
 
@@ -8,6 +8,6 @@ export default class ShikimoriLinkRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return ShikimoriLinkValidation();
+        return ShikimoriLinkValidator();
     }
 }

@@ -1,8 +1,8 @@
 import { NextFunction, Response } from "express";
-import BaseError from "../errors/BaseError";
-import { RequestStatuses } from "../ts/enums";
+import BaseError from "@errors/BaseError";
+import { RequestStatuses } from "@/ts/enums";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { logger } from "../loggerConf";
+import { logger } from "@/loggerConf";
 
 const isProduction = process.env.NODE_ENV === "production";
 

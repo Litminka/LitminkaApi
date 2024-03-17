@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import NotificationController from '../controllers/NotificationController';
-import { wrap } from '../middleware/errorHandler';
-import GetUserNotificationsRequest from '../requests/notifications/GetUserNotificationsRequest';
-import GetNotificationsRequest from '../requests/notifications/GetNotificationsRequest';
-import ReadNotificationsRequest from '../requests/notifications/ReadNotificationsRequest';
+import NotificationController from '@controllers/NotificationController';
+import { wrap } from '@/middleware/errorHandler';
+import GetUserNotificationsRequest from '@requests/notifications/GetUserNotificationsRequest';
+import GetNotificationsRequest from '@requests/notifications/GetNotificationsRequest';
+import ReadNotificationsRequest from '@requests/notifications/ReadNotificationsRequest';
 const router = Router();
 
 // Private methods

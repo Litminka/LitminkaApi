@@ -1,12 +1,12 @@
 
 import { Queue, Worker, Job } from 'bullmq';
-import prisma from "../db";
+import prisma from "@/db";
 import { Anime } from '@prisma/client';
-import ShikimoriApiService from '../services/ShikimoriApiService';
-import { ServerError, ShikimoriAnimeFull } from '../ts';
-import AnimeUpdateService from '../services/AnimeUpdateService';
-import { RequestStatuses } from '../ts/enums';
-import { logger } from "../loggerConf"
+import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
+import { ServerError, ShikimoriAnimeFull } from '@/ts';
+import AnimeUpdateService from '@services/anime/AnimeUpdateService';
+import { RequestStatuses } from '@/ts/enums';
+import { logger } from "@/loggerConf"
 
 const shikimoriCheckQueue = new Queue("shikimoriUpdate", {
     connection: {
@@ -35,12 +35,8 @@ const worker = new Worker("shikimoriUpdate", async (job: Job) => {
     const shikimoriApi = new ShikimoriApiService();
     const shikimoriAnimeFull: ShikimoriAnimeFull[] = []
     for (const single of anime) {
-        const req = await shikimoriApi.getAnimeById(single.shikimoriId);
-        const error = req as ServerError;
-        if (error.reqStatus === RequestStatuses.InternalServerError) {
-            throw error;
-        }
-        shikimoriAnimeFull.push(req as ShikimoriAnimeFull);
+        const anime = await shikimoriApi.getAnimeById(single.shikimoriId);
+        shikimoriAnimeFull.push(anime);
         logger.info(`Requesting anime ${single.name} from shikimori`)
     }
     const animeUpdateService = new AnimeUpdateService(shikimoriApi, undefined);

@@ -1,6 +1,7 @@
-import prisma from "../db";
-import { AnimeValidation } from "../validators/AnimeValidator";
-import OptionalRequest from "./OptionalRequest";
+import prisma from "@/db";
+import { AnimeValidator } from "@validators/AnimeValidator";
+import OptionalRequest from "@requests/OptionalRequest";
+
 
 export default class AnimeRequest extends OptionalRequest {
 
@@ -19,6 +20,6 @@ export default class AnimeRequest extends OptionalRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return AnimeValidation();
+        return AnimeValidator();
     }
 }

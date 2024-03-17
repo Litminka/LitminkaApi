@@ -1,12 +1,13 @@
 
 import { Queue, Worker, Job } from 'bullmq';
-import prisma from "../db";
-import AutoCheckService from '../services/AutoCheckService';
-import FollowService from '../services/FollowService';
-import { KodikAnimeFull, checkAnime } from '../ts/kodik';
-import KodikApiService from '../services/KodikApiService';
-import { FollowTypes } from '../ts/enums';
-import { logger } from "../loggerConf"
+import prisma from "@/db";
+import AutoCheckService from '@services/AutoCheckService';
+import FollowService from '@services/FollowService';
+import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
+import KodikApiService from '@services/KodikApiService';
+import { FollowTypes } from '@/ts/enums';
+import { logger } from "@/loggerConf"
+import { ShikimoriGraphAnime } from '@/ts/shikimori';
 
 const autoCheckQueue = new Queue("autocheck", {
     connection: {
@@ -109,7 +110,7 @@ const worker = new Worker("autocheck", async (job: Job) => {
     for (const anime of [...kodikDefaultAnime, ...kodikFollowedAnime]) {
         kodikAnimeMap.set(parseInt(anime.shikimori_id), anime)
     }
-    const ids = [...followIds, ...announcementsIds, ...defaultAnime.map(anime => anime.id)];
+    const ids = [...followIds, ...announcementsIds, ...defaultAnime.map(anime => Number(anime.id))];
     const anime = await prisma.anime.findMany({
         where: {
             shikimoriId: {
@@ -120,13 +121,13 @@ const worker = new Worker("autocheck", async (job: Job) => {
             animeTranslations: true
         }
     });
-    const animeMap = new Map<number, checkAnime>();
+    const animeMap = new Map<number, animeWithTranslation>();
     for (const anim of anime) animeMap.set(anim.shikimoriId, anim);
 
     const checkedIds: number[] = [];
     for (const anime of [...defaultAnime, ...followedAnime, ...announcedAnime]) {
 
-        const { id } = anime;
+        const id = Number(anime.id);
         if (checkedIds.includes(id)) {
             continue;
         }

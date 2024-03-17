@@ -1,6 +1,6 @@
 import { Anime, AnimeTranslation } from "@prisma/client";
-import { animeKind, animeStatus, pgCapitalizedRating } from ".";
-import { RequestStatuses } from "./enums";
+import { animeKind, animeStatus, pgCapitalizedRating } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
 
 export interface _KodikAnimeRequest {
     time: string;
@@ -137,12 +137,15 @@ export type translation = {
     type: "voice" | "subtitles";
 };
 
-export type checkAnime = (Anime & {
+export type animeWithTranslation = (Anime & {
     animeTranslations: AnimeTranslation[];
 });
 
 export type translations = {
-    id: number;
+    /**
+     * id of the group
+     */
+    id: number 
     title: string;
     type: "voice" | "subtitles";
     episodes_count: number;

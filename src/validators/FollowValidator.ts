@@ -1,7 +1,6 @@
 import { body, param } from "express-validator";
-import { validationError } from "../middleware/validationError";
 
-const FollowValidation = (): any[] => {
+export const FollowValidator = (): any[] => {
     return [
         param("animeId").bail().isInt().bail().toInt(),
         body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
@@ -9,18 +8,9 @@ const FollowValidation = (): any[] => {
     ];
 };
 
-const UnFollowValidation = (): any[] => {
+export const UnFollowValidator = (): any[] => {
     return [
         param("animeId").bail().isInt().bail().toInt(),
         body("groupName").optional().isString().bail(),
     ];
 };
-
-const validateId = (fieldName: string): any[] => {
-    return [
-        body(fieldName).notEmpty().isInt(),
-    ]
-}
-
-
-export { FollowValidation, UnFollowValidation };

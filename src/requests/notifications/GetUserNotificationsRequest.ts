@@ -1,5 +1,5 @@
-import { GetUserNotificationsValidation } from "../../validators/NotificationValidator";
-import AuthRequest from "../AuthRequest";
+import { GetUserNotificationsValidator } from "@validators/NotificationValidator";
+import AuthRequest from "@requests/AuthRequest";
 
 export default class GetUserNotificationsRequest extends AuthRequest {
 
@@ -8,6 +8,6 @@ export default class GetUserNotificationsRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GetUserNotificationsValidation();
+        return GetUserNotificationsValidator();
     }
 }

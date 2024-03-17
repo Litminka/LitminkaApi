@@ -1,7 +1,8 @@
 import { Response } from "express";
-import AnimeService from "../services/AnimeService";
-import { RequestStatuses } from "../ts/enums";
-import { RequestUserWithIntegration } from "../ts";
+import { RequestUserWithIntegration } from "@/ts/index";
+import AnimeService from "@services/anime/AnimeService";
+import { RequestStatuses } from "@/ts/enums";
+
 
 export default class AnimeController {
     public static async getSingleAnime(req: RequestUserWithIntegration, res: Response) {

@@ -1,8 +1,8 @@
 import { GroupList, GroupListMembers } from "@prisma/client"
-import prisma from "../../db"
-import BaseError from "../../errors/BaseError"
-import { AddWithAnime } from "../../ts"
-import { RequestStatuses } from "../../ts/enums"
+import prisma from "@/db"
+import BaseError from "@errors/BaseError"
+import { AddWithAnime, ListFilters } from "@/ts"
+import { RequestStatuses } from "@/ts/enums"
 
 interface AddToGroupList {
     userId: number,
@@ -21,7 +21,7 @@ type GroupWithMembers = GroupList & {
 }
 
 export default class GroupAnimeListService {
-    public static async get(userId: number, groupId: number) {
+    public static async get(userId: number, groupId: number, filters: ListFilters) {
         await prisma.groupListMembers.findFirstOrThrow({
             where: {
                 AND: {
@@ -31,14 +31,25 @@ export default class GroupAnimeListService {
             }
         })
 
+        const { statuses, ratings, isFavorite } = filters as ListFilters;
+        const statusFilter = {
+            in: statuses
+        }
+        const ratingFilter = {
+            gte: ratings ? ratings[0] : 1,
+            lte: ratings ? ratings[1] : 10
+        }
         return await prisma.groupAnimeList.findMany({
             where: {
-                groupId
+                groupId, 
+                rating: ratings === undefined ? undefined : ratingFilter, 
+                isFavorite, 
+                status: statuses === undefined ? undefined : statusFilter
             },
             include: {
-                anime: true,
+                anime: true
             }
-        })
+        });
     }
 
     public static async add({ userId, groupId, data }: AddToGroupList) {

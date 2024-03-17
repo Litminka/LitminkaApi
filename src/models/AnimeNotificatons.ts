@@ -1,5 +1,5 @@
-import { Notify, UserNotify } from "../ts";
-import prisma from "../db";
+import { Notify, UserNotify } from "@/ts";
+import prisma from "@/db";
 import { Prisma } from "@prisma/client";
 
 const extention = Prisma.defineExtension({

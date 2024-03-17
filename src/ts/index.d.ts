@@ -1,7 +1,7 @@
-import { Anime, AnimeList, AnimeTranslation, Group, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
+import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
 import { Request } from "express";
 import { Headers } from "node-fetch";
-import { FollowTypes, NotifyStatuses, RequestStatuses } from "./enums";
+import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
 
 export interface RequestWithAuth extends Request {
     auth?: {
@@ -94,6 +94,12 @@ export interface ShikimoriWhoAmI {
     birth_on: string | null;
     full_years: number | null;
     locale: string;
+}
+
+export interface ListFilters{
+    statuses?: watchListStatus[],
+    ratings?: number[],
+    isFavorite?: boolean
 }
 
 type watchListStatus =
@@ -294,7 +300,6 @@ export interface DeleteFollow {
 
 export interface options {
     method: string;
-    headers: Headers;
     body?: any;
 }
 

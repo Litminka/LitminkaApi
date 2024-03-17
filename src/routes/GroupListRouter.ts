@@ -1,27 +1,27 @@
 import { Router } from "express";
-import { wrap } from "../middleware/errorHandler";
-import GroupListController from "../controllers/group/GroupListController";
-import GroupInviteController from "../controllers/group/GroupInviteController";
-import GroupMemberController from "../controllers/group/GroupMemberController";
-import GroupAnimeListController from "../controllers/group/GroupAnimeListController";
-import CreateGroupRequest from "../requests/group/list/CreateGroupRequest";
-import DeleteGroupRequest from "../requests/group/list/DeleteGroupRequest";
-import UpdateGroupRequest from "../requests/group/list/UpdateGroupRequest";
-import OwnedGroupRequest from "../requests/group/list/OwnedGroupsRequest";
-import { GetMemberGroupRequest } from "../requests/group/member/GetMemberGroupRequest";
-import GetGroupMembersRequest from "../requests/group/member/GetGroupMembersRequest";
-import LeaveGroupRequest from "../requests/group/member/LeaveGroupRequest";
-import UpdateMemberStateRequest from "../requests/group/member/UpdateMemberStateRequest";
-import KickMemberRequest from "../requests/group/member/KickMemberRequest";
-import DeleteInviteRequest from "../requests/group/invite/DeleteInviteRequest";
-import DenyInviteRequest from "../requests/group/invite/DenyInviteRequest";
-import AcceptInviteRequest from "../requests/group/invite/AcceptInviteRequest";
-import SendInviteRequest from "../requests/group/invite/SendInviteRequest";
-import { GetInvitesRequest } from "../requests/group/invite/GetInvitesRequest";
-import GetGroupAnimeListRequest from "../requests/group/animeList/GetGroupAnimeListRequest";
-import AddGroupAnimeListRequest from "../requests/group/animeList/AddGroupAnimeListRequest";
-import UpdateGroupAnimeListRequest from "../requests/group/animeList/UpdateGroupAnimeListRequest";
-import DeleteGroupAnimeListRequest from "../requests/group/animeList/DeleteGroupAnimeListRequest";
+import { wrap } from "@/middleware/errorHandler";
+import GroupListController from "@controllers/group/GroupListController";
+import GroupInviteController from "@controllers/group/GroupInviteController";
+import GroupMemberController from "@controllers/group/GroupMemberController";
+import GroupAnimeListController from "@controllers/group/GroupAnimeListController";
+import CreateGroupRequest from "@requests/group/list/CreateGroupRequest";
+import DeleteGroupRequest from "@requests/group/list/DeleteGroupRequest";
+import UpdateGroupRequest from "@requests/group/list/UpdateGroupRequest";
+import OwnedGroupRequest from "@requests/group/list/OwnedGroupsRequest";
+import GetMemberGroupRequest from "@requests/group/member/GetMemberGroupRequest";
+import GetGroupMembersRequest from "@requests/group/member/GetGroupMembersRequest";
+import LeaveGroupRequest from "@requests/group/member/LeaveGroupRequest";
+import UpdateMemberStateRequest from "@requests/group/member/UpdateMemberStateRequest";
+import KickMemberRequest from "@requests/group/member/KickMemberRequest";
+import DeleteInviteRequest from "@requests/group/invite/DeleteInviteRequest";
+import DenyInviteRequest from "@requests/group/invite/DenyInviteRequest";
+import AcceptInviteRequest from "@requests/group/invite/AcceptInviteRequest";
+import SendInviteRequest from "@requests/group/invite/SendInviteRequest";
+import GetInvitesRequest from "@requests/group/invite/GetInvitesRequest";
+import GetGroupAnimeListRequest from "@requests/group/animeList/GetGroupAnimeListRequest";
+import AddGroupAnimeListRequest from "@requests/group/animeList/AddGroupAnimeListRequest";
+import UpdateGroupAnimeListRequest from "@requests/group/animeList/UpdateGroupAnimeListRequest";
+import DeleteGroupAnimeListRequest from "@requests/group/animeList/DeleteGroupAnimeListRequest";
 
 const router = Router();
 
@@ -42,7 +42,7 @@ groupIdRouter.delete('/invite', new DeleteInviteRequest().send(), wrap(GroupInvi
 groupIdRouter.get('/members', new GetGroupMembersRequest().send(), wrap(GroupMemberController.getMembers));
 groupIdRouter.patch('/members', new UpdateMemberStateRequest().send(), wrap(GroupMemberController.updateState));
 groupIdRouter.delete('/members', new LeaveGroupRequest().send(), wrap(GroupMemberController.leaveGroup))
-groupIdRouter.delete('/members/kick', new KickMemberRequest().send() , wrap(GroupMemberController.kickUser))
+groupIdRouter.delete('/members/kick', new KickMemberRequest().send(), wrap(GroupMemberController.kickUser))
 
 const groupListRouter = Router({ mergeParams: true });
 groupIdRouter.use('/list', groupListRouter);

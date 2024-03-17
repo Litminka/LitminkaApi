@@ -1,20 +1,43 @@
-import { ValidationChain, body, param } from "express-validator";
-import { validationError } from "../middleware/validationError";
+import { ValidationChain, body, param, query } from "express-validator";
+import { validatorError } from "@/middleware/validatorError";
 
-const validateBodyId = (fieldName: string): ValidationChain => {
-    return body(fieldName).isInt().notEmpty();
+
+export const validateBodyId = (fieldName: string): ValidationChain => {
+    return body(fieldName).isInt().notEmpty().bail();
 };
 
-const validateParamId = (fieldName: string): ValidationChain => {
+export const validateParamId = (fieldName: string): ValidationChain => {
     return param(fieldName).isInt().notEmpty().toInt();
 };
 
-const validateArrayId = (fieldName: string): any[] => {
-    return [body(fieldName).toArray().isArray({ min: 1 }), body(`${fieldName}.*`).isInt(), validationError]
+export const validateBodyArrayId = (fieldName: string): any[] => {
+    return [
+        body(fieldName).toArray().isArray({ min: 1 }),
+        body(`${fieldName}.*`).isInt()
+    ]
 };
 
-const validateBool = (fieldName: string): any[] => {
-    return [body(fieldName).isBoolean(), validationError];
+export const validateBodyBool = (fieldName: string): any[] => {
+    return [body(fieldName).isBoolean(), validatorError];
 };
 
-export { validateBodyId, validateParamId, validateArrayId, validateBool };
+interface IvalidateParamInt {
+    fieldName: string,
+    defValue: any,
+    message: string,
+    intParams: object,
+}
+
+export const validateQueryInt = ({
+    fieldName,
+    defValue,
+    intParams = { min: 0 },
+    message = `Validation ${fieldName} was failed`
+}: IvalidateParamInt): any[] => {
+    return [
+        query(fieldName)
+            .default(defValue)
+            .isInt(intParams)
+            .withMessage(message),
+    ];
+};

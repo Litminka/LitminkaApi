@@ -1,6 +1,6 @@
-import BaseError from "../../errors/BaseError";
-import { RequestStatuses } from "../../ts/enums";
-import prisma from "../../db";
+import BaseError from "@errors/BaseError";
+import { RequestStatuses } from "@/ts/enums";
+import prisma from "@/db";
 import { User, GroupList, GroupListInvites } from "@prisma/client";
 
 type UserWithGroup = User & {
