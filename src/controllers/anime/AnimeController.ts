@@ -1,4 +1,5 @@
-import { Response } from "express";
+import { Response, Request } from "express";
+import { RequestUserWithIntegration } from "@/ts/index";
 import { RequestUserWithIntegration, RequestWithUser } from "@/ts/index";
 import AnimeService from "@services/anime/AnimeService";
 import { RequestStatuses } from "@/ts/enums";
@@ -14,6 +15,14 @@ export default class AnimeController {
         return res.status(RequestStatuses.OK).json({
             body: anime
         });
+    }
+
+    public static async getTopAnime(req: Request, res: Response) {
+        const shikimori = req.body.shikimori
+
+        const top = await AnimeService.getTopAnime(shikimori)
+
+        return res.status(RequestStatuses.OK).json(top)
     }
 
     public static async banAnime(req: RequestWithUser, res: Response) {

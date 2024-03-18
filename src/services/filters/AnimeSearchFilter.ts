@@ -104,7 +104,7 @@ export default class AnimeSearchFilter {
                 name: true,
                 slug: true,
                 genres: true,
-                shikimoriScore: true,
+                shikimoriRating: true,
                 rpaRating: true,
                 image: true,
                 mediaType: true

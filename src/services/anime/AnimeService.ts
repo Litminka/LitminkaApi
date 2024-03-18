@@ -3,6 +3,7 @@ import AnimeUpdateService from "@services/anime/AnimeUpdateService";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import prisma from "@/db";
 import { UserWithIntegration } from "@/ts";
+import { Prisma } from "@prisma/client";
 
 export default class AnimeService {
     public static async getSingleAnime(animeId: number, user: UserWithIntegration) {
@@ -19,6 +20,13 @@ export default class AnimeService {
             anime = await prisma.anime.findWithTranlsationsAndGenres(animeId);
         }
         return anime;
+    }
+
+    public static async getTopAnime(shikimori: boolean) {
+        let query: Prisma.AnimeFindManyArgs = { take: 100 }
+        query.orderBy = { rating: 'desc' }
+        if (shikimori) { query.orderBy = { shikimoriRating: 'desc' } }
+        return await prisma.anime.findMany(query)
     }
 
     public static async banAnime(animeId: number) {
