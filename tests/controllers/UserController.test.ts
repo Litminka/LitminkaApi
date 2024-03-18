@@ -38,6 +38,17 @@ describe("UserController.ts Tests", async () => {
     let defTestToken: string;
     let diffTestToken: string;
 
+    beforeAll(async () => {
+        removeUser(defTestLogin)
+        diffTestToken = crypto.randomBytes(64).toString('hex');
+    });
+
+    afterAll(async () => {
+        removeUser(defTestLogin);
+        diffTestToken = "";
+        defTestToken = "";
+    });
+
     describe("Register tests", async () => {
         test("Register successful", async () => {
             const response = await testRegister(testUser);
@@ -126,17 +137,5 @@ describe("UserController.ts Tests", async () => {
                 expect(response.body).toHaveProperty("message", "Failed to authenticate token")
             })
         })
-
-    beforeAll(async () => {
-        removeUser(defTestLogin)
-        diffTestToken = crypto.randomBytes(64).toString('hex');
-    });
-
-    afterAll(async () => {
-        removeUser(defTestLogin);
-        diffTestToken = "";
-        defTestToken = "";
-    });
-
 });
 
