@@ -5,6 +5,7 @@ import { auth } from "@/middleware/auth";
 import { optionalAuth } from "@/middleware/optionalAuth";
 import { RequestWithAuth, RequestWithUserPermissions } from "@/ts";
 import { checkExact } from "express-validator";
+import { validateParamId, validateUserParamId } from "@/validators/BaseValidator";
 
 export default class Request {
 

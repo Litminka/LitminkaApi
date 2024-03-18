@@ -3,6 +3,14 @@ import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
 
+export interface RequestWithBot extends Request {
+    auth?: {
+        user: undefined
+        id: number,
+        bot?: boolean
+    },
+}
+
 export interface RequestWithAuth extends Request {
     auth?: {
         user: undefined;
