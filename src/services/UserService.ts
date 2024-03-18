@@ -3,6 +3,7 @@ import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
 import { Encrypt } from "@/helper/encrypt";
 import { CreateUser, LoginUser } from "@/ts";
 import * as jwt from "jsonwebtoken";
+import { Permissions } from "@/ts/enums";
 
 
 export default class UserService {
@@ -24,8 +25,12 @@ export default class UserService {
         if (!await Encrypt.comparePassword(password, user.password)) throw new UnauthorizedError("Login or password incorrect");
 
         const { id } = user;
+        const signObject = {
+            id,
+            bot: user.role.permissions.some(perm => perm.name == Permissions.ApiServiceBot)
+        }
 
-        const token = jwt.sign({ id }, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE })
+        const token = jwt.sign(signObject, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE })
         const refreshToken = jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET!, { expiresIn: process.env.REFRESH_TOKEN_LIFE })
 
         await prisma.refreshToken.createToken(refreshToken, id);
