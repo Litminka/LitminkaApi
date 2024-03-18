@@ -23,7 +23,8 @@ import { adminRouter } from './routes/AdminRouter';
 
 dotenv.config();
 
-const app: Express = express();
+export const app: Express = express();
+
 const port: string | undefined = process.env.PORT;
 
 if (!process.env.SHIKIMORI_AGENT) throw new Error("No agent specified in ENV");

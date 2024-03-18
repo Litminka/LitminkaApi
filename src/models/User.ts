@@ -95,6 +95,13 @@ const extention = Prisma.defineExtension({
             async findUserWithGroupInvites(id: number) {
                 return await prisma.user.findFirstOrThrow({ where: { id }, include: { groupInvites: true } });
             },
+            async removeById(id: number){
+                return await prisma.user.delete({
+                    where: {
+                        id
+                    }
+                })
+            },
             async findUserByLogin(login: string) {
                 return prisma.user.findFirst({
                     select: {

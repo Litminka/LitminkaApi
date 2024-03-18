@@ -47,7 +47,7 @@ model RefreshToken {
   id     Int    @id @default(autoincrement())
   token  String @unique
   userId Int
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model Integration {
@@ -60,13 +60,13 @@ model Integration {
   telegramId            String?
   vkId                  String?
   userId                Int     @unique
-  user                  User    @relation(fields: [userId], references: [id])
+  user                  User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model ShikimoriLinkToken {
   id     Int    @id @default(autoincrement())
   userId Int    @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   token  String @unique
 }
 
@@ -142,7 +142,7 @@ model Follow {
   id            Int               @id @default(autoincrement())
   status        String
   userId        Int
-  user          User              @relation(fields: [userId], references: [id])
+  user          User              @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   animeId       Int
   anime         Anime             @relation(fields: [animeId], references: [id])
   translationId Int?
@@ -154,7 +154,7 @@ model AnimeList {
   animeId         Int
   anime           Anime   @relation(fields: [animeId], references: [id])
   userId          Int
-  user            User    @relation(fields: [userId], references: [id])
+  user            User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   status          String
   isFavorite      Boolean
   watchedEpisodes Int
@@ -163,7 +163,7 @@ model AnimeList {
 
 model GroupList {
   id          Int                @id @default(autoincrement())
-  owner       User               @relation(fields: [ownerId], references: [id])
+  owner       User               @relation(fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   ownerId     Int
   description String
   name        String
@@ -174,7 +174,7 @@ model GroupList {
 
 model GroupListInvites {
   id      Int       @id @default(autoincrement())
-  user    User      @relation(fields: [userId], references: [id])
+  user    User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId  Int
   groupId Int
   group   GroupList @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -182,7 +182,7 @@ model GroupListInvites {
 
 model GroupListMembers {
   id           Int       @id @default(autoincrement())
-  user         User      @relation(fields: [userId], references: [id])
+  user         User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId       Int
   groupId      Int
   group        GroupList @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -207,7 +207,7 @@ model UserAnimeNotifications {
   anime     Anime    @relation(fields: [animeId], references: [id])
   status    String
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   episode   Int?
   groupId   Int?
   group     Group?   @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
