@@ -13,6 +13,7 @@
     "dev": "npx nodemon --inspect src/index.ts",
     "autocheck": "npx ts-node src/queues/autocheck.ts",
     "shikimoriupdate": "npx ts-node src/queues/shikimoriUpdate.ts",
+    "ratingupdate": "npx ts-node src/queues/ratingUpdate.ts",
     "watchlistimporter": "npx ts-node src/queues/watchListWorker.ts"
   },
   "repository": {
