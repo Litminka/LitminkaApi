@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { RequestUserWithIntegration } from "@/ts/index";
+import { RequestUserWithIntegration, RequestWithUser } from "@/ts/index";
 import AnimeService from "@services/anime/AnimeService";
 import { RequestStatuses } from "@/ts/enums";
 
@@ -14,5 +14,25 @@ export default class AnimeController {
         return res.status(RequestStatuses.OK).json({
             body: anime
         });
+    }
+
+    public static async banAnime(req: RequestWithUser, res: Response) {
+        const animeId: number = req.params.animeId as unknown as number;
+
+        await AnimeService.banAnime(animeId);
+
+        return res.status(RequestStatuses.OK).json({
+            message: "anime_banned"
+        })
+    }
+
+    public static async unBanAnime(req: RequestWithUser, res: Response) {
+        const animeId: number = req.params.animeId as unknown as number;
+
+        await AnimeService.unBanAnime(animeId);
+
+        return res.status(RequestStatuses.OK).json({
+            message: "anime_unbanned"
+        })
     }
 }

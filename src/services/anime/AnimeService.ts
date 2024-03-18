@@ -20,4 +20,22 @@ export default class AnimeService {
         }
         return anime;
     }
+
+    public static async banAnime(animeId: number) {
+        await prisma.anime.updateMany({
+            where: { id: animeId },
+            data: {
+                banned: true,
+            }
+        })
+    }
+
+    public static async unBanAnime(animeId: number) {
+        await prisma.anime.updateMany({
+            where: { id: animeId },
+            data: {
+                banned: false,
+            }
+        })
+    }
 }
