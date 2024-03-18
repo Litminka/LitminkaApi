@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client'
-import { logger } from '../src/loggerConf'
+import { logger } from '@/loggerConf'
 const prisma = new PrismaClient()
 import dotenv from 'dotenv';
 dotenv.config();
-import { Encrypt } from "../src/helper/encrypt";
-import capitalize from "../src/helper/capitalize";
-import KodikApiService from "../src/services/KodikApiService";
-import { KodikGenresRequest } from '../src/ts/kodik';
+import { Encrypt } from "@/helper/encrypt";
+import capitalize from "@/helper/capitalize";
+import KodikApiService from "@services/KodikApiService";
+import { KodikGenresRequest } from '@/ts/kodik';
 
 async function main() {
     const adminRole = await prisma.role.upsert({
@@ -93,6 +93,64 @@ async function main() {
             update: {}
         });
     });
+    // Create test data
+    switch (process.env.CREATE_TEST) {
+        case '1':
+        case 'true':
+        case 'True':
+            const animes = await prisma.anime.findMany({
+                select: { id: true }
+            })
+
+            let animesId = animes.flatMap(anime => anime.id)
+
+            const random = (mn: number, mx: number) => {
+                return Math.random() * (mx - mn) + mn;
+            }
+
+            for (const i of Array(20).keys()) {
+                const user = await prisma.user.upsert({
+                    where: { email: `test${i}@test.ru` },
+                    update: {},
+                    create: {
+                        email: `test${i}@test.ru`,
+                        login: `test${i}`,
+                        password: await Encrypt.cryptPassword("test"),
+                        name: `test${i}`,
+                        role: {
+                            connect: {
+                                id: userRole.id
+                            }
+                        }
+                    }
+                })
+
+                await prisma.user.update({
+                    where: {
+                        id: user.id
+                    },
+                    data: {
+                        animeList: {
+                            createMany: {
+                                data: [...{
+                                    *[Symbol.iterator]() {
+                                        for (let i = 0; i < 10; i++)
+                                            yield Object({
+                                                status: "completed",
+                                                isFavorite: false,
+                                                watchedEpisodes: 1,
+                                                animeId: animesId[Math.floor(Math.random() * animesId.length)],
+                                                rating: random(0, 10)
+                                            })
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                })
+            }
+            break
+    }
 }
 
 main()
