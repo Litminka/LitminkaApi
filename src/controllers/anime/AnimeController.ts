@@ -1,5 +1,4 @@
 import { Response, Request } from "express";
-import { RequestUserWithIntegration } from "@/ts/index";
 import { RequestUserWithIntegration, RequestWithUser } from "@/ts/index";
 import AnimeService from "@services/anime/AnimeService";
 import { RequestStatuses } from "@/ts/enums";
