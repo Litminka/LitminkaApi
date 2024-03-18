@@ -6,21 +6,21 @@ import { RequestStatuses } from "@/ts/enums";
 
 export default class NotificationController {
     public static async getUserNotifications(req: RequestWithUser, res: Response): Promise<Object> {
-        const user = req.auth.user;
-        const isRead: boolean = req.body.isRead as boolean
-        const createdAt = req.body.createdAt;
+        const userId = req.auth.user.id;
+        const isRead = req.body.isRead as boolean
+        const period = req.body.period;
 
         const notifications = await NotificationService.getUserNotifications({
-            isRead, userId: user.id, period: createdAt
+            isRead, userId, period
         })
 
         return res.json(notifications)
     }
 
     public static async getNotifications(req: RequestWithUser, res: Response): Promise<Object> {
-        const createdAt = req.body.createdAt;
+        const period = req.body.period;
 
-        const notifications = await NotificationService.getNotifications(Period.getPeriod(createdAt))
+        const notifications = await NotificationService.getNotifications(Period.getPeriod(period))
 
         return res.json(notifications)
     }

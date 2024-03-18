@@ -1,5 +1,4 @@
 import { ValidationChain, body, param, query } from "express-validator";
-import { validatorError } from "@/middleware/validatorError";
 
 
 export const validateBodyId = (fieldName: string): ValidationChain => {
@@ -7,16 +6,23 @@ export const validateBodyId = (fieldName: string): ValidationChain => {
 };
 
 export const validateParamId = (fieldName: string): ValidationChain => {
-    return param(fieldName).isInt().notEmpty().toInt();
+    return param(fieldName).isInt({ min: 1, max: 2147483647 }).notEmpty().toInt();
 };
 
 export const validateUserParamId = () => {
-    return query('userId').optional().isInt().bail().toInt();
+    return query('userId').optional().isInt({ min: 1, max: 2147483647 }).bail().toInt();
 }
 
 export const validateBodyArrayId = (fieldName: string): any[] => {
     return [
-        body(fieldName).toArray().isArray({ min: 1 }),
+        body(fieldName).toArray().isArray({ min: 1, max: 50 }),
+        body(`${fieldName}.*`).isInt()
+    ]
+};
+
+export const validateBodyArrayIdOptional = (fieldName: string): any[] => {
+    return [
+        body(fieldName).optional().toArray().isArray({ min: 1, max: 50 }),
         body(`${fieldName}.*`).isInt()
     ]
 };

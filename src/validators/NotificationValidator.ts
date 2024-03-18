@@ -1,9 +1,9 @@
-import { validateBodyArrayId, validateBodyBool } from "@validators/BaseValidator";
+import { validateBodyArrayIdOptional, validateBodyBool } from "@validators/BaseValidator";
 import { softPeriodValidator } from "@validators/PeriodValidator";
 
 export const ReadNotificationsValidator = (): any[] => {
     return [
-        validateBodyArrayId('id')
+        validateBodyArrayIdOptional('id')
     ]
 };
 
