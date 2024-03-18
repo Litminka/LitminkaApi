@@ -19,6 +19,7 @@ import { animeRouter } from '@routes/anime/AnimeRouter';
 import { animeSearchRouter } from '@routes/SearchRouter';
 import { groupListRouter } from '@routes/GroupListRouter';
 import { notificationRouter } from '@routes/NotificationRouter';
+import { adminRouter } from './routes/AdminRouter';
 
 dotenv.config();
 
@@ -61,6 +62,7 @@ app.use("/shikimori", shikimoriRouter);
 app.use("/token", tokenRouter);
 app.use("/notifications", notificationRouter);
 app.use("/search", animeSearchRouter);
+app.use("/admin", adminRouter);
 
 app.get("/shikimori_token", (req: Request, res: Response) => {
     logger.debug(`shikimori_token ${req.query}`)

@@ -86,7 +86,8 @@ model Anime {
   currentEpisodes        Int
   firstEpisodeAired      DateTime?
   lastEpisodeAired       DateTime?
-  shikimoriScore         Float
+  shikimoriRating        Float
+  rating                 Float                    @default(0)
   franchiseName          String?
   kodikLink              String?
   censored               Boolean                  @default(false)

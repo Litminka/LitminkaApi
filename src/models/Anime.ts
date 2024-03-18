@@ -6,7 +6,7 @@ import { config } from "@/config";
 import prisma from "@/db";
 import { cyrillicSlug } from "@/helper/cyrillic-slug";
 import { ShikimoriAnime, ShikimoriAnimeFull } from "@/ts";
-import { ShikimoriGraphAnime, ShikimoriRelation } from "@/ts/shikimori";
+import { ShikimoriGraphAnime } from "@/ts/shikimori";
 
 const extention = Prisma.defineExtension({
     name: "AnimeModel",
@@ -23,7 +23,7 @@ const extention = Prisma.defineExtension({
                         id
                     },
                     data: {
-                        shikimoriScore: parseFloat(update.score),
+                        shikimoriRating: parseFloat(update.score),
                         description: update.description,
                         japaneseName: update.japanese ? update.japanese[0] : null,
                         franchiseName: update.franchise,
@@ -73,7 +73,7 @@ const extention = Prisma.defineExtension({
                             image: anime.image.original,
                             name: anime.russian,
                             mediaType: anime.kind,
-                            shikimoriScore: parseFloat(anime.score),
+                            shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
                             lastEpisodeAired: new Date(anime.released_on),
                         },
@@ -86,7 +86,7 @@ const extention = Prisma.defineExtension({
                             mediaType: anime.kind,
                             japaneseName: anime.japanese[0] ?? "",
                             image: anime.image.original,
-                            shikimoriScore: parseFloat(anime.score),
+                            shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
                             lastEpisodeAired: new Date(anime.released_on),
                         }
@@ -117,7 +117,7 @@ const extention = Prisma.defineExtension({
                             image: anime.image.original,
                             name: anime.russian,
                             mediaType: anime.kind,
-                            shikimoriScore: parseFloat(anime.score),
+                            shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
                             lastEpisodeAired: new Date(anime.released_on),
                         },
@@ -127,7 +127,7 @@ const extention = Prisma.defineExtension({
                             status: anime.status,
                             image: anime.image.original,
                             mediaType: anime.kind,
-                            shikimoriScore: parseFloat(anime.score),
+                            shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
                             lastEpisodeAired: new Date(anime.released_on),
                         }
@@ -203,7 +203,7 @@ const extention = Prisma.defineExtension({
                         franchiseName: shikimori.franchise,
                         maxEpisodes: shikimori.episodes,
                         currentEpisodes: shikimori.episodesAired,
-                        shikimoriScore: shikimori.score ?? 0,
+                        shikimoriRating: shikimori.score ?? 0,
                         mediaType: shikimori.kind,
                         rpaRating: shikimori.rating,
                         status: shikimori.status!,
@@ -246,7 +246,7 @@ const extention = Prisma.defineExtension({
                         franchiseName: shikimori.franchise,
                         maxEpisodes: shikimori.episodes,
                         currentEpisodes: shikimori.episodesAired,
-                        shikimoriScore: shikimori.score ?? 0,
+                        shikimoriRating: shikimori.score ?? 0,
                         mediaType: shikimori.kind,
                         rpaRating: shikimori.rating,
                         status: shikimori.status!,

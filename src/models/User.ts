@@ -107,6 +107,11 @@ const extention = Prisma.defineExtension({
                     select: {
                         id: true,
                         password: true,
+                        role: {
+                            include: {
+                                permissions: true
+                            }
+                        }
                     },
                     where: {
                         OR: [

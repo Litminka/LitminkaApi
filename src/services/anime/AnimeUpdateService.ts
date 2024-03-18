@@ -7,6 +7,9 @@ import { RequestStatuses } from "@/ts/enums";
 import InternalServerError from "@errors/servererrors/InternalServerError";
 import { cyrillicSlug } from "@/helper/cyrillic-slug";
 import { ShikimoriGraphAnime } from "@/ts/shikimori";
+import { config } from "@/config";
+import groupArrSplice from "@/helper/groupsplice";
+import sleep from "@/helper/sleep";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -131,7 +134,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     image: material_data.poster_url,
                     name: material_data.anime_title,
                     mediaType: material_data.anime_kind,
-                    shikimoriScore: material_data.shikimori_rating,
+                    shikimoriRating: material_data.shikimori_rating,
                     firstEpisodeAired: new Date(material_data.aired_at),
                     kodikLink: anime.link,
                     rpaRating: material_data.rating_mpaa,
@@ -165,7 +168,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     mediaType: material_data.anime_kind,
                     description: material_data.anime_description,
                     image: material_data.poster_url,
-                    shikimoriScore: material_data.shikimori_rating,
+                    shikimoriRating: material_data.shikimori_rating,
                     firstEpisodeAired: new Date(material_data.aired_at),
                     lastEpisodeAired: material_data.released_at ? new Date(material_data.released_at) : null
                 }
@@ -220,5 +223,54 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 });
             })
         );
+    }
+
+    static async updateRating() {
+        prisma.animeList.count()
+        const avgByAll = await prisma.anime.aggregate({
+            _avg: {
+                shikimoriRating: true
+            },
+            where: {
+                shikimoriRating: { not: 0 }
+            }
+        })
+
+        const avgByTitle = await prisma.animeList.groupBy({
+            by: "animeId",
+            _avg: { rating: true },
+            where: { rating: { not: 0 } }
+        })
+
+        const splitedAvgByTitle = groupArrSplice(avgByTitle, 50)
+
+        for (const pack of splitedAvgByTitle) {
+            for (const anime of pack) {
+                const ratings = await prisma.animeList.groupBy({
+                    by: "rating",
+                    where: {
+                        rating: { not: 0 },
+                        animeId: anime.animeId
+                    },
+                    _count: { _all: true }
+                })
+                const ratingsCount = (() => {
+                    let count = 0
+                    for (const rate of ratings) {
+                        count += rate._count._all
+                    }
+                    return count
+                })()
+                const rating = (anime._avg.rating! * ratingsCount +
+                    avgByAll._avg.shikimoriRating! * config.ratingMinVotes
+                ) / (ratingsCount + config.ratingMinVotes)
+                console.log(anime.animeId, rating.toFixed(2))
+                await prisma.anime.update({
+                    where: { id: anime.animeId },
+                    data: { rating: Number(rating.toFixed(2)) }
+                })
+            }
+            await sleep(1000)
+        }
     }
 }

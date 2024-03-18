@@ -95,5 +95,6 @@ export enum RequestAuthTypes {
 export enum Permissions {
     ManageAnime = "manage_anime",
     ViewLists = "view_lists",
-    SyncShikimori = "sync_shikimori"
+    SyncShikimori = "sync_shikimori",
+    ApiServiceBot = "api_service_bot",
 }

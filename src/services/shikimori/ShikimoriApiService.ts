@@ -1,6 +1,6 @@
 import { User, Integration, Prisma } from "@prisma/client";
 import axios, { AxiosHeaders } from "axios";
-import BadRequestError from "../../errors/clienterrors/BadRequestError";
+import BadRequestError from "@/errors/clienterrors/BadRequestError";
 import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest } from "@/ts/shikimori";
 import { getAnimeBySeasonQuery, getAnimeWithRelationsQuery, getAnimeWithoutRelationQuery } from "@/ts/shikimoriGraphQLRequests";
 import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "@/ts/index";
