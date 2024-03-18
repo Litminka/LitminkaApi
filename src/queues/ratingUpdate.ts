@@ -1,10 +1,6 @@
 
 import { Queue, Worker, Job } from 'bullmq';
-import prisma from "@/db";
-import { Anime } from '@prisma/client';
-import { ServerError, ShikimoriAnimeFull } from '@/ts';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
-import { RequestStatuses } from '@/ts/enums';
 import { logger } from "@/loggerConf"
 
 const ratingUpdateQueue = new Queue("ratingUpdate", {
@@ -15,7 +11,12 @@ const ratingUpdateQueue = new Queue("ratingUpdate", {
 });
 
 const worker = new Worker("ratingUpdate", async (job: Job) => {
-    await AnimeUpdateService.updateRating()
+    try {
+        await AnimeUpdateService.updateRating()
+    } catch (err) {
+        logger.error("Rating update failed:", err)
+        throw err
+    }
 }, {
     connection: {
         host: process.env.REDIS_HOST,
@@ -27,5 +28,6 @@ const worker = new Worker("ratingUpdate", async (job: Job) => {
 
 ratingUpdateQueue.add("ratingUpdate", {}, {
     removeOnComplete: 10,
-    removeOnFail: 100
+    removeOnFail: 100,
+    repeat: { pattern: "0 3 * * *" }
 })
