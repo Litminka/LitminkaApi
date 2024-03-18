@@ -4,7 +4,7 @@
   "description": "api for the litminka service",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "devmigrate": "npx prisma migrate dev",
     "migrate": "npx prisma migrate deploy",
     "build": "npx tsc",
