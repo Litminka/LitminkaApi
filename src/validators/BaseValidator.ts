@@ -17,11 +17,11 @@ export const validateBodyArrayId = (fieldName: string): any[] => {
     ]
 };
 
-export const validateBodyBool = (fieldName: string): any[] => {
-    return [body(fieldName).isBoolean(), validatorError];
+export const validateBodyBool = (fieldName: string): ValidationChain => {
+    return body(fieldName).isBoolean()
 };
 
-interface IvalidateParamInt {
+interface IvalidateQueryInt {
     fieldName: string,
     defValue: any,
     message: string,
@@ -33,7 +33,7 @@ export const validateQueryInt = ({
     defValue,
     intParams = { min: 0 },
     message = `Validation ${fieldName} was failed`
-}: IvalidateParamInt): any[] => {
+}: IvalidateQueryInt): any[] => {
     return [
         query(fieldName)
             .default(defValue)
