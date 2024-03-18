@@ -28,4 +28,22 @@ export default class AnimeService {
         if (shikimori) { query.orderBy = { shikimoriRating: 'desc' } }
         return await prisma.anime.findMany(query)
     }
+
+    public static async banAnime(animeId: number) {
+        await prisma.anime.updateMany({
+            where: { id: animeId },
+            data: {
+                banned: true,
+            }
+        })
+    }
+
+    public static async unBanAnime(animeId: number) {
+        await prisma.anime.updateMany({
+            where: { id: animeId },
+            data: {
+                banned: false,
+            }
+        })
+    }
 }

@@ -10,6 +10,10 @@ export const validateParamId = (fieldName: string): ValidationChain => {
     return param(fieldName).isInt().notEmpty().toInt();
 };
 
+export const validateUserParamId = () => {
+    return query('userId').optional().isInt().bail().toInt();
+}
+
 export const validateBodyArrayId = (fieldName: string): any[] => {
     return [
         body(fieldName).toArray().isArray({ min: 1 }),

@@ -1,9 +1,10 @@
 import { Response, NextFunction } from 'express';
 import * as jwt from "jsonwebtoken";
-import { RequestWithAuth } from '@/ts/index';
+import { RequestWithBot } from '@/ts/index';
 import { RequestStatuses } from '@/ts/enums';
+import isBot from '@/helper/isBot';
 
-export function auth(req: RequestWithAuth, res: Response, next: NextFunction) {
+export async function auth(req: RequestWithBot, res: Response, next: NextFunction) {
     const token = req.get("authorization");
     if (!token) return res.status(RequestStatuses.Forbidden).json({
         data: {
@@ -11,7 +12,7 @@ export function auth(req: RequestWithAuth, res: Response, next: NextFunction) {
         }
     });
     const result = token.split(" ")[1];
-    jwt.verify(result, process.env.TOKEN_SECRET!, function (err, decoded) {
+    jwt.verify(result, process.env.TOKEN_SECRET!, async function (err, decoded) {
         if (<any>err instanceof jwt.TokenExpiredError) {
             return res.status(RequestStatuses.Unauthorized).json({ "error": true, "message": 'Token expired' });
         }
@@ -24,6 +25,18 @@ export function auth(req: RequestWithAuth, res: Response, next: NextFunction) {
                 message: "Unauthorized",
             }
         });
+
+        if (req.auth.bot && await isBot(req.auth.id)) {
+            console.log("i am a bot!")
+            const userId = Number(req.query.userId);
+            if (!isNaN(userId) && userId !== undefined && userId % 1 === 0) {
+                req.auth.id = userId;
+            }
+            delete req.query.userId;
+            console.log(`requesting as ${req.auth.id}`);
+        }
+
+        delete req.auth.bot;
         next();
     });
 }

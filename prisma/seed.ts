@@ -38,6 +38,21 @@ async function main() {
             }
         }
     })
+    const botRole = await prisma.role.upsert({
+        where: { name: "bot" },
+        update: {},
+        create: {
+            name: "bot",
+            permissions: {
+                connectOrCreate: [
+                    {
+                        where: { name: "api_service_bot" },
+                        create: { name: "api_service_bot" }
+                    }
+                ]
+            }
+        }
+    });
     const userRole = await prisma.role.upsert({
         where: { name: "user" },
         update: {},
@@ -60,6 +75,21 @@ async function main() {
             }
         },
     });
+    const botUser = await prisma.user.upsert({
+        where: { email: "bot@bot.ru" },
+        update: {},
+        create: {
+            email: "bot@bot.ru",
+            login: "bot",
+            password: await Encrypt.cryptPassword("bot"),
+            name: "Bot",
+            role: {
+                connect: {
+                    id: botRole.id
+                }
+            }
+        }
+    })
     const user = await prisma.user.upsert({
         where: { email: 'user@user.ru' },
         update: {},
@@ -77,6 +107,7 @@ async function main() {
     });
     console.dir(admin);
     console.dir(user);
+    console.dir(botUser);
     const kodik = new KodikApiService();
     const genres = await kodik.getGenres();
     // Test new logger
