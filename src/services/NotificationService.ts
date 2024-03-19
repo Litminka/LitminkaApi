@@ -55,17 +55,16 @@ export default class NotificationService {
 
     public static async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {
         if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
-        period = Period.getPeriod(period)
-        return prisma.userAnimeNotifications.getUserNotifications({ isRead, userId, period })
+        return prisma.userAnimeNotifications.getUserNotifications({ isRead, userId, period: Period.getPeriod(period) });
     }
 
     public static async getNotifications(period: Date[]) {
         if (typeof period === 'undefined') period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()]
-        period = Period.getPeriod(period)
-        return prisma.animeNotifications.getNotifications(period);
+        return prisma.animeNotifications.getNotifications(Period.getPeriod(period));
     }
 
     public static async readNotifications(ids: number[], userId: number) {
+        if (typeof ids === 'undefined') ids = []
         return prisma.userAnimeNotifications.readNotifications(ids, userId);
     }
 }

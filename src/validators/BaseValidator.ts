@@ -1,23 +1,29 @@
 import { ValidationChain, body, param, query } from "express-validator";
-import { validatorError } from "@/middleware/validatorError";
 
 
 export const validateBodyId = (fieldName: string): ValidationChain => {
-    return body(fieldName).isInt().notEmpty().bail();
+    return body(fieldName).isInt({ min: 1, max: 2147483647 }).notEmpty().bail();
 };
 
 export const validateParamId = (fieldName: string): ValidationChain => {
-    return param(fieldName).isInt().notEmpty().toInt();
+    return param(fieldName).isInt({ min: 1, max: 2147483647 }).notEmpty().toInt();
 };
 
 export const validateUserParamId = () => {
-    return query('userId').optional().isInt().bail().toInt();
+    return query('userId').optional().isInt({ min: 1, max: 2147483647 }).bail().toInt();
 }
 
 export const validateBodyArrayId = (fieldName: string): any[] => {
     return [
-        body(fieldName).toArray().isArray({ min: 1 }),
-        body(`${fieldName}.*`).isInt()
+        body(fieldName).toArray().isArray({ min: 1, max: 50 }),
+        body(`${fieldName}.*`).isInt({ min: 1, max: 2147483647 })
+    ]
+};
+
+export const validateBodyArrayIdOptional = (fieldName: string): any[] => {
+    return [
+        body(fieldName).optional().toArray().isArray({ min: 1, max: 50 }),
+        body(`${fieldName}.*`).isInt({ min: 1, max: 2147483647 })
     ]
 };
 
@@ -35,7 +41,7 @@ interface IvalidateQueryInt {
 export const validateQueryInt = ({
     fieldName,
     defValue,
-    intParams = { min: 0 },
+    intParams = { min: 0, max: 2147483647 },
     message = `Validation ${fieldName} was failed`
 }: IvalidateQueryInt): any[] => {
     return [

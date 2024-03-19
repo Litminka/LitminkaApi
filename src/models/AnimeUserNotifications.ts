@@ -19,15 +19,18 @@ const extention = Prisma.defineExtension({
                 })
             },
             async readNotifications(ids: number[], userId: number) {
-                return prisma.userAnimeNotifications.updateMany({
+                let query: Prisma.UserAnimeNotificationsUpdateManyArgs = {
                     where: {
                         userId,
-                        id: {
-                            in: ids
-                        }
                     },
                     data: { isRead: true }
-                })
+                }
+
+                if (ids.length === 0) query.where = {
+                    userId,
+                    id: { in: ids }
+                }
+                return prisma.userAnimeNotifications.updateMany(query)
             },
             async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {
                 return prisma.userAnimeNotifications.findMany({
