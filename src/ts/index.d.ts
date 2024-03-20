@@ -1,4 +1,4 @@
-import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
+import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, SessionToken, User } from "@prisma/client";
 import { Request } from "express";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
 
@@ -25,8 +25,20 @@ export interface RequestWithUser extends Request {
     }
 }
 
+export interface RequestWithTokens extends Request {
+    auth: {
+        user: UserWithTokens,
+        id: number,
+        token: string
+    }
+}
+
 interface RoleWithPermissions extends Role {
     permissions: Permission[]
+}
+
+type UserWithTokens = User & {
+    sessionTokens: SessionToken[]
 }
 
 export interface RequestWithUserPermissions extends Request {

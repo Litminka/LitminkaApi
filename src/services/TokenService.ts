@@ -25,7 +25,7 @@ export default class TokenService {
                 if (err) return reject(new InternalServerError("Failed to authenticate token"));
                 const auth = <any>decoded;
                 if (!auth) return reject(new InternalServerError("Failed to authenticate token"));
-    
+
                 const user = await prisma.user.findUserWithTokensAndPermissions(auth.id);
                 if (!user) return reject(new InternalServerError("Failed to authenticate token"));
                 if (!user.sessionTokens.some(token => token.token === auth.token)) {
@@ -38,11 +38,9 @@ export default class TokenService {
                 resolve({ token: userToken, refreshToken: userRefreshToken })
             });
         });
-        
+
         return tokens;
     }
-
-
 
     public static signTokens(user: UserWithPermissions, sessionToken: string): SignedTokens {
 
@@ -57,5 +55,34 @@ export default class TokenService {
         return {
             token, refreshToken
         }
+    }
+
+    public static async getTokens(id: number) {
+        return await prisma.sessionToken.findMany({
+            where: {
+                userId: id
+            }
+        })
+    }
+
+    public static async deleteTokens(id: number, currentToken: string, deleteTokens?: string[]) {
+        const isSpecificDelete = deleteTokens !== undefined;
+        if (isSpecificDelete) {
+            const index = deleteTokens.indexOf(currentToken);
+            if (index > -1) {
+                deleteTokens.splice(index, 1);
+            }
+        }
+
+        return await prisma.sessionToken.deleteMany({
+            where: {
+                userId: id,
+                token: isSpecificDelete ? {
+                    in: deleteTokens
+                } : {
+                    notIn: [currentToken]
+                }
+            }
+        })
     }
 }
