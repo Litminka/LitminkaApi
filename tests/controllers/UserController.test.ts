@@ -5,7 +5,7 @@ import { RequestStatuses } from "@/ts/enums";
 import prisma from "@/db";
 import crypto from "crypto";
 
-const defTestLogin = "Test";;
+const defTestLogin = "Test";
 const defTestEmail = "test@test.ru";
 const defTestName = "Testing";
 const defTestPassword = "test11";

@@ -10,7 +10,7 @@
     "build": "npx tsc",
     "start": "npm run build && node dist/index.js",
     "seed": "npx ts-node prisma/seed.ts",
-    "dev": "npx nodemon --inspect src/index.ts -r tsconfig-paths/register",
+    "dev": "npm install && npm run devmigrate && npx nodemon --inspect src/index.ts -r tsconfig-paths/register",
     "autocheck": "npx ts-node src/queues/autocheck.ts",
     "shikimoriupdate": "npx ts-node src/queues/shikimoriUpdate.ts",
     "ratingupdate": "npx ts-node src/queues/ratingUpdate.ts",
