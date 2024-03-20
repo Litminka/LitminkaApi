@@ -1,6 +1,5 @@
 import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, User } from "@prisma/client";
 import { Request } from "express";
-import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
 
 export interface RequestWithBot extends Request {
@@ -8,6 +7,7 @@ export interface RequestWithBot extends Request {
         user: undefined
         id: number,
         bot?: boolean
+        token: string
     },
 }
 
@@ -31,9 +31,7 @@ interface RoleWithPermissions extends Role {
 
 export interface RequestWithUserPermissions extends Request {
     auth: {
-        user: User & {
-            role: RoleWithPermissions
-        },
+        user: UserWithPermissions
         id: number
     }
 }
@@ -75,6 +73,10 @@ export interface RequestWithUserAnimeList extends Request {
             animeList: AnimeList | null
         }
     }
+}
+
+export type UserWithPermissions = User & {
+    role: RoleWithPermissions
 }
 
 export interface ShikimoriWhoAmI {

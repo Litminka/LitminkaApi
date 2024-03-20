@@ -4,12 +4,12 @@ import TokenService from "@services/TokenService";
 
 export default class TokenController {
 
-    public static refreshToken(req: Request, res: Response) {
+    public static async refreshToken(req: Request, res: Response) {
         const token = req.get("authorization");
 
-        const resToken = TokenService.refreshToken(token)
+        const tokens = await TokenService.refreshToken(token)
 
-        return res.status(RequestStatuses.OK).json({ data: { resToken } });
+        return res.status(RequestStatuses.OK).json({ data: tokens });
     }
 
     // TODO: Add the ability to end sessions except current

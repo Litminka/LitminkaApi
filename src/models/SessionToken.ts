@@ -4,9 +4,9 @@ import prisma from "@/db";
 const extention = Prisma.defineExtension({
     name: "RefreshTokenModel",
     model: {
-        refreshToken: {
+        sessionToken: {
             async createToken(refreshToken: string, id: number) {
-                prisma.refreshToken.create({
+                await prisma.sessionToken.create({
                     data: {
                         token: refreshToken,
                         userId: id
@@ -17,4 +17,4 @@ const extention = Prisma.defineExtension({
     }
 })
 
-export { extention as RefreshTokenExt }
+export { extention as SessionTokenExt }

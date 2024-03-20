@@ -2,9 +2,8 @@ import prisma from "@/db";
 import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
 import { Encrypt } from "@/helper/encrypt";
 import { CreateUser, LoginUser } from "@/ts";
-import * as jwt from "jsonwebtoken";
-import { Permissions } from "@/ts/enums";
-
+import crypto from "crypto";
+import TokenService from "./TokenService";
 
 export default class UserService {
 
@@ -19,21 +18,19 @@ export default class UserService {
 
     public static async login(userData: LoginUser) {
         const { login, password } = userData;
-        const user = await prisma.user.findUserByLogin(login);
-
+        const user = await prisma.user.findUserByLogin(login) ?? undefined;
+        
+        // protection against time based attack
+        if (!await Encrypt.comparePassword(password, user?.password ?? '')) throw new UnauthorizedError("Login or password incorrect");
         if (!user) throw new UnauthorizedError("Login or password incorrect");
-        if (!await Encrypt.comparePassword(password, user.password)) throw new UnauthorizedError("Login or password incorrect");
 
         const { id } = user;
-        const signObject = {
-            id,
-            bot: user.role.permissions.some(perm => perm.name == Permissions.ApiServiceBot)
-        }
 
-        const token = jwt.sign(signObject, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE })
-        const refreshToken = jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET!, { expiresIn: process.env.REFRESH_TOKEN_LIFE })
+        const sessionToken = crypto.randomUUID();
 
-        await prisma.refreshToken.createToken(refreshToken, id);
+        const { token, refreshToken } = TokenService.signTokens(user, sessionToken);
+
+        await prisma.sessionToken.createToken(sessionToken, id);
 
         return {
             token, refreshToken
