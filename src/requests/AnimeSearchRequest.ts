@@ -4,12 +4,13 @@ import {
     genresValidator,
     seasonsValidator,
     nameValidator,
-    statusesValidator,
+    bodyStatusesValidator,
     rpaRatingsValidator,
     mediaTypesValidator
 } from "@validators/AnimeValidator";
-import { softPeriodValidator } from "@validators/PeriodValidator";
-import { validateQueryInt } from "@validators/BaseValidator";
+import { bodySoftPeriodValidator } from "@validators/PeriodValidator";
+import { queryIntValidator } from "@validators/BaseValidator";
+import { validation } from "@/ts/messages"
 
 export default class SearchAnimeRequest extends Request {
 
@@ -23,27 +24,31 @@ export default class SearchAnimeRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
+        const msg = validation.errors.base
         return [
             ...
             genresValidator("includeGenres"),
             genresValidator("excludeGenres"),
-            softPeriodValidator("period"),
+            bodySoftPeriodValidator({
+                fieldName: "period",
+                message: msg.valueNotInRange
+            }),
             seasonsValidator("seasons"),
             nameValidator("name"),
-            statusesValidator("statuses"),
+            bodyStatusesValidator("statuses"),
             rpaRatingsValidator("rpaRatings"),
             mediaTypesValidator("mediaTypes"),
-            validateQueryInt({
+            queryIntValidator({
                 fieldName: "page",
                 defValue: 1,
-                intParams: { min: 1 },
-                message: "Amount must be more than 0"
+                typeParams: { min: 1 },
+                message: { msg: msg.valueNotInRange, range: [1, null] }
             }),
-            validateQueryInt({
+            queryIntValidator({
                 fieldName: "pageLimit",
                 defValue: 25,
-                intParams: { min: 1, max: 125 },
-                message: "Limit must be in range of 1 to 125"
+                typeParams: { min: 1, max: 125 },
+                message: { msg: msg.valueNotInRange, range: [1, 125] }
             }),
         ]
     }

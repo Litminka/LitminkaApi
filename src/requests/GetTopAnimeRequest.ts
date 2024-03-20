@@ -1,6 +1,6 @@
 import { RequestAuthTypes } from "@/ts/enums";
 import Request from "@requests/Request";
-import { validateBodyBool } from "@validators/BaseValidator";
+import { bodyBoolValidator } from "@validators/BaseValidator";
 
 export default class GetTopAnimeRequest extends Request {
 
@@ -14,6 +14,11 @@ export default class GetTopAnimeRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return [validateBodyBool("shikimori").optional()]
+        return [
+            bodyBoolValidator({
+                fieldName: "shikimori",
+                message: "requires_bool"
+            }).optional()
+        ]
     }
 }

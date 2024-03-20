@@ -2,6 +2,22 @@ import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, 
 import { Request } from "express";
 import { Headers } from "node-fetch";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
+import { ValidationError, Location } from "express-validator";
+import { ErrorMessage } from "express-validator/src/base";
+
+export declare type AdditionalValidationError = {
+    type: string;
+    additional: object;
+    location: Location;
+    path: string;
+    value: any;
+    msg: any;
+} | ValidationError
+
+export declare type ValidatorErrorMessage = {
+    msg: string,
+    args: any
+} | ErrorMessage
 
 export interface RequestWithBot extends Request {
     auth?: {
@@ -104,7 +120,7 @@ export interface ShikimoriWhoAmI {
     locale: string;
 }
 
-export interface ListFilters{
+export interface ListFilters {
     statuses?: watchListStatus[],
     ratings?: number[],
     isFavorite?: boolean

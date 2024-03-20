@@ -1,4 +1,4 @@
-import { ReadNotificationsValidator } from "@validators/NotificationValidator";
+import { bodyArrayValidator, bodyIdValidator } from "@validators/BaseValidator";
 import AuthRequest from "@requests/AuthRequest";
 
 export default class ReadNotificationsRequest extends AuthRequest {
@@ -8,6 +8,15 @@ export default class ReadNotificationsRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return ReadNotificationsValidator();
+        return [
+            bodyArrayValidator({
+                fieldName: 'id',
+                message: ""
+            }).optional(),
+            bodyIdValidator({
+                fieldName: "id.*",
+                message: ""
+            })
+        ];
     }
 }

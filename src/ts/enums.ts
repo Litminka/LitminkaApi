@@ -9,6 +9,31 @@ export enum AnimeStatuses {
     Ongoing = "ongoing"
 }
 
+export enum AnimeSeasons {
+    Winter = "winter",
+    Spring = "spring",
+    Summer = "summer",
+    Fall = "fall"
+}
+
+export enum AnimePgaRatings {
+    G = "G",
+    PG = "PG",
+    PG_13 = "PG-13",
+    R = "R",
+    R_plus = "R+",
+    RX = "RX"
+}
+
+export enum AnimeMediaTypes {
+    TV = "tv",
+    TV_Special = "tv_special",
+    Special = "special",
+    ONA = "ona",
+    OVA = "ova",
+    Movie = "movie",
+}
+
 export enum NotifyStatuses {
     AnimeRelease = "anime_released",
     EpisodeRelease = "episode_released",

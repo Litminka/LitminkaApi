@@ -1,28 +1,41 @@
 import { body } from "express-validator";
+import { BaseValidator } from "./BaseValidator";
 
-const periodValidator = (fieldName: string): any[] => {
+const bodyPeriodValidator = ({
+    fieldName,
+    typeParams,
+    message
+}: BaseValidator): any[] => {
     return [
-        body(`${fieldName}.*`).isDate()
+        body(`${fieldName}.*`).isDate(typeParams).withMessage(message)
     ]
 };
 
-export const softPeriodValidator = (fieldName: string): any[] => {
+export const bodySoftPeriodValidator = ({
+    fieldName,
+    typeParams,
+    message
+}: BaseValidator): any[] => {
     return [
         body(fieldName)
             .optional()
             .toArray()
             .isArray({ max: 2, min: 1 })
             .bail(),
-        periodValidator(fieldName)
+        bodyPeriodValidator({ fieldName, message, typeParams })
     ]
 };
 
-export const strictPeriodValidator = (fieldName: string): any[] => {
+export const bodyStrictPeriodValidator = ({
+    fieldName,
+    typeParams,
+    message
+}: BaseValidator): any[] => {
     return [
         body(fieldName)
             .optional()
             .isArray({ min: 2, max: 2 })
             .bail(),
-        periodValidator(fieldName)
+        bodyPeriodValidator({ fieldName, message, typeParams })
     ]
 };

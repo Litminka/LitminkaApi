@@ -1,62 +1,51 @@
-import { validateParamId } from "@validators/BaseValidator";
 import { body } from "express-validator";
-
-export const AnimeValidator = (): any[] => {
-    return [
-        validateParamId('animeId')
-    ]
-};
+import { bodyIdValidator } from "@validators/BaseValidator";
+import { AnimeStatuses, AnimeSeasons, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
 
 export const genresValidator = (fieldName: string): any[] => {
-    return [body(fieldName).optional().isArray().bail(),
-    body(`${fieldName}.*`).isInt()
+    return [
+        body(fieldName).optional().isArray().bail(),
+        bodyIdValidator({
+            fieldName: `${fieldName}.*`,
+            message: ""
+        })
     ];
 };
 
 export const nameValidator = (fieldName: string): any[] => {
-    return [body(fieldName).optional().isString()];
+    return [
+        body(fieldName).optional().isString(
+        )];
 };
 
 export const seasonsValidator = (fieldName: string): any[] => {
     return [
         body(fieldName).optional().isArray().bail(),
-        body(`${fieldName}.*`).isString().isIn([
-            "winter",
-            "spring",
-            "summer",
-            "fall"
-        ])];
+        body(`${fieldName}.*`).isString().isIn(
+            Object.values(AnimeSeasons)
+        )];
 };
 
-export const statusesValidator = (fieldName: string): any[] => {
-    return [body(fieldName).optional().isArray().bail(),
-    body(`${fieldName}.*`).isString().isIn([
-        "ongoing",
-        "released",
-        "announced"
-    ])];
+export const bodyStatusesValidator = (fieldName: string): any[] => {
+    return [
+        body(fieldName).optional().isArray().bail(),
+        body(`${fieldName}.*`).isString().isIn(
+            Object.values(AnimeStatuses)
+        )];
 };
 
 export const rpaRatingsValidator = (fieldName: string): any[] => {
-    return [body(fieldName).optional().isArray().bail(),
-    body(`${fieldName}.*`).isString().isIn([
-        "G",
-        "PG",
-        "PG-13",
-        "R",
-        "R+",
-        "RX"
-    ])];
+    return [
+        body(fieldName).optional().isArray().bail(),
+        body(`${fieldName}.*`).isString().isIn(
+            Object.values(AnimePgaRatings)
+        )];
 };
 
 export const mediaTypesValidator = (fieldName: string): any[] => {
-    return [body(fieldName).optional().isArray().bail(),
-    body(`${fieldName}.*`).isString().isIn([
-        "tv",
-        "tv_special",
-        "special",
-        "ona",
-        "ova",
-        "movie",
-    ])];
+    return [
+        body(fieldName).optional().isArray().bail(),
+        body(`${fieldName}.*`).isString().isIn(
+            Object.values(AnimeMediaTypes)
+        )];
 };
