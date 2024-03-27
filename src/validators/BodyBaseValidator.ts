@@ -1,6 +1,6 @@
 import { baseMsg } from "@/ts/messages";
 import { body, ValidationChain } from "express-validator";
-import { BaseValidator } from "./BaseValidator";
+import { BaseValidator } from "@validators/BaseValidator";
 
 /**
  * Validate required array[any] body parameter.

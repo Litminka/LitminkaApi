@@ -1,5 +1,5 @@
 import { body, ValidationChain } from "express-validator";
-import { BaseValidator } from "./BaseValidator";
+import { BaseValidator } from "@validators/BaseValidator";
 
 /**
  * Base period validator

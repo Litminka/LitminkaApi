@@ -1,6 +1,6 @@
 import { ValidationChain, param } from "express-validator";
 import { baseMsg } from '@/ts/messages';
-import { BaseValidator } from "./BaseValidator";
+import { BaseValidator } from "@validators/BaseValidator";
 
 /**
  * Validate required `number` param parameter.
