@@ -10,10 +10,10 @@ const base = validation.errors.base;
 export interface BaseValidator {
     fieldName: string,
     message: ValidatorErrorMessage,
-    typeParams?: object,
+    typeParams?: object
 };
 
-interface validateQueryInt extends BaseValidator {
+interface QueryIntValidator extends BaseValidator {
     defValue: any
 };
 
@@ -42,6 +42,24 @@ export const bodyArrayValidator = ({
         .toArray()
         .isArray(typeParams)
         .withMessage(message)
+};
+
+/**
+ * Validate required `string` body parameter.
+ * @param fieldName Parameter name
+ * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
+ * @param message Error message for validation exceptions.
+ * @returns
+ */
+export const bodyStringValidator = ({
+    fieldName,
+    typeParams = { min: 0, max: 32 },
+    message = base.validationFailed
+}: BaseValidator): ValidationChain => {
+    return body(fieldName, base.intValidationFailed)
+        .isString()
+        .isLength(typeParams)
+        .withMessage(message);
 };
 
 /**
@@ -92,9 +110,10 @@ export const queryIntValidator = ({
     defValue = 0,
     typeParams = { min: -2147483648, max: 2147483647 },
     message = base.validationFailed
-}: validateQueryInt): ValidationChain => {
+}: QueryIntValidator): ValidationChain => {
     return query(fieldName, base.intValidationFailed)
         .default(defValue)
         .isInt(typeParams)
         .withMessage(message)
 };
+
