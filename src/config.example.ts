@@ -2,6 +2,9 @@ interface config {
     ignoreLicensors: string[]
     ratingMinVotes: number
     createTestData: boolean
+    updateRatingSchedule: object
+    updateShikimoriSchedule: object
+    autocheckSchedule: object
 }
 
 export const config: config = {
@@ -11,5 +14,8 @@ export const config: config = {
      */
     ignoreLicensors: ["Wakanim", "Crunchyroll", "Netflix", "Dentsu", "Русский Репортаж", "2x2", "1C", "1С", "FAN", "Синема Галэкси", "Мега-Аниме", "Экспонента", "All Media Company"],
     ratingMinVotes: 5,
-    createTestData: true
+    createTestData: true,
+    updateRatingSchedule: { pattern: "*/30 * * * *" },
+    updateShikimoriSchedule: { pattern: "* * */1 * *" },
+    autocheckSchedule: { pattern: "* */1 * * *" }
 }

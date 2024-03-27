@@ -8,6 +8,7 @@ import KodikApiService from '@services/KodikApiService';
 import { FollowTypes } from '@/ts/enums';
 import { logger } from "@/loggerConf"
 import { ShikimoriGraphAnime } from '@/ts/shikimori';
+import { config } from '@/config';
 
 const autoCheckQueue = new Queue("autocheck", {
     connection: {
@@ -16,41 +17,25 @@ const autoCheckQueue = new Queue("autocheck", {
     }
 });
 
+/**
+ * get titles ->
+ * sort titles as pairs with users ->
+ * separate follow types ->
+ * request all from shikimori ->
+ * request follows from shikimori
+ * 
+ * request titles from kodik ->
+ * separate titles into array ->
+ * check each title ->
+ * send notification ->
+ * update title
+ */
 const worker = new Worker("autocheck", async (job: Job) => {
-    // get titles
-    // sort titles as pairs with users
-    // separate follow types
-    // request all from shikimori
-    // request follows from shikimori
-
-    // request titles from kodik
-    // separate titles into array
-    // check each title
-    // send notification
-    // update title
 
     logger.info("started a job");
     logger.info("updating translations");
-    const kodikApi = new KodikApiService()
-    const translations = await kodikApi.getTranslationGroups();
-    for (const translation of translations) {
-        await prisma.group.upsert({
-            where: {
-                id: translation.id,
-            },
-            create: {
-                id: translation.id,
-                name: translation.title,
-                type: translation.type,
-            },
-            update: {
-                id: translation.id,
-                name: translation.title,
-                type: translation.type,
-            }
-        })
-
-    }
+    const autoCheckService = new AutoCheckService();
+    await autoCheckService.updateGroups();
     const started = Date.now();
     const follows = await prisma.follow.findMany({
         where: {
@@ -68,7 +53,6 @@ const worker = new Worker("autocheck", async (job: Job) => {
         },
     });
     const followService = new FollowService();
-    const autoCheckService = new AutoCheckService();
 
     const announcements = await prisma.follow.findMany({
         where: {
@@ -167,5 +151,6 @@ const worker = new Worker("autocheck", async (job: Job) => {
 
 autoCheckQueue.add("autocheck", {}, {
     removeOnComplete: 10,
-    removeOnFail: 100
+    removeOnFail: 100,
+    repeat: config.autocheckSchedule
 })
