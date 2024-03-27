@@ -5,12 +5,7 @@ interface minmax {
     max?: number
 }
 
-export const CreateGroupListValidator = (): any[] => {
-    return [
-        body("name").notEmpty().bail().isString().bail(),
-        body("description").notEmpty().bail().isString().bail(),
-    ];
-};
+
 export const GroupInviteValidator = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
@@ -22,27 +17,6 @@ export const GroupListIdValidator = (): any[] => {
     return [
         param("groupId").isInt().bail().toInt(),
     ];
-};
-
-export const GroupListIdWithUserIdValidator = (): any[] => {
-    return [
-        param("groupId").isInt().bail().toInt(),
-        body("userId").isInt().bail().toInt(),
-    ];
-};
-
-export const UpdateGroupListValidator = (): any[] => {
-    return [
-        param("groupId").isInt().bail().toInt(),
-        body("name").optional().notEmpty().bail().isString().bail(),
-        body("description").optional().notEmpty().bail().isString().bail(),
-    ];
-}
-
-export const GroupInviteIdValidator = (): any[] => {
-    return [
-        param("inviteId").isInt().bail().toInt(),
-    ]
 };
 
 export const GroupInviteActionValidator = (): any[] => {

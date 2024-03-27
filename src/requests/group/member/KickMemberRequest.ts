@@ -1,6 +1,7 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
 import { GroupListIdWithUserIdValidator } from "@validators/GroupListValidator";
+import { body, param } from "express-validator";
 
 export default class KickMemberRequest extends AuthRequest {
 
@@ -19,6 +20,9 @@ export default class KickMemberRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupListIdWithUserIdValidator();
+        return [
+            param("groupId").isInt().bail().toInt(),
+            body("userId").isInt().bail().toInt(),
+        ];
     }
 }

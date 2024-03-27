@@ -378,3 +378,8 @@ export interface FollowAnime {
 export type UserWithIntegration = User & {
     integration: Integration | null
 }
+
+export interface minmax {
+    min: number,
+    max?: number
+}

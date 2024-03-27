@@ -1,5 +1,5 @@
-import { ShikimoriLinkValidator } from "@validators/ShikimoriValidator";
 import Request from "@requests/Request";
+import { query } from "express-validator";
 
 export default class ShikimoriLinkRequest extends Request {
 
@@ -8,6 +8,9 @@ export default class ShikimoriLinkRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return ShikimoriLinkValidator();
+        return [
+            query("token").notEmpty().isString().bail(),
+            query("code").notEmpty().isString().bail()
+        ];
     }
 }

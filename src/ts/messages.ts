@@ -12,7 +12,9 @@ export const validation = {
             noPasswordProvided: "no_password_provided"
         },
         base: {
-            valueNotInRange: "value_not_in_range"
+            valueNotInRange: "value_not_in_range",
+            validationFailed: "validation_failed",
+            intValidationFailed: "int_validation_failed"
         }
     }
 }

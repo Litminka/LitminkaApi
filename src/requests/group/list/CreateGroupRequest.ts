@@ -1,6 +1,7 @@
 import prisma from "@/db";
 import { CreateGroupListValidator } from "@validators/GroupListValidator";
 import AuthRequest from "@requests/AuthRequest";
+import { body } from "express-validator";
 
 export default class CreateGroupRequest extends AuthRequest {
 
@@ -19,6 +20,9 @@ export default class CreateGroupRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return CreateGroupListValidator();
+        return [
+            body("name").notEmpty().bail().isString().bail(),
+            body("description").notEmpty().bail().isString().bail(),
+        ];
     }
 }

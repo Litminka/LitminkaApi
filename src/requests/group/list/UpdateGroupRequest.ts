@@ -1,6 +1,6 @@
 import prisma from "@/db";
-import { UpdateGroupListValidator } from "@validators/GroupListValidator";
 import AuthRequest from "@requests/AuthRequest";
+import { body, param } from "express-validator";
 
 export default class UpdateGroupRequest extends AuthRequest {
 
@@ -19,6 +19,10 @@ export default class UpdateGroupRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return UpdateGroupListValidator();
+        return [
+            param("groupId").isInt().bail().toInt(),
+            body("name").optional().notEmpty().bail().isString().bail(),
+            body("description").optional().notEmpty().bail().isString().bail(),
+        ];
     }
 }

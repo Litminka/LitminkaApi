@@ -1,7 +1,7 @@
 import prisma from "@/db";
 import { Permissions, RequestAuthTypes } from "@/ts/enums";
 import Request from "@requests/Request";
-import { FollowValidator } from "@validators/FollowValidator";
+import { body, param } from "express-validator";
 
 export default class FollowAnimeRequest extends Request {
 
@@ -27,6 +27,10 @@ export default class FollowAnimeRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return FollowValidator();
+        return [
+            param("animeId").bail().isInt().bail().toInt(),
+            body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
+            body("groupName").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail()
+        ];
     }
 }

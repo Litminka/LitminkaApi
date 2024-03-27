@@ -2,7 +2,6 @@ import { param, body } from "express-validator";
 import prisma from "@/db";
 import { RequestAuthTypes } from "@/ts/enums";
 import Request from "@requests/Request";
-import { UnFollowValidator } from "@validators/FollowValidator";
 
 export default class UnFollowAnimeRequest extends Request {
 
@@ -26,6 +25,9 @@ export default class UnFollowAnimeRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return UnFollowValidator()
+        return [
+            param("animeId").bail().isInt().bail().toInt(),
+            body("groupName").optional().isString().bail(),
+        ];
     }
 }

@@ -1,5 +1,8 @@
 import { ValidationChain, body, param, query } from "express-validator";
 import { ValidatorErrorMessage } from "@/ts";
+import { validation } from '@/ts/messages';
+
+const base = validation.errors.base;
 
 /**
  * Base input parameters to all base validators
@@ -33,7 +36,7 @@ export const paramIdValidator = (fieldName: string): ValidationChain => {
 export const bodyArrayValidator = ({
     fieldName,
     typeParams = { min: 0, max: 50 },
-    message = "validation_failed"
+    message = base.validationFailed
 }: BaseValidator): ValidationChain => {
     return body(fieldName)
         .toArray()
@@ -51,9 +54,9 @@ export const bodyArrayValidator = ({
 export const bodyIdValidator = ({
     fieldName,
     typeParams = { min: 1, max: 2147483647 },
-    message = "validation_failed"
+    message = base.validationFailed
 }: BaseValidator): ValidationChain => {
-    return body(fieldName, "int_validation_failed")
+    return body(fieldName, base.intValidationFailed)
         .isInt(typeParams)
         .toInt()
         .withMessage(message);
@@ -69,7 +72,7 @@ export const bodyIdValidator = ({
 export const bodyBoolValidator = ({
     fieldName,
     typeParams,
-    message = "validation_failed"
+    message = base.validationFailed
 }: BaseValidator): ValidationChain => {
     return body(fieldName, "bool_validation_failed")
         .isBoolean(typeParams)
@@ -88,9 +91,9 @@ export const queryIntValidator = ({
     fieldName,
     defValue = 0,
     typeParams = { min: -2147483648, max: 2147483647 },
-    message = "validation_failed"
+    message = base.validationFailed
 }: validateQueryInt): ValidationChain => {
-    return query(fieldName, "int_validation_failed")
+    return query(fieldName, base.intValidationFailed)
         .default(defValue)
         .isInt(typeParams)
         .withMessage(message)

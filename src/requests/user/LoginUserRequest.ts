@@ -1,5 +1,7 @@
-import { LoginValidator } from "@validators/UserValidator";
 import Request from "@requests/Request";
+import { body } from "express-validator";
+import { validation } from '@/ts/messages';
+const registration = validation.errors.registration;
 
 export default class LoginUserRequest extends Request {
 
@@ -8,6 +10,9 @@ export default class LoginUserRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return LoginValidator();
+        return [
+            body("login").notEmpty().withMessage(registration.noLoginProvided).isString(),
+            body("password").notEmpty().withMessage(registration.noPasswordProvided).isString()
+        ];
     }
 }
