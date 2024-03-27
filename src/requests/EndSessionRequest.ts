@@ -1,5 +1,5 @@
+import { bodyArrayValidator, bodyUUIDValidator } from "@/validators/BodyBaseValidator";
 import AuthRequest from "@requests/AuthRequest";
-import { body } from "express-validator";
 
 
 export default class EndSessionRequest extends AuthRequest {
@@ -11,8 +11,15 @@ export default class EndSessionRequest extends AuthRequest {
      */
     protected rules(): any[] {
         return [
-            body('sessions').optional().isArray({ min: 1, max: 100 }),
-            body('sessions.*').isUUID().withMessage('invalid_session_token'),
+            bodyArrayValidator({
+                fieldName: "sessions",
+                typeParams: { min: 1, max: 100 },
+                message: ""
+            }).optional(),
+            bodyUUIDValidator({
+                fieldName: "sessions.*",
+                message: "invalid_session_token"
+            })
         ]
     }
 }

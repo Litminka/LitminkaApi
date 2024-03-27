@@ -68,3 +68,21 @@ export const bodyBoolValidator = ({
         .isBoolean(typeParams)
         .withMessage(message)
 };
+
+interface bodyUUIDValidator extends BaseValidator {
+    typeParams?: never
+}
+
+/**
+ * Validate required UUID body parameter
+ * @param fieldName Parameter name
+ * @param message Error message for validation exceptions. 
+ */
+export const bodyUUIDValidator = ({
+    fieldName,
+    message = baseMsg.validationFailed
+}: bodyUUIDValidator): ValidationChain => {
+    return body(fieldName, baseMsg.boolValidationFailed)
+        .isUUID()
+        .withMessage(message)
+};
