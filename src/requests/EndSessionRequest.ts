@@ -1,4 +1,4 @@
-import AuthRequest from "./AuthRequest";
+import AuthRequest from "@requests/AuthRequest";
 import { body } from "express-validator";
 
 
