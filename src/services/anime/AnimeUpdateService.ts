@@ -6,10 +6,13 @@ import prisma from "@/db";
 import { RequestStatuses } from "@/ts/enums";
 import InternalServerError from "@errors/servererrors/InternalServerError";
 import { cyrillicSlug } from "@/helper/cyrillic-slug";
-import { ShikimoriGraphAnime } from "@/ts/shikimori";
+import { ShikimoriAnimeWithRelation, ShikimoriGraphAnime, ShikimoriRelation } from "@/ts/shikimori";
 import { config } from "@/config";
 import groupArrSplice from "@/helper/groupsplice";
 import sleep from "@/helper/sleep";
+import { logger } from "@/loggerConf";
+import KodikApiService from "../KodikApiService";
+import AutoCheckService from "../AutoCheckService";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -49,7 +52,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
     }
 
     async createShikimoriGraphAnime(shikimoriAnime: ShikimoriGraphAnime, kodikAnime?: KodikAnime) {
-        return prisma.anime.createFromShikimoriGraph(shikimoriAnime, false, kodikAnime);
+        return await prisma.anime.createFromShikimoriGraph(shikimoriAnime, false, kodikAnime);
     }
 
     async updateShikimoriGraphAnime(shikimoriAnime: ShikimoriGraphAnime, dbAnime: Anime, kodikAnime?: KodikAnime) {
@@ -272,5 +275,94 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             }
             await sleep(1000)
         }
+    }
+
+    static async updateRelations() {
+        const autoCheckService = new AutoCheckService();
+        await autoCheckService.updateGroups();
+        const checkMap = new Set<number>();
+        let page = 0;
+        let length = 0;
+        const shikimoriApi = new ShikimoriApiService();
+        const kodikApi = new KodikApiService();
+        const updateService = new AnimeUpdateService();
+        do {
+            const anime = await prisma.anime.findMany({
+                where: {
+                    hasRelation: false,
+                },
+                take: 50,
+                skip: page * 50,
+            });
+            if (anime.length == 0) break;
+            length = anime.length;
+
+            const shikimoriIds: number[] = [];
+
+            for (const single of anime) {
+                checkMap.add(single.shikimoriId);
+                shikimoriIds.push(single.shikimoriId);
+            }
+            logger.info(`Requesting batch: ${page} from shikimori`)
+            const shikimoriRequest = await shikimoriApi.getBatchGraphAnime(shikimoriIds);
+            const shikimoriAnime = shikimoriRequest.data.animes;
+            const shikimoriMap = new Map<number, ShikimoriAnimeWithRelation>();
+
+            for (const shikimori of shikimoriAnime) {
+                shikimoriMap.set(Number(shikimori.id), shikimori);
+                logger.info(`Writing relations for anime ${shikimori.russian ?? shikimori.name}`)
+                const relations = new Map<number, ShikimoriRelation>();
+                const createAnime = new Map<number, ShikimoriGraphAnime>();
+
+                shikimori.related = shikimori.related.filter(relation => relation.anime !== null);
+                for (const relation of shikimori.related) {
+                    relations.set(relation.id, relation);
+
+                    if (checkMap.has(Number(relation.anime!.id))) continue;
+
+                    createAnime.set(Number(relation.anime!.id), relation.anime!);
+                }
+                logger.info(`Getting anime from kodik`)
+
+                const animeInDb = await prisma.anime.findMany({
+                    where: {
+                        shikimoriId: {
+                            in: [...createAnime.keys()]
+                        }
+                    }
+                })
+
+                for (const db of animeInDb) {
+                    checkMap.add(db.shikimoriId);
+                    createAnime.delete(db.shikimoriId);
+                }
+
+                const kodikAnime = await kodikApi.getBatchAnime([...createAnime.keys()]);
+
+                const kodikMap = new Map<number, KodikAnime>();
+
+                for (const kodik of kodikAnime) {
+                    kodikMap.set(Number(kodik.shikimori_id), kodik);
+                }
+
+                for (const create of createAnime.values()) {
+                    await updateService.createShikimoriGraphAnime(create, kodikMap.get(Number(create.id)));
+                    checkMap.add(Number(create.id));
+                }
+
+                console.log(shikimori.id);
+                await prisma.anime.update({
+                    where: {
+                        shikimoriId: Number(shikimori.id),
+                    },
+                    data: {
+                        hasRelation: true
+                    }
+                })
+            }
+
+            await prisma.animeRelation.createFromShikimoriMap(shikimoriMap);
+            page++;
+        } while (length > 0);
     }
 }
