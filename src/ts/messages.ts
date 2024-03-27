@@ -15,6 +15,13 @@ export const validation = {
             valueNotInRange: "value_not_in_range",
             validationFailed: "validation_failed",
             intValidationFailed: "int_validation_failed"
+        },
+        search:{
+            maxArraySizeExceeded: "max_array_size_exceeded",
+            maxLengthExceeded: "max_length_exceeded",
+            unknownType: "unknown_type",
+            
+
         }
     }
 }
