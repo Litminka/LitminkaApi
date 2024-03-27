@@ -1,7 +1,6 @@
 import Request from "@requests/Request";
 import { body } from "express-validator";
-import { validation } from '@/ts/messages';
-const registration = validation.errors.registration;
+import { registrationMsg } from '@/ts/messages';
 
 export default class LoginUserRequest extends Request {
 
@@ -11,8 +10,8 @@ export default class LoginUserRequest extends Request {
      */
     protected rules(): any[] {
         return [
-            body("login").notEmpty().withMessage(registration.noLoginProvided).isString(),
-            body("password").notEmpty().withMessage(registration.noPasswordProvided).isString()
+            body("login").notEmpty().withMessage(registrationMsg.noLoginProvided).isString(),
+            body("password").notEmpty().withMessage(registrationMsg.noPasswordProvided).isString()
         ];
     }
 }

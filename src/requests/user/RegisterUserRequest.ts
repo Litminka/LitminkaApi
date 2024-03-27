@@ -1,8 +1,7 @@
 import Request from "@requests/Request";
-import { validation } from '@/ts/messages';
+import { registrationMsg } from '@/ts/messages';
 import { body } from "express-validator";
 import prisma from "@/db";
-const registration = validation.errors.registration;
 
 export default class RegisterUserRequest extends Request {
 
@@ -13,26 +12,26 @@ export default class RegisterUserRequest extends Request {
     protected rules(): any[] {
         return [
             body("login")
-                .notEmpty().bail().withMessage(registration.noLoginProvided)
+                .notEmpty().bail().withMessage(registrationMsg.noLoginProvided)
                 .custom(async value => {
                     const user = await prisma.user.findFirst({  where: { login: value } })
-                    if (user) throw new Error(registration.loginTaken);
+                    if (user) throw new Error(registrationMsg.loginTaken);
                     return true;
                 }),
             body("email")
-                .notEmpty().bail().withMessage(registration.noEmailProvided)
-                .isEmail().bail().withMessage(registration.invalidEmail)
+                .notEmpty().bail().withMessage(registrationMsg.noEmailProvided)
+                .isEmail().bail().withMessage(registrationMsg.invalidEmail)
                 .custom(async value => {
                     const user = await prisma.user.findFirst({ where: { email: value } })
-                    if (user) throw new Error(registration.emailTaken);
+                    if (user) throw new Error(registrationMsg.emailTaken);
                     return true;
                 })
                 .normalizeEmail(),
-            body("name").optional().isLength({ min: 4 }).withMessage(registration.nameTooShort),
-            body("password").isLength({ min: 5 }).withMessage(registration.passwordTooShort),
+            body("name").optional().isLength({ min: 4 }).withMessage(registrationMsg.nameTooShort),
+            body("password").isLength({ min: 5 }).withMessage(registrationMsg.passwordTooShort),
             body("passwordConfirm").custom((value, { req }) => {
                 if (value !== req.body.password) 
-                    throw new Error(registration.passwordsDontMatch);
+                    throw new Error(registrationMsg.passwordsDontMatch);
                 return true;
             })
         ];

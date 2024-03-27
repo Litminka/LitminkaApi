@@ -1,10 +1,6 @@
 import { body, param } from "express-validator";
 import prisma from "@/db";
-interface minmax {
-    min: number,
-    max?: number
-}
-
+import { minmax } from "@/ts";
 
 export const GroupInviteValidator = (): any[] => {
     return [

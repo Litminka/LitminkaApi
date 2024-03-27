@@ -13,8 +13,10 @@ export const validation = {
         },
         base: {
             valueNotInRange: "value_not_in_range",
+            requiresBoolean: "requires_boolean",
             validationFailed: "validation_failed",
-            intValidationFailed: "int_validation_failed"
+            intValidationFailed: "int_validation_failed",
+            boolValidationFailed: "bool_validation_failed"
         },
         search: {
             maxArraySizeExceeded: "max_array_size_exceeded",
@@ -23,3 +25,7 @@ export const validation = {
         }
     }
 }
+
+export const baseMsg = validation.errors.base;
+export const searchMsg = validation.errors.search;
+export const registrationMsg = validation.errors.registration;
