@@ -159,4 +159,27 @@ export default class AutoCheckService {
         return animeResult;
     }
 
+
+    async updateGroups() {
+        const kodikApi = new KodikApiService();
+        const translations = await kodikApi.getTranslationGroups();
+        for (const translation of translations) {
+            await prisma.group.upsert({
+                where: {
+                    id: translation.id,
+                },
+                create: {
+                    id: translation.id,
+                    name: translation.title,
+                    type: translation.type,
+                },
+                update: {
+                    id: translation.id,
+                    name: translation.title,
+                    type: translation.type,
+                }
+            })
+
+        }
+    }
 }
