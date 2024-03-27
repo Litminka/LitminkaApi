@@ -21,7 +21,7 @@ model User {
   role                   Role                     @relation(fields: [roleId], references: [id])
   integration            Integration?
   shikimoriLink          ShikimoriLinkToken?
-  refreshToken           RefreshToken[]
+  sessionTokens          SessionToken[]
   animeList              AnimeList[]
   follows                Follow[]
   UserAnimeNotifications UserAnimeNotifications[]
@@ -43,7 +43,7 @@ model Permission {
   roles Role[]
 }
 
-model RefreshToken {
+model SessionToken {
   id     Int    @id @default(autoincrement())
   token  String @unique
   userId Int
