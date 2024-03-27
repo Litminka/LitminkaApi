@@ -1,6 +1,5 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupListIdWithUserIdValidator } from "@validators/GroupListValidator";
 import { body, param } from "express-validator";
 
 export default class KickMemberRequest extends AuthRequest {

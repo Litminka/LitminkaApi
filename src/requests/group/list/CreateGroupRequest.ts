@@ -1,5 +1,4 @@
 import prisma from "@/db";
-import { CreateGroupListValidator } from "@validators/GroupListValidator";
 import AuthRequest from "@requests/AuthRequest";
 import { body } from "express-validator";
 
