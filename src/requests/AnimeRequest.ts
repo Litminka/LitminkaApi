@@ -21,7 +21,10 @@ export default class AnimeRequest extends OptionalRequest {
      */
     protected rules(): any[] {
         return [
-            paramIdValidator('animeId')
+            paramIdValidator({
+                fieldName: "animeId",
+                message: ""
+            })
         ];
     }
 }

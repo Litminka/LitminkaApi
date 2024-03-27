@@ -28,6 +28,11 @@ export default class BanAnimeRequest extends Request {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return [paramIdValidator('animeId')];
+        return [
+            paramIdValidator({
+                fieldName: "animeId",
+                message: ""
+            })
+        ];
     }
 }
