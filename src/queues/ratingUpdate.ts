@@ -2,6 +2,7 @@
 import { Queue, Worker, Job } from 'bullmq';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { logger } from "@/loggerConf"
+import { config } from "@/config"
 
 const ratingUpdateQueue = new Queue("ratingUpdate", {
     connection: {
@@ -29,5 +30,5 @@ const worker = new Worker("ratingUpdate", async (job: Job) => {
 ratingUpdateQueue.add("ratingUpdate", {}, {
     removeOnComplete: 10,
     removeOnFail: 100,
-    repeat: { pattern: "0 3 * * *" }
+    repeat: config.updateRatingSchedule
 })
