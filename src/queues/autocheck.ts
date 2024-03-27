@@ -8,6 +8,7 @@ import KodikApiService from '@services/KodikApiService';
 import { FollowTypes } from '@/ts/enums';
 import { logger } from "@/loggerConf"
 import { ShikimoriGraphAnime } from '@/ts/shikimori';
+import { config } from '@/config';
 
 const autoCheckQueue = new Queue("autocheck", {
     connection: {
@@ -16,18 +17,19 @@ const autoCheckQueue = new Queue("autocheck", {
     }
 });
 
+/**
+ * get titles ->
+ * sort titles as pairs with users ->
+ * separate follow types ->
+ * request all from shikimori ->
+ * request follows from ->
+ * request titles from kodik ->
+ * separate titles into array ->
+ * check each title ->
+ * send notification ->
+ * update title
+ */
 const worker = new Worker("autocheck", async (job: Job) => {
-    // get titles
-    // sort titles as pairs with users
-    // separate follow types
-    // request all from shikimori
-    // request follows from shikimori
-
-    // request titles from kodik
-    // separate titles into array
-    // check each title
-    // send notification
-    // update title
 
     logger.info("started a job");
     logger.info("updating translations");
@@ -167,5 +169,6 @@ const worker = new Worker("autocheck", async (job: Job) => {
 
 autoCheckQueue.add("autocheck", {}, {
     removeOnComplete: 10,
-    removeOnFail: 100
+    removeOnFail: 100,
+    repeat: config.autocheckSchedule
 })

@@ -7,6 +7,7 @@ import { ServerError, ShikimoriAnimeFull } from '@/ts';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { RequestStatuses } from '@/ts/enums';
 import { logger } from "@/loggerConf"
+import { config } from '@/config';
 
 const shikimoriCheckQueue = new Queue("shikimoriUpdate", {
     connection: {
@@ -63,5 +64,6 @@ const worker = new Worker("shikimoriUpdate", async (job: Job) => {
 
 shikimoriCheckQueue.add("shikimoriUpdate", {}, {
     removeOnComplete: 10,
-    removeOnFail: 100
+    removeOnFail: 100,
+    repeat: config.updateShikimoriSchedule
 })
