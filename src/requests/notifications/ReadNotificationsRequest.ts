@@ -1,4 +1,4 @@
-import { bodyArrayValidator, bodyIdValidator } from "@validators/BaseValidator";
+import { bodyArrayValidator, bodyIdValidator } from "@validators/BodyBaseValidator";
 import AuthRequest from "@requests/AuthRequest";
 
 export default class ReadNotificationsRequest extends AuthRequest {

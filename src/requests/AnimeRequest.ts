@@ -1,5 +1,5 @@
 import prisma from "@/db";
-import { paramIdValidator } from "@validators/BaseValidator";
+import { paramIdValidator } from "@validators/ParamBaseValidator";
 import OptionalRequest from "@requests/OptionalRequest";
 import { baseMsg } from "@/ts/messages"
 

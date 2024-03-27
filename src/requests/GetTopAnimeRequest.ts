@@ -1,6 +1,6 @@
 import { RequestAuthTypes } from "@/ts/enums";
 import Request from "@requests/Request";
-import { bodyBoolValidator } from "@validators/BaseValidator";
+import { bodyBoolValidator } from "@validators/BodyBaseValidator";
 import { baseMsg } from '@/ts/messages';
 
 export default class GetTopAnimeRequest extends Request {

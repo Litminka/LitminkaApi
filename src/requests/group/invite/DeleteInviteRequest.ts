@@ -1,6 +1,6 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupInviteValidator } from "@validators/GroupListValidator";
+import { body, param } from "express-validator";
 
 export default class DeleteInviteRequest extends AuthRequest {
 
@@ -19,6 +19,9 @@ export default class DeleteInviteRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupInviteValidator();
+        return [
+            param("groupId").isInt().bail().toInt(),
+            body("userId").isInt().bail().toInt(),
+        ]
     }
 }

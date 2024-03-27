@@ -1,5 +1,5 @@
+import { param } from "express-validator";
 import AuthRequest from "@requests/AuthRequest";
-import { GroupListIdValidator } from "@validators/GroupListValidator";
 
 
 export default class LeaveGroupRequest extends AuthRequest {
@@ -9,6 +9,8 @@ export default class LeaveGroupRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupListIdValidator();
+        return [
+            param("groupId").isInt().bail().toInt(),
+        ]
     }
 }

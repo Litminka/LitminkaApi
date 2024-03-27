@@ -1,7 +1,6 @@
+import { param } from "express-validator";
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupListIdValidator } from "@validators/GroupListValidator";
-import { DeleteFromWatchListValidator } from "@validators/WatchListValidator";
 
 export default class DeleteGroupAnimeListRequest extends AuthRequest {
 
@@ -20,6 +19,14 @@ export default class DeleteGroupAnimeListRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return [...GroupListIdValidator(), ...DeleteFromWatchListValidator()];
+        return [
+            param("groupId").isInt().bail().toInt(),
+            param("animeId").notEmpty().isInt().bail().toInt().custom(async value => {
+                const anime = await prisma.anime.findFirst({
+                    where: { id: value }
+                });
+                if (!anime) throw new Error("Anime doesn't exist");
+            })
+        ];
     }
 }

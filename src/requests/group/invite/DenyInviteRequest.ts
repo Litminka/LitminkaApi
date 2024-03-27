@@ -1,6 +1,6 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { GroupInviteActionValidator } from "@validators/GroupListValidator";
+import { body, param } from "express-validator";
 
 export default class DenyInviteRequest extends AuthRequest {
 
@@ -19,6 +19,9 @@ export default class DenyInviteRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GroupInviteActionValidator();
+        return [
+            param("inviteId").isInt().bail().toInt(),
+            body("modifyList").optional().isBoolean().bail().toBoolean(),
+        ];
     }
 }

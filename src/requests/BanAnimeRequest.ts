@@ -1,6 +1,6 @@
 import prisma from "@/db";
 import { Permissions, RequestAuthTypes } from "@/ts/enums";
-import { paramIdValidator } from "@/validators/BaseValidator";
+import { paramIdValidator } from "@/validators/ParamBaseValidator";
 import Request from "@requests/Request";
 import { baseMsg } from "@/ts/messages"
 

@@ -1,5 +1,5 @@
-import { bodySoftPeriodValidator } from "@/validators/PeriodValidator";
-import { bodyBoolValidator } from "@validators/BaseValidator";
+import { bodySoftPeriodValidator } from "@/validators/BodyPeriodValidator";
+import { bodyBoolValidator } from "@validators/BodyBaseValidator";
 import AuthRequest from "@requests/AuthRequest";
 
 export default class GetUserNotificationsRequest extends AuthRequest {

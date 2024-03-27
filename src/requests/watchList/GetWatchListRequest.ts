@@ -1,5 +1,4 @@
-
-import { GetFilteredWatchListValidator } from "@validators/WatchListValidator";
+import { body } from "express-validator";
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
 
@@ -20,6 +19,12 @@ export default class GetWatchListRequest extends AuthRequest {
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return GetFilteredWatchListValidator();
+        return [
+            body("statuses").optional().toArray(),
+            body("statuses.*").notEmpty().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
+            body("ratings").optional().toArray(),
+            body("ratings.*").notEmpty().bail().isInt({ min: 0, max: 10 }),
+            body("isFavorite").optional().notEmpty().bail().isBoolean().bail().toBoolean()
+        ]
     }
 }
