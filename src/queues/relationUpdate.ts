@@ -2,6 +2,7 @@
 import { Queue, Worker, Job } from 'bullmq';
 import { logger } from "@/loggerConf"
 import AnimeUpdateService from '@/services/anime/AnimeUpdateService';
+import { config } from '@/config';
 
 const shikimoriCheckQueue = new Queue("relationUpdate", {
     connection: {
@@ -39,5 +40,6 @@ const worker = new Worker("relationUpdate", async (job: Job) => {
 
 shikimoriCheckQueue.add("relationUpdate", {}, {
     removeOnComplete: 10,
-    removeOnFail: 100
+    removeOnFail: 100,
+    repeat: config.updateShikimoriSchedule
 })
