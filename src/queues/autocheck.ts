@@ -22,7 +22,8 @@ const autoCheckQueue = new Queue("autocheck", {
  * sort titles as pairs with users ->
  * separate follow types ->
  * request all from shikimori ->
- * request follows from ->
+ * request follows from shikimori
+ * 
  * request titles from kodik ->
  * separate titles into array ->
  * check each title ->
