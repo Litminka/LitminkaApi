@@ -6,11 +6,11 @@ import { baseMsg } from "@/ts/messages";
 export default class DeleteFromWatchListRequest extends AuthRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             paramIntValidator({
                 fieldName: "animeId",
                 message: baseMsg.valueNotInRange
@@ -21,6 +21,6 @@ export default class DeleteFromWatchListRequest extends AuthRequest {
                 });
                 if (!anime) throw new Error("Anime doesn't exist");
             }),
-        ]
+        ])
     }
 }

@@ -9,12 +9,12 @@ import { WatchListStatuses } from "@/ts/enums";
 export default class EditWatchListRequest extends AuthRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
+    protected rulesExtend(): void {
+        super.rulesExtend()
         const watchedRange: minmax = { min: 0 };
-        return [
+        this.rulesArr.push([
             paramIntValidator({
                 fieldName: "animeId",
                 message: baseMsg.valueNotInRange
@@ -48,6 +48,6 @@ export default class EditWatchListRequest extends AuthRequest {
                 fieldName: "isFavorite",
                 message: baseMsg.requiresBoolean
             })
-        ]
+        ])
     }
 }
