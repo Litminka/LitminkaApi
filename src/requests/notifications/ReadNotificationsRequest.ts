@@ -1,22 +1,22 @@
-import { bodyArrayValidator, bodyIdValidator } from "@validators/BodyBaseValidator";
+import { bodyArrayValidator, bodyIntValidator } from "@validators/BodyBaseValidator";
 import AuthRequest from "@requests/AuthRequest";
 
 export default class ReadNotificationsRequest extends AuthRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             bodyArrayValidator({
-                fieldName: 'id',
+                fieldName: "id",
                 message: ""
             }).optional(),
-            bodyIdValidator({
+            bodyIntValidator({
                 fieldName: "id.*",
                 message: ""
             })
-        ];
+        ])
     }
 }

@@ -1,18 +1,18 @@
-import { bodySoftPeriodValidator } from "@/validators/BodyPeriodValidator";
 import { bodyBoolValidator } from "@validators/BodyBaseValidator";
-import AuthRequest from "@requests/AuthRequest";
+import GetNotificationsRequest from "./GetNotificationsRequest";
 
-export default class GetUserNotificationsRequest extends AuthRequest {
+export default class GetUserNotificationsRequest extends GetNotificationsRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
-            ...
-            bodySoftPeriodValidator({ fieldName: 'period', message: "" }),
-            bodyBoolValidator({ fieldName: 'isRead', message: "" })
-        ];
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
+            bodyBoolValidator({
+                fieldName: "isRead",
+                message: ""
+            })
+        ])
     }
 }
