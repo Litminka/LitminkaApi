@@ -1,7 +1,7 @@
 import AuthRequest from "@requests/AuthRequest";
 import { minmax } from "@/ts";
 import prisma from "@/db";
-import { paramIdValidator } from "@/validators/ParamBaseValidator";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages";
 import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
 import { WatchListStatuses } from "@/ts/enums";
@@ -15,7 +15,7 @@ export default class EditWatchListRequest extends AuthRequest {
     protected rules(): any[] {
         const watchedRange: minmax = { min: 0 };
         return [
-            paramIdValidator({
+            paramIntValidator({
                 fieldName: "animeId",
                 message: baseMsg.valueNotInRange
             }).custom(async value => {

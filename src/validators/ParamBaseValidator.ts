@@ -5,10 +5,10 @@ import { BaseValidator } from "@validators/BaseValidator";
 /**
  * Validate required `number` param parameter.
  * @param fieldName Parameter name
- * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object. By default limits array length to 50 elements.
+ * @param typeParams Express [isInt()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object. By default limited to int32 positive numbers.
  * @param message Error message for validation exceptions. By default `message: string = "validation_failed"`
  */
-export const paramIdValidator = ({
+export const paramIntValidator = ({
     fieldName,
     typeParams = { min: 1, max: 2147483647 },
     message = baseMsg.validationFailed

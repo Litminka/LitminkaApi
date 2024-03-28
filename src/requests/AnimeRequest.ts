@@ -1,5 +1,5 @@
 import prisma from "@/db";
-import { paramIdValidator } from "@validators/ParamBaseValidator";
+import { paramIntValidator } from "@validators/ParamBaseValidator";
 import OptionalRequest from "@requests/OptionalRequest";
 import { baseMsg } from "@/ts/messages"
 
@@ -21,7 +21,7 @@ export default class AnimeRequest extends OptionalRequest {
      */
     protected rules(): any[] {
         return [
-            paramIdValidator({
+            paramIntValidator({
                 fieldName: "animeId",
                 message: baseMsg.valueNotInRange
             })

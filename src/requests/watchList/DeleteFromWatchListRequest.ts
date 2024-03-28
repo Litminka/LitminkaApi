@@ -1,6 +1,6 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { paramIdValidator } from "@/validators/ParamBaseValidator";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 import { baseMsg } from "@/ts/messages";
 
 export default class DeleteFromWatchListRequest extends AuthRequest {
@@ -11,7 +11,7 @@ export default class DeleteFromWatchListRequest extends AuthRequest {
      */
     protected rules(): any[] {
         return [
-            paramIdValidator({
+            paramIntValidator({
                 fieldName: "animeId",
                 message: baseMsg.valueNotInRange
             }).custom(async value => {
