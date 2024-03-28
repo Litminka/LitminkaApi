@@ -6,15 +6,15 @@ import prisma from "@/db";
 export default class RegisterUserRequest extends Request {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             body("login")
                 .notEmpty().bail().withMessage(registrationMsg.noLoginProvided)
                 .custom(async value => {
-                    const user = await prisma.user.findFirst({  where: { login: value } })
+                    const user = await prisma.user.findFirst({ where: { login: value } })
                     if (user) throw new Error(registrationMsg.loginTaken);
                     return true;
                 }),
@@ -30,10 +30,10 @@ export default class RegisterUserRequest extends Request {
             body("name").optional().isLength({ min: 4 }).withMessage(registrationMsg.nameTooShort),
             body("password").isLength({ min: 5 }).withMessage(registrationMsg.passwordTooShort),
             body("passwordConfirm").custom((value, { req }) => {
-                if (value !== req.body.password) 
+                if (value !== req.body.password)
                     throw new Error(registrationMsg.passwordsDontMatch);
                 return true;
             })
-        ];
+        ])
     }
 }

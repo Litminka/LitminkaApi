@@ -25,14 +25,6 @@ export default class Request {
     }
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
-     */
-    protected rules(): any[] {
-        return this.rulesArr
-    }
-
-    /**
      * append ValidationChain to class context
      */
     protected rulesExtend(): void {
@@ -115,7 +107,7 @@ export default class Request {
         return [
             ...this.getAuthMethod(),
             this.checkPermissions.bind(this),
-            ...(this.rules().flat()),
+            ...(this.rulesArr.flat()),
             checkExact([], { message: 'Additional fields are not allowed' }),
             validatorError
         ]

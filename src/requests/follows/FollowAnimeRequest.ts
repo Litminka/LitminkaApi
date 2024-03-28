@@ -23,14 +23,14 @@ export default class FollowAnimeRequest extends Request {
     }
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             param("animeId").bail().isInt().bail().toInt(),
             body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
             body("groupName").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail()
-        ];
+        ])
     }
 }

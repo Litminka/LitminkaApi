@@ -5,13 +5,13 @@ import { registrationMsg } from '@/ts/messages';
 export default class LoginUserRequest extends Request {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             body("login").notEmpty().withMessage(registrationMsg.noLoginProvided).isString(),
             body("password").notEmpty().withMessage(registrationMsg.noPasswordProvided).isString()
-        ];
+        ])
     }
 }

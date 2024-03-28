@@ -4,13 +4,13 @@ import { query } from "express-validator";
 export default class ShikimoriLinkRequest extends Request {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             query("token").notEmpty().isString().bail(),
             query("code").notEmpty().isString().bail()
-        ];
+        ])
     }
 }
