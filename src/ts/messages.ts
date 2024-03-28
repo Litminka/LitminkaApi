@@ -22,6 +22,9 @@ export const validation = {
             maxArraySizeExceeded: "max_array_size_exceeded",
             maxLengthExceeded: "max_length_exceeded",
             unknownType: "unknown_type",
+        },
+        session:{
+            invalidSessionToken: "invalid_session_token"
         }
     }
 }
@@ -29,3 +32,4 @@ export const validation = {
 export const baseMsg = validation.errors.base;
 export const searchMsg = validation.errors.search;
 export const registrationMsg = validation.errors.registration;
+export const sessionMsg = validation.errors.session;

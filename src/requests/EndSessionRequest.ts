@@ -1,3 +1,4 @@
+import { searchMsg, sessionMsg } from "@/ts/messages";
 import { bodyArrayValidator, bodyUUIDValidator } from "@/validators/BodyBaseValidator";
 import AuthRequest from "@requests/AuthRequest";
 
@@ -14,11 +15,11 @@ export default class EndSessionRequest extends AuthRequest {
             bodyArrayValidator({
                 fieldName: "sessions",
                 typeParams: { min: 1, max: 100 },
-                message: ""
+                message: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyUUIDValidator({
                 fieldName: "sessions.*",
-                message: "invalid_session_token"
+                message: sessionMsg.invalidSessionToken
             })
         ]
     }
