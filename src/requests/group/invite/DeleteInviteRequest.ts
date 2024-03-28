@@ -15,13 +15,13 @@ export default class DeleteInviteRequest extends AuthRequest {
     }
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             param("groupId").isInt().bail().toInt(),
             body("userId").isInt().bail().toInt(),
-        ]
+        ])
     }
 }

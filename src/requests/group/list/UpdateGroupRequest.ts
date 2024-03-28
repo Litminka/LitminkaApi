@@ -15,14 +15,14 @@ export default class UpdateGroupRequest extends AuthRequest {
     }
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             param("groupId").isInt().bail().toInt(),
             body("name").optional().notEmpty().bail().isString().bail(),
             body("description").optional().notEmpty().bail().isString().bail(),
-        ];
+        ])
     }
 }
