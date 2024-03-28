@@ -82,6 +82,7 @@ model Anime {
   status                 String
   rpaRating              String?
   mediaType              String?
+  season                 String?
   maxEpisodes            Int
   currentEpisodes        Int
   firstEpisodeAired      DateTime?
