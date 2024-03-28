@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { wrap } from '@/middleware/errorHandler';
-import AnimeRequest from '@requests/AnimeRequest';
-import GetTopAnimeRequest from '@/requests/GetTopAnimeRequest';
+import AnimeRequest from '@/requests/anime/AnimeRequest';
+import GetTopAnimeRequest from '@/requests/anime/TopAnimeRequest';
 import AnimeController from '@controllers/anime/AnimeController';
-import AnimeSearchRequest from '@/requests/AnimeSearchRequest';
+import AnimeSearchRequest from '@/requests/anime/SearchAnimeRequest';
 import AnimeSearchController from '@/controllers/anime/AnimeSearchController';
 const router = Router();
 

@@ -1,7 +1,7 @@
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
 
-export default class GetShikimoriLinkRequest extends AuthRequest {
+export default class UnlinkShikimoriRequest extends AuthRequest {
 
     /**
      *  if authType is not None 

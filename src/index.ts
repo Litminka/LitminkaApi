@@ -15,7 +15,7 @@ import { shikimoriRouter } from '@routes/ShikimoriRouter';
 import { tokenRouter } from '@routes/TokenRouter';
 import { watchListRouter } from '@routes/WatchListRouter';
 import { followRouter } from '@routes/FollowRouter';
-import { animeRouter } from '@routes/anime/AnimeRouter';
+import { animeRouter } from '@/routes/AnimeRouter';
 import { groupListRouter } from '@routes/GroupListRouter';
 import { notificationRouter } from '@routes/NotificationRouter';
 import { adminRouter } from './routes/AdminRouter';

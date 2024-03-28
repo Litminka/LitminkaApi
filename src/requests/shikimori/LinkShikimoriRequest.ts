@@ -1,7 +1,7 @@
 import Request from "@requests/Request";
 import { query } from "express-validator";
 
-export default class ShikimoriLinkRequest extends Request {
+export default class LinkShikimoriRequest extends Request {
 
     /**
      * append ValidationChain to class context

@@ -8,8 +8,7 @@ import CreateGroupRequest from "@requests/group/list/CreateGroupRequest";
 import DeleteGroupRequest from "@requests/group/list/DeleteGroupRequest";
 import UpdateGroupRequest from "@requests/group/list/UpdateGroupRequest";
 import OwnedGroupRequest from "@requests/group/list/OwnedGroupsRequest";
-import GroupMemberRequest from "@requests/group/member/GroupMemberRequest";
-import KickGroupMemberRequest from "@requests/group/member/KickMemberRequest";
+import { BaseGroupMemberRequest, KickGroupMemberRequest } from "@/requests/group/GroupMemberRequests";
 import DeleteInviteRequest from "@requests/group/invite/DeleteInviteRequest";
 import DenyInviteRequest from "@requests/group/invite/DenyInviteRequest";
 import AcceptInviteRequest from "@requests/group/invite/AcceptInviteRequest";
@@ -36,9 +35,9 @@ groupIdRouter.patch('/', new UpdateGroupRequest().send(), wrap(GroupListControll
 groupIdRouter.post('/invite', new SendInviteRequest().send(), wrap(GroupInviteController.inviteUser));
 groupIdRouter.delete('/invite', new DeleteInviteRequest().send(), wrap(GroupInviteController.deleteInvite));
 
-groupIdRouter.get('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.getMembers));
-groupIdRouter.patch('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.updateState));
-groupIdRouter.delete('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.leaveGroup))
+groupIdRouter.get('/members', new BaseGroupMemberRequest().send(), wrap(GroupMemberController.getMembers));
+groupIdRouter.patch('/members', new BaseGroupMemberRequest().send(), wrap(GroupMemberController.updateState));
+groupIdRouter.delete('/members', new BaseGroupMemberRequest().send(), wrap(GroupMemberController.leaveGroup))
 groupIdRouter.delete('/members/kick', new KickGroupMemberRequest().send(), wrap(GroupMemberController.kickUser))
 
 const groupListRouter = Router({ mergeParams: true });
