@@ -12,7 +12,6 @@ const worker = new Worker("importWatchList", async (job: Job) => {
     }
     const finished = Date.now();
     logger.info(`Finished in: ${(finished - started) / 1000} seconds`)
-    console.log('я обосрався')
 }, {
     connection: {
         host: process.env.REDIS_HOST,
