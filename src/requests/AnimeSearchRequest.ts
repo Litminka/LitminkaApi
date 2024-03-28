@@ -15,11 +15,11 @@ export default class SearchAnimeRequest extends Request {
     protected authType = RequestAuthTypes.None;
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             bodyStringValidator({
                 fieldName: "name",
                 message: searchMsg.maxLengthExceeded
@@ -105,6 +105,6 @@ export default class SearchAnimeRequest extends Request {
                 typeParams: { min: 1, max: 125 },
                 message: { msg: baseMsg.valueNotInRange, range: [1, 125] }
             }),
-        ]
+        ])
     }
 }

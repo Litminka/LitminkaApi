@@ -16,15 +16,15 @@ export default class AnimeRequest extends OptionalRequest {
     }
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             paramIntValidator({
                 fieldName: "animeId",
                 message: baseMsg.valueNotInRange
             })
-        ];
+        ])
     }
 }
