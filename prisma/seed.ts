@@ -7,6 +7,8 @@ import { Encrypt } from "@/helper/encrypt";
 import capitalize from "@/helper/capitalize";
 import KodikApiService from "@services/KodikApiService";
 import { KodikGenresRequest } from '@/ts/kodik';
+import AnimeUpdateService from '@/services/anime/AnimeUpdateService';
+import AutoCheckService from '@/services/AutoCheckService';
 
 async function main() {
     const adminRole = await prisma.role.upsert({
@@ -105,9 +107,11 @@ async function main() {
             }
         },
     });
+
     console.dir(admin);
     console.dir(user);
     console.dir(botUser);
+
     const kodik = new KodikApiService();
     const genres = await kodik.getGenres();
     // Test new logger
@@ -124,6 +128,11 @@ async function main() {
             update: {}
         });
     });
+    const updateService = new AnimeUpdateService();
+    const autoCheckService = new AutoCheckService();
+    await autoCheckService.updateGroups();
+    await updateService.seedAnime();
+
     // Create test data
     switch (process.env.CREATE_TEST) {
         case '1':

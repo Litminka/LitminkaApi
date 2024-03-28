@@ -241,4 +241,15 @@ export default class ShikimoriApiService implements iShikimoriApi {
             }
         });
     }
+
+    public async getGraphAnimeByPage(page: number): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        const query = getAnimeBySeasonQuery;
+        return this.requestMaker(`/graphql`, "POST", false, {
+            operationName: null,
+            query,
+            variables: {
+                page
+            }
+        });
+    }
 }
