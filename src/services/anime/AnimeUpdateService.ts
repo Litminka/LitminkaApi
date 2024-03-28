@@ -267,7 +267,6 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 const rating = (anime._avg.rating! * ratingsCount +
                     avgByAll._avg.shikimoriRating! * config.ratingMinVotes
                 ) / (ratingsCount + config.ratingMinVotes)
-                console.log(anime.animeId, rating.toFixed(2))
                 await prisma.anime.update({
                     where: { id: anime.animeId },
                     data: { rating: Number(rating.toFixed(2)) }
@@ -349,8 +348,6 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     await updateService.createShikimoriGraphAnime(create, kodikMap.get(Number(create.id)));
                     checkMap.add(Number(create.id));
                 }
-
-                console.log(shikimori.id);
                 await prisma.anime.update({
                     where: {
                         shikimoriId: Number(shikimori.id),
@@ -364,5 +361,61 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             await prisma.animeRelation.createFromShikimoriMap(shikimoriMap);
             page++;
         } while (length > 0);
+    }
+
+    async seedAnime() {
+
+        let length = 0;
+        let page = 1;
+
+        const shikimoriApi = new ShikimoriApiService();
+        const kodikApi = new KodikApiService();
+
+        do {
+            logger.info(`seeding anime batch: ${page}`)
+            const animeRequest = await shikimoriApi.getGraphAnimeByPage(page);
+            const anime = animeRequest.data.animes;
+
+            const animeMap = new Map<number, ShikimoriGraphAnime>();
+
+            for (const single of anime) {
+                animeMap.set(Number(single.id), single);
+            }
+
+            const dbAnime = await prisma.anime.findMany({
+                where: {
+                    shikimoriId: {
+                        in: [...animeMap.keys()]
+                    }
+                }
+            });
+
+            const dbAnimeIds = dbAnime.map(single => single.shikimoriId);
+
+            const addIds = [...animeMap.keys()].filter(x => !dbAnimeIds.includes(x));
+
+            const createAnime: ShikimoriGraphAnime[] = [];
+
+            for (const id of addIds) {
+                createAnime.push(animeMap.get(id)!);
+            }
+
+            const kodikAnime = await kodikApi.getBatchAnime(addIds);
+            const kodikMap = new Map<number, KodikAnime>();
+
+            for (const kodik of kodikAnime) {
+                kodikMap.set(Number(kodik.shikimori_id), kodik);
+            }
+
+            for (const create of createAnime) {
+                await this.createShikimoriGraphAnime(create, kodikMap.get(Number(create.id)));
+            }
+
+            logger.info(`Batch ${page} seeded, added ${createAnime.length} titles`);
+
+            length = anime.length;
+            page++;
+        } while (length > 0);
+
     }
 }
