@@ -8,27 +8,24 @@ import CreateGroupRequest from "@requests/group/list/CreateGroupRequest";
 import DeleteGroupRequest from "@requests/group/list/DeleteGroupRequest";
 import UpdateGroupRequest from "@requests/group/list/UpdateGroupRequest";
 import OwnedGroupRequest from "@requests/group/list/OwnedGroupsRequest";
-import GetMemberGroupRequest from "@requests/group/member/GetMemberGroupRequest";
-import GetGroupMembersRequest from "@requests/group/member/GetGroupMembersRequest";
-import LeaveGroupRequest from "@requests/group/member/LeaveGroupRequest";
-import UpdateMemberStateRequest from "@requests/group/member/UpdateMemberStateRequest";
-import KickMemberRequest from "@requests/group/member/KickMemberRequest";
+import GroupMemberRequest from "@requests/group/member/GroupMemberRequest";
+import KickGroupMemberRequest from "@requests/group/member/KickMemberRequest";
 import DeleteInviteRequest from "@requests/group/invite/DeleteInviteRequest";
 import DenyInviteRequest from "@requests/group/invite/DenyInviteRequest";
 import AcceptInviteRequest from "@requests/group/invite/AcceptInviteRequest";
 import SendInviteRequest from "@requests/group/invite/SendInviteRequest";
-import GetInvitesRequest from "@requests/group/invite/GetInvitesRequest";
 import GetGroupAnimeListRequest from "@requests/group/animeList/GetGroupAnimeListRequest";
 import AddGroupAnimeListRequest from "@requests/group/animeList/AddGroupAnimeListRequest";
 import UpdateGroupAnimeListRequest from "@requests/group/animeList/UpdateGroupAnimeListRequest";
 import DeleteGroupAnimeListRequest from "@requests/group/animeList/DeleteGroupAnimeListRequest";
+import AuthRequest from "@/requests/AuthRequest";
 
 const router = Router();
 
 router.post('/', new CreateGroupRequest().send(), wrap(GroupListController.createGroup));
 router.get('/owned', new OwnedGroupRequest().send(), wrap(GroupListController.getOwnedGroups));
 
-router.get('/member', new GetMemberGroupRequest().send(), wrap(GroupMemberController.getMemberGroup));
+router.get('/member', new AuthRequest().send(), wrap(GroupMemberController.getMemberGroup));
 
 const groupIdRouter = Router({ mergeParams: true });
 router.use('/:groupId', groupIdRouter);
@@ -39,10 +36,10 @@ groupIdRouter.patch('/', new UpdateGroupRequest().send(), wrap(GroupListControll
 groupIdRouter.post('/invite', new SendInviteRequest().send(), wrap(GroupInviteController.inviteUser));
 groupIdRouter.delete('/invite', new DeleteInviteRequest().send(), wrap(GroupInviteController.deleteInvite));
 
-groupIdRouter.get('/members', new GetGroupMembersRequest().send(), wrap(GroupMemberController.getMembers));
-groupIdRouter.patch('/members', new UpdateMemberStateRequest().send(), wrap(GroupMemberController.updateState));
-groupIdRouter.delete('/members', new LeaveGroupRequest().send(), wrap(GroupMemberController.leaveGroup))
-groupIdRouter.delete('/members/kick', new KickMemberRequest().send(), wrap(GroupMemberController.kickUser))
+groupIdRouter.get('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.getMembers));
+groupIdRouter.patch('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.updateState));
+groupIdRouter.delete('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.leaveGroup))
+groupIdRouter.delete('/members/kick', new KickGroupMemberRequest().send(), wrap(GroupMemberController.kickUser))
 
 const groupListRouter = Router({ mergeParams: true });
 groupIdRouter.use('/list', groupListRouter);
@@ -55,7 +52,7 @@ groupListRouter.delete('/:animeId', new DeleteGroupAnimeListRequest().send(), wr
 const invitesRouter = Router({ mergeParams: true });
 router.use('/invites', invitesRouter);
 
-invitesRouter.get('', new GetInvitesRequest().send(), wrap(GroupInviteController.getInvites));
+invitesRouter.get('', new AuthRequest().send(), wrap(GroupInviteController.getInvites));
 invitesRouter.post('/:inviteId/accept', new AcceptInviteRequest().send(), wrap(GroupInviteController.acceptInvite));
 invitesRouter.delete('/:inviteId/deny', new DenyInviteRequest().send(), wrap(GroupInviteController.denyInvite));
 
