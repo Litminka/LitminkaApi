@@ -1,6 +1,5 @@
 import AuthRequest from "@requests/AuthRequest";
 import { minmax } from "@/ts";
-import { body, param } from "express-validator";
 import prisma from "@/db";
 import { paramIdValidator } from "@/validators/ParamBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages";
