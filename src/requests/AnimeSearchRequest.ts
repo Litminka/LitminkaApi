@@ -1,7 +1,7 @@
 import { RequestAuthTypes } from "@/ts/enums";
 import Request from "@requests/Request";
 import { bodySoftPeriodValidator } from "@/validators/BodyPeriodValidator";
-import { bodyArrayValidator, bodyIdValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
+import { bodyArrayValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { queryIntValidator } from "@/validators/QueryBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages"
 import { AnimeStatuses, AnimeSeasons, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
@@ -73,7 +73,7 @@ export default class SearchAnimeRequest extends Request {
                 fieldName: "includeGenres",
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyIdValidator({
+            bodyIntValidator({
                 fieldName: "includeGenres.*",
                 message: baseMsg.valueNotInRange
             }),
@@ -82,7 +82,7 @@ export default class SearchAnimeRequest extends Request {
                 fieldName: "excludeGenres",
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyIdValidator({
+            bodyIntValidator({
                 fieldName: "excludeGenres.*",
                 message: baseMsg.valueNotInRange
             }),
