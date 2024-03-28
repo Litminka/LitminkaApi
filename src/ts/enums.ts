@@ -123,12 +123,3 @@ export enum Permissions {
     SyncShikimori = "sync_shikimori",
     ApiServiceBot = "api_service_bot",
 }
-
-export enum WatchListStatuses{
-    Planned ="planned",
-    Watching = "watching", 
-    Rewatching = "rewatching",
-    Completed = "completed", 
-    OnHold = "on_hold",
-    Dropped = "dropped"
-}

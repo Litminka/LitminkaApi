@@ -42,7 +42,7 @@ export const bodyStringValidator = ({
  * @param typeParams Express [isInt()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object. By default limited to int32 positive numbers.
  * @param message Error message for validation exceptions.
  */
-export const bodyIntValidator = ({
+export const bodyIdValidator = ({
     fieldName,
     typeParams = { min: 1, max: 2147483647 },
     message = baseMsg.validationFailed
