@@ -77,7 +77,7 @@ export const getAnimeBySeasonQuery = `query($season: SeasonString, $page: Int) {
     }
 }`;
 
-export const getAnimeByPage = `query($page: Int) { 
+export const getAnimeByPageQuery = `query($page: Int) { 
     animes(page: $page, limit: 50) {
         id 
         name 
