@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import AnimeController from '@controllers/anime/AnimeController';
 import { wrap } from '@/middleware/errorHandler';
+import AnimeController from '@controllers/anime/AnimeController';
 import BanAnimeRequest from '@/requests/anime/BanAnimeRequest';
 const router = Router();
 

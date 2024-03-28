@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { wrap } from '@/middleware/errorHandler';
-import AnimeRequest from '@/requests/anime/AnimeRequest';
-import GetTopAnimeRequest from '@/requests/anime/TopAnimeRequest';
 import AnimeController from '@controllers/anime/AnimeController';
-import AnimeSearchRequest from '@/requests/anime/SearchAnimeRequest';
 import AnimeSearchController from '@/controllers/anime/AnimeSearchController';
+import GetTopAnimeRequest from '@/requests/anime/TopAnimeRequest';
+import AnimeSearchRequest from '@/requests/anime/SearchAnimeRequest';
+import AnimeRequest from '@/requests/anime/AnimeRequest';
 const router = Router();
 
 router.get("/top", new GetTopAnimeRequest().send(), wrap(AnimeController.getTopAnime));
