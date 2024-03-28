@@ -172,8 +172,6 @@ export default class WatchListService {
         }
         await prisma.animeRelation.createFromShikimoriMap(writeRelations);
         await prisma.animeList.createUserWatchListByMap(user.id, shikimoriDBAnimeMap, watchList);
-
-        console.log(watchList.length, shikimoriMap.size, kodikMap.size);
     }
 
     public static async addAnimeToListWithParams(user: User, animeId: number, addingParameters: AddToList) {

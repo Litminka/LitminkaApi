@@ -161,6 +161,7 @@ export default class AutoCheckService {
 
 
     async updateGroups() {
+        logger.info('began updating groups')
         const kodikApi = new KodikApiService();
         const translations = await kodikApi.getTranslationGroups();
         for (const translation of translations) {
@@ -181,5 +182,6 @@ export default class AutoCheckService {
             })
 
         }
+        logger.info('finished updating groups')
     }
 }

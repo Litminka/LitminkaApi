@@ -230,10 +230,6 @@ const extention = Prisma.defineExtension({
 
                 const hasTranslations = translations !== undefined;
 
-                if (!shikimori.poster) {
-                    console.log(shikimori.id);
-                }
-
                 return await prisma.anime.create({
                     data: {
                         slug,
