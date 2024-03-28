@@ -1,6 +1,9 @@
 import { body } from "express-validator";
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
+import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
+import { baseMsg, searchMsg } from "@/ts/messages";
+import { WatchListStatuses } from "@/ts/enums";
 
 export default class GetWatchListRequest extends AuthRequest {
 
@@ -20,11 +23,29 @@ export default class GetWatchListRequest extends AuthRequest {
      */
     protected rules(): any[] {
         return [
-            body("statuses").optional().toArray(),
-            body("statuses.*").notEmpty().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
-            body("ratings").optional().toArray(),
-            body("ratings.*").notEmpty().bail().isInt({ min: 0, max: 10 }),
-            body("isFavorite").optional().notEmpty().bail().isBoolean().bail().toBoolean()
+            bodyArrayValidator({
+                fieldName: "statuses",
+                message: searchMsg.maxArraySizeExceeded
+            }).optional(),
+            bodyStringValidator({
+                fieldName: "statuses.*",
+                message: searchMsg.maxLengthExceeded
+            }).isIn(Object.values(WatchListStatuses)),
+            
+            bodyArrayValidator({
+                fieldName: "ratings",
+                message: searchMsg.maxArraySizeExceeded
+            }).optional(),
+            bodyIntValidator({
+                fieldName: "ratings.*",
+                typeParams: { min: 0, max: 10 },
+                message: baseMsg.valueNotInRange
+            }),
+
+            bodyBoolValidator({
+                fieldName: "isFavorite",
+                message: baseMsg.requiresBoolean
+            })
         ]
     }
 }
