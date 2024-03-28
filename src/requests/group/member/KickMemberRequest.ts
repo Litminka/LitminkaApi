@@ -1,8 +1,8 @@
-import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { body, param } from "express-validator";
+import { body } from "express-validator";
+import GroupMemberRequest from "./GroupMemberRequest";
 
-export default class KickMemberRequest extends AuthRequest {
+export default class KickGroupMemberRequest extends GroupMemberRequest {
 
     /**
      *  if authType is not None 
@@ -15,13 +15,12 @@ export default class KickMemberRequest extends AuthRequest {
     }
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
-            param("groupId").isInt().bail().toInt(),
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             body("userId").isInt().bail().toInt(),
-        ];
+        ])
     }
 }
