@@ -18,11 +18,11 @@ export default class GetWatchListRequest extends AuthRequest {
     }
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             bodyArrayValidator({
                 fieldName: "statuses",
                 message: searchMsg.maxArraySizeExceeded
@@ -31,7 +31,7 @@ export default class GetWatchListRequest extends AuthRequest {
                 fieldName: "statuses.*",
                 message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(WatchListStatuses)),
-            
+
             bodyArrayValidator({
                 fieldName: "ratings",
                 message: searchMsg.maxArraySizeExceeded
@@ -46,6 +46,6 @@ export default class GetWatchListRequest extends AuthRequest {
                 fieldName: "isFavorite",
                 message: baseMsg.requiresBoolean
             })
-        ]
+        ])
     }
 }

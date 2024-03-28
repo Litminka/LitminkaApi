@@ -5,13 +5,12 @@ import AuthRequest from "@requests/AuthRequest";
 
 export default class EndSessionRequest extends AuthRequest {
 
-
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             bodyArrayValidator({
                 fieldName: "sessions",
                 typeParams: { min: 1, max: 100 },
@@ -21,6 +20,6 @@ export default class EndSessionRequest extends AuthRequest {
                 fieldName: "sessions.*",
                 message: sessionMsg.invalidSessionToken
             })
-        ]
+        ])
     }
 }

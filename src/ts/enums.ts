@@ -40,6 +40,15 @@ export enum NotifyStatuses {
     FinalEpisodeReleased = "final_episode_released"
 }
 
+export enum AnimeListStatuses {
+    planned = "planned",
+    watching = "watching",
+    rewatching = "rewatching",
+    completed = "completed",
+    on_hold = "on_hold",
+    dropped = "dropped"
+}
+
 export enum RequestStatuses {
     //Information responses
     Continue = 100,

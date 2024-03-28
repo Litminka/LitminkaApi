@@ -11,15 +11,15 @@ export default class GetTopAnimeRequest extends Request {
     protected authType = RequestAuthTypes.None;
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * append ValidationChain to class context
      */
-    protected rules(): any[] {
-        return [
+    protected rulesExtend(): void {
+        super.rulesExtend()
+        this.rulesArr.push([
             bodyBoolValidator({
                 fieldName: "shikimori",
                 message: baseMsg.requiresBoolean
             }).optional()
-        ]
+        ])
     }
 }

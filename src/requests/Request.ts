@@ -4,10 +4,14 @@ import { validatorError } from "@/middleware/validatorError";
 import { auth } from "@/middleware/auth";
 import { optionalAuth } from "@/middleware/optionalAuth";
 import { RequestWithAuth, RequestWithUserPermissions } from "@/ts";
-import { checkExact } from "express-validator";
+import { checkExact, ValidationChain } from "express-validator";
 export default class Request {
-
     protected authType: RequestAuthTypes;
+
+    /**
+     * define rule set
+     */
+    protected rulesArr: any[];
 
     /**
      * define permissons for this request
@@ -17,13 +21,22 @@ export default class Request {
     constructor() {
         this.authType = RequestAuthTypes.None;
         this.permissions = []
+        this.rulesArr = []
     }
+
     /**
      * define validation rules for this request
      * @returns ValidationChain
      */
     protected rules(): any[] {
-        return []
+        return this.rulesArr
+    }
+
+    /**
+     * append ValidationChain to class context
+     */
+    protected rulesExtend(): void {
+        this.rulesArr.push([])
     }
 
     /**
