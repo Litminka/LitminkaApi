@@ -104,6 +104,7 @@ export default class Request {
      * return final set of middlewares
      */
     public send() {
+        this.rulesExtend();
         return [
             ...this.getAuthMethod(),
             this.checkPermissions.bind(this),
