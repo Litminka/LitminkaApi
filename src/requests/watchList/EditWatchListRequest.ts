@@ -46,7 +46,7 @@ export default class EditWatchListRequest extends AuthRequest {
 
             bodyBoolValidator({
                 fieldName: "isFavorite",
-                message: baseMsg.requiresBoolean
+                message: baseMsg.valueMustBeBool
             })
         ])
     }

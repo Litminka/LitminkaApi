@@ -13,21 +13,21 @@ export const validation = {
         },
         base: {
             valueNotInRange: "value_not_in_range",
-            requiresBoolean: "requires_boolean",
             validationFailed: "validation_failed",
             valueIsNotProvided: "value_is_not_provided",
             valueMustBeInt: "value_must_be_int",
             valueMustBeBool: "value_must_be_bool",
             valueMustBeString: "value_must_be_string",
             valueMustBeUUID: "value_must_be_UUID",
-            valueMustBeAnArray: "value_must_be_an_array"
+            valueMustBeAnArray: "value_must_be_an_array",
+            valueMustBeDate: "value_must_be_date"
         },
         search: {
             maxArraySizeExceeded: "max_array_size_exceeded",
             maxLengthExceeded: "max_length_exceeded",
             unknownType: "unknown_type",
         },
-        session:{
+        session: {
             invalidSessionToken: "invalid_session_token"
         }
     }
