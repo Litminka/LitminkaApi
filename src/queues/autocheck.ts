@@ -35,7 +35,6 @@ const worker = new Worker("autocheck", async (job: Job) => {
     logger.info("started a job");
     logger.info("updating translations");
     const autoCheckService = new AutoCheckService();
-    await autoCheckService.updateGroups();
     const started = Date.now();
     const follows = await prisma.follow.findMany({
         where: {

@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList, watchListStatus, ListFilters } from "@/ts/index";
 import WatchListService from "@services/WatchListService";
-import { importWatchListQueue } from "@/queues/watchListImporter";
 
 export default class WatchListController {
     public static async getWatchList(req: RequestWithUserAnimeList, res: Response): Promise<Object> {
@@ -18,13 +17,10 @@ export default class WatchListController {
     public static async importList(req: RequestUserWithIntegration, res: Response): Promise<any> {
         const user = req.auth.user;
 
-        importWatchListQueue.add("importWatchList", { id: user.id }, {
-            removeOnComplete: 10,
-            removeOnFail: 100
-        })
+        WatchListService.startImport(user);
 
         return res.json({
-            message: 'List imported successfully'
+            message: 'started_list_import'
         });
     }
 

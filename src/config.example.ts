@@ -16,6 +16,6 @@ export const config: config = {
     ratingMinVotes: 5,
     createTestData: true,
     updateRatingSchedule: { pattern: "*/30 * * * *" },
-    updateShikimoriSchedule: { pattern: "* * */1 * *" },
-    autocheckSchedule: { pattern: "* */1 * * *" }
+    updateShikimoriSchedule: { pattern: "0 2 */1 * *" },
+    autocheckSchedule: { pattern: "0 */1 * * *" }
 }
