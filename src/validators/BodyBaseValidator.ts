@@ -80,9 +80,7 @@ export const bodyBoolValidator = ({
         .withMessage(message)
 };
 
-interface bodyUUIDValidator extends BaseValidator {
-    typeParams?: never
-}
+interface bodyUUIDValidator extends Omit<BaseValidator, "typeParams"> { }
 
 /**
  * Validate required UUID body parameter

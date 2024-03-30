@@ -15,7 +15,7 @@ export declare type AdditionalValidationError = {
 
 export declare type ValidatorErrorMessage = {
     msg: string,
-    args: any
+    [key: string]: any
 } | ErrorMessage
 
 export interface RequestWithBot extends Request {

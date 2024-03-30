@@ -96,14 +96,14 @@ export default class SearchAnimeRequest extends Request {
                 fieldName: "page",
                 defValue: 1,
                 typeParams: { min: 1 },
-                message: { msg: baseMsg.valueNotInRange, range: [1, null] }
+                message: baseMsg.valueNotInRange
             }),
 
             queryIntValidator({
                 fieldName: "pageLimit",
                 defValue: 25,
                 typeParams: { min: 1, max: 125 },
-                message: { msg: baseMsg.valueNotInRange, range: [1, 125] }
+                message: baseMsg.valueNotInRange
             }),
         ])
     }
