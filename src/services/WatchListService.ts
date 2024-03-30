@@ -1,7 +1,7 @@
 import BadRequestError from "@errors/clienterrors/BadRequestError";
 import NotFoundError from "@errors/clienterrors/NotFoundError";
 import groupArrSplice from "@/helper/groupsplice";
-import { AddToList, ListFilters, ShikimoriAnime, ShikimoriWatchList}  from "@/ts";
+import { AddToList, ListFilters, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "@/ts";
 import AnimeUpdateService from "@services/anime/AnimeUpdateService";
 import KodikApiService from "@services/KodikApiService";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
@@ -10,6 +10,7 @@ import { KodikAnime } from "@/ts/kodik";
 import { logger } from "@/loggerConf";
 import prisma from "@/db";
 import { User, Anime } from "@prisma/client";
+import { importWatchListQueue } from "@/queues/watchListImporter";
 
 export default class WatchListService {
 
@@ -51,7 +52,6 @@ export default class WatchListService {
         watchList = watchList.filter(list => allIds.has(list.target_id));
 
         const animeUpdateService = new AnimeUpdateService(shikimoriapi, user);
-        await animeUpdateService.updateGroups(result);
         let animeInList = await animeUpdateService.updateAnimeKodik(result);
         const shikimoriUpdate = await animeUpdateService.updateAnimeShikimori(noResultAnime);
 
@@ -66,6 +66,15 @@ export default class WatchListService {
             if (count > 0) watchList.splice(i--, 1);
         }
         await prisma.animeList.createUserWatchList(user.id, animeInList, watchList);
+    }
+
+    public static startImport(user: UserWithIntegration) {
+        if (!user.integration || !user.integration.shikimoriId) throw new BadRequestError("no_shikimori_integration");
+
+        importWatchListQueue.add("importWatchList", { id: user.id }, {
+            removeOnComplete: 10,
+            removeOnFail: 100
+        })
     }
 
     public static async importListV2(id: number) {
@@ -194,7 +203,7 @@ export default class WatchListService {
         return await prisma.animeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 
-    public static async getFilteredWatchList(user: User, filters: ListFilters){
+    public static async getFilteredWatchList(user: User, filters: ListFilters) {
         return await prisma.animeList.findFilteredWatchList(user.id, filters);
     }
 }

@@ -7,6 +7,8 @@ import prisma from "@/db";
 import { cyrillicSlug } from "@/helper/cyrillic-slug";
 import { ShikimoriAnime, ShikimoriAnimeFull } from "@/ts";
 import { ShikimoriGraphAnime } from "@/ts/shikimori";
+import dayjs from "dayjs";
+import { getSeasonNameByDate } from "@/helper/animeseason";
 
 const extention = Prisma.defineExtension({
     name: "AnimeModel",
@@ -178,7 +180,6 @@ const extention = Prisma.defineExtension({
 
                 shikimori.licensors = shikimori.licensors.filter(licensor => !config.ignoreLicensors.includes(licensor));
 
-                // TODO: Too many titles are getting banned
                 let isBanned = shikimori.licensors.length > 0;
                 if (anime.banned) {
                     isBanned = true;
@@ -187,6 +188,12 @@ const extention = Prisma.defineExtension({
                 let isCensored = shikimori.isCensored;
                 if (anime.censored) {
                     isCensored = true;
+                }
+
+                let season = shikimori.season === "?" ? null : shikimori.season;
+                if ((season === null) && shikimori.airedOn.date !== null) {
+                    const date = dayjs(shikimori.airedOn.date);
+                    if (date.startOf('year') !== date) season = getSeasonNameByDate(date.toDate());
                 }
 
                 return await prisma.anime.update({
@@ -221,8 +228,7 @@ const extention = Prisma.defineExtension({
             async createFromShikimoriGraph(shikimori: ShikimoriGraphAnime, hasRelation: boolean = false, kodikAnime?: KodikAnime) {
                 let name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
-                // TODO: Too many titles are getting banned
-
+                
                 shikimori.licensors = shikimori.licensors.filter(licensor => !config.ignoreLicensors.includes(licensor));
                 let isBanned = shikimori.licensors.length > 0;
                 let isCensored = shikimori.isCensored;
@@ -230,6 +236,12 @@ const extention = Prisma.defineExtension({
                 const translations = kodikAnime?.translations;
 
                 const hasTranslations = translations !== undefined;
+
+                let season = shikimori.season;
+                if ((season === null || season === "?") && shikimori.airedOn.date !== null) {
+                    const date = dayjs(shikimori.airedOn.date);
+                    if (date.startOf('year') !== date) season = getSeasonNameByDate(date.toDate());
+                }
 
                 return await prisma.anime.create({
                     data: {
@@ -273,6 +285,7 @@ const extention = Prisma.defineExtension({
                                     return {
                                         currentEpisodes: translation.episodes_count,
                                         groupId: translation.id,
+                                        link: translation.link
                                     }
                                 })
                             }

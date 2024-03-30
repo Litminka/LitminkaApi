@@ -100,3 +100,10 @@ export function getSeasonEnd(date: Date, season: string) {
     d = d.endOf("month")
     return d;
 }
+
+export function getSeasonNameByDate(date: Date) {
+    const d = dayjs(date);
+    const year = d.year();
+    const season = getSeason(date);
+    return `${season}_${year}`;
+}
