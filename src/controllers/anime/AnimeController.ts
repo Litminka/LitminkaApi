@@ -2,6 +2,8 @@ import { Response, Request } from "express";
 import { RequestUserWithIntegration, RequestWithUser } from "@/ts/index";
 import AnimeService from "@services/anime/AnimeService";
 import { RequestStatuses } from "@/ts/enums";
+import AnimeSearchFilter, { IAnimeFilterQuery, IAnimeFilters } from "@/services/filters/AnimeSearchFilter";
+import { matchedData } from "express-validator";
 
 
 export default class AnimeController {
@@ -10,6 +12,17 @@ export default class AnimeController {
         const animeId: number = req.params.animeId as unknown as number;
 
         const anime = await AnimeService.getSingleAnime(animeId, user);
+
+        return res.status(RequestStatuses.OK).json({
+            body: anime
+        });
+    }
+
+    public static async getAnime(req: Request, res: Response) {
+        const query = matchedData(req, { locations: ['query'] }) as IAnimeFilterQuery;
+        const body = matchedData(req, { locations: ['body'] }) as IAnimeFilters;
+
+        const anime = await AnimeSearchFilter.filterSelector(body, query)
 
         return res.status(RequestStatuses.OK).json({
             body: anime
