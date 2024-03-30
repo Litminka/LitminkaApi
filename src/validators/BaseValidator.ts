@@ -26,7 +26,7 @@ export interface BaseValidator extends Omit<TypeBaseValidator, "validator"> {
 function genMessage(
     arg: {
         message: string | ValidationError | ValidatorErrorMessage | any,
-        typeParams: { min?: number, max?: number }
+        typeParams: { min?: number, max?: number, [key: string]: any }
     }
 ): ValidatorErrorMessage {
     const setRange = (arg: { min?: number, max?: number }) => {
