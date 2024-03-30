@@ -57,14 +57,7 @@ export default class KodikApiService {
             const { title, type, id } = res.translation
 
             const translation = translations.get(id);
-            if (typeof translation !== "undefined") {
-                if (translation.episodes_count > episodes) {
-                    translations.set(id, {
-                        episodes_count: episodes,
-                        link: res.link,
-                        title, type, id
-                    });
-                }
+            if (typeof translation !== "undefined" && translation.episodes_count <= episodes) {
                 continue;
             }
 
@@ -99,15 +92,7 @@ export default class KodikApiService {
             const { title, type, id } = res.translation
 
             const translation = translations.get(id);
-
-            if (typeof translation !== "undefined") {
-                if (translation.episodes_count > episodes) {
-                    translations.set(id, {
-                        episodes_count: episodes,
-                        link: res.link,
-                        title, type, id
-                    });
-                }
+            if (typeof translation !== "undefined" && translation.episodes_count <= episodes) {
                 continue;
             }
 
