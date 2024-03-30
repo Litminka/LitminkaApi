@@ -2,7 +2,6 @@ import Request from "@requests/Request";
 import { registrationMsg } from '@/ts/messages';
 import { body } from "express-validator";
 import prisma from "@/db";
-import { bodyStringOptionalValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
 
 export default class RegisterUserRequest extends Request {
 

@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
-import { bodyArrayOptionalValidator, bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
+import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages";
 import { WatchListStatuses } from "@/ts/enums";
 
@@ -23,28 +23,28 @@ export default class GetWatchListRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodyArrayOptionalValidator({
+            bodyArrayValidator({
                 fieldName: "statuses",
-                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
-            }),
+                message: searchMsg.maxArraySizeExceeded
+            }).optional(),
             bodyStringValidator({
                 fieldName: "statuses.*",
-                ifNotTypeParamsMessage: searchMsg.maxLengthExceeded
+                message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(WatchListStatuses)),
 
-            bodyArrayOptionalValidator({
+            bodyArrayValidator({
                 fieldName: "ratings",
-                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
-            }),
+                message: searchMsg.maxArraySizeExceeded
+            }).optional(),
             bodyIntValidator({
                 fieldName: "ratings.*",
                 typeParams: { min: 0, max: 10 },
-                ifNotTypeParamsMessage: baseMsg.valueNotInRange
+                message: baseMsg.valueNotInRange
             }),
 
             bodyBoolValidator({
                 fieldName: "isFavorite",
-                ifNotTypeParamsMessage: baseMsg.requiresBoolean
+                message: baseMsg.requiresBoolean
             })
         ])
     }

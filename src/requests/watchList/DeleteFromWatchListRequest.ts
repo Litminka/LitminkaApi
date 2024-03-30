@@ -13,7 +13,7 @@ export default class DeleteFromWatchListRequest extends AuthRequest {
         this.rulesArr.push([
             paramIntValidator({
                 fieldName: "animeId",
-                ifNotTypeParamsMessage: baseMsg.valueNotInRange
+                message: baseMsg.valueNotInRange
             }).custom(async value => {
                 // TODO: this will die, if it doesnt find an anime
                 const anime = await prisma.anime.findFirst({
