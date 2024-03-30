@@ -11,9 +11,9 @@ import { BaseValidator } from "@validators/BaseValidator";
 const bodyDateValidator = ({
     fieldName,
     typeParams,
-    ifNotTypeParamsMessage
+    message
 }: BaseValidator): ValidationChain => {
-    return body(`${fieldName}.*`).isDate(typeParams).withMessage(ifNotTypeParamsMessage as string)
+    return body(`${fieldName}.*`).isDate(typeParams).withMessage(message)
 };
 
 /**
@@ -26,7 +26,7 @@ const bodyDateValidator = ({
 export const bodySoftPeriodValidator = ({
     fieldName,
     typeParams,
-    ifNotTypeParamsMessage
+    message
 }: BaseValidator): any[] => {
     return [
         body(fieldName)
@@ -34,7 +34,7 @@ export const bodySoftPeriodValidator = ({
             .toArray()
             .isArray({ max: 2, min: 1 })
             .bail(),
-        bodyDateValidator({ fieldName, ifNotTypeParamsMessage, typeParams })
+        bodyDateValidator({ fieldName, message, typeParams })
     ]
 };
 
@@ -48,13 +48,13 @@ export const bodySoftPeriodValidator = ({
 export const bodyStrictPeriodValidator = ({
     fieldName,
     typeParams,
-    ifNotTypeParamsMessage
+    message
 }: BaseValidator): any[] => {
     return [
         body(fieldName)
             .optional()
             .isArray({ min: 2, max: 2 })
             .bail(),
-        bodyDateValidator({ fieldName, ifNotTypeParamsMessage, typeParams })
+        bodyDateValidator({ fieldName, message, typeParams })
     ]
 };

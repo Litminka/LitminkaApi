@@ -2,6 +2,7 @@ import { bodyBoolValidator } from "@validators/BodyBaseValidator";
 import { bodySoftPeriodValidator } from "@/validators/BodyPeriodValidator";
 import { bodyArrayValidator, bodyIntValidator } from "@validators/BodyBaseValidator";
 import AuthRequest from "@requests/AuthRequest";
+import { baseMsg } from "@/ts/messages";
 
 export class GetNotificationsRequest extends AuthRequest {
 
@@ -13,7 +14,7 @@ export class GetNotificationsRequest extends AuthRequest {
         this.rulesArr.push([
             bodySoftPeriodValidator({
                 fieldName: "period",
-                ifNotTypeParamsMessage: ""
+                message: baseMsg.validationFailed
             })
         ])
     }
@@ -29,11 +30,11 @@ export class GetUserNotificationsRequest extends AuthRequest {
         this.rulesArr.push([
             bodySoftPeriodValidator({
                 fieldName: "period",
-                ifNotTypeParamsMessage: ""
+                message: baseMsg.validationFailed
             }),
             bodyBoolValidator({
                 fieldName: "isRead",
-                ifNotTypeParamsMessage: ""
+                message: baseMsg.validationFailed
             })
         ])
     }
@@ -49,11 +50,11 @@ export class ReadNotificationsRequest extends AuthRequest {
         this.rulesArr.push([
             bodyArrayValidator({
                 fieldName: "id",
-                ifNotTypeParamsMessage: ""
+                message: baseMsg.validationFailed
             }).optional(),
             bodyIntValidator({
                 fieldName: "id.*",
-                ifNotTypeParamsMessage: ""
+                message: baseMsg.validationFailed
             })
         ])
     }

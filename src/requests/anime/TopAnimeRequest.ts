@@ -18,7 +18,7 @@ export default class GetTopAnimeRequest extends Request {
         this.rulesArr.push([
             bodyBoolValidator({
                 fieldName: "shikimori",
-                ifNotTypeParamsMessage: baseMsg.requiresBoolean
+                message: baseMsg.requiresBoolean
             }).optional()
         ])
     }

@@ -14,11 +14,11 @@ export default class EndSessionRequest extends AuthRequest {
             bodyArrayValidator({
                 fieldName: "sessions",
                 typeParams: { min: 1, max: 100 },
-                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
+                message: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyUUIDValidator({
                 fieldName: "sessions.*",
-                ifNotTypeParamsMessage: sessionMsg.invalidSessionToken
+                message: sessionMsg.invalidSessionToken
             })
         ])
     }

@@ -23,7 +23,7 @@ export default class AnimeRequest extends OptionalRequest {
         this.rulesArr.push([
             paramIntValidator({
                 fieldName: "animeId",
-                ifNotTypeParamsMessage: baseMsg.valueNotInRange
+                message: baseMsg.valueNotInRange
             })
         ])
     }

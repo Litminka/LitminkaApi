@@ -2,6 +2,17 @@ import { baseMsg } from "@/ts/messages";
 import { body, ValidationChain } from "express-validator";
 import { BaseValidator } from "@validators/BaseValidator";
 
+// 🕷️: Why are we still here? 
+// 🕷️: Just to suffer? 
+// 🕷️: Every night, I can feel my leg... 
+// 🕷️: And my arm... even my fingers... 
+// 🕷️: The body I've lost... the comrades 
+// 🕷️: I've lost... won't stop hurting... 
+// 🕷️: It's like they're all still there. 
+// 🕷️: You feel it, too, don't you? 
+// 🕷️: I'm gonna make them give back our past!
+
+
 /**
  * Validate required array[any] body parameter.
  * @param fieldName Parameter name
@@ -30,7 +41,7 @@ export const bodyStringValidator = ({
     typeParams = { min: 0, max: 32 },
     message = baseMsg.validationFailed
 }: BaseValidator): ValidationChain => {
-    return body(fieldName, baseMsg.intValidationFailed)
+    return body(fieldName, baseMsg.valueMustBeString)
         .isString()
         .isLength(typeParams)
         .withMessage(message);
@@ -47,7 +58,7 @@ export const bodyIntValidator = ({
     typeParams = { min: 1, max: 2147483647 },
     message = baseMsg.validationFailed
 }: BaseValidator): ValidationChain => {
-    return body(fieldName, baseMsg.intValidationFailed)
+    return body(fieldName, baseMsg.valueMustBeInt)
         .isInt(typeParams)
         .toInt()
         .withMessage(message);
@@ -64,7 +75,7 @@ export const bodyBoolValidator = ({
     typeParams,
     message = baseMsg.validationFailed
 }: BaseValidator): ValidationChain => {
-    return body(fieldName, baseMsg.boolValidationFailed)
+    return body(fieldName, baseMsg.valueMustBeBool)
         .isBoolean(typeParams)
         .withMessage(message)
 };
@@ -82,7 +93,7 @@ export const bodyUUIDValidator = ({
     fieldName,
     message = baseMsg.validationFailed
 }: bodyUUIDValidator): ValidationChain => {
-    return body(fieldName, baseMsg.boolValidationFailed)
+    return body(fieldName, baseMsg.valueMustBeUUID)
         .isUUID()
         .withMessage(message)
 };
