@@ -41,7 +41,7 @@ export default class RegisterUserRequest extends Request {
                 ifNotTypeParamsMessage: registrationMsg.passwordTooShort
             }),
             bodyStringValidator({
-                fieldName: "password"
+                fieldName: "passwordConfirm"
             }).custom((value, { req }) => {
                     if (value !== req.body.password)
                         throw new Error(registrationMsg.passwordsDontMatch);
