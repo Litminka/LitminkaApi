@@ -1,7 +1,7 @@
 import { Anime, Prisma, User } from "@prisma/client";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "@/ts/index";
-import { KodikAnime, KodikAnimeFull, animeWithTranslation, translation } from "@/ts/kodik";
+import { KodikAnime, KodikAnimeFull, animeWithTranslation, _translation } from "@/ts/kodik";
 import prisma from "@/db";
 import { RequestStatuses } from "@/ts/enums";
 import InternalServerError from "@errors/servererrors/InternalServerError";
@@ -12,7 +12,6 @@ import groupArrSplice from "@/helper/groupsplice";
 import sleep from "@/helper/sleep";
 import { logger } from "@/loggerConf";
 import KodikApiService from "../KodikApiService";
-import AutoCheckService from "../AutoCheckService";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -52,11 +51,17 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
     }
 
     async createShikimoriGraphAnime(shikimoriAnime: ShikimoriGraphAnime, kodikAnime?: KodikAnime) {
+        if (typeof kodikAnime !== "undefined") {
+            await this.updateTranslationGroups([kodikAnime]);
+        }
         return await prisma.anime.createFromShikimoriGraph(shikimoriAnime, false, kodikAnime);
     }
 
     async updateShikimoriGraphAnime(shikimoriAnime: ShikimoriGraphAnime, dbAnime: Anime, kodikAnime?: KodikAnime) {
-        return prisma.anime.updateFromShikimoriGraph(shikimoriAnime, false, dbAnime, kodikAnime)
+        if (typeof kodikAnime !== "undefined") {
+            await this.updateTranslationGroups([kodikAnime]);
+        }
+        return await prisma.anime.updateFromShikimoriGraph(shikimoriAnime, false, dbAnime, kodikAnime)
     }
 
     /**
@@ -68,46 +73,31 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         return prisma.anime.upsertMany(animeArr);
     }
 
-    async updateTranslationGroups(result: KodikAnimeFull[]) {
-        const translations: Map<number, translation> = new Map();
-        const groupIdsSet: Set<number> = new Set();
+    async updateTranslationGroups(result: KodikAnimeFull[] | KodikAnime[]) {
+        const translations: Map<number, _translation> = new Map();
         for (const anime of result) {
             for (const translation of anime.translations) {
-                groupIdsSet.add(translation.id);
                 translations.set(translation.id, translation);
             }
         }
-        const groups = await prisma.group.findMany({
-            where: {
-                id: {
-                    in: [...groupIdsSet]
-                }
-            }
-        })
-        const inDbGroupIds = new Set(groups.map(group => group.id));
-        const notInDbIds = new Set([...groupIdsSet].filter(x => !inDbGroupIds.has(x)));
-        const groupInDBUpdates = [...inDbGroupIds].map(id => {
-            const translation = translations.get(id);
-            prisma.group.updateMany({
-                where: { id },
-                data: {
-                    id: translation!.id,
-                    type: translation!.type,
-                    name: translation!.title
-                }
-            });
-        })
-        await prisma.group.createMany({
-            data: [...notInDbIds].map(id => {
-                const translation = translations.get(id);
-                return {
-                    id: translation!.id,
-                    type: translation!.type,
-                    name: translation!.title
+        for (const translation of translations.values()) {
+            await prisma.group.upsert({
+                where: {
+                    id: translation.id
+                },
+                create: {
+                    id: translation.id,
+                    type: translation.type,
+                    name: translation.title
+                },
+                update: {
+                    id: translation.id,
+                    type: translation.type,
+                    name: translation.title
                 }
             })
-        });
-        await Promise.all([...groupInDBUpdates])
+
+        }
     }
 
     /**
@@ -149,6 +139,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                                 return {
                                     groupId: translation.id,
                                     currentEpisodes: translation.episodes_count ?? 0,
+                                    link: translation.link
                                 } satisfies Prisma.AnimeTranslationCreateManyAnimeInput
                             })
                         }
@@ -198,6 +189,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             if (update.count) continue;
             await prisma.animeTranslation.create({
                 data: {
+                    link: translation.link,
                     animeId: animeDB.id,
                     groupId: translation.id,
                     currentEpisodes: translation.episodes_count,
@@ -208,7 +200,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
 
     async updateGroups(result: KodikAnimeFull[]) {
         // Form unique translations from all collected data
-        const translations: Map<number, translation> = new Map<number, translation>();
+        const translations: Map<number, _translation> = new Map<number, _translation>();
         for (const res of result) {
             for (const translation of res.translations) {
                 translations.set(translation.id, translation);
@@ -277,8 +269,6 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
     }
 
     static async updateRelations() {
-        const autoCheckService = new AutoCheckService();
-        await autoCheckService.updateGroups();
         const checkMap = new Set<number>();
         let page = 0;
         let length = 0;

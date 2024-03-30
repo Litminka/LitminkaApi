@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { ServerError } from "@/ts/index";
-import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translations, KodikAnime, translation } from "@/ts/kodik";
+import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translation, KodikAnime, _translation, _KodikAnimeFull } from "@/ts/kodik";
 import { RequestStatuses } from "@/ts/enums";
 import { logger } from "@/loggerConf"
 
@@ -38,6 +38,7 @@ export default class KodikApiService {
     }
 
     private _packFullAnime(request: _KodikAnimeFullRequest) {
+        // FIXME: Todo Fix dublicate translations
         const { reqStatus, shikimori_request, time, total, results } = request;
         if (results.length == 0) {
             const newResult: any = request;
@@ -45,19 +46,29 @@ export default class KodikApiService {
             delete newResult.results;
             return newResult as _KodikAnimeWithTranslationsFullRequest;
         };
-        const translations: translations = []
+        const translations = new Map<number, translation>();
+
         for (const res of results) {
-            let episodes = res.episodes_count;
+            let episodes = res.episodes_count ?? 1;
             if (episodes === undefined) {
                 episodes = res.material_data.episodes_aired;
             }
-            translations.push({
+
+            const { title, type, id } = res.translation
+
+            const translation = translations.get(id);
+            if (typeof translation !== "undefined" && translation.episodes_count <= episodes) {
+                continue;
+            }
+
+            translations.set(id, {
                 episodes_count: episodes,
-                ...res.translation
+                link: res.link,
+                title, type, id
             });
         }
         const resultObj = results[0] as any;
-        resultObj.translations = translations;
+        resultObj.translations = [...translations.values()];
         delete resultObj.translation;
         delete resultObj.episodes_count;
         const newResult: _KodikAnimeWithTranslationsFullRequest = {
@@ -75,17 +86,24 @@ export default class KodikApiService {
             delete newResult.results;
             return newResult as _KodikAnimeWithTranslationsRequest;
         };
-        const translations: translations = []
+        const translations = new Map<number, translation>();
         for (const res of results) {
             let episodes = res.episodes_count ?? 1;
+            const { title, type, id } = res.translation
 
-            translations.push({
+            const translation = translations.get(id);
+            if (typeof translation !== "undefined" && translation.episodes_count <= episodes) {
+                continue;
+            }
+
+            translations.set(id, {
                 episodes_count: episodes,
-                ...res.translation
+                link: res.link,
+                title, type, id
             });
         }
         const resultObj = results[0] as any;
-        resultObj.translations = translations;
+        resultObj.translations = [...translations.values()];
         delete resultObj.translation;
         delete resultObj.episodes_count;
         const newResult: _KodikAnimeWithTranslationsRequest = {
@@ -135,7 +153,7 @@ export default class KodikApiService {
         return await response.json();
     }
 
-    async getTranslationGroups(): Promise<translation[]> {
+    async getTranslationGroups(): Promise<_translation[]> {
         const params = new URLSearchParams({
             "token": process.env.KODIK_API_KEY!,
             "genres_type": "shikimori",

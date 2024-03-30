@@ -124,6 +124,7 @@ model AnimeTranslation {
   id              Int      @id @default(autoincrement())
   currentEpisodes Int
   groupId         Int
+  link            String   
   group           Group    @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   animeId         Int
   anime           Anime    @relation(fields: [animeId], references: [id], onUpdate: Cascade, onDelete: Cascade)

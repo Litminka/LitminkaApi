@@ -53,7 +53,7 @@ interface _KodikAnime {
     title: string;
     title_orig: string;
     other_title: string;
-    translation: translation
+    translation: _translation
     year: number;
     last_season: number;
     last_episode: number;
@@ -81,7 +81,7 @@ interface KodikAnimeWithTranslationsN {
     created_at: string;
     updated_at: string;
     screenshots: string[];
-    translations: translations
+    translations: translation[]
 }
 type KodikAnime = Omit<KodikAnimeWithTranslationsN, "translation">;
 
@@ -131,7 +131,7 @@ interface KodikAnimeWithTranslationsFullN extends _KodikAnimeFull, KodikAnime {
 type KodikAnimeFull = Omit<KodikAnimeWithTranslationsFullN, "translation">;
 
 
-export type translation = {
+export type _translation = {
     id: number;
     title: string;
     type: "voice" | "subtitles";
@@ -141,7 +141,7 @@ export type animeWithTranslation = (Anime & {
     animeTranslations: AnimeTranslation[];
 });
 
-export type translations = {
+export type translation = {
     /**
      * id of the group
      */
@@ -149,4 +149,5 @@ export type translations = {
     title: string;
     type: "voice" | "subtitles";
     episodes_count: number;
-}[]
+    link: string,
+}
