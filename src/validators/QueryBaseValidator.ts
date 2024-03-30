@@ -20,9 +20,9 @@ export const queryIntValidator = ({
     message = baseMsg.validationFailed
 }: QueryIntValidator): ValidationChain => {
     return intValidator({
-        validator: query(fieldName, baseMsg.valueMustBeInt),
+        validator: query(fieldName, baseMsg.valueMustBeInt).default(defValue),
         typeParams,
         message
-    }).default(defValue)
+    })
 
 };

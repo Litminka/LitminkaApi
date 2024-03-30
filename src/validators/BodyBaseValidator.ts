@@ -1,6 +1,13 @@
 import { baseMsg } from "@/ts/messages";
 import { body, ValidationChain } from "express-validator";
-import { BaseValidator } from "@validators/BaseValidator";
+import {
+    BaseValidator,
+    intValidator,
+    stringValidator,
+    boolValidator,
+    uuidValidator,
+    arrayValidator
+} from "@validators/BaseValidator";
 
 // 🕷️: Why are we still here? 
 // 🕷️: Just to suffer? 
@@ -17,17 +24,18 @@ import { BaseValidator } from "@validators/BaseValidator";
  * Validate required array[any] body parameter.
  * @param fieldName Parameter name
  * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object. By default limits array length to 50 elements.
- * @param message Error message for validation exceptions. By default `message: string = "validation_failed"`
+ * @param message Error message for validation exceptions.  
  */
 export const bodyArrayValidator = ({
     fieldName,
     typeParams = { min: 0, max: 50 },
-    message = baseMsg.validationFailed
+    message = baseMsg.valueMustBeString
 }: BaseValidator): ValidationChain => {
-    return body(fieldName)
-        .toArray()
-        .isArray(typeParams)
-        .withMessage(message)
+    return arrayValidator({
+        validator: body(fieldName, baseMsg.validationFailed),
+        typeParams,
+        message
+    })
 };
 
 /**
@@ -39,12 +47,13 @@ export const bodyArrayValidator = ({
 export const bodyStringValidator = ({
     fieldName,
     typeParams = { min: 0, max: 32 },
-    message = baseMsg.validationFailed
+    message = baseMsg.valueMustBeString
 }: BaseValidator): ValidationChain => {
-    return body(fieldName, baseMsg.valueMustBeString)
-        .isString()
-        .isLength(typeParams)
-        .withMessage(message);
+    return stringValidator({
+        validator: body(fieldName, baseMsg.validationFailed),
+        typeParams,
+        message
+    })
 };
 
 /**
@@ -56,12 +65,13 @@ export const bodyStringValidator = ({
 export const bodyIntValidator = ({
     fieldName,
     typeParams = { min: 1, max: 2147483647 },
-    message = baseMsg.validationFailed
+    message = baseMsg.valueMustBeInt
 }: BaseValidator): ValidationChain => {
-    return body(fieldName, baseMsg.valueMustBeInt)
-        .isInt(typeParams)
-        .toInt()
-        .withMessage(message);
+    return intValidator({
+        validator: body(fieldName, baseMsg.validationFailed),
+        typeParams,
+        message
+    })
 };
 
 /**
@@ -73,11 +83,13 @@ export const bodyIntValidator = ({
 export const bodyBoolValidator = ({
     fieldName,
     typeParams,
-    message = baseMsg.validationFailed
+    message = baseMsg.valueMustBeBool
 }: BaseValidator): ValidationChain => {
-    return body(fieldName, baseMsg.valueMustBeBool)
-        .isBoolean(typeParams)
-        .withMessage(message)
+    return boolValidator({
+        validator: body(fieldName, baseMsg.validationFailed),
+        typeParams,
+        message
+    })
 };
 
 interface bodyUUIDValidator extends Omit<BaseValidator, "typeParams"> { }
@@ -89,9 +101,10 @@ interface bodyUUIDValidator extends Omit<BaseValidator, "typeParams"> { }
  */
 export const bodyUUIDValidator = ({
     fieldName,
-    message = baseMsg.validationFailed
+    message = baseMsg.valueMustBeUUID
 }: bodyUUIDValidator): ValidationChain => {
-    return body(fieldName, baseMsg.valueMustBeUUID)
-        .isUUID()
-        .withMessage(message)
+    return uuidValidator({
+        validator: body(fieldName, baseMsg.validationFailed),
+        message
+    })
 };

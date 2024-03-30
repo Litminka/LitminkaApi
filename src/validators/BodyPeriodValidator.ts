@@ -1,39 +1,43 @@
 import { body, ValidationChain } from "express-validator";
-import { BaseValidator } from "@validators/BaseValidator";
+import { arrayValidator, BaseValidator, dateValidator, genMessage } from "@validators/BaseValidator";
+import { baseMsg } from "@/ts/messages";
 
 /**
  * Base period validator
  * @param fieldName Parameter name
- * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object. By default limits array length to 50 elements.
- * @param message Error message for validation exceptions. By default `message: string = "validation_failed"`
+ * @param typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
+ * @param message Error message for validation exceptions.  
  * @returns base date validation chain
  */
 const bodyDateValidator = ({
     fieldName,
     typeParams,
-    message
+    message = baseMsg.valueMustBeDate
 }: BaseValidator): ValidationChain => {
-    return body(`${fieldName}.*`).isDate(typeParams).withMessage(message)
+    return dateValidator({
+        validator: body(`${fieldName}.*`, baseMsg.valueMustBeDate),
+        typeParams,
+        message
+    })
 };
 
 /**
  * Validate required array[any] body parameter.
  * @param fieldName Parameter name
- * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object. By default limits array length to 50 elements.
- * @param message Error message for validation exceptions. By default `message: string = "validation_failed"`
+ * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object.
+ * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
 export const bodySoftPeriodValidator = ({
     fieldName,
     typeParams,
-    message
+    message = baseMsg.validationFailed
 }: BaseValidator): any[] => {
     return [
-        body(fieldName)
-            .optional()
-            .toArray()
-            .isArray({ max: 2, min: 1 })
-            .bail(),
+        arrayValidator({
+            validator: body(fieldName).optional(),
+            typeParams: { max: 2, min: 1 },
+        }).bail(),
         bodyDateValidator({ fieldName, message, typeParams })
     ]
 };
@@ -41,8 +45,8 @@ export const bodySoftPeriodValidator = ({
 /**
  * Validate required array[any] body parameter.
  * @param fieldName Parameter name
- * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object. By default limits array length to 50 elements.
- * @param message Error message for validation exceptions. By default `message: string = "validation_failed"`
+ * @param typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
+ * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
 export const bodyStrictPeriodValidator = ({
@@ -51,10 +55,15 @@ export const bodyStrictPeriodValidator = ({
     message
 }: BaseValidator): any[] => {
     return [
+        // Validator doesn't cast value to array except arrayValidator, using unique chain
         body(fieldName)
             .optional()
             .isArray({ min: 2, max: 2 })
-            .bail(),
+            .bail()
+            .withMessage(genMessage({
+                message: baseMsg.valueMustBeAnArray,
+                typeParams: { min: 2, max: 2 }
+            })),
         bodyDateValidator({ fieldName, message, typeParams })
     ]
 };
