@@ -5,6 +5,8 @@ import { ValidatorErrorMessage } from "@/ts";
  */
 export interface BaseValidator {
     fieldName: string,
-    message: ValidatorErrorMessage,
+    ifEmptyMessage?: ValidatorErrorMessage,
+    ifNotTypeMessage?: ValidatorErrorMessage,
+    ifNotTypeParamsMessage?: ValidatorErrorMessage,
     typeParams?: object
 };

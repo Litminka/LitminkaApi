@@ -17,7 +17,7 @@ export default class EditWatchListRequest extends AuthRequest {
         this.rulesArr.push([
             paramIntValidator({
                 fieldName: "animeId",
-                message: baseMsg.valueNotInRange
+                ifNotTypeParamsMessage: baseMsg.valueNotInRange
             }).custom(async value => {
                 // TODO: this will die, if it doesnt find an anime
                 const anime = await prisma.anime.findFirst({
@@ -29,24 +29,24 @@ export default class EditWatchListRequest extends AuthRequest {
 
             bodyStringValidator({
                 fieldName: "status",
-                message: searchMsg.maxLengthExceeded
+                ifNotTypeParamsMessage: searchMsg.maxLengthExceeded
             }).isIn(Object.values(WatchListStatuses)),
 
             bodyIntValidator({
                 fieldName: "watchedEpisodes",
                 typeParams: watchedRange,
-                message: baseMsg.valueNotInRange
+                ifNotTypeParamsMessage: baseMsg.valueNotInRange
             }),
 
             bodyIntValidator({
                 fieldName: "rating",
                 typeParams: { min: 0, max: 10 },
-                message: baseMsg.valueNotInRange
+                ifNotTypeParamsMessage: baseMsg.valueNotInRange
             }),
 
             bodyBoolValidator({
                 fieldName: "isFavorite",
-                message: baseMsg.requiresBoolean
+                ifNotTypeParamsMessage: baseMsg.requiresBoolean
             })
         ])
     }
