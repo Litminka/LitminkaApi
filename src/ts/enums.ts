@@ -17,17 +17,17 @@ export enum AnimeSeasons {
 }
 
 export enum AnimePgaRatings {
-    G = "G",
-    PG = "PG",
-    PG_13 = "PG-13",
-    R = "R",
-    R_plus = "R+",
-    RX = "RX"
+    G = "g",
+    PG = "pg",
+    PG_13 = "pg_13",
+    R = "r",
+    R_plus = "r_plus",
+    RX = "rx"
 }
 
 export enum AnimeMediaTypes {
     TV = "tv",
-    TV_Special = "tv_special",
+    TV_special = "tv_special",
     Special = "special",
     ONA = "ona",
     OVA = "ova",
@@ -133,11 +133,11 @@ export enum Permissions {
     ApiServiceBot = "api_service_bot",
 }
 
-export enum WatchListStatuses{
-    Planned ="planned",
-    Watching = "watching", 
+export enum WatchListStatuses {
+    Planned = "planned",
+    Watching = "watching",
     Rewatching = "rewatching",
-    Completed = "completed", 
+    Completed = "completed",
     OnHold = "on_hold",
     Dropped = "dropped"
 }
