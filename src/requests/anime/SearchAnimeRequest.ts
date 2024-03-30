@@ -22,88 +22,88 @@ export default class SearchAnimeRequest extends Request {
         this.rulesArr.push([
             bodyStringValidator({
                 fieldName: "name",
-                message: searchMsg.maxLengthExceeded
+                ifNotTypeParamsMessage: searchMsg.maxLengthExceeded
             }).optional(),
 
             bodyArrayValidator({
                 fieldName: "seasons",
                 typeParams: { max: 4 },
-                message: searchMsg.maxArraySizeExceeded
+                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyStringValidator({
                 fieldName: "seasons.*",
-                message: searchMsg.maxLengthExceeded
+                ifNotTypeParamsMessage: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimeSeasons))
                 .withMessage(searchMsg.unknownType),
 
             bodyArrayValidator({
                 fieldName: "statuses",
                 typeParams: { max: 3 },
-                message: searchMsg.maxArraySizeExceeded
+                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyStringValidator({
                 fieldName: "statuses.*",
-                message: searchMsg.maxLengthExceeded
+                ifNotTypeParamsMessage: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimeStatuses))
                 .withMessage(searchMsg.unknownType),
 
             bodyArrayValidator({
                 fieldName: "rpaRatings",
                 typeParams: { max: 6 },
-                message: searchMsg.maxArraySizeExceeded
+                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyStringValidator({
                 fieldName: "rpaRatings.*",
-                message: searchMsg.maxLengthExceeded
+                ifNotTypeParamsMessage: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimePgaRatings))
                 .withMessage(searchMsg.unknownType),
 
             bodyArrayValidator({
                 fieldName: "mediaTypes",
                 typeParams: { max: 6 },
-                message: searchMsg.maxArraySizeExceeded
+                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyStringValidator({
                 fieldName: "mediaTypes.*",
-                message: searchMsg.maxLengthExceeded
+                ifNotTypeParamsMessage: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimeMediaTypes))
                 .withMessage(searchMsg.unknownType),
 
             bodyArrayValidator({
                 fieldName: "includeGenres",
-                message: searchMsg.maxArraySizeExceeded
+                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyIntValidator({
                 fieldName: "includeGenres.*",
-                message: baseMsg.valueNotInRange
+                ifNotTypeParamsMessage: baseMsg.valueNotInRange
             }),
 
             bodyArrayValidator({
                 fieldName: "excludeGenres",
-                message: searchMsg.maxArraySizeExceeded
+                ifNotTypeParamsMessage: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyIntValidator({
                 fieldName: "excludeGenres.*",
-                message: baseMsg.valueNotInRange
+                ifNotTypeParamsMessage: baseMsg.valueNotInRange
             }),
 
             bodySoftPeriodValidator({
                 fieldName: "period",
-                message: baseMsg.valueNotInRange
+                ifNotTypeParamsMessage: baseMsg.valueNotInRange
             }),
 
             queryIntValidator({
                 fieldName: "page",
                 defValue: 1,
                 typeParams: { min: 1 },
-                message: { msg: baseMsg.valueNotInRange, range: [1, null] }
+                ifNotTypeParamsMessage: { msg: baseMsg.valueNotInRange, range: [1, null] }
             }),
 
             queryIntValidator({
                 fieldName: "pageLimit",
                 defValue: 25,
                 typeParams: { min: 1, max: 125 },
-                message: { msg: baseMsg.valueNotInRange, range: [1, 125] }
+                ifNotTypeParamsMessage: { msg: baseMsg.valueNotInRange, range: [1, 125] }
             }),
         ])
     }

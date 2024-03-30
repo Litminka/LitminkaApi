@@ -17,10 +17,10 @@ export const queryIntValidator = ({
     fieldName,
     defValue = 0,
     typeParams = { min: -2147483648, max: 2147483647 },
-    message = baseMsg.validationFailed
+    ifNotTypeParamsMessage = baseMsg.validationFailed
 }: QueryIntValidator): ValidationChain => {
-    return query(fieldName, baseMsg.intValidationFailed)
+    return query(fieldName, baseMsg.valueMustBeInt)
         .default(defValue)
         .isInt(typeParams)
-        .withMessage(message)
+        .withMessage(ifNotTypeParamsMessage)
 };

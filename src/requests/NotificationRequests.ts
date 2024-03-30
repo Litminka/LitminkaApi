@@ -13,7 +13,7 @@ export class GetNotificationsRequest extends AuthRequest {
         this.rulesArr.push([
             bodySoftPeriodValidator({
                 fieldName: "period",
-                message: ""
+                ifNotTypeParamsMessage: ""
             })
         ])
     }
@@ -29,11 +29,11 @@ export class GetUserNotificationsRequest extends AuthRequest {
         this.rulesArr.push([
             bodySoftPeriodValidator({
                 fieldName: "period",
-                message: ""
+                ifNotTypeParamsMessage: ""
             }),
             bodyBoolValidator({
                 fieldName: "isRead",
-                message: ""
+                ifNotTypeParamsMessage: ""
             })
         ])
     }
@@ -49,11 +49,11 @@ export class ReadNotificationsRequest extends AuthRequest {
         this.rulesArr.push([
             bodyArrayValidator({
                 fieldName: "id",
-                message: ""
+                ifNotTypeParamsMessage: ""
             }).optional(),
             bodyIntValidator({
                 fieldName: "id.*",
-                message: ""
+                ifNotTypeParamsMessage: ""
             })
         ])
     }
