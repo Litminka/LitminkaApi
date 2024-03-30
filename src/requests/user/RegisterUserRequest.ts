@@ -1,7 +1,8 @@
 import Request from "@requests/Request";
-import { registrationMsg } from '@/ts/messages';
+import { baseMsg, registrationMsg } from '@/ts/messages';
 import { body } from "express-validator";
 import prisma from "@/db";
+import { bodyStringValidator } from "@/validators/BodyBaseValidator";
 
 export default class RegisterUserRequest extends Request {
 
@@ -13,7 +14,7 @@ export default class RegisterUserRequest extends Request {
         this.rulesArr.push([
             bodyStringValidator({
                 fieldName: "login",
-                ifEmptyMessage: registrationMsg.noLoginProvided
+                message: registrationMsg.noLoginProvided
             }).custom(async value => {
                 const user = await prisma.user.findFirst({ where: { login: value } })
                 if (user) throw new Error(registrationMsg.loginTaken);
@@ -21,7 +22,7 @@ export default class RegisterUserRequest extends Request {
             }),
             bodyStringValidator({
                 fieldName: "email",
-                ifEmptyMessage: registrationMsg.noEmailProvided
+                message: registrationMsg.noEmailProvided
             }).isEmail().bail().withMessage(registrationMsg.invalidEmail)
                 .custom(async value => {
                     const user = await prisma.user.findFirst({ where: { email: value } })
@@ -29,18 +30,19 @@ export default class RegisterUserRequest extends Request {
                     return true;
                 })
                 .normalizeEmail(),
-            bodyStringOptionalValidator({
+            bodyStringValidator({
                 fieldName: "name",
                 typeParams: { min: 4 },
-                ifNotTypeParamsMessage: registrationMsg.nameTooShort
+                message: registrationMsg.nameTooShort
             }),
             bodyStringValidator({
                 fieldName: "password",
                 typeParams: { min: 5 },
-                ifNotTypeParamsMessage: registrationMsg.passwordTooShort
+                message: registrationMsg.passwordTooShort
             }),
             bodyStringValidator({
-                fieldName: "passwordConfirm"
+                fieldName: "passwordConfirm",
+                message: baseMsg.validationFailed
             }).custom((value, { req }) => {
                     if (value !== req.body.password)
                         throw new Error(registrationMsg.passwordsDontMatch);
