@@ -43,7 +43,7 @@ export function genMessage(
         }
     }
 
-    if (!arg.message.hasOwnProperty("range")) arg.message.range = setRange(arg.typeParams)
+    arg.message.range = setRange(arg.typeParams)
     return arg.message
 }
 
