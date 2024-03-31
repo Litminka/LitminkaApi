@@ -10,7 +10,7 @@ import { KodikAnime } from "@/ts/kodik";
 import { logger } from "@/loggerConf";
 import prisma from "@/db";
 import { User, Anime } from "@prisma/client";
-import { importWatchListQueue } from "@/queues/watchListImporter";
+import { importWatchListQueue } from "@/queues/queues"
 
 export default class WatchListService {
 

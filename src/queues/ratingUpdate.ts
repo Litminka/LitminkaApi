@@ -1,15 +1,9 @@
 
-import { Queue, Worker, Job } from 'bullmq';
+import { Worker, Job } from 'bullmq';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { logger } from "@/loggerConf"
 import { config } from "@/config"
-
-const ratingUpdateQueue = new Queue("ratingUpdate", {
-    connection: {
-        host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT!),
-    }
-});
+import { ratingUpdateQueue } from './queues';
 
 const worker = new Worker("ratingUpdate", async (job: Job) => {
     try {
@@ -24,8 +18,6 @@ const worker = new Worker("ratingUpdate", async (job: Job) => {
         port: parseInt(process.env.REDIS_PORT!),
     }
 });
-
-
 
 ratingUpdateQueue.add("ratingUpdate", {}, {
     removeOnComplete: 10,

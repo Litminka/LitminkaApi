@@ -41,9 +41,9 @@ export default class GroupAnimeListService {
         }
         return await prisma.groupAnimeList.findMany({
             where: {
-                groupId, 
-                rating: ratings === undefined ? undefined : ratingFilter, 
-                isFavorite, 
+                groupId,
+                rating: ratings === undefined ? undefined : ratingFilter,
+                isFavorite,
                 status: statuses === undefined ? undefined : statusFilter
             },
             include: {
@@ -155,6 +155,14 @@ export default class GroupAnimeListService {
 
     private static async updateMembers(group: GroupWithMembers, data: AddWithAnime) {
         const { animeId, isFavorite, rating, status, watchedEpisodes } = data;
+        const { shikimoriId } = await prisma.anime.findFirstOrThrow({
+            where: {
+                id: animeId
+            },
+            select: {
+                shikimoriId: true
+            }
+        });
         const members = group.members.filter(member => member.overrideList);
         const memberIds = members.map(user => user.userId)
 
