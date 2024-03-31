@@ -18,11 +18,12 @@ const extention = Prisma.defineExtension({
                         userId
                     },
                     data: {
-                        shikimoriId
+                        shikimoriId,
+                        shikimoriCanChangeList: true,
                     }
                 });
             },
-            async clear(userId: number) {
+            async clearShikimoriIntegration(userId: number) {
                 await prisma.integration.update({
                     where: {
                         userId
@@ -32,6 +33,7 @@ const extention = Prisma.defineExtension({
                         shikimoriToken: null,
                         shikimoriRefreshToken: null,
                         shikimoriId: null,
+                        shikimoriCanChangeList: null
                     }
                 });
             }

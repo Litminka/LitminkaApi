@@ -1,13 +1,14 @@
 import { User, Integration, Prisma } from "@prisma/client";
 import axios, { AxiosHeaders } from "axios";
 import BadRequestError from "@/errors/clienterrors/BadRequestError";
-import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest } from "@/ts/shikimori";
+import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest, shikimoriList } from "@/ts/shikimori";
 import { getAnimeByPageQuery, getAnimeBySeasonQuery, getAnimeWithRelationsQuery, getAnimeWithoutRelationQuery } from "@/ts/shikimoriGraphQLRequests";
 import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "@/ts/index";
 import prisma from "@/db";
 import { shikiRateLimiter } from "@/shikiRateLimiter";
 import { RateLimiter } from "limiter";
 import { RequestStatuses } from "@/ts/enums";
+import ForbiddenError from "@/errors/clienterrors/ForbiddenError";
 
 interface iShikimoriApi {
     user: User & {
@@ -19,6 +20,17 @@ interface iShikimoriApi {
 axios.defaults.validateStatus = (status) => {
     return (status >= 400 && status <= 499) || (status >= 200 && status <= 299)
 }
+
+/**
+ *  Documenting this api for the unfortunate soul that will maintain it in the future
+ *  To be absolutely honest, shikimori's api is an absolute mess
+ *  It is extremely bad documented, some things are not apparent so i will try to write them here
+ *  Used docs: 
+ *      Api v2: https://shikimori.one/api/doc/2.0 for user list (called user_rates)
+ *      Api v1: https://shikimori.one/api/doc/1.0 was used for anime, now is deprecated
+ *      GraphQL https://shikimori.one/api/doc/graphql while experimental allows for more dynamic anime fetching, 
+ *                                                    also has a lot of undocumented errors
+ */
 
 const baseUrl = `${process.env.SHIKIMORI_URL}/api`;
 export default class ShikimoriApiService implements iShikimoriApi {
@@ -79,17 +91,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             Do the same on our end
         */
         if (status === RequestStatuses.BadRequest) {
-            await prisma.integration.update({
-                where: {
-                    userId: this.user.id
-                },
-                data: {
-                    shikimoriToken: null,
-                    shikimoriRefreshToken: null,
-                    shikimoriId: null,
-                    shikimoriCode: null,
-                }
-            });
+            await prisma.integration.clearShikimoriIntegration(this.user.id);
             return false;
         }
         const data: any = await response.data;
@@ -154,9 +156,12 @@ export default class ShikimoriApiService implements iShikimoriApi {
                 headers: headers,
             });
 
-            const { status } = response;
+            const { status }: { status: number } = response;
 
             if (status !== RequestStatuses.TooManyRequests) {
+                if (status === RequestStatuses.Forbidden) {
+                    throw new BadRequestError('no_shikimori_rights')
+                }
                 const data: any = response.data;
                 data.reqStatus = status;
                 if (status !== RequestStatuses.Unauthorized) return data;
@@ -207,49 +212,88 @@ export default class ShikimoriApiService implements iShikimoriApi {
     }
 
     public async getBatchGraphAnime(ids: number[]): Promise<ShikimoriGraphAnimeRequest> {
+        if (ids.length == 0) return {
+            data: {
+                animes: []
+            }
+        };
         const query = getAnimeWithRelationsQuery;
         const animeIds = ids.join(",");
         return this.requestMaker(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
-                ids: animeIds
+                ids: animeIds // if empty will give a random set of 50
             }
         });
     }
 
-    public async getBatchGraphAnimeWithouRelation(ids: number[]): Promise<ShikimoriGraphAnimeWithoutRelationRequest[]> {
+    public async getBatchGraphAnimeWithoutRelation(ids: number[]): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        if (ids.length == 0) return {
+            data: {
+                animes: []
+            }
+        };
         const query = getAnimeWithoutRelationQuery;
         const animeIds = ids.join(",");
         return this.requestMaker(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
-                ids: animeIds
+                ids: animeIds // if empty will give a random set of 50
             }
         });
     }
 
     public async getGraphAnimeBySeason(page: number, season: string): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        if (page < 1) page = 1;
         const query = getAnimeBySeasonQuery;
         return this.requestMaker(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
                 season,
-                page
+                page // must be larger than zero or shikimori will throw 503 error
             }
         });
     }
 
     public async getGraphAnimeByPage(page: number): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        if (page < 1) page = 1;
         const query = getAnimeByPageQuery;
         return this.requestMaker(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
-                page
+                page // must be larger than zero or shikimori will throw 503 error
             }
         });
+    }
+
+    public async addOrUpdateList(userList: shikimoriList) {
+        /** 
+         * So about this implementation, shikimori's api specifically states, 
+         * You have 2 ways of updating a record and a one way to add it
+         * That's not the case, the documentation does not tell the whole picture
+         * So the POST method also updates records, the only difference is query param of rate
+         * So we are gonna use this feature, hoping it won't be deleted
+         */
+        if (!this.user?.integration?.shikimoriCanChangeList) throw new BadRequestError("shikimori_cant_change_list");
+
+        const { episodes, status, animeId, score } = userList;
+        try {
+            return await this.requestMaker('/v2/user_rates', "POST", true, {
+                user_rate: {
+                    episodes, status, score,
+                    target_id: animeId,
+                    user_id: this.user!.integration!.shikimoriId
+                }
+            })
+        } catch (error) {
+            if (error instanceof ForbiddenError) {
+                await prisma.user.disableShikimoriListUpdate(this.user.id);
+            }
+            throw error
+        }
     }
 }

@@ -1,3 +1,5 @@
+import { watchListStatus } from "."
+
 export interface ShikimoriGraphAnimeRequest {
     data: {
         animes: ShikimoriAnimeWithRelation[]
@@ -40,6 +42,13 @@ export interface ShikimoriAnimeWithRelation extends ShikimoriGraphAnime {
 
 export interface ShikimoriAnimeOptionalRelation extends ShikimoriGraphAnime {
     related?: ShikimoriRelation[]
+}
+
+interface shikimoriList {
+    episodes: number,
+    score?: number,
+    status: watchListStatus,
+    animeId: number,
 }
 
 type genreKind = "demographic" | "genre" | "theme"

@@ -124,7 +124,7 @@ export interface ListFilters{
     isFavorite?: boolean
 }
 
-type watchListStatus =
+export type watchListStatus =
     | "planned"
     | "watching"
     | "rewatching"
