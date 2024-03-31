@@ -36,11 +36,9 @@ export function genMessage(
         ]
     }
 
-    if (typeof arg.message === "string") {
-        return {
-            msg: arg.message,
-            range: setRange(arg.typeParams)
-        }
+    if (typeof arg.message === "string") return {
+        msg: arg.message,
+        range: setRange(arg.typeParams)
     }
 
     arg.message.range = setRange(arg.typeParams)
