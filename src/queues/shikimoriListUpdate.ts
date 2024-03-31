@@ -1,18 +1,23 @@
 import { logger } from '@/loggerConf';
 import { Job, Worker } from "bullmq";
-import WatchListService from "@services/WatchListService";
+import ShikimoriListSyncService from '@/services/shikimori/ShikimoriListSyncService';
+import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 
 const worker = new Worker("shikimoriListUpdate", async (job: Job) => {
     const data = job.data;
+    console.log(data);
     try {
         if (data.type === "add-update") {
-            await WatchListService.importListV2(job.data.id);
+            await ShikimoriListSyncService.addOrUpdateList(data.userId, data.list);
         }
         if (data.type === "delete") {
-            await WatchListService.importListByUser(123);
+            await ShikimoriListSyncService.deleteList(data.userId, data.shikimoriId);
         }
     } catch (error) {
-        logger.error("ListUpdate has failed! Error" + error);
+        if (!(error instanceof ForbiddenError)) {
+            logger.error("ListUpdate has failed! Error" + error);
+            throw error;
+        }
     }
 }, {
     connection: {

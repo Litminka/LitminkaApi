@@ -1,7 +1,7 @@
 import { User, Integration, Prisma } from "@prisma/client";
 import axios, { AxiosHeaders } from "axios";
 import BadRequestError from "@/errors/clienterrors/BadRequestError";
-import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest, shikimoriList } from "@/ts/shikimori";
+import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest, ShikimoriListResponse, shikimoriList } from "@/ts/shikimori";
 import { getAnimeByPageQuery, getAnimeBySeasonQuery, getAnimeWithRelationsQuery, getAnimeWithoutRelationQuery } from "@/ts/shikimoriGraphQLRequests";
 import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "@/ts/index";
 import prisma from "@/db";
@@ -163,7 +163,6 @@ export default class ShikimoriApiService implements iShikimoriApi {
                     throw new BadRequestError('no_shikimori_rights')
                 }
                 const data: any = response.data;
-                data.reqStatus = status;
                 if (status !== RequestStatuses.Unauthorized) return data;
             }
 
@@ -172,7 +171,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             || requestStatus === RequestStatuses.TooManyRequests);
     }
 
-    private async makeListRequest(uri: string, method: RequestTypes, data: object) {
+    private async makeListRequest(uri: string, method: RequestTypes, data: object): Promise<unknown> {
         if (!this.user?.integration?.shikimoriCanChangeList) throw new BadRequestError("shikimori_cant_change_list");
         try {
             return await this.makeRequest(uri, method, true, {
@@ -315,7 +314,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
      * @throws ForbiddenError
      * @returns ShikimoriGraphAnimeWithoutRelationRequest
      */
-    public async addOrUpdateList(userList: shikimoriList) {
+    public async addOrUpdateList(userList: shikimoriList): Promise<ShikimoriListResponse> {
         /** 
          * So about this implementation, shikimori's api specifically states, 
          * You have 2 ways of updating a record and a one way to add it
@@ -328,10 +327,11 @@ export default class ShikimoriApiService implements iShikimoriApi {
         const requestData = {
             episodes, status, score,
             target_id: animeId,
-            user_id: this.user!.integration!.shikimoriId
+            user_id: this.user!.integration!.shikimoriId,
+            target_type: "Anime"
         }
 
-        await this.makeListRequest('/v2/user_rates', "POST", requestData);
+        return await this.makeListRequest('/v2/user_rates', "POST", requestData) as ShikimoriListResponse;
     }
 
     /**
@@ -340,7 +340,6 @@ export default class ShikimoriApiService implements iShikimoriApi {
      * @param id of listEntryOnShikimori
      * @throws BadRequestError
      * @throws ForbiddenError
-     * @returns ShikimoriGraphAnimeWithoutRelationRequest
      */
     public async deleteListEntry(id: number): Promise<void> {
         await this.makeListRequest(`/v2/user_rates/${id}`, "DELETE", {});

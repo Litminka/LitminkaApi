@@ -22,8 +22,6 @@ export default class ShikimoriLinkService {
         const profile = await shikimoriapi.getProfile();
         if (!profile) throw new UnauthorizedError("User does not have shikimori integration")
 
-        if (profile.reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
-
         const integrated = await prisma.integration.findByShikimoriId((<ShikimoriWhoAmI>profile).id)
         // fix if user integrated this shikimori account on another user account
         if (integrated) {
@@ -42,7 +40,6 @@ export default class ShikimoriLinkService {
         const shikimori = new ShikimoriApiService(user);
         const profile = await shikimori.getProfile();
         if (!profile) throw new UnauthorizedError("User does not have shikimori integration");
-        if (profile.reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
         return profile;
     }
 

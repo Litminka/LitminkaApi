@@ -11,6 +11,7 @@ import { logger } from "@/loggerConf";
 import prisma from "@/db";
 import { User, Anime } from "@prisma/client";
 import { importWatchListQueue } from "@/queues/queues"
+import ShikimoriListSyncService from "./shikimori/ShikimoriListSyncService";
 
 export default class WatchListService {
 
@@ -183,23 +184,65 @@ export default class WatchListService {
         await prisma.animeList.createUserWatchListByMap(user.id, shikimoriDBAnimeMap, watchList);
     }
 
-    public static async addAnimeToListWithParams(user: User, animeId: number, addingParameters: AddToList) {
+    public static async addAnimeToListWithParams(user: UserWithIntegration, animeId: number, addingParameters: AddToList) {
         const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
+        const { shikimoriId } = await prisma.anime.findFirstOrThrow({
+            where: {
+                id: animeId
+            },
+            select: {
+                shikimoriId: true
+            }
+        })
+
         if (animeListEntry) throw new BadRequestError("List entry with this anime already exists");
-        await prisma.animeList.addAnimeToListByIds(user.id, animeId, addingParameters)
+
+        await prisma.animeList.addAnimeToListByIds(user.id, animeId, addingParameters);
+
+        ShikimoriListSyncService.createAddUpdateJob(user, {
+            animeId: shikimoriId,
+            episodes: addingParameters.watchedEpisodes,
+            status: addingParameters.status,
+            score: addingParameters.rating === 0 ? undefined : addingParameters.rating,
+        });
+
         return await prisma.animeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 
-    public static async removeAnimeFromList(user: User, animeId: number) {
+    public static async removeAnimeFromList(user: UserWithIntegration, animeId: number) {
         const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
+
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
+
+        if (animeListEntry.shikimoriId !== null ) {
+            ShikimoriListSyncService.createDeleteJob(user, animeListEntry.shikimoriId);
+        }
+
         await prisma.animeList.removeAnimeFromListById(animeId);
     }
 
-    public static async editAnimeListWithParams(user: User, animeId: number, editParameters: AddToList) {
+    public static async editAnimeListWithParams(user: UserWithIntegration, animeId: number, editParameters: AddToList) {
         const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
+        const { shikimoriId } = await prisma.anime.findFirstOrThrow({
+            where: {
+                id: animeId
+            },
+            select: {
+                shikimoriId: true
+            }
+        })
+
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
+
         await prisma.animeList.updateAnimeListByAnimeId(animeId, editParameters)
+
+        ShikimoriListSyncService.createAddUpdateJob(user, {
+            animeId: shikimoriId,
+            episodes: editParameters.watchedEpisodes,
+            status: editParameters.status,
+            score: editParameters.rating === 0 ? undefined : editParameters.rating,
+        });
+
         return await prisma.animeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 

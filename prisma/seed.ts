@@ -115,7 +115,6 @@ async function main() {
     const kodik = new KodikApiService();
     const genres = await kodik.getGenres();
     // Test new logger
-    if (genres.reqStatus === 500) return logger.error(genres);
     const { results } = genres as KodikGenresRequest;
     results.forEach(async genre => {
         await prisma.genre.upsert({
