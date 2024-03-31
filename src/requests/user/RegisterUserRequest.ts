@@ -44,10 +44,10 @@ export default class RegisterUserRequest extends Request {
                 fieldName: "passwordConfirm",
                 message: baseMsg.validationFailed
             }).custom((value, { req }) => {
-                    if (value !== req.body.password)
-                        throw new Error(registrationMsg.passwordsDontMatch);
-                    return true;
-                })
+                if (value !== req.body.password)
+                    throw new Error(registrationMsg.passwordsDontMatch);
+                return true;
+            })
         ])
     }
 }
