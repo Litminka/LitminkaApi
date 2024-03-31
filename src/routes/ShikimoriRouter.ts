@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import ShikimoriController from '@controllers/ShikimoriController';
 import { wrap } from '@/middleware/errorHandler';
-import UnlinkShikimoriRequest from '@/requests/shikimori/UnlinkShikimoriRequest';
-import BaseShikimoriRequest from '@/requests/shikimori/BaseShikimoriRequest';
-import LinkShikimoriRequest from '@/requests/shikimori/LinkShikimoriRequest';
+import UnlinkShikimoriRequest from '@requests/shikimori/UnlinkShikimoriRequest';
+import BaseShikimoriRequest from '@requests/shikimori/BaseShikimoriRequest';
+import LinkShikimoriRequest from '@requests/shikimori/LinkShikimoriRequest';
 const router = Router();
 
 // Public methods

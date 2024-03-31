@@ -8,7 +8,7 @@ import CreateGroupRequest from "@requests/group/list/CreateGroupRequest";
 import DeleteGroupRequest from "@requests/group/list/DeleteGroupRequest";
 import UpdateGroupRequest from "@requests/group/list/UpdateGroupRequest";
 import OwnedGroupRequest from "@requests/group/list/OwnedGroupsRequest";
-import { BaseGroupMemberRequest, KickGroupMemberRequest } from "@/requests/group/GroupMemberRequests";
+import { BaseGroupMemberRequest, KickGroupMemberRequest } from "@requests/group/GroupMemberRequests";
 import DeleteInviteRequest from "@requests/group/invite/DeleteInviteRequest";
 import DenyInviteRequest from "@requests/group/invite/DenyInviteRequest";
 import AcceptInviteRequest from "@requests/group/invite/AcceptInviteRequest";
@@ -17,7 +17,7 @@ import GetGroupAnimeListRequest from "@requests/group/animeList/GetGroupAnimeLis
 import AddGroupAnimeListRequest from "@requests/group/animeList/AddGroupAnimeListRequest";
 import UpdateGroupAnimeListRequest from "@requests/group/animeList/UpdateGroupAnimeListRequest";
 import DeleteGroupAnimeListRequest from "@requests/group/animeList/DeleteGroupAnimeListRequest";
-import AuthRequest from "@/requests/AuthRequest";
+import AuthRequest from "@requests/AuthRequest";
 
 const router = Router();
 
