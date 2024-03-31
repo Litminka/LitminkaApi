@@ -24,7 +24,7 @@ export default class WatchListController {
         });
     }
 
-    public static async addToList(req: RequestWithUser, res: Response) {
+    public static async addToList(req: RequestUserWithIntegration, res: Response) {
         const addingParameters = req.body as AddToList
         const user = req.auth.user;
         const animeId: number = req.params.animeId as unknown as number;
@@ -34,7 +34,7 @@ export default class WatchListController {
         });
     }
 
-    public static async editList(req: RequestWithUser, res: Response) {
+    public static async editList(req: RequestUserWithIntegration, res: Response) {
         const editParameters = req.body as AddToList
         const user = req.auth.user;
         const animeId: number = req.params.animeId as unknown as number;
@@ -44,7 +44,7 @@ export default class WatchListController {
         });
     }
 
-    public static async deleteFromList(req: RequestWithUser, res: Response) {
+    public static async deleteFromList(req: RequestUserWithIntegration, res: Response) {
         const user = req.auth.user;
         const animeId = req.params.animeId as unknown as number;
         await WatchListService.removeAnimeFromList(user, animeId);

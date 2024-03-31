@@ -1,6 +1,6 @@
 import { Anime, Prisma, User } from "@prisma/client";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
-import { ServerError, ShikimoriAnimeFull, ShikimoriAnime } from "@/ts/index";
+import { ShikimoriAnimeFull, ShikimoriAnime } from "@/ts/index";
 import { KodikAnime, KodikAnimeFull, animeWithTranslation, _translation } from "@/ts/kodik";
 import prisma from "@/db";
 import { RequestStatuses } from "@/ts/enums";
@@ -33,9 +33,8 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
      */
     async update(anime: Anime): Promise<boolean> {
         if (!this.shikimoriApi) throw new InternalServerError("No shikimori api specified");
-        const resAnime: ShikimoriAnimeFull | ServerError = await this.shikimoriApi.getAnimeById(anime.shikimoriId);
+        const resAnime: ShikimoriAnimeFull= await this.shikimoriApi.getAnimeById(anime.shikimoriId);
         if (!resAnime) return false;
-        if (resAnime.reqStatus === RequestStatuses.InternalServerError || resAnime.reqStatus === RequestStatuses.NotFound) return false;
         const update = resAnime as ShikimoriAnimeFull;
         prisma.anime.updateShikimori(anime.id, update);
         return true;

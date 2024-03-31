@@ -159,6 +159,20 @@ const extention = Prisma.defineExtension({
                         }
                     }
                 })
+            },
+            async disableShikimoriListUpdate(id: number) {
+                await prisma.user.update({
+                    where: {
+                        id
+                    },
+                    data: {
+                        integration: {
+                            update: {
+                                shikimoriCanChangeList: false,
+                            }
+                        }
+                    }
+                })
             }
         }
     }
