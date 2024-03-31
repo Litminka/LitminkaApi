@@ -5,7 +5,6 @@ import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 
 const worker = new Worker("shikimoriListUpdate", async (job: Job) => {
     const data = job.data;
-    console.log(data);
     try {
         if (data.type === "add-update") {
             await ShikimoriListSyncService.addOrUpdateList(data.userId, data.list);

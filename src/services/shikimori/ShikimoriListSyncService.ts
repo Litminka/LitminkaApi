@@ -19,7 +19,6 @@ export default class ShikimoriListSyncService {
         const shikimoriApi = new ShikimoriApiService(user);
 
         const response = await shikimoriApi.addOrUpdateList(list);
-        console.log(response);
         const { id } = response;
 
         await prisma.animeList.updateMany({
@@ -47,7 +46,7 @@ export default class ShikimoriListSyncService {
 
         if (!user || !user.integration || !user.integration.shikimoriCanChangeList) return;
 
-        shikimoriListUpdateQueue.add("shikimoriListUpdate", { id: user.id, list, type: "add-update" }, {
+        shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, list, type: "add-update" }, {
             removeOnComplete: 10,
             removeOnFail: 100
         })
@@ -56,7 +55,7 @@ export default class ShikimoriListSyncService {
 
         if (!user || !user.integration || !user.integration.shikimoriCanChangeList) return;
 
-        shikimoriListUpdateQueue.add("shikimoriListUpdate", { id: user.id, shikimoriId: id, type: "delete" }, {
+        shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, shikimoriId: id, type: "delete" }, {
             removeOnComplete: 10,
             removeOnFail: 100
         })
