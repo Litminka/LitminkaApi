@@ -1,6 +1,6 @@
 import { ValidationChain, param } from "express-validator";
 import { baseMsg } from '@/ts/messages';
-import { BaseValidator } from "@validators/BaseValidator";
+import { BaseValidator, intValidator } from "@validators/BaseValidator";
 
 /**
  * Validate required `number` param parameter.
@@ -11,10 +11,11 @@ import { BaseValidator } from "@validators/BaseValidator";
 export const paramIntValidator = ({
     fieldName,
     typeParams = { min: 1, max: 2147483647 },
-    message = baseMsg.validationFailed
+    message = baseMsg.valueMustBeInt
 }: BaseValidator): ValidationChain => {
-    return param(fieldName)
-        .isInt(typeParams)
-        .toInt()
-        .withMessage(message);
+    return intValidator({
+        validator: param(fieldName, baseMsg.validationFailed),
+        typeParams,
+        message
+    })
 };
