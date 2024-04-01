@@ -23,9 +23,7 @@ export default class GetWatchListRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodyArrayValidator("statuses", {
-                message: searchMsg.maxArraySizeExceeded
-            }).optional(),
+            bodyArrayValidator("statuses").optional(),
             bodyStringValidator("statuses.*", {
                 message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(WatchListStatuses)),
@@ -33,6 +31,7 @@ export default class GetWatchListRequest extends AuthRequest {
             bodyArrayValidator("ratings", {
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
+            
             bodyIntValidator("ratings.*", {
                 typeParams: { min: 0, max: 10 },
                 message: baseMsg.valueNotInRange
@@ -40,7 +39,7 @@ export default class GetWatchListRequest extends AuthRequest {
 
             bodyBoolValidator("isFavorite", {
                 message: baseMsg.valueMustBeBool
-            })
+            }).optional()
         ])
     }
 }

@@ -9,13 +9,12 @@ import { baseMsg } from "@/ts/messages";
  * @param message Error message for validation exceptions.  
  * @returns base date validation chain
  */
-const bodyDateValidator = (fieldName: string, {
-    typeParams,
-    message = baseMsg.valueMustBeDate
-}: BaseValidator): ValidationChain => {
+const bodyDateValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
+    const message = options?.message ?? baseMsg.valueMustBeDate;
+        
     return dateValidator({
         validator: body(`${fieldName}.*`, baseMsg.valueMustBeDate),
-        typeParams,
+        typeParams: options?.typeParams,
         message
     })
 };
@@ -27,16 +26,15 @@ const bodyDateValidator = (fieldName: string, {
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodySoftPeriodValidator = (fieldName: string, {
-    typeParams,
-    message = baseMsg.validationFailed
-}: BaseValidator): any[] => {
+export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidator): any[] => {
+    const message = options?.message ?? baseMsg.validationFailed;
+
     return [
         arrayValidator({
             validator: body(fieldName).optional(),
             typeParams: { max: 2, min: 1 },
         }).bail(),
-        bodyDateValidator(fieldName, { message, typeParams })
+        bodyDateValidator(fieldName, { message, typeParams: options?.typeParams })
     ]
 };
 
@@ -47,10 +45,9 @@ export const bodySoftPeriodValidator = (fieldName: string, {
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodyStrictPeriodValidator = (fieldName: string,{
-    typeParams,
-    message
-}: BaseValidator): any[] => {
+export const bodyStrictPeriodValidator = (fieldName: string, options?: BaseValidator): any[] => {
+
+
     return [
         // Validator doesn't cast value to array except arrayValidator, using unique chain
         body(fieldName)
@@ -61,6 +58,6 @@ export const bodyStrictPeriodValidator = (fieldName: string,{
                 message: baseMsg.valueMustBeAnArray,
                 typeParams: { min: 2, max: 2 }
             })),
-        bodyDateValidator(fieldName, { message, typeParams })
+        bodyDateValidator(fieldName, { message: options?.message, typeParams: options?.typeParams })
     ]
 };
