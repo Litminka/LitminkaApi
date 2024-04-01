@@ -14,7 +14,8 @@
     "autocheck": "npx ts-node src/queues/autocheck.ts",
     "relation-update": "npx ts-node src/queues/relationUpdate.ts",
     "rating-update": "npx ts-node src/queues/ratingUpdate.ts",
-    "watchlist-importer": "npx ts-node src/queues/watchListWorker.ts"
+    "watchlist-importer": "npx ts-node src/queues/watchListWorker.ts",
+    "shikimori-watchlist-sync": "npx ts-node src/queues/shikimoriListUpdate.ts"
   },
   "repository": {
     "type": "git",

@@ -1,13 +1,14 @@
 import { User, Integration, Prisma } from "@prisma/client";
 import axios, { AxiosHeaders } from "axios";
 import BadRequestError from "@/errors/clienterrors/BadRequestError";
-import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest } from "@/ts/shikimori";
+import { ShikimoriGraphAnimeRequest, ShikimoriGraphAnimeWithoutRelationRequest, ShikimoriListResponse, shikimoriList } from "@/ts/shikimori";
 import { getAnimeByPageQuery, getAnimeBySeasonQuery, getAnimeWithRelationsQuery, getAnimeWithoutRelationQuery } from "@/ts/shikimoriGraphQLRequests";
 import { ShikimoriWhoAmI, RequestTypes, ShikimoriWatchList, ShikimoriAnime, ShikimoriAnimeFull } from "@/ts/index";
 import prisma from "@/db";
 import { shikiRateLimiter } from "@/shikiRateLimiter";
 import { RateLimiter } from "limiter";
 import { RequestStatuses } from "@/ts/enums";
+import ForbiddenError from "@/errors/clienterrors/ForbiddenError";
 
 interface iShikimoriApi {
     user: User & {
@@ -19,6 +20,17 @@ interface iShikimoriApi {
 axios.defaults.validateStatus = (status) => {
     return (status >= 400 && status <= 499) || (status >= 200 && status <= 299)
 }
+
+/**
+ *  Documenting this api for the unfortunate soul that will maintain it in the future
+ *  To be absolutely honest, shikimori's api is an absolute mess
+ *  It is extremely bad documented, some things are not apparent so i will try to write them here
+ *  Used docs: 
+ *      Api v2: https://shikimori.one/api/doc/2.0 for user list (called user_rates)
+ *      Api v1: https://shikimori.one/api/doc/1.0 was used for anime, now is deprecated
+ *      GraphQL https://shikimori.one/api/doc/graphql while experimental allows for more dynamic anime fetching, 
+ *                                                    also has a lot of undocumented errors
+ */
 
 const baseUrl = `${process.env.SHIKIMORI_URL}/api`;
 export default class ShikimoriApiService implements iShikimoriApi {
@@ -79,17 +91,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             Do the same on our end
         */
         if (status === RequestStatuses.BadRequest) {
-            await prisma.integration.update({
-                where: {
-                    userId: this.user.id
-                },
-                data: {
-                    shikimoriToken: null,
-                    shikimoriRefreshToken: null,
-                    shikimoriId: null,
-                    shikimoriCode: null,
-                }
-            });
+            await prisma.integration.clearShikimoriIntegration(this.user.id);
             return false;
         }
         const data: any = await response.data;
@@ -123,7 +125,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
      * @returns ServerError object if request fails
      * @returns false is request is unable to be made due to auth requirement
      */
-    private async requestMaker(url: string, method: RequestTypes, auth = false, data?: Object) {
+    private async makeRequest(url: string, method: RequestTypes, auth = false, data?: Object) {
         if (auth) {
             if (!this.user) throw new BadRequestError("no_shikimori_integration");
             if (this.user.integration === null || this.user.integration.shikimoriCode === null) throw new BadRequestError("no_shikimori_integration");
@@ -154,11 +156,13 @@ export default class ShikimoriApiService implements iShikimoriApi {
                 headers: headers,
             });
 
-            const { status } = response;
+            const { status }: { status: number } = response;
 
             if (status !== RequestStatuses.TooManyRequests) {
+                if (status === RequestStatuses.Forbidden) {
+                    throw new BadRequestError('no_shikimori_rights')
+                }
                 const data: any = response.data;
-                data.reqStatus = status;
                 if (status !== RequestStatuses.Unauthorized) return data;
             }
 
@@ -167,14 +171,29 @@ export default class ShikimoriApiService implements iShikimoriApi {
             || requestStatus === RequestStatuses.TooManyRequests);
     }
 
+    private async makeListRequest(uri: string, method: RequestTypes, data: object): Promise<unknown> {
+        if (!this.user?.integration?.shikimoriCanChangeList) throw new BadRequestError("shikimori_cant_change_list");
+        try {
+            return await this.makeRequest(uri, method, true, {
+                user_rate: data
+            })
+        } catch (error) {
+            if (error instanceof ForbiddenError) {
+                await prisma.user.disableShikimoriListUpdate(this.user.id);
+            }
+            throw error
+        }
+
+    }
+
     public async getProfile(): Promise<ShikimoriWhoAmI> {
-        return this.requestMaker("/users/whoami", "GET", true);
+        return this.makeRequest("/users/whoami", "GET", true);
     }
 
     public async getUserList(): Promise<ShikimoriWatchList[]> {
         if (!this.user) throw new BadRequestError("no_shikimori_integration");
         if (this.user.integration!.shikimoriId === null) throw new BadRequestError("no_shikimori_integration");
-        return this.requestMaker(`/v2/user_rates?user_id=${this.user.integration!.shikimoriId}&target_type=Anime&censored=true`, "GET");
+        return this.makeRequest(`/v2/user_rates?user_id=${this.user.integration!.shikimoriId}&target_type=Anime&censored=true`, "GET");
     }
 
     /**
@@ -183,7 +202,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
      * @returns 
      */
     public async getAnimeById(id: number): Promise<ShikimoriAnimeFull> {
-        return this.requestMaker(`/animes/${id}`, "GET");
+        return this.makeRequest(`/animes/${id}`, "GET");
     }
 
     /**
@@ -193,7 +212,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
      */
     public async getBatchAnime(ids: number[]): Promise<ShikimoriAnime[]> {
         const animeIds = ids.join(",");
-        return this.requestMaker(`/animes?ids=${animeIds}&limit=50&censored=true`, "GET");
+        return this.makeRequest(`/animes?ids=${animeIds}&limit=50&censored=true`, "GET");
     }
 
     /**
@@ -203,53 +222,126 @@ export default class ShikimoriApiService implements iShikimoriApi {
      * @returns 
      */
     public async getSeasonAnimeByPage(page: number, season: string): Promise<ShikimoriAnime[]> {
-        return this.requestMaker(`/animes?limit=50&season=${season}&page=${page}&censored=true`, "GET");
+        return this.makeRequest(`/animes?limit=50&season=${season}&page=${page}&censored=true`, "GET");
     }
 
+     /**
+     * Get 50 anime by ids with relations
+     * @param page  
+     * @returns ShikimoriGraphAnimeRequest
+     */
     public async getBatchGraphAnime(ids: number[]): Promise<ShikimoriGraphAnimeRequest> {
+        if (ids.length == 0) return {
+            data: {
+                animes: []
+            }
+        };
         const query = getAnimeWithRelationsQuery;
         const animeIds = ids.join(",");
-        return this.requestMaker(`/graphql`, "POST", false, {
+        return this.makeRequest(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
-                ids: animeIds
+                ids: animeIds // if empty will give a random set of 50
             }
         });
     }
 
-    public async getBatchGraphAnimeWithouRelation(ids: number[]): Promise<ShikimoriGraphAnimeWithoutRelationRequest[]> {
+    /**
+     * Get 50 anime by ids
+     * @param page  
+     * @returns ShikimoriGraphAnimeWithoutRelationRequest
+     */
+    public async getBatchGraphAnimeWithoutRelation(ids: number[]): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        if (ids.length == 0) return {
+            data: {
+                animes: []
+            }
+        };
         const query = getAnimeWithoutRelationQuery;
         const animeIds = ids.join(",");
-        return this.requestMaker(`/graphql`, "POST", false, {
+        return this.makeRequest(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
-                ids: animeIds
+                ids: animeIds // if empty will give a random set of 50
             }
         });
     }
-
+    /**
+     * Get 50 anime by page and season
+     * Note: if page is less than 1, it will be set to 1
+     * @param page number of page
+     * @param season season in format 'season_year'
+     * @returns ShikimoriGraphAnimeWithoutRelationRequest
+     */
     public async getGraphAnimeBySeason(page: number, season: string): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        if (page < 1) page = 1;
         const query = getAnimeBySeasonQuery;
-        return this.requestMaker(`/graphql`, "POST", false, {
+        return this.makeRequest(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
                 season,
-                page
+                page // must be larger than zero or shikimori will throw 503 error
             }
         });
     }
 
+    /**
+     * Get 50 anime by shikimori page
+     * Note: if page is less than 1, it will be set to 1
+     * @param page  
+     * @returns ShikimoriGraphAnimeWithoutRelationRequest
+     */
     public async getGraphAnimeByPage(page: number): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        if (page < 1) page = 1;
         const query = getAnimeByPageQuery;
-        return this.requestMaker(`/graphql`, "POST", false, {
+        return this.makeRequest(`/graphql`, "POST", false, {
             operationName: null,
             query,
             variables: {
-                page
+                page // must be larger than zero or shikimori will throw 503 error
             }
         });
+    }
+
+    /**
+     * Updates or adds an entry of animeList to shikimori
+     * Requires auth to function
+     * @param userList
+     * @throws BadRequestError
+     * @throws ForbiddenError
+     * @returns ShikimoriGraphAnimeWithoutRelationRequest
+     */
+    public async addOrUpdateList(userList: shikimoriList): Promise<ShikimoriListResponse> {
+        /** 
+         * So about this implementation, shikimori's api specifically states, 
+         * You have 2 ways of updating a record and a one way to add it
+         * That's not the case, the documentation does not tell the whole picture
+         * So the POST method also updates records, the only difference is query param of rate
+         * So we are gonna use this feature, hoping it won't be deleted
+         */
+
+        const { episodes, status, animeId, score } = userList;
+        const requestData = {
+            episodes, status, score,
+            target_id: animeId,
+            user_id: this.user!.integration!.shikimoriId,
+            target_type: "Anime"
+        }
+
+        return await this.makeListRequest('/v2/user_rates', "POST", requestData) as ShikimoriListResponse;
+    }
+
+    /**
+     * Updates or adds an entry of animeList to shikimori
+     * Requires auth to function
+     * @param id of listEntryOnShikimori
+     * @throws BadRequestError
+     * @throws ForbiddenError
+     */
+    public async deleteListEntry(id: number): Promise<void> {
+        await this.makeListRequest(`/v2/user_rates/${id}`, "DELETE", {});
     }
 }

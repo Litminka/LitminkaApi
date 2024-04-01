@@ -109,7 +109,6 @@ export type UserWithPermissions = User & {
 
 export interface ShikimoriWhoAmI {
     id: number;
-    reqStatus: number;
     nickname: string;
     /**
      * Url to avatar image
@@ -140,7 +139,7 @@ export interface ListFilters {
     isFavorite?: boolean
 }
 
-type watchListStatus =
+export type watchListStatus =
     | "planned"
     | "watching"
     | "rewatching"
@@ -169,7 +168,6 @@ interface ratingStatus {
     value: number;
 }
 export interface ShikimoriWatchList {
-    reqStatus: number;
     id: number;
     user_id: number;
     target_id: number;
@@ -187,7 +185,6 @@ export interface ShikimoriWatchList {
 }
 
 export interface ShikimoriAnime {
-    reqStatus: number;
     id: number;
     /**
      * Assumed to be an english name
@@ -286,7 +283,6 @@ export interface ShikimoriAnimeFull {
     videos: video[];
     screenshots: screenshot[];
     user_rate: null;
-    reqStatus: number;
 }
 
 interface screenshot {
@@ -339,11 +335,6 @@ export interface DeleteFollow {
 export interface options {
     method: string;
     body?: any;
-}
-
-export interface ServerError {
-    reqStatus: RequestStatuses.InternalServerError;
-    message: string;
 }
 
 export type info = {

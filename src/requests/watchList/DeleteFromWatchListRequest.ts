@@ -6,7 +6,18 @@ import { baseMsg } from "@/ts/messages";
 export default class DeleteFromWatchListRequest extends AuthRequest {
 
     /**
+     *  if authType is not None 
+     *  Define prisma user request for this method
+     * 
+     *  @returns Prisma User Variant
+     */
+    protected async auth(userId: number): Promise<any> {
+        return await prisma.user.findUserByIdWithIntegration(userId);
+    }
+    
+    /**
      * append ValidationChain to class context
+     * @returns ValidationChain
      */
     protected rulesExtend(): void {
         super.rulesExtend()

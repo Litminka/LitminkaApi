@@ -6,7 +6,6 @@ import { ShikimoriWhoAmI, UserWithIntegration } from "@/ts";
 import UnprocessableContentError from "@errors/clienterrors/UnprocessableContentError";
 import crypto from "crypto";
 import prisma from "@/db";
-import ForbiddenError from "@errors/clienterrors/ForbiddenError";
 import BadRequestError from "@errors/clienterrors/BadRequestError";
 
 export default class ShikimoriLinkService {
@@ -23,14 +22,11 @@ export default class ShikimoriLinkService {
         const profile = await shikimoriapi.getProfile();
         if (!profile) throw new UnauthorizedError("User does not have shikimori integration")
 
-        if (profile.reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
-
         const integrated = await prisma.integration.findByShikimoriId((<ShikimoriWhoAmI>profile).id)
         // fix if user integrated this shikimori account on another user account
         if (integrated) {
-            await prisma.integration.clear(user.id);
+            await prisma.integration.clearShikimoriIntegration(user.id);
             throw new UnprocessableContentError("Account already linked");
-            // FIXME: need to add relink
         }
         await prisma.integration.updateUserShikimoriId(user.id, (<ShikimoriWhoAmI>profile).id);
         await prisma.shikimoriLinkToken.removeToken(token);
@@ -44,7 +40,6 @@ export default class ShikimoriLinkService {
         const shikimori = new ShikimoriApiService(user);
         const profile = await shikimori.getProfile();
         if (!profile) throw new UnauthorizedError("User does not have shikimori integration");
-        if (profile.reqStatus === RequestStatuses.InternalServerError) throw new InternalServerError();
         return profile;
     }
 

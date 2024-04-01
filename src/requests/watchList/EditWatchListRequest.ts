@@ -7,7 +7,17 @@ import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/vali
 import { WatchListStatuses } from "@/ts/enums";
 
 export default class EditWatchListRequest extends AuthRequest {
-
+    
+    /**
+     *  if authType is not None 
+     *  Define prisma user request for this method
+     * 
+     *  @returns Prisma User Variant
+     */
+    protected async auth(userId: number): Promise<any> {
+        return await prisma.user.findUserByIdWithIntegration(userId);
+    }
+    
     /**
      * append ValidationChain to class context
      */

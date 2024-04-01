@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import { ServerError } from "@/ts/index";
 import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translation, KodikAnime, _translation, _KodikAnimeFull } from "@/ts/kodik";
 import { RequestStatuses } from "@/ts/enums";
 import { logger } from "@/loggerConf"
@@ -139,7 +138,7 @@ export default class KodikApiService {
         return packedAnime.result;
     }
 
-    async getGenres(): Promise<KodikGenresRequest | ServerError> {
+    async getGenres(): Promise<KodikGenresRequest> {
         const params = new URLSearchParams({
             "token": process.env.KODIK_API_KEY!,
             "genres_type": "shikimori",

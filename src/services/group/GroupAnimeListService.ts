@@ -3,6 +3,7 @@ import prisma from "@/db"
 import BaseError from "@errors/BaseError"
 import { AddWithAnime, ListFilters } from "@/ts"
 import { RequestStatuses } from "@/ts/enums"
+import ShikimoriListSyncService from "../shikimori/ShikimoriListSyncService"
 
 interface AddToGroupList {
     userId: number,
@@ -41,9 +42,9 @@ export default class GroupAnimeListService {
         }
         return await prisma.groupAnimeList.findMany({
             where: {
-                groupId, 
-                rating: ratings === undefined ? undefined : ratingFilter, 
-                isFavorite, 
+                groupId,
+                rating: ratings === undefined ? undefined : ratingFilter,
+                isFavorite,
                 status: statuses === undefined ? undefined : statusFilter
             },
             include: {
@@ -143,6 +144,34 @@ export default class GroupAnimeListService {
         const members = group.members.filter(member => member.overrideList);
         const memberIds = members.map(user => user.userId)
 
+
+        
+        const userListEntries = await prisma.animeList.findMany({
+            where: {
+                animeId,
+                userId: {
+                    in: memberIds
+                }
+            }
+        });
+        const memberIntegrations = await prisma.user.findMany({
+            where: {
+                id: {
+                    in: memberIds
+                }
+            },
+            include: {
+                integration: true
+            }
+        })
+        
+        for (const entry of userListEntries) {
+            if (!entry.shikimoriId) continue;
+            const user = memberIntegrations.find(user => user.id === entry.userId);
+            if (!user) continue;
+            ShikimoriListSyncService.createDeleteJob(user, entry.shikimoriId);
+        }
+
         await prisma.animeList.deleteMany({
             where: {
                 animeId,
@@ -150,11 +179,21 @@ export default class GroupAnimeListService {
                     in: memberIds
                 }
             }
-        })
+        });
     }
 
     private static async updateMembers(group: GroupWithMembers, data: AddWithAnime) {
         const { animeId, isFavorite, rating, status, watchedEpisodes } = data;
+
+        const { shikimoriId } = await prisma.anime.findFirstOrThrow({
+            where: {
+                id: animeId
+            },
+            select: {
+                shikimoriId: true
+            }
+        });
+
         const members = group.members.filter(member => member.overrideList);
         const memberIds = members.map(user => user.userId)
 
@@ -166,6 +205,7 @@ export default class GroupAnimeListService {
                 animeId
             }
         })
+
         const membersWithListEntries: number[] = membersListEntries.map(list => list.userId);
         const membersWithoutListEntries: number[] = memberIds.filter(id => membersWithListEntries.indexOf(id) === -1);
 
@@ -195,6 +235,27 @@ export default class GroupAnimeListService {
                     userId: id
                 }
             })
+        }
+
+        const membersWithIntegrations = await prisma.user.findMany({
+            where: {
+                id: {
+                    in: memberIds
+                }
+            },
+            include: {
+                integration: true,
+            }
+        });
+        
+
+        for (const user of membersWithIntegrations) {
+            ShikimoriListSyncService.createAddUpdateJob(user, {
+                animeId: shikimoriId,
+                episodes: watchedEpisodes,
+                status,
+                score: rating === 0 ? undefined : rating
+            });
         }
     }
 }

@@ -1,21 +1,13 @@
 
-import { Queue, Worker, Job } from 'bullmq';
+import { Worker, Job } from 'bullmq';
 import prisma from "@/db";
 import AutoCheckService from '@services/AutoCheckService';
 import FollowService from '@services/FollowService';
 import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
-import KodikApiService from '@services/KodikApiService';
 import { FollowTypes } from '@/ts/enums';
 import { logger } from "@/loggerConf"
-import { ShikimoriGraphAnime } from '@/ts/shikimori';
 import { config } from '@/config';
-
-const autoCheckQueue = new Queue("autocheck", {
-    connection: {
-        host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT!),
-    }
-});
+import { autoCheckQueue } from './queues';
 
 /**
  * get titles ->
@@ -138,15 +130,6 @@ const worker = new Worker("autocheck", async (job: Job) => {
         port: parseInt(process.env.REDIS_PORT!),
     }
 });
-
-
-// autoCheckQueue.add("autocheck", {}, {
-//     repeat: {
-//         every: 1000 * 1000
-//     },
-//     removeOnComplete: 10,
-//     removeOnFail: 100
-// })
 
 autoCheckQueue.add("autocheck", {}, {
     removeOnComplete: 10,

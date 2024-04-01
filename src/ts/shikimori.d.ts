@@ -1,3 +1,5 @@
+import { watchListStatus } from "."
+
 export interface ShikimoriGraphAnimeRequest {
     data: {
         animes: ShikimoriAnimeWithRelation[]
@@ -34,12 +36,36 @@ export interface ShikimoriGraphAnime {
     poster: shikimoriPoster | null
 }
 
+export interface ShikimoriListResponse {
+    id: number,
+    user_id: number,
+    target_id: number,
+    target_type: "Anime",
+    score: number,
+    status: watchListStatus,
+    rewatches: number,
+    episodes: number,
+    volumes: number,
+    chapters: number,
+    text?: string,
+    text_html: string,
+    created_at: string,
+    updated_at: string
+}
+
 export interface ShikimoriAnimeWithRelation extends ShikimoriGraphAnime {
     related: ShikimoriRelation[]
 }
 
 export interface ShikimoriAnimeOptionalRelation extends ShikimoriGraphAnime {
     related?: ShikimoriRelation[]
+}
+
+interface shikimoriList {
+    episodes: number,
+    score?: number,
+    status: watchListStatus,
+    animeId: number,
 }
 
 type genreKind = "demographic" | "genre" | "theme"

@@ -51,16 +51,17 @@ model SessionToken {
 }
 
 model Integration {
-  id                    Int     @id @default(autoincrement())
-  shikimoriToken        String?
-  shikimoriRefreshToken String?
-  shikimoriCode         String?
-  shikimoriId           Int?    @unique
-  discordId             String?
-  telegramId            String?
-  vkId                  String?
-  userId                Int     @unique
-  user                  User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  id                     Int      @id @default(autoincrement())
+  shikimoriToken         String?
+  shikimoriRefreshToken  String?
+  shikimoriCode          String?
+  shikimoriId            Int?     @unique
+  shikimoriCanChangeList Boolean? @default(false)
+  discordId              String?
+  telegramId             String?
+  vkId                   String?
+  userId                 Int      @unique
+  user                   User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model ShikimoriLinkToken {
@@ -124,7 +125,7 @@ model AnimeTranslation {
   id              Int      @id @default(autoincrement())
   currentEpisodes Int
   groupId         Int
-  link            String   
+  link            String
   group           Group    @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   animeId         Int
   anime           Anime    @relation(fields: [animeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -153,6 +154,7 @@ model Follow {
 
 model AnimeList {
   id              Int     @id @default(autoincrement())
+  shikimoriId     Int?    @unique
   animeId         Int
   anime           Anime   @relation(fields: [animeId], references: [id])
   userId          Int
