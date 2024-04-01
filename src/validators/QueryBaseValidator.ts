@@ -13,8 +13,7 @@ interface QueryIntValidator extends BaseValidator {
  * @param typeParams Express [isint()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object.
  * @param message Error message for validation exceptions.
  */
-export const queryIntValidator = ({
-    fieldName,
+export const queryIntValidator = (fieldName: string, {
     defValue = 0,
     typeParams = { min: -2147483648, max: 2147483647 },
     message = baseMsg.validationFailed

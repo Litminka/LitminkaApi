@@ -9,8 +9,7 @@ import { baseMsg } from "@/ts/messages";
  * @param message Error message for validation exceptions.  
  * @returns base date validation chain
  */
-const bodyDateValidator = ({
-    fieldName,
+const bodyDateValidator = (fieldName: string, {
     typeParams,
     message = baseMsg.valueMustBeDate
 }: BaseValidator): ValidationChain => {
@@ -28,8 +27,7 @@ const bodyDateValidator = ({
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodySoftPeriodValidator = ({
-    fieldName,
+export const bodySoftPeriodValidator = (fieldName: string, {
     typeParams,
     message = baseMsg.validationFailed
 }: BaseValidator): any[] => {
@@ -38,7 +36,7 @@ export const bodySoftPeriodValidator = ({
             validator: body(fieldName).optional(),
             typeParams: { max: 2, min: 1 },
         }).bail(),
-        bodyDateValidator({ fieldName, message, typeParams })
+        bodyDateValidator(fieldName, { message, typeParams })
     ]
 };
 
@@ -49,8 +47,7 @@ export const bodySoftPeriodValidator = ({
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodyStrictPeriodValidator = ({
-    fieldName,
+export const bodyStrictPeriodValidator = (fieldName: string,{
     typeParams,
     message
 }: BaseValidator): any[] => {
@@ -64,6 +61,6 @@ export const bodyStrictPeriodValidator = ({
                 message: baseMsg.valueMustBeAnArray,
                 typeParams: { min: 2, max: 2 }
             })),
-        bodyDateValidator({ fieldName, message, typeParams })
+        bodyDateValidator(fieldName, { message, typeParams })
     ]
 };

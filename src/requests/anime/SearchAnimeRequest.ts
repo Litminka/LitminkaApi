@@ -20,87 +20,71 @@ export default class SearchAnimeRequest extends Request {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodyStringValidator({
-                fieldName: "name",
+            bodyStringValidator("name", {
                 message: searchMsg.maxLengthExceeded
             }).optional(),
 
-            bodyArrayValidator({
-                fieldName: "seasons",
+            bodyArrayValidator("seasons", {
                 typeParams: { max: 4 },
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator({
-                fieldName: "seasons.*",
+            bodyStringValidator("seasons.*", {
                 message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimeSeasons))
                 .withMessage(searchMsg.unknownType),
 
-            bodyArrayValidator({
-                fieldName: "statuses",
+            bodyArrayValidator("statuses", {
                 typeParams: { max: 3 },
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator({
-                fieldName: "statuses.*",
+            bodyStringValidator("statuses.*", {
                 message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimeStatuses))
                 .withMessage(searchMsg.unknownType),
 
-            bodyArrayValidator({
-                fieldName: "rpaRatings",
+            bodyArrayValidator("rpaRatings", {
                 typeParams: { max: 6 },
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator({
-                fieldName: "rpaRatings.*",
+            bodyStringValidator("rpaRatings.*", {
                 message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimePgaRatings))
                 .withMessage(searchMsg.unknownType),
 
-            bodyArrayValidator({
-                fieldName: "mediaTypes",
+            bodyArrayValidator("mediaTypes", {
                 typeParams: { max: 6 },
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator({
-                fieldName: "mediaTypes.*",
+            bodyStringValidator("mediaTypes.*", {
                 message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(AnimeMediaTypes))
                 .withMessage(searchMsg.unknownType),
 
-            bodyArrayValidator({
-                fieldName: "includeGenres",
+            bodyArrayValidator("includeGenres", {
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyIntValidator({
-                fieldName: "includeGenres.*",
+            bodyIntValidator("includeGenres.*", {
                 message: baseMsg.valueNotInRange
             }),
 
-            bodyArrayValidator({
-                fieldName: "excludeGenres",
+            bodyArrayValidator("excludeGenres", {
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyIntValidator({
-                fieldName: "excludeGenres.*",
+            bodyIntValidator("excludeGenres.*", {
                 message: baseMsg.valueNotInRange
             }),
 
-            bodySoftPeriodValidator({
-                fieldName: "period",
+            bodySoftPeriodValidator("period", {
                 message: baseMsg.valueNotInRange
             }),
 
-            queryIntValidator({
-                fieldName: "page",
+            queryIntValidator("page", {
                 defValue: 1,
                 typeParams: { min: 1 },
                 message: baseMsg.valueNotInRange
             }),
 
-            queryIntValidator({
-                fieldName: "pageLimit",
+            queryIntValidator("pageLimit", {
                 defValue: 25,
                 typeParams: { min: 1, max: 125 },
                 message: baseMsg.valueNotInRange

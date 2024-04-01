@@ -21,8 +21,7 @@ export default class AnimeRequest extends OptionalRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            paramIntValidator({
-                fieldName: "animeId",
+            paramIntValidator("animeId", {
                 message: baseMsg.valueNotInRange
             })
         ])

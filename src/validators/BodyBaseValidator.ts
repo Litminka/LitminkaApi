@@ -26,10 +26,9 @@ import {
  * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object. By default limits array length to 50 elements.
  * @param message Error message for validation exceptions.  
  */
-export const bodyArrayValidator = ({
-    fieldName,
+export const bodyArrayValidator = (fieldName: string, {
     typeParams = { min: 0, max: 50 },
-    message = baseMsg.valueMustBeString
+    message = baseMsg.valueMustBeAnArray
 }: BaseValidator): ValidationChain => {
     return arrayValidator({
         validator: body(fieldName, baseMsg.validationFailed),
@@ -44,8 +43,7 @@ export const bodyArrayValidator = ({
  * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
  * @param message Error message for validation exceptions.
  */
-export const bodyStringValidator = ({
-    fieldName,
+export const bodyStringValidator = (fieldName: string, {
     typeParams = { min: 0, max: 32 },
     message = baseMsg.valueMustBeString
 }: BaseValidator): ValidationChain => {
@@ -62,8 +60,7 @@ export const bodyStringValidator = ({
  * @param typeParams Express [isInt()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object. By default limited to int32 positive numbers.
  * @param message Error message for validation exceptions.
  */
-export const bodyIntValidator = ({
-    fieldName,
+export const bodyIntValidator = (fieldName: string, {
     typeParams = { min: 1, max: 2147483647 },
     message = baseMsg.valueMustBeInt
 }: BaseValidator): ValidationChain => {
@@ -80,8 +77,7 @@ export const bodyIntValidator = ({
  * @param typeParams Express [isBoolead()](https://express-validator.github.io/docs/api/validation-chain/#isboolean) options object. 
  * @param message Error message for validation exceptions. 
  */
-export const bodyBoolValidator = ({
-    fieldName,
+export const bodyBoolValidator = (fieldName: string, {
     typeParams,
     message = baseMsg.valueMustBeBool
 }: BaseValidator): ValidationChain => {
@@ -99,8 +95,7 @@ interface bodyUUIDValidator extends Omit<BaseValidator, "typeParams"> { }
  * @param fieldName Parameter name
  * @param message Error message for validation exceptions. 
  */
-export const bodyUUIDValidator = ({
-    fieldName,
+export const bodyUUIDValidator = (fieldName: string, {
     message = baseMsg.valueMustBeUUID
 }: bodyUUIDValidator): ValidationChain => {
     return uuidValidator({

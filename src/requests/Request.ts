@@ -5,6 +5,7 @@ import { auth } from "@/middleware/auth";
 import { optionalAuth } from "@/middleware/optionalAuth";
 import { RequestWithAuth, RequestWithUserPermissions } from "@/ts";
 import { checkExact } from "express-validator";
+import { validatorData } from "@/middleware/validatorData";
 export default class Request {
     protected authType: RequestAuthTypes;
 
@@ -110,7 +111,8 @@ export default class Request {
             this.checkPermissions.bind(this),
             ...(this.rulesArr.flat()),
             checkExact([], { message: 'Additional fields are not allowed' }),
-            validatorError
+            validatorError,
+            validatorData
         ]
     }
 }

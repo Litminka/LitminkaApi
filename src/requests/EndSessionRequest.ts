@@ -11,13 +11,11 @@ export default class EndSessionRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodyArrayValidator({
-                fieldName: "sessions",
+            bodyArrayValidator("sessions", {
                 typeParams: { min: 1, max: 100 },
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyUUIDValidator({
-                fieldName: "sessions.*",
+            bodyUUIDValidator("sessions.*", {
                 message: sessionMsg.invalidSessionToken
             })
         ])

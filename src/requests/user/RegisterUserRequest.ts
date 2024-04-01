@@ -12,16 +12,14 @@ export default class RegisterUserRequest extends Request {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodyStringValidator({
-                fieldName: "login",
+            bodyStringValidator("login", {
                 message: registrationMsg.noLoginProvided
             }).custom(async value => {
                 const user = await prisma.user.findFirst({ where: { login: value } })
                 if (user) throw new Error(registrationMsg.loginTaken);
                 return true;
             }),
-            bodyStringValidator({
-                fieldName: "email",
+            bodyStringValidator("email", {
                 message: registrationMsg.noEmailProvided
             }).isEmail().bail().withMessage(registrationMsg.invalidEmail)
                 .custom(async value => {
@@ -30,18 +28,15 @@ export default class RegisterUserRequest extends Request {
                     return true;
                 })
                 .normalizeEmail(),
-            bodyStringValidator({
-                fieldName: "name",
+            bodyStringValidator("name", {
                 typeParams: { min: 4 },
                 message: registrationMsg.nameTooShort
             }),
-            bodyStringValidator({
-                fieldName: "password",
+            bodyStringValidator("password", {
                 typeParams: { min: 5 },
                 message: registrationMsg.passwordTooShort
             }),
-            bodyStringValidator({
-                fieldName: "passwordConfirm",
+            bodyStringValidator("passwordConfirm", {
                 message: baseMsg.validationFailed
             }).custom((value, { req }) => {
                 if (value !== req.body.password)

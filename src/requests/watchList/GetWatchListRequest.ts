@@ -23,27 +23,22 @@ export default class GetWatchListRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodyArrayValidator({
-                fieldName: "statuses",
+            bodyArrayValidator("statuses", {
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator({
-                fieldName: "statuses.*",
+            bodyStringValidator("statuses.*", {
                 message: searchMsg.maxLengthExceeded
             }).isIn(Object.values(WatchListStatuses)),
 
-            bodyArrayValidator({
-                fieldName: "ratings",
+            bodyArrayValidator("ratings", {
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyIntValidator({
-                fieldName: "ratings.*",
+            bodyIntValidator("ratings.*", {
                 typeParams: { min: 0, max: 10 },
                 message: baseMsg.valueNotInRange
             }),
 
-            bodyBoolValidator({
-                fieldName: "isFavorite",
+            bodyBoolValidator("isFavorite", {
                 message: baseMsg.valueMustBeBool
             })
         ])

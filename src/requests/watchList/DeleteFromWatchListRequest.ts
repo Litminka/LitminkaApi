@@ -11,8 +11,7 @@ export default class DeleteFromWatchListRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            paramIntValidator({
-                fieldName: "animeId",
+            paramIntValidator("animeId", {
                 message: baseMsg.valueNotInRange
             }).custom(async value => {
                 // TODO: this will die, if it doesnt find an anime

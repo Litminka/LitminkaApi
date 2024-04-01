@@ -29,8 +29,7 @@ export default class BanAnimeRequest extends Request {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            paramIntValidator({
-                fieldName: "animeId",
+            paramIntValidator("animeId", {
                 message: baseMsg.valueNotInRange
             })
         ])

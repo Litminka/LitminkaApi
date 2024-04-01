@@ -14,9 +14,7 @@ export interface TypeBaseValidator {
 /**
  * Base input parameters to all base validators
  */
-export interface BaseValidator extends Omit<TypeBaseValidator, "validator"> {
-    fieldName: string,
-};
+export interface BaseValidator extends Omit<TypeBaseValidator, "validator"> {}
 
 /**
  * Generate message object with range for `is<Type>()` validator options by min-max value.

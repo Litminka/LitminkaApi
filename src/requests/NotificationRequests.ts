@@ -12,8 +12,7 @@ export class GetNotificationsRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodySoftPeriodValidator({
-                fieldName: "period",
+            bodySoftPeriodValidator("period", {
                 message: baseMsg.validationFailed
             })
         ])
@@ -28,12 +27,10 @@ export class GetUserNotificationsRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodySoftPeriodValidator({
-                fieldName: "period",
+            bodySoftPeriodValidator("period", {
                 message: baseMsg.validationFailed
             }),
-            bodyBoolValidator({
-                fieldName: "isRead",
+            bodyBoolValidator("isRead", {
                 message: baseMsg.validationFailed
             })
         ])
@@ -48,12 +45,10 @@ export class ReadNotificationsRequest extends AuthRequest {
     protected rulesExtend(): void {
         super.rulesExtend()
         this.rulesArr.push([
-            bodyArrayValidator({
-                fieldName: "id",
+            bodyArrayValidator("id", {
                 message: baseMsg.validationFailed
             }).optional(),
-            bodyIntValidator({
-                fieldName: "id.*",
+            bodyIntValidator("id.*", {
                 message: baseMsg.validationFailed
             })
         ])
