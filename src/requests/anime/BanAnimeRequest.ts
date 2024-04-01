@@ -26,12 +26,12 @@ export default class BanAnimeRequest extends Request {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             paramIntValidator("animeId", {
                 message: baseMsg.valueNotInRange
             })
-        ])
+        ]
     }
 }

@@ -17,11 +17,11 @@ export default class SendInviteRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("groupId").isInt().bail().toInt(),
             body("userId").isInt().bail().toInt(),
-        ])
+        ]
     }
 }

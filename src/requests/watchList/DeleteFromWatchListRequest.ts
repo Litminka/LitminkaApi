@@ -2,6 +2,7 @@ import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
 import { paramIntValidator } from "@/validators/ParamBaseValidator";
 import { baseMsg } from "@/ts/messages";
+import { ValidationChain } from "express-validator";
 
 export default class DeleteFromWatchListRequest extends AuthRequest {
 
@@ -14,14 +15,14 @@ export default class DeleteFromWatchListRequest extends AuthRequest {
     protected async auth(userId: number): Promise<any> {
         return await prisma.user.findUserByIdWithIntegration(userId);
     }
-    
+
     /**
      * append ValidationChain to class context
      * @returns ValidationChain
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             paramIntValidator("animeId", {
                 message: baseMsg.valueNotInRange
             }).custom(async value => {
@@ -31,6 +32,6 @@ export default class DeleteFromWatchListRequest extends AuthRequest {
                 });
                 if (!anime) throw new Error("Anime doesn't exist");
             }),
-        ])
+        ]
     }
 }

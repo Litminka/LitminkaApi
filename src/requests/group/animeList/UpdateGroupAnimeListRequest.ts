@@ -1,6 +1,6 @@
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { body, param } from "express-validator";
+import { body, param, ValidationChain } from "express-validator";
 import { minmax } from "@/ts";
 
 export default class UpdateGroupAnimeListRequest extends AuthRequest {
@@ -18,10 +18,10 @@ export default class UpdateGroupAnimeListRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
+    protected rules(): ValidationChain[] {
+
         const watchedRange: minmax = { min: 0 };
-        this.rulesArr.push([
+        return [
             param("groupId").isInt().bail().toInt(),
             param("animeId").bail().toInt().custom(async value => {
                 const anime = await prisma.anime.findFirst({
@@ -34,6 +34,6 @@ export default class UpdateGroupAnimeListRequest extends AuthRequest {
             body("watchedEpisodes").notEmpty().bail().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
             body("rating").notEmpty().bail().isInt({ min: 0, max: 10 }),
             body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean(),
-        ])
+        ]
     }
 }

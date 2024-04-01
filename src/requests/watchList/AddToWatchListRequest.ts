@@ -5,15 +5,16 @@ import { paramIntValidator } from "@/validators/ParamBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages";
 import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
 import { WatchListStatuses } from "@/ts/enums";
+import { ValidationChain } from "express-validator";
 
 export default class AddToWatchListRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
+    protected rules(): ValidationChain[] {
+
         const watchedRange: minmax = { min: 0 };
-        this.rulesArr.push([
+        return [
             paramIntValidator("animeId", {
                 message: baseMsg.valueNotInRange
             }).custom(async value => {
@@ -41,7 +42,7 @@ export default class AddToWatchListRequest extends AuthRequest {
             bodyBoolValidator("isFavorite", {
                 message: baseMsg.valueMustBeBool
             })
-        ])
+        ]
     }
     /** 
      *  if authType is not None 

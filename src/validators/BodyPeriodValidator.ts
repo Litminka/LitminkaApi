@@ -11,7 +11,7 @@ import { baseMsg } from "@/ts/messages";
  */
 const bodyDateValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
     const message = options?.message ?? baseMsg.valueMustBeDate;
-        
+
     return dateValidator({
         validator: body(`${fieldName}.*`, baseMsg.valueMustBeDate),
         typeParams: options?.typeParams,
@@ -26,7 +26,7 @@ const bodyDateValidator = (fieldName: string, options?: BaseValidator): Validati
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidator): any[] => {
+export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidator): ValidationChain[] => {
     const message = options?.message ?? baseMsg.validationFailed;
 
     return [
@@ -34,7 +34,7 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidat
             validator: body(fieldName).optional(),
             typeParams: { max: 2, min: 1 },
         }).bail(),
-        bodyDateValidator(fieldName, { message, typeParams: options?.typeParams })
+        bodyDateValidator(`${fieldName}.*`, { message, typeParams: options?.typeParams })
     ]
 };
 
@@ -45,7 +45,7 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidat
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodyStrictPeriodValidator = (fieldName: string, options?: BaseValidator): any[] => {
+export const bodyStrictPeriodValidator = (fieldName: string, options?: BaseValidator): ValidationChain[] => {
 
 
     return [
@@ -58,6 +58,6 @@ export const bodyStrictPeriodValidator = (fieldName: string, options?: BaseValid
                 message: baseMsg.valueMustBeAnArray,
                 typeParams: { min: 2, max: 2 }
             })),
-        bodyDateValidator(fieldName, { message: options?.message, typeParams: options?.typeParams })
+        bodyDateValidator(`${fieldName}.*`, { message: options?.message, typeParams: options?.typeParams })
     ]
 };

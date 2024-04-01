@@ -1,6 +1,6 @@
 import Request from "@requests/Request";
 import { baseMsg, registrationMsg } from '@/ts/messages';
-import { body } from "express-validator";
+import { body, ValidationChain } from "express-validator";
 import prisma from "@/db";
 import { bodyStringValidator } from "@/validators/BodyBaseValidator";
 
@@ -9,9 +9,9 @@ export default class RegisterUserRequest extends Request {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             bodyStringValidator("login", {
                 message: registrationMsg.noLoginProvided
             }).custom(async value => {
@@ -43,6 +43,6 @@ export default class RegisterUserRequest extends Request {
                     throw new Error(registrationMsg.passwordsDontMatch);
                 return true;
             })
-        ])
+        ]
     }
 }

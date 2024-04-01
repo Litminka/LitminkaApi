@@ -23,11 +23,11 @@ export default class UnFollowAnimeRequest extends Request {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("animeId").bail().isInt().bail().toInt(),
             body("groupName").optional().isString().bail(),
-        ])
+        ]
     }
 }

@@ -1,4 +1,4 @@
-import { param, body } from "express-validator";
+import { param, body, ValidationChain } from "express-validator";
 import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
 
@@ -7,11 +7,11 @@ export class BaseGroupMemberRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("groupId").isInt().bail().toInt()
-        ])
+        ]
     }
 }
 export class KickGroupMemberRequest extends AuthRequest {
@@ -29,11 +29,11 @@ export class KickGroupMemberRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("groupId").isInt().bail().toInt(),
             body("userId").isInt().bail().toInt()
-        ])
+        ]
     }
 }

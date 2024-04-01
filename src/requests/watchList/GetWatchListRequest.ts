@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, ValidationChain } from "express-validator";
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
 import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
@@ -20,9 +20,9 @@ export default class GetWatchListRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             bodyArrayValidator("statuses").optional(),
             bodyStringValidator("statuses.*", {
                 message: searchMsg.maxLengthExceeded
@@ -31,7 +31,7 @@ export default class GetWatchListRequest extends AuthRequest {
             bodyArrayValidator("ratings", {
                 message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            
+
             bodyIntValidator("ratings.*", {
                 typeParams: { min: 0, max: 10 },
                 message: baseMsg.valueNotInRange
@@ -40,6 +40,6 @@ export default class GetWatchListRequest extends AuthRequest {
             bodyBoolValidator("isFavorite", {
                 message: baseMsg.valueMustBeBool
             }).optional()
-        ])
+        ]
     }
 }

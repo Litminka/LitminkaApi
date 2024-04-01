@@ -4,7 +4,7 @@ import { validatorError } from "@/middleware/validatorError";
 import { auth } from "@/middleware/auth";
 import { optionalAuth } from "@/middleware/optionalAuth";
 import { RequestWithAuth, RequestWithUserPermissions } from "@/ts";
-import { checkExact } from "express-validator";
+import { checkExact, ValidationChain } from "express-validator";
 import { validatorData } from "@/middleware/validatorData";
 export default class Request {
     protected authType: RequestAuthTypes;
@@ -12,7 +12,7 @@ export default class Request {
     /**
      * define rule set
      */
-    protected rulesArr: any[];
+    protected rulesArr: ValidationChain[] | ValidationChain[][];
 
     /**
      * define permissons for this request
@@ -28,8 +28,8 @@ export default class Request {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        this.rulesArr.push([])
+    protected rules(): ValidationChain[] {
+        return []
     }
 
     /**
@@ -105,11 +105,11 @@ export default class Request {
      * return final set of middlewares
      */
     public send() {
-        this.rulesExtend();
+        this.rules();
         return [
             ...this.getAuthMethod(),
             this.checkPermissions.bind(this),
-            ...(this.rulesArr.flat()),
+            ...(this.rules().flat()),
             checkExact([], { message: 'Additional fields are not allowed' }),
             validatorError,
             validatorData

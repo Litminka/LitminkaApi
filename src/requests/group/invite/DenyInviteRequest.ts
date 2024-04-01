@@ -17,11 +17,11 @@ export default class DenyInviteRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("inviteId").isInt().bail().toInt(),
             body("modifyList").optional().isBoolean().bail().toBoolean(),
-        ])
+        ]
     }
 }

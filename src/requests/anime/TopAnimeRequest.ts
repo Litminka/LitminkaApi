@@ -13,12 +13,12 @@ export default class GetTopAnimeRequest extends Request {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             bodyBoolValidator("shikimori", {
                 message: baseMsg.valueMustBeBool
             }).optional()
-        ])
+        ]
     }
 }

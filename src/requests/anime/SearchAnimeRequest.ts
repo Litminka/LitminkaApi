@@ -17,9 +17,9 @@ export default class SearchAnimeRequest extends Request {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             bodyStringValidator("name", {
                 message: searchMsg.maxLengthExceeded
             }).optional(),
@@ -89,6 +89,6 @@ export default class SearchAnimeRequest extends Request {
                 typeParams: { min: 1, max: 125 },
                 message: baseMsg.valueNotInRange
             }),
-        ])
+        ]
     }
 }

@@ -6,10 +6,10 @@ export default class DeleteGroupRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("groupId").isInt().bail().toInt()
-        ])
+        ]
     }
 }

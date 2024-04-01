@@ -17,11 +17,11 @@ export default class CreateGroupRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             body("name").notEmpty().bail().isString().bail(),
             body("description").notEmpty().bail().isString().bail(),
-        ])
+        ]
     }
 }

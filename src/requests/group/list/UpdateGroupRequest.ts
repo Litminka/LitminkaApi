@@ -1,6 +1,6 @@
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
-import { body, param } from "express-validator";
+import { body, param, ValidationChain } from "express-validator";
 
 export default class UpdateGroupRequest extends AuthRequest {
 
@@ -17,12 +17,12 @@ export default class UpdateGroupRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("groupId").isInt().bail().toInt(),
             body("name").optional().notEmpty().bail().isString().bail(),
             body("description").optional().notEmpty().bail().isString().bail(),
-        ])
+        ]
     }
 }

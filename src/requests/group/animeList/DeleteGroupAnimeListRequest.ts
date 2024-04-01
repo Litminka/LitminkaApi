@@ -17,9 +17,9 @@ export default class DeleteGroupAnimeListRequest extends AuthRequest {
     /**
      * append ValidationChain to class context
      */
-    protected rulesExtend(): void {
-        super.rulesExtend()
-        this.rulesArr.push([
+    protected rules(): ValidationChain[] {
+
+        return [
             param("groupId").isInt().bail().toInt(),
             param("animeId").notEmpty().isInt().bail().toInt().custom(async value => {
                 const anime = await prisma.anime.findFirst({
@@ -27,6 +27,6 @@ export default class DeleteGroupAnimeListRequest extends AuthRequest {
                 });
                 if (!anime) throw new Error("Anime doesn't exist");
             })
-        ])
+        ]
     }
 }
