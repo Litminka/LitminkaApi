@@ -1,5 +1,5 @@
 import { searchMsg, sessionMsg } from "@/ts/messages";
-import { bodyArrayValidator, bodyUUIDValidator } from "@/validators/BodyBaseValidator";
+import { bodyArrayValidator, bodyUUIDValidator } from "@validators/BodyBaseValidator";
 import AuthRequest from "@requests/AuthRequest";
 import { ValidationChain } from "express-validator";
 
@@ -7,10 +7,9 @@ import { ValidationChain } from "express-validator";
 export default class EndSessionRequest extends AuthRequest {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         return [
             bodyArrayValidator("sessions", {
                 typeParams: { min: 1, max: 100 },

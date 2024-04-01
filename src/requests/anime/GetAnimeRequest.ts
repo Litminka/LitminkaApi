@@ -1,24 +1,18 @@
-import { RequestAuthTypes } from "@/ts/enums";
 import Request from "@requests/Request";
-import { bodySoftPeriodValidator } from "@/validators/BodyPeriodValidator";
+import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
 import { bodyArrayValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
-import { queryIntValidator } from "@/validators/QueryBaseValidator";
+import { queryIntValidator } from "@validators/QueryBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages"
 import { AnimeStatuses, AnimeSeasons, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
+import { ValidationChain } from "express-validator";
 
 
-export default class SearchAnimeRequest extends Request {
-
-    /**
-     * Define auth type for this request
-     */
-    protected authType = RequestAuthTypes.None;
+export default class GetAnimeRequest extends Request {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         return [
             bodyStringValidator("name", {
                 message: searchMsg.maxLengthExceeded
@@ -74,7 +68,7 @@ export default class SearchAnimeRequest extends Request {
                 message: baseMsg.valueNotInRange
             }),
 
-            bodySoftPeriodValidator("period", {
+            ...bodySoftPeriodValidator("period", {
                 message: baseMsg.valueNotInRange
             }),
 

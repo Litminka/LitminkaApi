@@ -10,11 +10,6 @@ export default class Request {
     protected authType: RequestAuthTypes;
 
     /**
-     * define rule set
-     */
-    protected rulesArr: ValidationChain[] | ValidationChain[][];
-
-    /**
      * define permissons for this request
      */
     protected permissions: string[];
@@ -22,11 +17,10 @@ export default class Request {
     constructor() {
         this.authType = RequestAuthTypes.None;
         this.permissions = []
-        this.rulesArr = []
     }
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
         return []
@@ -105,7 +99,6 @@ export default class Request {
      * return final set of middlewares
      */
     public send() {
-        this.rules();
         return [
             ...this.getAuthMethod(),
             this.checkPermissions.bind(this),

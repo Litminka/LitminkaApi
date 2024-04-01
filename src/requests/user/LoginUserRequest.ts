@@ -5,10 +5,9 @@ import { registrationMsg } from '@/ts/messages';
 export default class LoginUserRequest extends Request {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         return [
             body("login").notEmpty().withMessage(registrationMsg.noLoginProvided).isString(),
             body("password").notEmpty().withMessage(registrationMsg.noPasswordProvided).isString()

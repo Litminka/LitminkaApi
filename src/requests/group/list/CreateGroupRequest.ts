@@ -1,21 +1,10 @@
-import prisma from "@/db";
-import AuthRequest from "@requests/AuthRequest";
-import { body } from "express-validator";
+import { body, ValidationChain } from "express-validator";
+import GroupRequest from "@requests/group/GroupRequest";
 
-export default class CreateGroupRequest extends AuthRequest {
-
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
-    }
+export default class CreateGroupRequest extends GroupRequest {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
 

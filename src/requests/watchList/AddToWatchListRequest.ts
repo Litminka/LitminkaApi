@@ -1,15 +1,16 @@
-import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
 import { minmax } from "@/ts";
-import { paramIntValidator } from "@/validators/ParamBaseValidator";
+import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages";
-import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
+import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { WatchListStatuses } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
+import IntegrationRequest from "@requests/IntegrationRequest";
 
-export default class AddToWatchListRequest extends AuthRequest {
+export default class AddToWatchListRequest extends IntegrationRequest {
+
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
 
@@ -43,13 +44,5 @@ export default class AddToWatchListRequest extends AuthRequest {
                 message: baseMsg.valueMustBeBool
             })
         ]
-    }
-    /** 
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserByIdWithIntegration(userId);
     }
 }

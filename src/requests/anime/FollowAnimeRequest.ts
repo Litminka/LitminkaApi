@@ -1,32 +1,15 @@
-import prisma from "@/db";
-import { Permissions, RequestAuthTypes } from "@/ts/enums";
-import Request from "@requests/Request";
+import { Permissions } from "@/ts/enums";
 import { body, param, ValidationChain } from "express-validator";
+import AuthRequest from "@requests/AuthRequest";
 
-export default class FollowAnimeRequest extends Request {
-
-    /**
-     * Define auth type for this request
-     */
-    protected authType = RequestAuthTypes.Auth;
+export default class FollowAnimeRequest extends AuthRequest {
 
     protected permissions: string[] = [Permissions.ManageAnime];
 
     /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserById(userId);
-    }
-
-    /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         return [
             param("animeId").bail().isInt().bail().toInt(),
             body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),

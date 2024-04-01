@@ -2,7 +2,7 @@ import { Router } from 'express';
 import TokenController from '@controllers/TokenController';
 import { wrap } from '@/middleware/errorHandler';
 import AuthRequest from '@requests/AuthRequest';
-import EndSessionRequest from '@requests/EndSessionRequest';
+import EndSessionRequest from '@/requests/session/EndSessionRequest';
 const router = Router();
 
 router.get("/refresh", wrap(TokenController.refreshToken));

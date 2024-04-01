@@ -1,26 +1,16 @@
-import AuthRequest from "@requests/AuthRequest";
 import { minmax } from "@/ts";
 import prisma from "@/db";
-import { paramIntValidator } from "@/validators/ParamBaseValidator";
+import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages";
-import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
+import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { WatchListStatuses } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
+import IntegrationRequest from "@requests/IntegrationRequest";
 
-export default class EditWatchListRequest extends AuthRequest {
-
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserByIdWithIntegration(userId);
-    }
+export default class EditWatchListRequest extends IntegrationRequest {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
 

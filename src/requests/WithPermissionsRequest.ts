@@ -1,7 +1,7 @@
 import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
 
-export default class OwnedGroupRequest extends AuthRequest {
+export default class WithPermissionsRequest extends AuthRequest {
 
     /**
      *  if authType is not None 
@@ -10,6 +10,6 @@ export default class OwnedGroupRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
+        return await prisma.user.findUserByIdWithRolePermission(userId);
     }
 }

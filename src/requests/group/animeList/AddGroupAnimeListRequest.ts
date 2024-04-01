@@ -1,25 +1,14 @@
-import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
 import { body, param, ValidationChain } from "express-validator";
 import { minmax } from "@/ts";
+import GroupRequest from "@requests/group/GroupRequest";
 
-export default class AddGroupAnimeListRequest extends AuthRequest {
-
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
-    }
+export default class AddGroupAnimeListRequest extends GroupRequest {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         const watchedRange: minmax = { min: 0 };
         return [
             param("groupId").isInt().bail().toInt(),

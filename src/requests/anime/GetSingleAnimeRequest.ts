@@ -1,18 +1,20 @@
-import { Permissions } from "@/ts/enums";
 import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { baseMsg } from "@/ts/messages"
 import { ValidationChain } from "express-validator";
-import WithPermissionsRequest from "@requests/WithPermissionsRequest";
+import { RequestAuthTypes } from "@/ts/enums";
+import IntegrationRequest from "@/requests/IntegrationRequest";
 
-export default class BanAnimeRequest extends WithPermissionsRequest {
+export default class GetSingleAnimeRequest extends IntegrationRequest {
 
-    protected permissions: string[] = [Permissions.ManageAnime];
+    /**
+     * Define auth type for this request
+     */
+    protected authType = RequestAuthTypes.Optional;
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         return [
             paramIntValidator("animeId", {
                 message: baseMsg.valueNotInRange

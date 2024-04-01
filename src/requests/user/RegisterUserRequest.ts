@@ -2,15 +2,14 @@ import Request from "@requests/Request";
 import { baseMsg, registrationMsg } from '@/ts/messages';
 import { body, ValidationChain } from "express-validator";
 import prisma from "@/db";
-import { bodyStringValidator } from "@/validators/BodyBaseValidator";
+import { bodyStringValidator } from "@validators/BodyBaseValidator";
 
 export default class RegisterUserRequest extends Request {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         return [
             bodyStringValidator("login", {
                 message: registrationMsg.noLoginProvided

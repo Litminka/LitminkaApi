@@ -1,7 +1,7 @@
-import prisma from "@/db";
 import AuthRequest from "@requests/AuthRequest";
+import prisma from "@/db";
 
-export default class ImportWatchListRequest extends AuthRequest {
+export default class GroupInviteRequest extends AuthRequest {
 
     /**
      *  if authType is not None 
@@ -10,6 +10,6 @@ export default class ImportWatchListRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserByIdWithIntegration(userId);
+        return await prisma.user.findUserWithGroupInvites(userId);
     }
 }

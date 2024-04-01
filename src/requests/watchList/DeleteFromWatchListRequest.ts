@@ -1,23 +1,13 @@
-import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { paramIntValidator } from "@/validators/ParamBaseValidator";
+import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { baseMsg } from "@/ts/messages";
 import { ValidationChain } from "express-validator";
+import IntegrationRequest from "@requests/IntegrationRequest";
 
-export default class DeleteFromWatchListRequest extends AuthRequest {
-
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserByIdWithIntegration(userId);
-    }
+export default class DeleteFromWatchListRequest extends IntegrationRequest {
 
     /**
-     * append ValidationChain to class context
+     * Define validation rules for this request
      * @returns ValidationChain
      */
     protected rules(): ValidationChain[] {
