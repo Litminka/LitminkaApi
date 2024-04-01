@@ -16,12 +16,11 @@ interface QueryIntValidator extends BaseValidator {
 export const queryIntValidator = (fieldName: string, options?: QueryIntValidator): ValidationChain => {
     const defValue = options?.defValue ?? 0;
     const typeParams = options?.typeParams ?? { min: -2147483648, max: 2147483647 };
-    const message = options?.message ?? baseMsg.validationFailed;
+    const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({
-        validator: query(fieldName, baseMsg.valueMustBeInt).default(defValue),
-        typeParams,
-        message
+        validator: query(fieldName, message).default(defValue),
+        typeParams
     })
 
 };

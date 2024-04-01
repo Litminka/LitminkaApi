@@ -13,9 +13,8 @@ const bodyDateValidator = (fieldName: string, options?: BaseValidator): Validati
     const message = options?.message ?? baseMsg.valueMustBeDate;
 
     return dateValidator({
-        validator: body(`${fieldName}.*`, baseMsg.valueMustBeDate),
-        typeParams: options?.typeParams,
-        message
+        validator: body(`${fieldName}.*`, message),
+        typeParams: options?.typeParams
     })
 };
 
@@ -27,7 +26,7 @@ const bodyDateValidator = (fieldName: string, options?: BaseValidator): Validati
  * @returns Array of ValidationChain
  */
 export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidator): ValidationChain[] => {
-    const message = options?.message ?? baseMsg.validationFailed;
+    const message = options?.message ?? baseMsg.valueMustBeDate;
 
     return [
         arrayValidator({
@@ -46,18 +45,27 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidat
  * @returns Array of ValidationChain
  */
 export const bodyStrictPeriodValidator = (fieldName: string, options?: BaseValidator): ValidationChain[] => {
-
+    const message = options?.message ?? baseMsg.valueMustBeDate;
+    const typeParams = { min: 2, max: 2 }
 
     return [
         // Validator doesn't cast value to array except arrayValidator, using unique chain
-        body(fieldName)
-            .optional()
-            .isArray({ min: 2, max: 2 })
-            .bail()
-            .withMessage(genMessage({
-                message: baseMsg.valueMustBeAnArray,
-                typeParams: { min: 2, max: 2 }
-            })),
-        bodyDateValidator(`${fieldName}.*`, { message: options?.message, typeParams: options?.typeParams })
+        body(fieldName).optional()
+            .custom(value => {
+                const options: { min?: number, max?: number } = typeParams
+                const min = typeof options.min === "undefined" ? 1 : options.min
+                const max = typeof options.max === "undefined" ? 150 : options.max
+
+                if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray)
+                if (value.length < min || value.length > max) {
+                    let message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams })
+                    const msg: string = message.msg; delete message.msg
+                    throw new Error(msg, message)
+                }
+                return true;
+            })
+            .withMessage(genMessage({ message: baseMsg.valueMustBeAnArray, typeParams }))
+            .bail(),
+        bodyDateValidator(`${fieldName}.*`, { message, typeParams: options?.typeParams })
     ]
 };

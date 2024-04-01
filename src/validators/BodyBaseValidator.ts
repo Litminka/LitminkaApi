@@ -31,9 +31,8 @@ export const bodyArrayValidator = (fieldName: string, options?: BaseValidator): 
     const message = options?.message ?? baseMsg.valueMustBeAnArray;
 
     return arrayValidator({
-        validator: body(fieldName, baseMsg.validationFailed),
-        typeParams,
-        message
+        validator: body(fieldName, message),
+        typeParams
     })
 };
 
@@ -44,13 +43,12 @@ export const bodyArrayValidator = (fieldName: string, options?: BaseValidator): 
  * @param message Error message for validation exceptions.
  */
 export const bodyStringValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
-    const typeParams = options?.typeParams ??  { min: 0, max: 32 };
-    const message =  options?.message ?? baseMsg.valueMustBeString;
+    const typeParams = options?.typeParams ?? { min: 0, max: 32 };
+    const message = options?.message ?? baseMsg.valueMustBeString;
 
     return stringValidator({
-        validator: body(fieldName, baseMsg.validationFailed),
-        typeParams,
-        message
+        validator: body(fieldName, message),
+        typeParams
     })
 };
 
@@ -62,12 +60,11 @@ export const bodyStringValidator = (fieldName: string, options?: BaseValidator):
  */
 export const bodyIntValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
     const typeParams = options?.typeParams ?? { min: 0, max: 32 };
-    const message = options?.message ?? baseMsg.valueMustBeString;
+    const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({
-        validator: body(fieldName, baseMsg.validationFailed),
-        typeParams,
-        message
+        validator: body(fieldName, message),
+        typeParams
     })
 };
 
@@ -81,9 +78,8 @@ export const bodyBoolValidator = (fieldName: string, options?: BaseValidator): V
     const message = options?.message ?? baseMsg.valueMustBeBool;
 
     return boolValidator({
-        validator: body(fieldName, baseMsg.validationFailed),
-        typeParams: options?.typeParams,
-        message
+        validator: body(fieldName, message),
+        typeParams: options?.typeParams
     })
 };
 
@@ -98,7 +94,6 @@ export const bodyUUIDValidator = (fieldName: string, options?: bodyUUIDValidator
     const message = options?.message ?? baseMsg.valueMustBeUUID;
 
     return uuidValidator({
-        validator: body(fieldName, baseMsg.validationFailed),
-        message
+        validator: body(fieldName, message)
     })
 };

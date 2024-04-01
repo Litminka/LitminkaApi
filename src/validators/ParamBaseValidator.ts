@@ -13,8 +13,7 @@ export const paramIntValidator = (fieldName: string, options?: BaseValidator): V
     const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({
-        validator: param(fieldName, baseMsg.validationFailed),
-        typeParams,
-        message
+        validator: param(fieldName, message),
+        typeParams
     })
 };
