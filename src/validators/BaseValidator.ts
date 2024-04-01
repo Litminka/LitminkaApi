@@ -56,10 +56,25 @@ export function genMessage(
 export const arrayValidator = ({
     validator,
     typeParams = { min: 0, max: 50 },
-    message = baseMsg.validationFailed
+    message = baseMsg.valueMustBeAnArray
 }: TypeBaseValidator): ValidationChain => {
     return validator
-        .isArray(typeParams)
+        // .isArray()
+        // .withMessage("Type is cringe")
+        // .isArray(typeParams)
+        // .withMessage("Array length is cringe")
+        .custom(value => {
+            const options: { min?: number, max?: number } = typeParams
+            const min = typeof options.min === "undefined" ? 0 : options.min
+            const max = typeof options.max === "undefined" ? 4294967294 : options.max
+
+            if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray)
+            if (value.length > min || value.length < max) {
+                let message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams })
+                const msg: string = message.msg; delete message.msg
+                throw new Error(msg, message)
+            }
+        })
         .toArray()
         .withMessage(genMessage({ message, typeParams }))
 };
