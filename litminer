@@ -39,7 +39,16 @@ const args = parseArgs({
 const command = args.positionals[0];
 const fileName = args.positionals[1];
 if (!command) {
-    return console.log('Error: No command specified')
+    return console.log(`
+An utility to create boiler plate files
+<usage>
+make>command
+    make:controller <name> - Creates a controller       --service (-s) Creates Service with the same name
+    make:service <name>    - Creates a service
+    make:router <name>     - Creates a router
+    make:model <name>      - Creates a model extention
+    make:request <name>    - Creates a request          --auth (-a) Extends AuthRequest --optional(-o) Extends OptionalRequest
+    `)
 }
 if (!fileName) {
     return console.log('Error: No name specified')
@@ -113,7 +122,7 @@ function executeMake(command, options) {
         case 'service':
             generateGenericFile(command, fileName);
             break;
-        case 'model': 
+        case 'model':
             generateGenericFile(command, fileName)
             break
         default:
