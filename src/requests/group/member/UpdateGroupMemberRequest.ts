@@ -1,29 +1,28 @@
 import { ValidationChain } from "express-validator";
 import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
 import { paramIntValidator } from "@/validators/ParamBaseValidator";
-import { bodyStringValidator } from "@/validators/BodyBaseValidator";
+import { bodyBoolValidator, bodyIntValidator } from "@/validators/BodyBaseValidator";
 
-export interface UpdateGroupReq extends GroupReq {
+export interface UpdateGroupMemberReq extends GroupReq {
     params: {
         groupId: number,
     },
     body: {
-        name?: string,
-        description?: string,
+        userId: number
+        modifyList: boolean,
     }
 }
 
-export class UpdateGroupRequest extends GroupRequest {
+export class UpdateGroupMemberRequest extends GroupRequest {
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         return [
             paramIntValidator("groupId"),
-            bodyStringValidator("name").optional(),
-            bodyStringValidator("description").optional(),
+            bodyIntValidator("userId"),
+            bodyBoolValidator("modifyList")
         ]
     }
 }

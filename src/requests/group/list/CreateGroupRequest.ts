@@ -1,7 +1,15 @@
-import { body, ValidationChain } from "express-validator";
-import GroupRequest from "@requests/group/GroupRequest";
+import { ValidationChain } from "express-validator";
+import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
+import { bodyStringValidator } from "@/validators/BodyBaseValidator";
 
-export default class CreateGroupRequest extends GroupRequest {
+export interface CreateGroupReq extends GroupReq {
+    body: {
+        name: string,
+        description: string,
+    }
+}
+
+export class CreateGroupRequest extends GroupRequest {
 
     /**
      * Define validation rules for this request
@@ -9,8 +17,8 @@ export default class CreateGroupRequest extends GroupRequest {
     protected rules(): ValidationChain[] {
 
         return [
-            body("name").notEmpty().bail().isString().bail(),
-            body("description").notEmpty().bail().isString().bail(),
+            bodyStringValidator("name").optional(),
+            bodyStringValidator("description").optional(),
         ]
     }
 }

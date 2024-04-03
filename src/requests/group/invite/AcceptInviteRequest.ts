@@ -1,5 +1,16 @@
-import { body, param, ValidationChain } from "express-validator";
-import GroupInviteRequest from "@/requests/group/GroupInviteRequest";
+import { ValidationChain } from "express-validator";
+import { GroupInviteReq, GroupInviteRequest } from "@/requests/group/GroupInviteRequest";
+import { bodyBoolValidator } from "@/validators/BodyBaseValidator";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
+
+export interface AcceptInviteReq extends GroupInviteReq {
+    params: {
+        inviteId: number,
+    },
+    body: {
+        modifyList: boolean,
+    }
+}
 
 export default class AcceptInviteRequest extends GroupInviteRequest {
 
@@ -9,8 +20,8 @@ export default class AcceptInviteRequest extends GroupInviteRequest {
     protected rules(): ValidationChain[] {
 
         return [
-            param("inviteId").isInt().bail().toInt(),
-            body("modifyList").optional().isBoolean().bail().toBoolean(),
+            paramIntValidator("inviteId"),
+            bodyBoolValidator("modifyList", { defValue: true })
         ]
     }
 }

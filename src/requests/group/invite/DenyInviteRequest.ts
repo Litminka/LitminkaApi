@@ -1,7 +1,14 @@
-import { body, param, ValidationChain } from "express-validator";
-import GroupInviteRequest from "@/requests/group/GroupInviteRequest";
+import { ValidationChain } from "express-validator";
+import { GroupInviteReq, GroupInviteRequest } from "@/requests/group/GroupInviteRequest";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 
-export default class DenyInviteRequest extends GroupInviteRequest {
+export interface DenyInviteReq extends GroupInviteReq {
+    params: {
+        inviteId: number,
+    },
+}
+
+export class DenyInviteRequest extends GroupInviteRequest {
 
     /**
      * Define validation rules for this request
@@ -9,8 +16,7 @@ export default class DenyInviteRequest extends GroupInviteRequest {
     protected rules(): ValidationChain[] {
 
         return [
-            param("inviteId").isInt().bail().toInt(),
-            body("modifyList").optional().isBoolean().bail().toBoolean(),
+            paramIntValidator("inviteId"),
         ]
     }
 }

@@ -1,10 +1,15 @@
 import { Response } from "express";
-import { RequestWithUser, RequestWithUserGroupInvites, RequestWithUserOwnedGroups } from "@/ts";
+import { RequestWithUserGroupInvites, RequestWithUserOwnedGroups } from "@/ts";
 import { RequestStatuses } from "@/ts/enums";
 import GroupInviteService from "@services/group/GroupInviteService";
+import { AuthReq } from "@/requests/AuthRequest";
+import { SendInviteReq } from "@/requests/group/invite/SendInviteRequest";
+import { DeleteInviteReq } from "@/requests/group/invite/DeleteInviteRequest";
+import { AcceptInviteReq } from "@/requests/group/invite/AcceptInviteRequest";
+import { DenyInviteReq } from "@/requests/group/invite/DenyInviteRequest";
 
 export default class GroupInviteController {
-    public static async getInvites(req: RequestWithUser, res: Response) {
+    public static async getInvites(req: AuthReq, res: Response) {
         const user = req.auth.user;
 
         const userInvites = await GroupInviteService.getUserInvites(user.id);
@@ -12,10 +17,10 @@ export default class GroupInviteController {
         return res.status(RequestStatuses.OK).json(userInvites);
     }
 
-    public static async inviteUser(req: RequestWithUserOwnedGroups, res: Response) {
+    public static async inviteUser(req: SendInviteReq, res: Response) {
         const user = req.auth.user;
 
-        const groupId = req.params.groupId as unknown as number;
+        const groupId = req.params.groupId;
         const { userId } = req.body;
 
         await GroupInviteService.inviteUser({ owner: user, userId, groupId })
@@ -23,10 +28,10 @@ export default class GroupInviteController {
         return res.status(RequestStatuses.Created).json();
     }
 
-    public static async deleteInvite(req: RequestWithUserOwnedGroups, res: Response) {
+    public static async deleteInvite(req: DeleteInviteReq, res: Response) {
         const user = req.auth.user;
 
-        const groupId = req.params.groupId as unknown as number;
+        const groupId = req.params.groupId;
         const { userId } = req.body;
 
         await GroupInviteService.deleteInvite({ owner: user, userId, groupId });
@@ -34,21 +39,21 @@ export default class GroupInviteController {
         return res.status(RequestStatuses.OK).json({ message: "user_uninvited" });
     }
 
-    public static async acceptInvite(req: RequestWithUserGroupInvites, res: Response) {
+    public static async acceptInvite(req: AcceptInviteReq, res: Response) {
         const user = req.auth.user;
 
-        const inviteId = req.params.inviteId as unknown as number;
-        const modifyList: boolean | undefined = req.body.modifyList;
+        const inviteId = req.params.inviteId;
+        const modifyList = req.body.modifyList;
 
         await GroupInviteService.acceptInvite({ user, inviteId, modifyList });
 
         return res.status(RequestStatuses.OK).json({ data: "invite_accepted" });
     }
 
-    public static async denyInvite(req: RequestWithUserGroupInvites, res: Response) {
+    public static async denyInvite(req: DenyInviteReq, res: Response) {
         const user = req.auth.user;
 
-        const inviteId = req.params.inviteId as unknown as number;
+        const inviteId = req.params.inviteId;
 
         await GroupInviteService.denyInvite({ user, inviteId });
 

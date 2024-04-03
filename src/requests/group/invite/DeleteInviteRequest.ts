@@ -1,5 +1,16 @@
-import { body, param, ValidationChain } from "express-validator";
-import GroupRequest from "@requests/group/GroupRequest";
+import { ValidationChain } from "express-validator";
+import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
+import { bodyIntValidator } from "@/validators/BodyBaseValidator";
+
+export interface DeleteInviteReq extends GroupReq {
+    params: {
+        groupId: number,
+    },
+    body: {
+        userId: number
+    }
+}
 
 export default class DeleteInviteRequest extends GroupRequest {
 
@@ -9,8 +20,8 @@ export default class DeleteInviteRequest extends GroupRequest {
     protected rules(): ValidationChain[] {
 
         return [
-            param("groupId").isInt().bail().toInt(),
-            body("userId").isInt().bail().toInt(),
+            paramIntValidator("groupId"),
+            bodyIntValidator("userId"),
         ]
     }
 }

@@ -1,27 +1,31 @@
 import { Response } from "express";
-import { AddWithAnime, ListFilters, RequestWithUserOwnedGroups, watchListStatus } from "@/ts";
+import { AddWithAnime } from "@/ts";
 import { RequestStatuses } from "@/ts/enums";
 import GroupAnimeListService from "@services/group/GroupAnimeListService";
+import { GetGroupAnimeListReq } from "@/requests/group/animeList/GetGroupAnimeListRequest";
+import { AddGroupAnimeListReq } from "@/requests/group/animeList/AddGroupAnimeListRequest";
+import { UpdateGroupAnimeListReq } from "@/requests/group/animeList/UpdateGroupAnimeListRequest";
+import { DeleteGroupAnimeListReq } from "@/requests/group/animeList/DeleteGroupAnimeListRequest";
 
 export default class GroupAnimeListController {
 
-    public static async get(req: RequestWithUserOwnedGroups, res: Response) {
+    public static async get(req: GetGroupAnimeListReq, res: Response) {
         const user = req.auth.user
-        const groupId = req.params.groupId as unknown as number;
-        const statuses: watchListStatus[] = req.body.statuses as watchListStatus[];
-        const ratings: number[] = req.body.ratings as number[];
-        const isFavorite: boolean = req.body.isFavorite as boolean;
+        const groupId = req.params.groupId;
+        const statuses = req.body.statuses;
+        const ratings = req.body.ratings;
+        const isFavorite = req.body.isFavorite;
 
-        const filteredGroupAnimeList = await GroupAnimeListService.get(user.id, groupId, {statuses, ratings, isFavorite} as ListFilters)
+        const filteredGroupAnimeList = await GroupAnimeListService.get(user.id, groupId, { statuses, ratings, isFavorite })
 
         return res.status(RequestStatuses.OK).json(filteredGroupAnimeList);
     }
 
-    public static async add(req: RequestWithUserOwnedGroups, res: Response) {
+    public static async add(req: AddGroupAnimeListReq, res: Response) {
         const user = req.auth.user
 
-        const groupId = req.params.groupId as unknown as number;
-        const animeId = req.params.animeId as unknown as number;
+        const groupId = req.params.groupId;
+        const animeId = req.params.animeId;
 
         const data = req.body as AddWithAnime;
         data.animeId = animeId;
@@ -31,11 +35,11 @@ export default class GroupAnimeListController {
         return res.status(RequestStatuses.OK).json(result);
     }
 
-    public static async update(req: RequestWithUserOwnedGroups, res: Response) {
+    public static async update(req: UpdateGroupAnimeListReq, res: Response) {
         const user = req.auth.user
 
-        const groupId = req.params.groupId as unknown as number;
-        const animeId = req.params.animeId as unknown as number;
+        const groupId = req.params.groupId;
+        const animeId = req.params.animeId;
 
         const data = req.body as AddWithAnime;
         data.animeId = animeId;
@@ -44,11 +48,11 @@ export default class GroupAnimeListController {
         return res.status(RequestStatuses.OK).json({ message: "updated" });
     }
 
-    public static async delete(req: RequestWithUserOwnedGroups, res: Response) {
+    public static async delete(req: DeleteGroupAnimeListReq, res: Response) {
         const user = req.auth.user
 
-        const groupId = req.params.groupId as unknown as number;
-        const animeId = req.params.animeId as unknown as number;
+        const groupId = req.params.groupId;
+        const animeId = req.params.animeId;
 
         await GroupAnimeListService.delete({ animeId, groupId, userId: user.id });
 

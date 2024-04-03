@@ -1,7 +1,18 @@
-import AuthRequest from "@requests/AuthRequest";
+import { AuthReq, AuthRequest } from "@requests/AuthRequest";
 import prisma from "@/db";
+import { User, GroupListInvites } from "@prisma/client";
 
-export default class GroupInviteRequest extends AuthRequest {
+export interface GroupInviteReq extends AuthReq {
+    auth: {
+        user: User & {
+            groupInvites: GroupListInvites[],
+        },
+        id: number,
+        token: string
+    }
+}
+
+export class GroupInviteRequest extends AuthRequest {
 
     /**
      *  if authType is not None 

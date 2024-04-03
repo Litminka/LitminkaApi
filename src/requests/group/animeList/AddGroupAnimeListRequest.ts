@@ -1,9 +1,25 @@
 import prisma from "@/db";
-import { body, param, ValidationChain } from "express-validator";
+import { ValidationChain } from "express-validator";
 import { minmax } from "@/ts";
-import GroupRequest from "@requests/group/GroupRequest";
+import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
+import { WatchListStatuses } from "@/ts/enums";
+import { bodyStringValidator, bodyIntValidator, bodyBoolValidator } from "@/validators/BodyBaseValidator";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 
-export default class AddGroupAnimeListRequest extends GroupRequest {
+export interface AddGroupAnimeListReq extends GroupReq {
+    params: {
+        groupId: number,
+        animeId: number,
+    },
+    body: {
+        status: WatchListStatuses,
+        watchedEpisodes: number,
+        rating: number,
+        isFavorite: boolean
+    }
+}
+
+export class AddGroupAnimeListRequest extends GroupRequest {
 
     /**
      * Define validation rules for this request
@@ -11,18 +27,26 @@ export default class AddGroupAnimeListRequest extends GroupRequest {
     protected rules(): ValidationChain[] {
         const watchedRange: minmax = { min: 0 };
         return [
-            param("groupId").isInt().bail().toInt(),
-            param("animeId").bail().toInt().custom(async value => {
+            paramIntValidator("groupId"),
+            paramIntValidator("animeId").custom(async value => {
                 const anime = await prisma.anime.findFirst({
                     where: { id: value }
                 });
                 if (!anime) throw new Error("Anime doesn't exist");
                 watchedRange.max = anime.maxEpisodes;
-            }).bail(),
-            body("status").notEmpty().bail().isString().bail().isIn(["planned", "watching", "rewatching", "completed", "on_hold", "dropped"]),
-            body("watchedEpisodes").notEmpty().bail().isInt(watchedRange).withMessage("Amount should be min 0 and should not be larger than the amount of episodes"),
-            body("rating").notEmpty().bail().isInt({ min: 0, max: 10 }),
-            body("isFavorite").notEmpty().bail().isBoolean().bail().toBoolean(),
+            }),
+
+            bodyStringValidator("status").isIn(Object.values(WatchListStatuses)),
+
+            bodyIntValidator("watchedEpisodes", {
+                typeParams: watchedRange,
+            }),
+
+            bodyIntValidator("rating", {
+                typeParams: { min: 0, max: 10 },
+            }),
+
+            bodyBoolValidator("isFavorite")
         ]
     }
 }
