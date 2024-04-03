@@ -2,9 +2,16 @@ import prisma from "@/db";
 import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { baseMsg } from "@/ts/messages";
 import { ValidationChain } from "express-validator";
-import IntegrationRequest from "@requests/IntegrationRequest";
+import {IntegrationReq, IntegrationRequest} from "@requests/IntegrationRequest";
 
-export default class DeleteFromWatchListRequest extends IntegrationRequest {
+export interface DeleteFromWatchListReq extends IntegrationReq {
+    params: {
+        animeId: number,
+    },
+}
+
+
+export class DeleteFromWatchListRequest extends IntegrationRequest {
 
     /**
      * Define validation rules for this request

@@ -5,7 +5,20 @@ import { baseMsg, searchMsg } from "@/ts/messages";
 import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { WatchListStatuses } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
-import IntegrationRequest from "@requests/IntegrationRequest";
+import {IntegrationReq, IntegrationRequest} from "@requests/IntegrationRequest";
+
+export interface AddToWatchListReq extends IntegrationReq {
+    params: {
+        animeId: number,
+    },
+    body: {
+        status: WatchListStatuses,
+        watchedEpisodes: number,
+        rating: number,
+        isFavorite: boolean
+    }
+}
+
 
 export default class AddToWatchListRequest extends IntegrationRequest {
 
@@ -16,9 +29,7 @@ export default class AddToWatchListRequest extends IntegrationRequest {
 
         const watchedRange: minmax = { min: 0 };
         return [
-            paramIntValidator("animeId", {
-                message: baseMsg.valueNotInRange
-            }).custom(async value => {
+            paramIntValidator("animeId").custom(async value => {
                 const anime = await prisma.anime.findFirst({
                     where: { id: value }
                 });
@@ -26,23 +37,17 @@ export default class AddToWatchListRequest extends IntegrationRequest {
                 watchedRange.max = anime.maxEpisodes;
             }),
 
-            bodyStringValidator("status", {
-                message: searchMsg.maxLengthExceeded
-            }).isIn(Object.values(WatchListStatuses)),
+            bodyStringValidator("status").isIn(Object.values(WatchListStatuses)),
 
             bodyIntValidator("watchedEpisodes", {
                 typeParams: watchedRange,
-                message: baseMsg.valueNotInRange
             }),
 
             bodyIntValidator("rating", {
                 typeParams: { min: 0, max: 10 },
-                message: baseMsg.valueNotInRange
             }),
 
-            bodyBoolValidator("isFavorite", {
-                message: baseMsg.valueMustBeBool
-            })
+            bodyBoolValidator("isFavorite")
         ]
     }
 }
