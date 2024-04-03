@@ -1,18 +1,21 @@
 import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
-import AuthRequest from "@requests/AuthRequest";
-import { baseMsg } from "@/ts/messages";
+import { Request as ExpressRequest } from "express";
 import { ValidationChain } from "express-validator";
 
-export default class GetNotificationsRequest extends AuthRequest {
+export interface GetNotificationsReq extends ExpressRequest {
+    body: {
+        period: Date[],
+    }
+}
+
+export class GetNotificationsRequest extends Request {
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
         return [
-            ...bodySoftPeriodValidator("period", {
-                message: baseMsg.validationFailed
-            })
+            ...bodySoftPeriodValidator("period")
         ]
     }
 }

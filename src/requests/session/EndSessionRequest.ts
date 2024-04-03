@@ -5,7 +5,7 @@ import { ValidationChain } from "express-validator";
 
 export interface EndSessionReq extends AuthReq {
     body: {
-        sessions: string[]
+        sessions?: string[]
     }
 }
 

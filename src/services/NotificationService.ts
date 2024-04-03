@@ -63,7 +63,7 @@ export default class NotificationService {
         return prisma.animeNotifications.getNotifications(Period.getPeriod(period));
     }
 
-    public static async readNotifications(ids: number[], userId: number) {
+    public static async readNotifications(userId: number, ids?: number[]) {
         if (typeof ids === 'undefined') ids = []
         return prisma.userAnimeNotifications.readNotifications(ids, userId);
     }

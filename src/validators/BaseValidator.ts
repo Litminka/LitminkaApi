@@ -170,5 +170,6 @@ export const dateValidator = ({
     return validator
         .isDate(typeParams)
         .withMessage(baseMsg.valueMustBeDate)
+        .toDate()
 };
 
