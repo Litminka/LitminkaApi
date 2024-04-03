@@ -1,7 +1,15 @@
 import prisma from "@/db";
-import AuthRequest from "@requests/AuthRequest";
+import { UserWithIntegration } from "@/ts";
+import {AuthRequest} from "@requests/AuthRequest";
 
-export default class IntegrationRequest extends AuthRequest {
+export interface IntegrationReq {
+    auth: {
+        user: UserWithIntegration,
+        id: number
+    }
+}
+
+export class IntegrationRequest extends AuthRequest {
 
     /**
      *  if authType is not None 

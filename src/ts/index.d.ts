@@ -57,13 +57,6 @@ type UserWithTokens = User & {
     sessionTokens: SessionToken[]
 }
 
-export interface RequestWithUserPermissions extends Request {
-    auth: {
-        user: UserWithPermissions
-        id: number
-    }
-}
-
 export interface RequestWithUserOwnedGroups extends Request {
     auth: {
         user: User & {
@@ -89,17 +82,13 @@ export interface RequestWithTokenAndCode extends Request {
     }
 }
 
-export interface RequestUserWithIntegration extends Request {
-    auth: {
-        user: UserWithIntegration
-    }
-}
 
 export interface RequestWithUserAnimeList extends Request {
     auth: {
         user: User & {
             animeList: AnimeList | null
         }
+        id: number,
     }
 }
 

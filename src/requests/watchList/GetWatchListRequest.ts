@@ -1,5 +1,5 @@
 import { ValidationChain } from "express-validator";
-import AuthRequest from "@requests/AuthRequest";
+import { AuthRequest } from "@requests/AuthRequest";
 import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { baseMsg, searchMsg } from "@/ts/messages";
 import { WatchListStatuses } from "@/ts/enums";

@@ -1,7 +1,15 @@
 import prisma from "@/db";
-import AuthRequest from "@requests/AuthRequest";
+import { UserWithPermissions } from "@/ts";
+import { AuthRequest } from "@requests/AuthRequest";
 
-export default class WithPermissionsRequest extends AuthRequest {
+export interface WithPermissionsReq {
+    auth: {
+        user: UserWithPermissions
+        id: number
+    }
+}
+
+export class WithPermissionsRequest extends AuthRequest {
 
     /**
      *  if authType is not None 

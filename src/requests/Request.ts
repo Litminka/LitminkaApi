@@ -3,9 +3,11 @@ import { NextFunction, Response } from "express";
 import { validatorError } from "@/middleware/validatorError";
 import { auth } from "@/middleware/auth";
 import { optionalAuth } from "@/middleware/optionalAuth";
-import { RequestWithAuth, RequestWithUserPermissions } from "@/ts";
+import { RequestWithAuth } from "@/ts";
 import { checkExact, ValidationChain } from "express-validator";
 import { validatorData } from "@/middleware/validatorData";
+import { WithPermissionsReq } from "./WithPermissionsRequest";
+
 export default class Request {
     protected authType: RequestAuthTypes;
 
@@ -77,7 +79,7 @@ export default class Request {
         return middleware
     }
 
-    private checkPermissions(req: RequestWithUserPermissions, res: Response, next: NextFunction) {
+    private checkPermissions(req: WithPermissionsReq, res: Response, next: NextFunction) {
         if (this.permissions.length < 1) return next();
 
         if (req.auth.user.role === undefined || req.auth.user.role.permissions === undefined) {
