@@ -1,10 +1,15 @@
-import { searchMsg, sessionMsg } from "@/ts/messages";
+import { sessionMsg } from "@/ts/messages";
 import { bodyArrayValidator, bodyUUIDValidator } from "@validators/BodyBaseValidator";
-import AuthRequest from "@requests/AuthRequest";
+import { AuthReq, AuthRequest } from "@requests/AuthRequest";
 import { ValidationChain } from "express-validator";
 
+export interface EndSessionReq extends AuthReq {
+    body: {
+        sessions: string[]
+    }
+}
 
-export default class EndSessionRequest extends AuthRequest {
+export class EndSessionRequest extends AuthRequest {
 
     /**
      * Define validation rules for this request
@@ -13,7 +18,6 @@ export default class EndSessionRequest extends AuthRequest {
         return [
             bodyArrayValidator("sessions", {
                 typeParams: { min: 1, max: 100 },
-                message: searchMsg.maxArraySizeExceeded
             }).optional(),
             bodyUUIDValidator("sessions.*", {
                 message: sessionMsg.invalidSessionToken

@@ -7,6 +7,7 @@ export interface AuthReq {
     auth: {
         user: User,
         id: number,
+        token: string,
     }
 } 
 
