@@ -6,7 +6,10 @@ import {
     stringValidator,
     boolValidator,
     uuidValidator,
-    arrayValidator
+    arrayValidator,
+    BoolValidator,
+    UUIDValidator,
+    IntValidator
 } from "@validators/BaseValidator";
 
 // 🕷️: Why are we still here? 
@@ -58,7 +61,7 @@ export const bodyStringValidator = (fieldName: string, options?: BaseValidator):
  * @param typeParams Express [isInt()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object. By default limited to int32 positive numbers.
  * @param message Error message for validation exceptions.
  */
-export const bodyIntValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
+export const bodyIntValidator = (fieldName: string, options?: IntValidator): ValidationChain => {
     const typeParams = options?.typeParams ?? { min: 0, max: 32 };
     const message = options?.message ?? baseMsg.valueMustBeInt;
 
@@ -74,7 +77,7 @@ export const bodyIntValidator = (fieldName: string, options?: BaseValidator): Va
  * @param typeParams Express [isBoolead()](https://express-validator.github.io/docs/api/validation-chain/#isboolean) options object. 
  * @param message Error message for validation exceptions. 
  */
-export const bodyBoolValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
+export const bodyBoolValidator = (fieldName: string, options?: BoolValidator): ValidationChain => {
     const message = options?.message ?? baseMsg.valueMustBeBool;
 
     return boolValidator({
@@ -83,14 +86,12 @@ export const bodyBoolValidator = (fieldName: string, options?: BaseValidator): V
     })
 };
 
-interface bodyUUIDValidator extends Omit<BaseValidator, "typeParams"> { }
-
 /**
  * Validate required UUID body parameter
  * @param fieldName Parameter name
  * @param message Error message for validation exceptions. 
  */
-export const bodyUUIDValidator = (fieldName: string, options?: bodyUUIDValidator): ValidationChain => {
+export const bodyUUIDValidator = (fieldName: string, options?: UUIDValidator): ValidationChain => {
     const message = options?.message ?? baseMsg.valueMustBeUUID;
 
     return uuidValidator({

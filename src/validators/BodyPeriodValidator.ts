@@ -1,5 +1,5 @@
 import { body, ValidationChain } from "express-validator";
-import { arrayValidator, BaseValidator, dateValidator, genMessage } from "@validators/BaseValidator";
+import { arrayValidator, BaseValidator, DateValidator, dateValidator, genMessage } from "@validators/BaseValidator";
 import { baseMsg } from "@/ts/messages";
 
 /**
@@ -9,7 +9,7 @@ import { baseMsg } from "@/ts/messages";
  * @param message Error message for validation exceptions.  
  * @returns base date validation chain
  */
-const bodyDateValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
+const bodyDateValidator = (fieldName: string, options?: DateValidator): ValidationChain => {
     const message = options?.message ?? baseMsg.valueMustBeDate;
 
     return dateValidator({
@@ -25,7 +25,7 @@ const bodyDateValidator = (fieldName: string, options?: BaseValidator): Validati
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidator): ValidationChain[] => {
+export const bodySoftPeriodValidator = (fieldName: string, options?: DateValidator): ValidationChain[] => {
     const message = options?.message ?? baseMsg.valueMustBeDate;
 
     return [
@@ -44,28 +44,28 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: BaseValidat
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodyStrictPeriodValidator = (fieldName: string, options?: BaseValidator): ValidationChain[] => {
+export const bodyStrictPeriodValidator = (fieldName: string, options?: DateValidator): ValidationChain[] => {
     const message = options?.message ?? baseMsg.valueMustBeDate;
-    const typeParams = { min: 2, max: 2 }
+    const typeParams = options?.typeParams
 
     return [
         // Validator doesn't cast value to array except arrayValidator, using unique chain
         body(fieldName).optional()
             .custom(value => {
-                const options: { min?: number, max?: number } = typeParams
-                const min = typeof options.min === "undefined" ? 1 : options.min
-                const max = typeof options.max === "undefined" ? 150 : options.max
+                const options = { min: 2, max: 2 }
 
                 if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray)
-                if (value.length < min || value.length > max) {
-                    let message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams })
+                if (value.length < options.min || value.length > options.max) {
+                    let message: any = genMessage({
+                        message: baseMsg.valueNotInRange,
+                        typeParams: options
+                    })
                     const msg: string = message.msg; delete message.msg
                     throw new Error(msg, message)
                 }
                 return true;
             })
-            .withMessage(genMessage({ message: baseMsg.valueMustBeAnArray, typeParams }))
             .bail(),
-        bodyDateValidator(`${fieldName}.*`, { message, typeParams: options?.typeParams })
+        bodyDateValidator(`${fieldName}.*`, { message, typeParams })
     ]
 };

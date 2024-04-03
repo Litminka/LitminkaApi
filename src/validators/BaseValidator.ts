@@ -1,19 +1,47 @@
 import { ValidatorErrorMessage } from "@/ts";
 import { baseMsg } from "@/ts/messages";
 import { ValidationChain, ValidationError } from "express-validator";
+import { IsBooleanOptions, IsDateOptions, MinMaxOptions } from "express-validator/src/options";
 
 /**
  * Base input interface to all base type validators
  */
 export interface TypeBaseValidator {
-    validator: ValidationChain,
-    typeParams?: object
+    validator: ValidationChain
+    typeParams?: MinMaxOptions
 }
+
+interface TypeIntValidator extends TypeBaseValidator {
+    typeParams?: {
+        min?: number,
+        max?: number,
+        [key: string]: any
+    }
+}
+interface TypeDateValidator extends Omit<TypeBaseValidator, "typeParams"> { typeParams?: IsDateOptions }
+interface TypeBoolValidator extends Omit<TypeBaseValidator, "typeParams"> { typeParams?: IsBooleanOptions }
+interface TypeUUIDValidator extends Omit<TypeBaseValidator, "typeParams"> { }
 
 /**
  * Base input parameters to all base validators
  */
 export interface BaseValidator extends Omit<TypeBaseValidator, "validator"> {
+    message?: string | ValidatorErrorMessage,
+}
+
+export interface IntValidator extends Omit<TypeIntValidator, "validator"> {
+    message?: string | ValidatorErrorMessage,
+}
+
+export interface DateValidator extends Omit<TypeDateValidator, "validator"> {
+    message?: string | ValidatorErrorMessage,
+}
+
+export interface BoolValidator extends Omit<TypeBoolValidator, "validator"> {
+    message?: string | ValidatorErrorMessage,
+}
+
+export interface UUIDValidator extends Omit<TypeUUIDValidator, "validator"> {
     message?: string | ValidatorErrorMessage,
 }
 
@@ -53,24 +81,26 @@ export function genMessage(
  */
 export const arrayValidator = ({
     validator,
-    typeParams = { min: 0, max: 50 }
+    typeParams = {}
 }: TypeBaseValidator): ValidationChain => {
     return validator
         .custom(value => {
-            const options: { min?: number, max?: number } = typeParams
-            const min = typeof options.min === "undefined" ? 1 : options.min
-            const max = typeof options.max === "undefined" ? 150 : options.max
+            const options = {
+                min: typeof typeParams.min === "undefined" ? 1 : typeParams.min,
+                max: typeof typeParams.max === "undefined" ? 50 : typeParams.max
+            }
 
             if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray)
-            if (value.length < min || value.length > max) {
+            if (value.length < options.min || value.length > options.max) {
                 let message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams })
                 const msg: string = message.msg; delete message.msg
                 throw new Error(msg, message)
             }
             return true;
         })
-        .toArray()
-        .withMessage(genMessage({ message: baseMsg.valueMustBeAnArray, typeParams }))
+        .toArray().withMessage(genMessage({
+            message: baseMsg.valueMustBeAnArray, typeParams
+        }))
 };
 
 /**
@@ -84,13 +114,11 @@ export const stringValidator = ({
     typeParams = { min: 0, max: 32 },
 }: TypeBaseValidator): ValidationChain => {
     return validator
-        .notEmpty()
-        .bail()
-        .withMessage(baseMsg.valueIsNotProvided)
-        .isString()
-        .withMessage(baseMsg.valueMustBeString)
-        .isLength(typeParams)
-        .withMessage(genMessage({ message: baseMsg.valueNotInRange, typeParams }));
+        .notEmpty().withMessage(baseMsg.valueIsNotProvided).bail()
+        .isString().withMessage(baseMsg.valueMustBeString).bail()
+        .isLength(typeParams).withMessage(genMessage({
+            message: baseMsg.valueNotInRange, typeParams
+        }));
 };
 
 /**
@@ -102,24 +130,26 @@ export const stringValidator = ({
  */
 export const intValidator = ({
     validator,
-    typeParams = { min: 1, max: 2147483647 },
-}: TypeBaseValidator): ValidationChain => {
+    typeParams = {},
+}: TypeIntValidator): ValidationChain => {
     return validator
         .custom(value => {
-            const options: { min?: number, max?: number } = typeParams
-            const min = typeof options.min === "undefined" ? -2147483648 : options.min
-            const max = typeof options.max === "undefined" ? 2147483647 : options.max
+            const options: { min: number, max: number } = {
+                min: typeof typeParams.min === "undefined" ? -2147483648 : typeParams.min,
+                max: typeof typeParams.max === "undefined" ? 2147483647 : typeParams.max
+            }
 
             if (!Number.isInteger(value)) throw new Error(baseMsg.valueMustBeInt)
-            if (value < min || value > max) {
+            if (value < options.min || value > options.max) {
                 let message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams })
                 const msg: string = message.msg; delete message.msg
                 throw new Error(msg, message)
             }
             return true;
         })
-        .toInt()
-        .withMessage(genMessage({ message: baseMsg.valueMustBeInt, typeParams }));
+        .toInt().withMessage(genMessage({
+            message: baseMsg.valueMustBeInt, typeParams
+        }));
 };
 
 /**
@@ -131,13 +161,11 @@ export const intValidator = ({
 export const boolValidator = ({
     validator,
     typeParams
-}: TypeBaseValidator): ValidationChain => {
+}: TypeBoolValidator): ValidationChain => {
     return validator
         .isBoolean(typeParams)
         .withMessage(baseMsg.valueMustBeBool)
 }
-
-interface TypeUUIDValidator extends Omit<TypeBaseValidator, "typeParams"> { }
 
 /**
  * Validate uuid parameter.
@@ -149,11 +177,8 @@ export const uuidValidator = ({
     validator
 }: TypeUUIDValidator): ValidationChain => {
     return validator
-        .notEmpty()
-        .bail()
-        .withMessage(baseMsg.valueIsNotProvided)
-        .isUUID()
-        .withMessage(baseMsg.valueMustBeUUID)
+        .notEmpty().withMessage(baseMsg.valueIsNotProvided).bail()
+        .isUUID().withMessage(baseMsg.valueMustBeUUID)
 }
 
 /**
@@ -166,10 +191,8 @@ export const uuidValidator = ({
 export const dateValidator = ({
     validator,
     typeParams,
-}: TypeBaseValidator): ValidationChain => {
+}: TypeDateValidator): ValidationChain => {
     return validator
-        .isDate(typeParams)
-        .withMessage(baseMsg.valueMustBeDate)
-        .toDate()
+        .isDate(typeParams).toDate().withMessage(baseMsg.valueMustBeDate)
 };
 
