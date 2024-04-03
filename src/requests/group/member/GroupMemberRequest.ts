@@ -8,7 +8,7 @@ export interface GroupMemberReq extends AuthReq {
     }
 }
 
-export default class GroupMemberRequest extends AuthRequest {
+export class GroupMemberRequest extends AuthRequest {
 
     /**
      * Define validation rules for this request

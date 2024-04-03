@@ -1,6 +1,5 @@
 import { bodyArrayValidator, bodyIntValidator } from "@validators/BodyBaseValidator";
 import { AuthReq, AuthRequest } from "@requests/AuthRequest";
-import { baseMsg } from "@/ts/messages";
 import { ValidationChain } from "express-validator";
 
 export interface ReadNotificationsReq extends AuthReq {

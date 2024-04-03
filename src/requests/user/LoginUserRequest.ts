@@ -10,7 +10,7 @@ export interface LoginUserReq extends ExpressRequest {
     }
 }
 
-export default class LoginUserRequest extends Request {
+export class LoginUserRequest extends Request {
 
     /**
      * Define validation rules for this request

@@ -19,7 +19,7 @@ export interface AddToWatchListReq extends IntegrationReq {
 }
 
 
-export default class AddToWatchListRequest extends IntegrationRequest {
+export class AddToWatchListRequest extends IntegrationRequest {
 
     /**
      * Define validation rules for this request

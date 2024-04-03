@@ -12,7 +12,7 @@ export interface DeleteInviteReq extends GroupReq {
     }
 }
 
-export default class DeleteInviteRequest extends GroupRequest {
+export class DeleteInviteRequest extends GroupRequest {
 
     /**
      * Define validation rules for this request

@@ -10,7 +10,7 @@ export interface LinkShikimoriReq extends ExpressRequest {
     }
 }
 
-export default class LinkShikimoriRequest extends Request {
+export class LinkShikimoriRequest extends Request {
 
     /**
      * Define validation rules for this request

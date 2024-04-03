@@ -4,21 +4,22 @@ import GroupListController from "@controllers/group/GroupListController";
 import GroupInviteController from "@controllers/group/GroupInviteController";
 import GroupMemberController from "@controllers/group/GroupMemberController";
 import GroupAnimeListController from "@controllers/group/GroupAnimeListController";
-import CreateGroupRequest from "@requests/group/list/CreateGroupRequest";
-import DeleteGroupRequest from "@requests/group/list/DeleteGroupRequest";
-import UpdateGroupRequest from "@requests/group/list/UpdateGroupRequest";
-import GroupRequest from "@requests/group/GroupRequest";
-import KickGroupMemberRequest from "@/requests/group/member/KickGroupMemberRequest";
-import GroupMemberRequest from "@/requests/group/member/GroupMemberRequest";
-import DeleteInviteRequest from "@requests/group/invite/DeleteInviteRequest";
-import DenyInviteRequest from "@requests/group/invite/DenyInviteRequest";
-import AcceptInviteRequest from "@requests/group/invite/AcceptInviteRequest";
-import SendInviteRequest from "@requests/group/invite/SendInviteRequest";
-import GetGroupAnimeListRequest from "@requests/group/animeList/GetGroupAnimeListRequest";
-import AddGroupAnimeListRequest from "@requests/group/animeList/AddGroupAnimeListRequest";
-import UpdateGroupAnimeListRequest from "@requests/group/animeList/UpdateGroupAnimeListRequest";
-import DeleteGroupAnimeListRequest from "@requests/group/animeList/DeleteGroupAnimeListRequest";
-import AuthRequest from "@requests/AuthRequest";
+import { CreateGroupRequest } from "@requests/group/list/CreateGroupRequest";
+import { DeleteGroupRequest } from "@requests/group/list/DeleteGroupRequest";
+import { UpdateGroupRequest } from "@requests/group/list/UpdateGroupRequest";
+import { GroupRequest } from "@requests/group/GroupRequest";
+import { KickGroupMemberRequest } from "@/requests/group/member/KickGroupMemberRequest";
+import { GroupMemberRequest } from "@/requests/group/member/GroupMemberRequest";
+import { DeleteInviteRequest } from "@requests/group/invite/DeleteInviteRequest";
+import { DenyInviteRequest } from "@requests/group/invite/DenyInviteRequest";
+import { AcceptInviteRequest } from "@requests/group/invite/AcceptInviteRequest";
+import { SendInviteRequest } from "@requests/group/invite/SendInviteRequest";
+import { GetGroupAnimeListRequest } from "@requests/group/animeList/GetGroupAnimeListRequest";
+import { AddGroupAnimeListRequest } from "@requests/group/animeList/AddGroupAnimeListRequest";
+import { UpdateGroupAnimeListRequest } from "@requests/group/animeList/UpdateGroupAnimeListRequest";
+import { DeleteGroupAnimeListRequest } from "@requests/group/animeList/DeleteGroupAnimeListRequest";
+import { AuthRequest } from "@requests/AuthRequest";
+import { UpdateGroupMemberRequest } from "@/requests/group/member/UpdateGroupMemberRequest";
 
 const router = Router();
 
@@ -37,7 +38,7 @@ groupIdRouter.post('/invite', new SendInviteRequest().send(), wrap(GroupInviteCo
 groupIdRouter.delete('/invite', new DeleteInviteRequest().send(), wrap(GroupInviteController.deleteInvite));
 
 groupIdRouter.get('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.getMembers));
-groupIdRouter.patch('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.updateState));
+groupIdRouter.patch('/members', new UpdateGroupMemberRequest().send(), wrap(GroupMemberController.updateState));
 groupIdRouter.delete('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.leaveGroup))
 groupIdRouter.delete('/members/kick', new KickGroupMemberRequest().send(), wrap(GroupMemberController.kickUser))
 

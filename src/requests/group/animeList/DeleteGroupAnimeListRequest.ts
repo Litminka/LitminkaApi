@@ -10,7 +10,7 @@ export interface DeleteGroupAnimeListReq extends GroupReq {
     },
 }
 
-export default class DeleteGroupAnimeListRequest extends GroupRequest {
+export class DeleteGroupAnimeListRequest extends GroupRequest {
 
     /**
      * Define validation rules for this request

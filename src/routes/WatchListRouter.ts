@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import WatchListController from '@controllers/WatchListController';
 import { wrap } from '@/middleware/errorHandler';
-import AddToWatchListRequest from '@requests/watchList/AddToWatchListRequest';
-import EditWatchListRequest from '@requests/watchList/EditWatchListRequest';
-import DeleteFromWatchListRequest from '@requests/watchList/DeleteFromWatchListRequest';
-import GetWatchListRequest from '@requests/watchList/GetWatchListRequest';
-import IntegrationRequest from '@requests/IntegrationRequest';
+import { AddToWatchListRequest } from '@requests/watchList/AddToWatchListRequest';
+import { EditWatchListRequest } from '@requests/watchList/EditWatchListRequest';
+import { DeleteFromWatchListRequest } from '@requests/watchList/DeleteFromWatchListRequest';
+import { GetWatchListRequest } from '@requests/watchList/GetWatchListRequest';
+import { IntegrationRequest } from '@requests/IntegrationRequest';
 const router = Router();
 
 // Private methods

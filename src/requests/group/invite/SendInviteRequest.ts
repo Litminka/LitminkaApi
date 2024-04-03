@@ -12,7 +12,7 @@ export interface SendInviteReq extends GroupReq {
     }
 }
 
-export default class SendInviteRequest extends GroupRequest {
+export class SendInviteRequest extends GroupRequest {
 
     /**
      * Define validation rules for this request

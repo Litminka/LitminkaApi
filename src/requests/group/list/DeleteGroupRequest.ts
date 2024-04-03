@@ -8,7 +8,7 @@ export interface DeleteGroupReq extends AuthReq {
     }
 }
 
-export default class DeleteGroupRequest extends AuthRequest {
+export class DeleteGroupRequest extends AuthRequest {
 
     /**
      * Define validation rules for this request
