@@ -1,0 +1,121 @@
+const fs = require('fs');
+const path = require('path');
+const { parseArgs } = require('util');
+
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const src = path.relative('./', 'src');
+const args = parseArgs({
+    options: {
+        service: {
+            type: "boolean",
+            default: false,
+            multiple: false,
+            short: "s"
+        },
+        auth: {
+            type: "boolean",
+            default: false,
+            multiple: false,
+            short: "a"
+        },
+        optional: {
+            type: "boolean",
+            default: false,
+            multiple: false,
+            short: "a"
+        },
+        path: {
+            type: 'string',
+            default: "./",
+            multiple: false,
+            short: "p"
+        }
+    }, allowPositionals: true, strict: true
+});
+
+const command = args.positionals[0];
+const fileName = args.positionals[1];
+if (!command) {
+    return console.log('Error: No command specified')
+}
+if (!fileName) {
+    return console.log('Error: No name specified')
+}
+const options = args.values;
+
+execute(command, options)
+
+function execute(command, options) {
+    if (!command) return console.log("Error: No command")
+    const split = command.split(':');
+    if (!split[0]) return console.log("Error: No command");
+    const commandType = split[0];
+    command = split[1];
+    if (!command) return console.log(`Error: ${commandType} does not have this command`)
+    if (commandType == "make") {
+        executeMake(command, options);
+    }
+}
+
+function generateRequest(command, fileName, options) {
+    let stubPath = `./stubs/${command}.stub`;
+    if (typeof options !== undefined) {
+        if (options.auth && options.optional) {
+            return console.log('Pick one! optional or auth')
+        }
+        if (options.auth) {
+            stubPath = `./stubs/auth${capitalize(command)}.stub`;
+        }
+        if (options.optional) {
+            stubPath = `./stubs/optional${capitalize(command)}.stub`;
+        }
+    }
+    const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
+    let nw = file.replace(`StubRequest`, fileName)
+    nw = file.replace(`StubReq`, fileName.replace('Request', "Req"))
+
+    const savePath = `${src}/${command}s/${fileName}.ts`;
+    console.log(`File: ${savePath} created!`)
+    fs.writeFileSync(savePath, nw);
+}
+
+function generateGenericFile(command, fileName, options) {
+    const stubPath = `./stubs/${command}.stub`;
+    const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
+    const nw = file.replace(`Stub${capitalize(command)}`, fileName)
+    if (typeof options !== "undefined") {
+        if (options.service && command !== "service") {
+            const serviceName = fileName.replaceAll(capitalize(command), "Service");
+            generateGenericFile("service", serviceName);
+        }
+    }
+
+    const savePath = `${src}/${command}s/${fileName}.ts`;
+    console.log(`File: ${savePath} created!`)
+    fs.writeFileSync(savePath, nw);
+}
+
+function executeMake(command, options) {
+    switch (command) {
+        case 'controller':
+            generateGenericFile(command, fileName, options)
+            break;
+        case 'request':
+            generateRequest(command, fileName, options)
+            break;
+        case 'router':
+            generateGenericFile(command, fileName);
+            break;
+        case 'service':
+            generateGenericFile(command, fileName);
+            break;
+        case 'model': 
+            //fixme
+            break
+        default:
+            return console.log('Unknown command')
+    }
+}

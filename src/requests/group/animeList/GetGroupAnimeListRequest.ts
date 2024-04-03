@@ -26,12 +26,8 @@ export class GetGroupAnimeListRequest extends GroupRequest {
             paramIntValidator("groupId"),
             bodyArrayValidator("statuses").optional(),
             bodyStringValidator("statuses.*").isIn(Object.values(WatchListStatuses)),
-            
             bodyArrayValidator("ratings").optional(),
-            bodyIntValidator("ratings.*", {
-                typeParams: { min: 0, max: 10 }
-            }),
-
+            bodyIntValidator("ratings.*", { typeParams: { min: 0, max: 10 } }),
             bodyBoolValidator("isFavorite").optional()
         ]
     }

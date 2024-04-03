@@ -1,0 +1,6 @@
+import { Router } from 'express';
+import { wrap } from '@/middleware/errorHandler';
+
+const router = Router();
+
+export { router as baseRouter };
