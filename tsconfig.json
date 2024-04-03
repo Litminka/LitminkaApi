@@ -24,7 +24,7 @@
         "src/validators/*"
       ],
       "@routes/*": [
-        "src/routes/*"
+        "src/routers/*"
       ],
       "@controllers/*": [
         "src/controllers/*"

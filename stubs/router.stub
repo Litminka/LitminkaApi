@@ -3,4 +3,4 @@ import { wrap } from '@/middleware/errorHandler';
 
 const router = Router();
 
-export { router as baseRouter };
+export { router as StubRouter };

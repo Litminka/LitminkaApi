@@ -10,15 +10,15 @@ import { RequestStatuses } from '@/ts/enums';
 import { wrap } from '@/middleware/errorHandler';
 import { logger } from '@/loggerConf'
 
-import { userRouter } from '@routes/UserRouter';
-import { shikimoriRouter } from '@routes/ShikimoriRouter';
-import { tokenRouter } from '@routes/TokenRouter';
-import { watchListRouter } from '@routes/WatchListRouter';
-import { followRouter } from '@routes/FollowRouter';
-import { animeRouter } from '@/routes/AnimeRouter';
-import { groupListRouter } from '@routes/GroupListRouter';
-import { notificationRouter } from '@routes/NotificationRouter';
-import { adminRouter } from './routes/AdminRouter';
+import { userRouter } from '@/routers/UserRouter';
+import { shikimoriRouter } from '@/routers/ShikimoriRouter';
+import { tokenRouter } from '@/routers/TokenRouter';
+import { watchListRouter } from '@/routers/WatchListRouter';
+import { followRouter } from '@/routers/FollowRouter';
+import { animeRouter } from '@/routers/AnimeRouter';
+import { groupListRouter } from '@/routers/GroupListRouter';
+import { notificationRouter } from '@/routers/NotificationRouter';
+import { adminRouter } from './routers/AdminRouter';
 
 dotenv.config();
 

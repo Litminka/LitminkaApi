@@ -25,7 +25,7 @@ const args = parseArgs({
             type: "boolean",
             default: false,
             multiple: false,
-            short: "a"
+            short: "o"
         },
         path: {
             type: 'string',
@@ -74,8 +74,8 @@ function generateRequest(command, fileName, options) {
         }
     }
     const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
-    let nw = file.replace(`StubRequest`, fileName)
-    nw = file.replace(`StubReq`, fileName.replace('Request', "Req"))
+    let nw = file.replaceAll(`StubRequest`, fileName)
+    nw = file.replaceAll(`StubReq`, fileName.replace('Request', "Req"))
 
     const savePath = `${src}/${command}s/${fileName}.ts`;
     console.log(`File: ${savePath} created!`)
@@ -85,7 +85,8 @@ function generateRequest(command, fileName, options) {
 function generateGenericFile(command, fileName, options) {
     const stubPath = `./stubs/${command}.stub`;
     const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
-    const nw = file.replace(`Stub${capitalize(command)}`, fileName)
+    fileName = fileName.replaceAll(capitalize(command), '');
+    const nw = file.replaceAll(`Stub`, fileName)
     if (typeof options !== "undefined") {
         if (options.service && command !== "service") {
             const serviceName = fileName.replaceAll(capitalize(command), "Service");
@@ -93,7 +94,7 @@ function generateGenericFile(command, fileName, options) {
         }
     }
 
-    const savePath = `${src}/${command}s/${fileName}.ts`;
+    const savePath = `${src}/${command}s/${fileName}${capitalize(command)}.ts`;
     console.log(`File: ${savePath} created!`)
     fs.writeFileSync(savePath, nw);
 }
@@ -113,7 +114,7 @@ function executeMake(command, options) {
             generateGenericFile(command, fileName);
             break;
         case 'model': 
-            //fixme
+            generateGenericFile(command, fileName)
             break
         default:
             return console.log('Unknown command')
