@@ -30,8 +30,13 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: DateValidat
 
     return [
         arrayValidator({
-            validator: body(fieldName).optional(),
-            typeParams: { max: 2, min: 1 },
+            validator: body(fieldName)
+                .trim()
+                .notEmpty()
+                .bail()
+                .withMessage(baseMsg.valueIsNotProvided)
+                .optional(),
+            typeParams: { min: 0, max: 2 },
         }).bail(),
         bodyDateValidator(`${fieldName}.*`, { message, typeParams: options?.typeParams })
     ]

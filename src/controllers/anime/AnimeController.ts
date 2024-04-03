@@ -1,11 +1,11 @@
-import { Response, Request } from "express";
+import { Response } from "express";
 import AnimeService from "@services/anime/AnimeService";
 import { RequestStatuses } from "@/ts/enums";
-import AnimeSearchFilter from "@/services/filters/AnimeSearchFilter";
-import { GetSingleAnimeReq } from "@/requests/anime/GetSingleAnimeRequest";
-import { GetAnimeReq } from "@/requests/anime/GetAnimeRequest";
-import { BanAnimeReq } from "@/requests/anime/BanAnimeRequest";
-import { GetTopAnimeReq } from "@/requests/anime/GetTopAnimeRequest";
+import AnimeSearchService from "@services/anime/AnimeSearchService";
+import { GetSingleAnimeReq } from "@requests/anime/GetSingleAnimeRequest";
+import { GetAnimeReq } from "@requests/anime/GetAnimeRequest";
+import { BanAnimeReq } from "@requests/anime/BanAnimeRequest";
+import { GetTopAnimeReq } from "@requests/anime/GetTopAnimeRequest";
 
 
 export default class AnimeController {
@@ -24,7 +24,7 @@ export default class AnimeController {
         const query = req.query;
         const body = req.body;
 
-        const anime = await AnimeSearchFilter.filterSelector(body, query)
+        const anime = await AnimeSearchService.filterSelector(body, query)
 
         return res.status(RequestStatuses.OK).json({
             body: anime

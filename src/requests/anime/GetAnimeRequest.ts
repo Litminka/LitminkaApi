@@ -6,6 +6,7 @@ import { searchMsg } from "@/ts/messages"
 import { AnimeStatuses, AnimeSeasons, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
 import { Request as ExpressRequest } from "express";
+import { OptionalRequest } from "../OptionalRequest";
 
 type queryType = ExpressRequest<{}, {}, {}, {}> // workaround on query
 export interface GetAnimeReq extends queryType {
@@ -26,7 +27,7 @@ export interface GetAnimeReq extends queryType {
     }
 }
 
-export class GetAnimeRequest extends Request {
+export class GetAnimeRequest extends OptionalRequest {
 
     /**
      * Define validation rules for this request

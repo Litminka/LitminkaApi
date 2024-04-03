@@ -85,6 +85,7 @@ export const arrayValidator = ({
     typeParams = {}
 }: TypeBaseValidator): ValidationChain => {
     return validator
+        .toArray()
         .custom(value => {
             const options = {
                 min: typeof typeParams.min === "undefined" ? 1 : typeParams.min,
@@ -99,9 +100,7 @@ export const arrayValidator = ({
             }
             return true;
         })
-        .toArray().withMessage(genMessage({
-            message: baseMsg.valueMustBeAnArray, typeParams
-        }))
+        .withMessage(genMessage({ message: baseMsg.valueMustBeAnArray, typeParams }))
 };
 
 /**
@@ -197,6 +196,6 @@ export const dateValidator = ({
     typeParams,
 }: TypeDateValidator): ValidationChain => {
     return validator
-        .isDate(typeParams).withMessage(baseMsg.valueMustBeDate).toDate()
+        .isDate(typeParams).withMessage(baseMsg.valueMustBeDate)
 };
 
