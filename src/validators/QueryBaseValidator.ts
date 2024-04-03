@@ -1,6 +1,6 @@
 import { ValidationChain, query } from "express-validator";
 import { baseMsg } from '@/ts/messages';
-import { BaseValidator } from "@validators/BaseValidator";
+import { BaseValidator, stringValidator } from "@validators/BaseValidator";
 import { intValidator } from "@validators/BaseValidator";
 interface QueryIntValidator extends BaseValidator {
     defValue: any
@@ -23,4 +23,20 @@ export const queryIntValidator = (fieldName: string, options?: QueryIntValidator
         typeParams
     })
 
+};
+
+/**
+ * Validate required `string` query parameter.
+ * @param fieldName Parameter name
+ * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
+ * @param message Error message for validation exceptions.
+ */
+export const queryStringValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
+    const typeParams = options?.typeParams ?? { min: 0, max: 64 };
+    const message = options?.message ?? baseMsg.valueMustBeString;
+
+    return stringValidator({
+        validator: query(fieldName, message),
+        typeParams
+    })
 };

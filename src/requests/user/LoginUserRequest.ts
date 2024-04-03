@@ -6,10 +6,7 @@ import { bodyStringValidator } from "@/validators/BodyBaseValidator";
 export interface LoginUserReq extends ExpressRequest {
     body: {
         login: string,
-        email: string,
-        name: string,
         password: string,
-        passwordConfirm: string
     }
 }
 

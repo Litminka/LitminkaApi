@@ -1,5 +1,14 @@
 import Request from "@requests/Request";
 import { query, ValidationChain } from "express-validator";
+import { Request as ExpressRequest } from "express";
+import { queryIntValidator, queryStringValidator } from "@/validators/QueryBaseValidator";
+
+export interface LinkShikimoriReq extends ExpressRequest {
+    query: {
+        token: string,
+        code: string,
+    }
+}
 
 export default class LinkShikimoriRequest extends Request {
 
@@ -8,8 +17,8 @@ export default class LinkShikimoriRequest extends Request {
      */
     protected rules(): ValidationChain[] {
         return [
-            query("token").notEmpty().isString().bail(),
-            query("code").notEmpty().isString().bail()
+            queryStringValidator("token"),
+            queryStringValidator("code"),
         ]
     }
 }
