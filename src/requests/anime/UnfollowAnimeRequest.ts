@@ -1,15 +1,26 @@
 import { param, body, ValidationChain } from "express-validator";
-import AuthRequest from "@requests/AuthRequest";
+import {AuthReq, AuthRequest} from "@requests/AuthRequest";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
+import { bodyStringValidator } from "@/validators/BodyBaseValidator";
 
-export default class UnFollowAnimeRequest extends AuthRequest {
+export interface UnFollowAnimeReq extends AuthReq {
+    body: {
+        groupName?: string,
+    },
+    params: {
+        animeId: number,
+    }
+}
+
+export class UnFollowAnimeRequest extends AuthRequest {
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
         return [
-            param("animeId").bail().isInt().bail().toInt(),
-            body("groupName").optional().isString().bail(),
+            paramIntValidator("animeId"),
+            bodyStringValidator("groupName").optional(),
         ]
     }
 }

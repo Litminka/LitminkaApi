@@ -1,19 +1,29 @@
-import { Permissions } from "@/ts/enums";
-import { body, param, ValidationChain } from "express-validator";
-import AuthRequest from "@requests/AuthRequest";
+import { body, ValidationChain } from "express-validator";
+import { AuthReq, AuthRequest } from "@requests/AuthRequest";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
+import { bodyStringValidator } from "@/validators/BodyBaseValidator";
+import { FollowTypes } from "@/ts/enums";
 
-export default class FollowAnimeRequest extends AuthRequest {
+export interface FollowAnimeReq extends AuthReq {
+    params: {
+        animeId: number
+    },
+    body: {
+        type: FollowTypes,
+        groupName: string
+    }
+}
 
-    protected permissions: string[] = [Permissions.ManageAnime];
+export class FollowAnimeRequest extends AuthRequest {
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
         return [
-            param("animeId").bail().isInt().bail().toInt(),
-            body("type").notEmpty().bail().isString().bail().isIn(["announcement", "follow"]).bail(),
-            body("groupName").if(body("type").exists().bail().equals('follow')).notEmpty().bail().isString().bail()
+            paramIntValidator("animeId"),
+            bodyStringValidator("type").isIn(["announcement", "follow"]).bail(),
+            bodyStringValidator("groupName").if(body("type").exists().bail().equals('follow')) // test
         ]
     }
 }

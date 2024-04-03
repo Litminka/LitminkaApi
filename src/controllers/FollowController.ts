@@ -1,14 +1,15 @@
 import { Response } from "express";
-import { DeleteFollow, Follow, RequestWithAuth, RequestWithUser } from "@/ts/index";
 import { RequestStatuses } from "@/ts/enums";
 import FollowService from "@services/FollowService";
+import { FollowAnimeReq } from "@/requests/anime/FollowAnimeRequest";
+import { UnFollowAnimeReq } from "@/requests/anime/UnfollowAnimeRequest";
 
 export default class FollowController {
 
-    public static async follow(req: RequestWithUser, res: Response) {
+    public static async follow(req: FollowAnimeReq, res: Response) {
         const user = req.auth.user;
-        const animeId: number = req.params.animeId as unknown as number;
-        const { groupName, type } = req.body as Follow;
+        const animeId = req.params.animeId;
+        const { groupName, type } = req.body
 
         await FollowService.follow(animeId, user.id, type, groupName)
 
@@ -17,11 +18,11 @@ export default class FollowController {
         })
     }
 
-    public static async unfollow(req: RequestWithUser, res: Response) {
+    public static async unfollow(req: UnFollowAnimeReq, res: Response) {
 
         const user = req.auth.user;
-        const { groupName } = req.body as DeleteFollow;
-        const animeId: number = req.params.animeId as unknown as number;
+        const { groupName } = req.body;
+        const animeId = req.params.animeId;
 
         await FollowService.unfollow(animeId, user.id, groupName)
 

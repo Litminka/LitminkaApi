@@ -13,12 +13,12 @@ export interface IAnimeFilters {
     seasons?: string[], // WIP
     period?: Date[], // Complete
     isCensored: boolean, //WIP
-    banInRussia: boolean, //WIP
+    banInRussia?: boolean, //WIP
 }
 
 export interface IAnimeFilterQuery {
-    page?: string,
-    pageLimit?: string
+    page?: number,
+    pageLimit?: number
 }
 
 export default class AnimeSearchFilter {

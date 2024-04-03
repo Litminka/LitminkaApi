@@ -39,6 +39,7 @@ export interface DateValidator extends Omit<TypeDateValidator, "validator"> {
 
 export interface BoolValidator extends Omit<TypeBoolValidator, "validator"> {
     message?: string | ValidatorErrorMessage,
+    defValue?: boolean
 }
 
 export interface UUIDValidator extends Omit<TypeUUIDValidator, "validator"> {

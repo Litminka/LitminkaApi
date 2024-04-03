@@ -1,15 +1,17 @@
 import { Response, Request } from "express";
-import { RequestUserWithIntegration, RequestWithUser } from "@/ts/index";
 import AnimeService from "@services/anime/AnimeService";
 import { RequestStatuses } from "@/ts/enums";
-import AnimeSearchFilter, { IAnimeFilterQuery, IAnimeFilters } from "@/services/filters/AnimeSearchFilter";
-import { matchedData } from "express-validator";
+import AnimeSearchFilter from "@/services/filters/AnimeSearchFilter";
+import { GetSingleAnimeReq } from "@/requests/anime/GetSingleAnimeRequest";
+import { GetAnimeReq } from "@/requests/anime/GetAnimeRequest";
+import { BanAnimeReq } from "@/requests/anime/BanAnimeRequest";
+import { GetTopAnimeReq } from "@/requests/anime/GetTopAnimeRequest";
 
 
 export default class AnimeController {
-    public static async getSingleAnime(req: RequestUserWithIntegration, res: Response) {
-        const user = req.auth.user;
-        const animeId: number = req.params.animeId as unknown as number;
+    public static async getSingleAnime(req: GetSingleAnimeReq, res: Response) {
+        const user = req.auth?.user;
+        const animeId = req.params.animeId;
 
         const anime = await AnimeService.getSingleAnime(animeId, user);
 
@@ -18,9 +20,9 @@ export default class AnimeController {
         });
     }
 
-    public static async getAnime(req: Request, res: Response) {
-        const query = matchedData(req, { locations: ['query'] }) as IAnimeFilterQuery;
-        const body = matchedData(req, { locations: ['body'] }) as IAnimeFilters;
+    public static async getAnime(req: GetAnimeReq, res: Response) {
+        const query = req.query;
+        const body = req.body;
 
         const anime = await AnimeSearchFilter.filterSelector(body, query)
 
@@ -29,7 +31,7 @@ export default class AnimeController {
         });
     }
 
-    public static async getTopAnime(req: Request, res: Response) {
+    public static async getTopAnime(req: GetTopAnimeReq, res: Response) {
         const shikimori = req.body.shikimori
 
         const top = await AnimeService.getTopAnime(shikimori)
@@ -37,8 +39,8 @@ export default class AnimeController {
         return res.status(RequestStatuses.OK).json(top)
     }
 
-    public static async banAnime(req: RequestWithUser, res: Response) {
-        const animeId: number = req.params.animeId as unknown as number;
+    public static async banAnime(req: BanAnimeReq, res: Response) {
+        const animeId = req.params.animeId;
 
         await AnimeService.banAnime(animeId);
 
@@ -47,8 +49,8 @@ export default class AnimeController {
         })
     }
 
-    public static async unBanAnime(req: RequestWithUser, res: Response) {
-        const animeId: number = req.params.animeId as unknown as number;
+    public static async unBanAnime(req: BanAnimeReq, res: Response) {
+        const animeId = req.params.animeId;
 
         await AnimeService.unBanAnime(animeId);
 

@@ -1,10 +1,15 @@
 import { Permissions } from "@/ts/enums";
 import { paramIntValidator } from "@validators/ParamBaseValidator";
-import { baseMsg } from "@/ts/messages"
 import { ValidationChain } from "express-validator";
-import WithPermissionsRequest from "@requests/WithPermissionsRequest";
+import { WithPermissionsRequest } from "@requests/WithPermissionsRequest";
 
-export default class BanAnimeRequest extends WithPermissionsRequest {
+export interface BanAnimeReq extends WithPermissionsRequest {
+    params: {
+        animeId: number
+    }
+}
+
+export class BanAnimeRequest extends WithPermissionsRequest {
 
     protected permissions: string[] = [Permissions.ManageAnime];
 
@@ -14,9 +19,7 @@ export default class BanAnimeRequest extends WithPermissionsRequest {
     protected rules(): ValidationChain[] {
 
         return [
-            paramIntValidator("animeId", {
-                message: baseMsg.valueNotInRange
-            })
+            paramIntValidator("animeId")
         ]
     }
 }

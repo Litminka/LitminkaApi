@@ -1,10 +1,17 @@
 import { paramIntValidator } from "@validators/ParamBaseValidator";
-import { baseMsg } from "@/ts/messages"
 import { ValidationChain } from "express-validator";
 import { RequestAuthTypes } from "@/ts/enums";
-import IntegrationRequest from "@/requests/IntegrationRequest";
+import { IntegrationReq, IntegrationRequest } from "@/requests/IntegrationRequest";
+import { OptionalReq } from "../OptionalRequest";
 
-export default class GetSingleAnimeRequest extends IntegrationRequest {
+export interface GetSingleAnimeReq extends OptionalReq {
+    auth?: IntegrationReq['auth'],
+    params: {
+        animeId: number
+    }
+}
+
+export class GetSingleAnimeRequest extends IntegrationRequest {
 
     /**
      * Define auth type for this request
@@ -16,9 +23,7 @@ export default class GetSingleAnimeRequest extends IntegrationRequest {
      */
     protected rules(): ValidationChain[] {
         return [
-            paramIntValidator("animeId", {
-                message: baseMsg.valueNotInRange
-            })
+            paramIntValidator("animeId")
         ]
     }
 }

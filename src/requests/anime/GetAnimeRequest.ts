@@ -1,87 +1,74 @@
 import Request from "@requests/Request";
 import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
-import { bodyArrayValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
+import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { queryIntValidator } from "@validators/QueryBaseValidator";
-import { baseMsg, searchMsg } from "@/ts/messages"
+import { searchMsg } from "@/ts/messages"
 import { AnimeStatuses, AnimeSeasons, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
+import { Request as ExpressRequest } from "express";
 
+type queryType = ExpressRequest<{}, {}, {}, {}> // workaround on query
+export interface GetAnimeReq extends queryType {
+    body: {
+        name?: string,
+        seasons?: AnimeSeasons[],
+        statuses?: AnimeStatuses[],
+        rpaRatings?: AnimePgaRatings[],
+        mediaTypes?: AnimeMediaTypes[],
+        includeGenres?: number[],
+        excludeGenres?: number[],
+        period?: Date[],
+        isCensored: boolean,
+    },
+    query: {
+        page?: number,
+        pageLimit?: number,
+    }
+}
 
-export default class GetAnimeRequest extends Request {
+export class GetAnimeRequest extends Request {
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
         return [
-            bodyStringValidator("name", {
-                message: searchMsg.maxLengthExceeded
-            }).optional(),
-
+            bodyStringValidator("name").optional(),
             bodyArrayValidator("seasons", {
                 typeParams: { max: 4 },
-                message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator("seasons.*", {
-                message: searchMsg.maxLengthExceeded
-            }).isIn(Object.values(AnimeSeasons))
-                .withMessage(searchMsg.unknownType),
-
+            bodyStringValidator("seasons.*").isIn(Object.values(AnimeSeasons)).withMessage(searchMsg.unknownType),
             bodyArrayValidator("statuses", {
                 typeParams: { max: 3 },
-                message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator("statuses.*", {
-                message: searchMsg.maxLengthExceeded
-            }).isIn(Object.values(AnimeStatuses))
-                .withMessage(searchMsg.unknownType),
-
+            bodyStringValidator("statuses.*").isIn(Object.values(AnimeStatuses)).withMessage(searchMsg.unknownType),
             bodyArrayValidator("rpaRatings", {
                 typeParams: { max: 6 },
-                message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator("rpaRatings.*", {
-                message: searchMsg.maxLengthExceeded
-            }).isIn(Object.values(AnimePgaRatings))
-                .withMessage(searchMsg.unknownType),
+            bodyStringValidator("rpaRatings.*").isIn(Object.values(AnimePgaRatings)).withMessage(searchMsg.unknownType),
 
             bodyArrayValidator("mediaTypes", {
                 typeParams: { max: 6 },
-                message: searchMsg.maxArraySizeExceeded
             }).optional(),
-            bodyStringValidator("mediaTypes.*", {
-                message: searchMsg.maxLengthExceeded
-            }).isIn(Object.values(AnimeMediaTypes))
-                .withMessage(searchMsg.unknownType),
+            bodyStringValidator("mediaTypes.*").isIn(Object.values(AnimeMediaTypes)).withMessage(searchMsg.unknownType),
+            bodyArrayValidator("includeGenres").optional(),
+            bodyIntValidator("includeGenres.*"),
 
-            bodyArrayValidator("includeGenres", {
-                message: searchMsg.maxArraySizeExceeded
-            }).optional(),
-            bodyIntValidator("includeGenres.*", {
-                message: baseMsg.valueNotInRange
-            }),
+            bodyArrayValidator("excludeGenres").optional(),
+            bodyIntValidator("excludeGenres.*"),
 
-            bodyArrayValidator("excludeGenres", {
-                message: searchMsg.maxArraySizeExceeded
-            }).optional(),
-            bodyIntValidator("excludeGenres.*", {
-                message: baseMsg.valueNotInRange
-            }),
+            ...bodySoftPeriodValidator("period"),
 
-            ...bodySoftPeriodValidator("period", {
-                message: baseMsg.valueNotInRange
-            }),
+            bodyBoolValidator('isCensored', { defValue: true }),
 
             queryIntValidator("page", {
                 defValue: 1,
                 typeParams: { min: 1 },
-                message: baseMsg.valueNotInRange
             }),
 
             queryIntValidator("pageLimit", {
                 defValue: 25,
                 typeParams: { min: 1, max: 125 },
-                message: baseMsg.valueNotInRange
             }),
         ]
     }
