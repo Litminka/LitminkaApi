@@ -23,7 +23,7 @@ export class FollowAnimeRequest extends AuthRequest {
         return [
             paramIntValidator("animeId"),
             bodyStringValidator("type").isIn(["announcement", "follow"]).bail(),
-            bodyStringValidator("groupName").if(body("type").exists().bail().equals('follow')) // test
+            bodyStringValidator("groupName").optional()
         ]
     }
 }

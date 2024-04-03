@@ -56,6 +56,9 @@ export default class FollowService {
     public static async follow(animeId: number, userId: number, type: FollowTypes, groupName: string) {
         const anime = await prisma.anime.findWithTranlsations(animeId);
         if (type === FollowTypes.Follow) {
+            if (groupName === undefined) {
+                throw new UnprocessableContentError("no_group_name_provided");
+            }
             const translation = anime.animeTranslations.find(anime => anime.group.name == groupName)
             if (translation === undefined)
                 throw new UnprocessableContentError("This anime doesn't have given group");

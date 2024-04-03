@@ -135,6 +135,9 @@ export const intValidator = ({
 }: TypeIntValidator): ValidationChain => {
     return validator
         .custom(value => {
+            value = Number(value);
+            if (isNaN(value)) throw new Error(baseMsg.valueMustBeInt);
+
             const options: { min: number, max: number } = {
                 min: typeof typeParams.min === "undefined" ? -2147483648 : typeParams.min,
                 max: typeof typeParams.max === "undefined" ? 2147483647 : typeParams.max
@@ -194,6 +197,6 @@ export const dateValidator = ({
     typeParams,
 }: TypeDateValidator): ValidationChain => {
     return validator
-        .isDate(typeParams).toDate().withMessage(baseMsg.valueMustBeDate)
+        .isDate(typeParams).withMessage(baseMsg.valueMustBeDate).toDate()
 };
 
