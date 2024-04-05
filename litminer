@@ -98,8 +98,9 @@ function generateGenericFile(command, fileName, options) {
             generateGenericFile("service", serviceName);
         }
     }
-
-    const savePath = `${src}/${command}s/${fileName}${capitalize(command)}.ts`;
+    let basePath = src
+    if (command !== "router") basePath = `${src}/http`
+    const savePath = `${basePath}/${command}s/${fileName}${capitalize(command)}.ts`;
     if (fs.existsSync(savePath)) return console.error(`File ${savePath} already exists!`);
     console.log(`File: ${savePath} created!`)
     fs.writeFileSync(savePath, nw);
