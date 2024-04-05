@@ -107,7 +107,7 @@ function generateGenericFile(command, fileName, options) {
 
 function generateRequest(command, fileName, options) {
     let stubPath = `./stubs/${command}.stub`;
-    if (typeof options !== undefined) {
+    if (typeof options !== "undefined") {
         if (options.auth && options.optional) {
             return console.log('Pick one! optional or auth')
         }
