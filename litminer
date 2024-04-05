@@ -69,6 +69,42 @@ function execute(command, options) {
     }
 }
 
+function executeMake(command, options) {
+    switch (command) {
+        case 'controller':
+            generateGenericFile(command, fileName, options)
+            break;
+        case 'request':
+            generateRequest(command, fileName, options)
+            break;
+        case 'model':
+        case 'router':
+        case 'service':
+            generateGenericFile(command, fileName);
+            break;
+        default:
+            return console.log('Unknown command')
+    }
+}
+
+function generateGenericFile(command, fileName, options) {
+    const stubPath = `./stubs/${command}.stub`;
+    const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
+    fileName = fileName.replaceAll(capitalize(command), '');
+    const nw = file.replaceAll(`Stub`, fileName)
+    if (typeof options !== "undefined") {
+        if (options.service && command !== "service") {
+            const serviceName = fileName.replaceAll(capitalize(command), "Service");
+            generateGenericFile("service", serviceName);
+        }
+    }
+
+    const savePath = `${src}/${command}s/${fileName}${capitalize(command)}.ts`;
+    if (fs.existsSync(savePath)) return console.error(`File ${savePath} already exists!`);
+    console.log(`File: ${savePath} created!`)
+    fs.writeFileSync(savePath, nw);
+}
+
 function generateRequest(command, fileName, options) {
     let stubPath = `./stubs/${command}.stub`;
     if (typeof options !== undefined) {
@@ -86,42 +122,8 @@ function generateRequest(command, fileName, options) {
     let nw = file.replaceAll(`StubRequest`, fileName)
     nw = file.replaceAll(`StubReq`, fileName.replace('Request', "Req"))
 
-    const savePath = `${src}/${command}s/${fileName}.ts`;
-    console.log(`File: ${savePath} created!`)
-    fs.writeFileSync(savePath, nw);
-}
-
-function generateGenericFile(command, fileName, options) {
-    const stubPath = `./stubs/${command}.stub`;
-    const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
-    fileName = fileName.replaceAll(capitalize(command), '');
-    const nw = file.replaceAll(`Stub`, fileName)
-    if (typeof options !== "undefined") {
-        if (options.service && command !== "service") {
-            const serviceName = fileName.replaceAll(capitalize(command), "Service");
-            generateGenericFile("service", serviceName);
-        }
-    }
-
     const savePath = `${src}/${command}s/${fileName}${capitalize(command)}.ts`;
+    if (fs.existsSync(savePath)) return console.error(`File ${savePath} already exists!`);
     console.log(`File: ${savePath} created!`)
     fs.writeFileSync(savePath, nw);
-}
-
-function executeMake(command, options) {
-    switch (command) {
-        case 'controller':
-            generateGenericFile(command, fileName, options)
-            break;
-        case 'request':
-            generateRequest(command, fileName, options)
-            break;
-        case 'model':
-        case 'router':
-        case 'service':
-            generateGenericFile(command, fileName);
-            break;
-        default:
-            return console.log('Unknown command')
-    }
 }
