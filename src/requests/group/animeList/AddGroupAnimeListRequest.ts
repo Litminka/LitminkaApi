@@ -35,17 +35,9 @@ export class AddGroupAnimeListRequest extends GroupRequest {
                 if (!anime) throw new Error("Anime doesn't exist");
                 watchedRange.max = anime.maxEpisodes;
             }),
-
             bodyStringValidator("status").isIn(Object.values(WatchListStatuses)),
-
-            bodyIntValidator("watchedEpisodes", {
-                typeParams: watchedRange,
-            }),
-
-            bodyIntValidator("rating", {
-                typeParams: { min: 0, max: 10 },
-            }),
-
+            bodyIntValidator("watchedEpisodes", {typeParams: watchedRange}),
+            bodyIntValidator("rating", { typeParams: { min: 0, max: 10 } }),
             bodyBoolValidator("isFavorite")
         ]
     }

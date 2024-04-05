@@ -1,0 +1,34 @@
+import { ValidationChain } from "express-validator";
+import { OptionalReq, OptionalRequest } from "./OptionalRequest";
+import prisma from "@/db";
+
+export interface StubReq extends OptionalReq {
+
+} 
+
+export class StubRequest extends OptionalRequest {
+
+    /**
+     * Define permissions for this request
+     */
+    protected permissions: string[] = [];
+
+    /**
+     *  Define prisma user request for this method
+     * 
+     *  @returns Prisma User Variant
+     */
+    protected async auth(userId: number): Promise<any> {
+
+    }
+
+    /**
+     * Define validation rules for this request
+     */
+    protected rules(): ValidationChain[] {
+
+        return [
+            
+        ]
+    }
+}
