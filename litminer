@@ -119,8 +119,8 @@ function generateRequest(command, fileName, options) {
         }
     }
     const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
-    let nw = file.replaceAll(`StubRequest`, fileName)
-    nw = file.replaceAll(`StubReq`, fileName.replace('Request', "Req"))
+    let nw = file.replaceAll(`Stub`, fileName)
+    nw = file.replaceAll(`${fileName}Req`, fileName.replace('Request', "Req"))
 
     const savePath = `${src}/${command}s/${fileName}${capitalize(command)}.ts`;
     if (fs.existsSync(savePath)) return console.error(`File ${savePath} already exists!`);
