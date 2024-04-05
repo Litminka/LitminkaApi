@@ -116,15 +116,11 @@ function executeMake(command, options) {
         case 'request':
             generateRequest(command, fileName, options)
             break;
+        case 'model':
         case 'router':
-            generateGenericFile(command, fileName);
-            break;
         case 'service':
             generateGenericFile(command, fileName);
             break;
-        case 'model':
-            generateGenericFile(command, fileName)
-            break
         default:
             return console.log('Unknown command')
     }
