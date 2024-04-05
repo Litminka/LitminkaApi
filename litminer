@@ -37,7 +37,7 @@ const args = parseArgs({
 });
 
 const command = args.positionals[0];
-const fileName = args.positionals[1];
+const fileName = capitalize(args.positionals[1]);
 if (!command) {
     return console.log(`
 An utility to create boiler plate files
