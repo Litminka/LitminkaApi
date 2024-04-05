@@ -1,24 +1,27 @@
-import AuthRequest from "@requests/AuthRequest";
-import prisma from "@/db";
-import { GroupInviteValidator } from "@validators/GroupListValidator";
+import { ValidationChain } from "express-validator";
+import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
+import { bodyIntValidator } from "@/validators/BodyBaseValidator";
 
-export default class DeleteInviteRequest extends AuthRequest {
-
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
+export interface DeleteInviteReq extends GroupReq {
+    params: {
+        groupId: number,
+    },
+    body: {
+        userId: number
     }
+}
+
+export class DeleteInviteRequest extends GroupRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * Define validation rules for this request
      */
-    protected rules(): any[] {
-        return GroupInviteValidator();
+    protected rules(): ValidationChain[] {
+
+        return [
+            paramIntValidator("groupId"),
+            bodyIntValidator("userId"),
+        ]
     }
 }

@@ -4,8 +4,9 @@ import { app } from '@/index';
 import { RequestStatuses } from "@/ts/enums";
 import prisma from "@/db";
 import crypto from "crypto";
+import { registrationMsg } from "@/ts/messages";
 
-const defTestLogin = "Test";;
+const defTestLogin = "Test";
 const defTestEmail = "test@test.ru";
 const defTestName = "Testing";
 const defTestPassword = "test11";
@@ -62,20 +63,20 @@ describe("UserController.ts Tests", async () => {
                 const response = await testRegister(testUser);
                 expect(response.statusCode).toEqual(RequestStatuses.UnprocessableContent);
                 expect(response.body).toHaveProperty("errors[0].path", "login");
-                expect(response.body).toHaveProperty("errors[0].msg", "Login is taken!");
+                expect(response.body).toHaveProperty("errors[0].msg", registrationMsg.loginTaken);
             }),
             test("Register failed, email taken", async () => {
                 const response = await testRegister(testUser);
                 expect(response.statusCode).toEqual(RequestStatuses.UnprocessableContent);
                 expect(response.body).toHaveProperty("errors[1].path", "email");
-                expect(response.body).toHaveProperty("errors[1].msg", "Email is taken!");
+                expect(response.body).toHaveProperty("errors[1].msg", registrationMsg.emailTaken);
             }),
             test("Register failed, email incorrect", async () => {
                 testUser.email = incorrectEmail;
                 const response = await testRegister(testUser);
                 expect(response.statusCode).toEqual(RequestStatuses.UnprocessableContent);
                 expect(response.body).toHaveProperty("errors[1].path", "email");
-                expect(response.body).toHaveProperty("errors[1].msg", "Invalid value");
+                expect(response.body).toHaveProperty("errors[1].msg", registrationMsg.invalidEmail);
                 testUser.email = defTestEmail;
             }),
             test("Register failed, passwords doesn't match", async () => {
@@ -83,7 +84,7 @@ describe("UserController.ts Tests", async () => {
                 const response = await testRegister(testUser);
                 expect(response.statusCode).toEqual(RequestStatuses.UnprocessableContent);
                 expect(response.body).toHaveProperty("errors[2].path", "passwordConfirm");
-                expect(response.body).toHaveProperty("errors[2].msg", "Password confirmation does not match password");
+                expect(response.body).toHaveProperty("errors[2].msg", registrationMsg.passwordsDontMatch);
                 testUser.passwordConfirm = defTestPassword;
             }),
             test("Register failed, password is too small", async () => {
@@ -91,7 +92,7 @@ describe("UserController.ts Tests", async () => {
                 const response = await testRegister(testUser);
                 expect(response.statusCode).toEqual(RequestStatuses.UnprocessableContent);
                 expect(response.body).toHaveProperty("errors[2].path", "password");
-                expect(response.body).toHaveProperty("errors[2].msg", "Invalid value");
+                expect(response.body).toHaveProperty("errors[2].msg", registrationMsg.passwordTooShort);
                 testUser.password = defTestPassword;
             }),
             test("Register failed, name is too small", async () => {
@@ -99,7 +100,7 @@ describe("UserController.ts Tests", async () => {
                 const response = await testRegister(testUser);
                 expect(response.statusCode).toEqual(RequestStatuses.UnprocessableContent);
                 expect(response.body).toHaveProperty("errors[2].path", "name");
-                expect(response.body).toHaveProperty("errors[2].msg", "Invalid value");
+                expect(response.body).toHaveProperty("errors[2].msg", registrationMsg.nameTooShort);
                 testUser.name = defTestName;
             })
     }),

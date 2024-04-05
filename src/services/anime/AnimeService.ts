@@ -6,7 +6,7 @@ import { UserWithIntegration } from "@/ts";
 import { Prisma } from "@prisma/client";
 
 export default class AnimeService {
-    public static async getSingleAnime(animeId: number, user: UserWithIntegration) {
+    public static async getSingleAnime(animeId: number, user?: UserWithIntegration) {
 
         let anime = await prisma.anime.findWithTranlsationsAndGenres(animeId);
         if (!anime) throw new NotFoundError("This anime doesn't exist");

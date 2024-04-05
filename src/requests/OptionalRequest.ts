@@ -1,9 +1,16 @@
 import prisma from "@/db";
 import { RequestAuthTypes } from "@/ts/enums";
+import { User } from "@prisma/client";
 import Request from "@requests/Request";
 
+export interface OptionalReq  {
+    auth?: {
+        user?: User,
+        id?: number,
+    }
+}  
 
-export default class OptionalRequest extends Request {
+export class OptionalRequest extends Request {
 
     /**
      * Define auth type for this request

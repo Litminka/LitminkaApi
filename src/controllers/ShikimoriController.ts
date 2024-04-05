@@ -1,10 +1,11 @@
 import { Response } from "express";
 import { RequestStatuses } from "@/ts/enums";
 import ShikimoriLinkService from "@services/shikimori/ShikimoriLinkService";
-import { RequestUserWithIntegration, RequestWithTokenAndCode } from "@/ts";
+import { IntegrationReq } from "@/requests/IntegrationRequest";
+import { LinkShikimoriReq } from "@/requests/shikimori/LinkShikimoriRequest";
 
 export default class ShikimoriController {
-    static async generateLink(req: RequestUserWithIntegration, res: Response): Promise<Object> {
+    static async generateLink(req: IntegrationReq, res: Response): Promise<Object> {
         const user = req.auth.user;
 
         const link = await ShikimoriLinkService.generateLink(user);
@@ -14,7 +15,7 @@ export default class ShikimoriController {
         });
     }
 
-    static async link(req: RequestWithTokenAndCode, res: Response): Promise<Object> {
+    static async link(req: LinkShikimoriReq, res: Response): Promise<Object> {
         const { token, code } = req.query;
 
         await ShikimoriLinkService.link(token, code);
@@ -24,7 +25,7 @@ export default class ShikimoriController {
         })
     }
 
-    static async unlink(req: RequestUserWithIntegration, res: Response) {
+    static async unlink(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         ShikimoriLinkService.unlink(user)
@@ -35,7 +36,7 @@ export default class ShikimoriController {
         })
     }
 
-    static async getProfile(req: RequestUserWithIntegration, res: Response): Promise<Object> {
+    static async getProfile(req: IntegrationReq, res: Response): Promise<Object> {
         const user = req.auth.user;
 
         const result = await ShikimoriLinkService.getProfile(user);

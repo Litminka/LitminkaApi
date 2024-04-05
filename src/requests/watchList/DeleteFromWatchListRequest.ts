@@ -1,24 +1,34 @@
-import { DeleteFromWatchListValidator } from "@validators/WatchListValidator";
-import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
+import { paramIntValidator } from "@validators/ParamBaseValidator";
+import { baseMsg } from "@/ts/messages";
+import { ValidationChain } from "express-validator";
+import {IntegrationReq, IntegrationRequest} from "@requests/IntegrationRequest";
 
-export default class DeleteFromWatchListRequest extends AuthRequest {
+export interface DeleteFromWatchListReq extends IntegrationReq {
+    params: {
+        animeId: number,
+    },
+}
+
+
+export class DeleteFromWatchListRequest extends IntegrationRequest {
 
     /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserByIdWithIntegration(userId);
-    }
-    
-    /**
-     * define validation rules for this request
+     * Define validation rules for this request
      * @returns ValidationChain
      */
-    protected rules(): any[] {
-        return DeleteFromWatchListValidator();
+    protected rules(): ValidationChain[] {
+
+        return [
+            paramIntValidator("animeId", {
+                message: baseMsg.valueNotInRange
+            }).custom(async value => {
+                // TODO: this will die, if it doesnt find an anime
+                const anime = await prisma.anime.findFirst({
+                    where: { id: value }
+                });
+                if (!anime) throw new Error("Anime doesn't exist");
+            }),
+        ]
     }
 }

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { RequestStatuses } from "@/ts/enums";
 import TokenService from "@services/TokenService";
-import { RequestWithTokens, RequestWithUser } from "@/ts";
+import { AuthReq } from "@/requests/AuthRequest";
+import { EndSessionReq } from "@/requests/session/EndSessionRequest";
 
 export default class TokenController {
 
@@ -13,7 +14,7 @@ export default class TokenController {
         return res.status(RequestStatuses.OK).json({ data: tokens });
     }
 
-    public static async getTokens(req: RequestWithTokens, res: Response) {
+    public static async getTokens(req: AuthReq, res: Response) {
         const user = req.auth.user;
 
         const tokens = await TokenService.getTokens(user.id);
@@ -32,10 +33,12 @@ export default class TokenController {
         return res.status(RequestStatuses.OK).json({ data: result });
     }
 
-    public static async deleteTokens(req: RequestWithTokens, res: Response) {
+    public static async deleteTokens(req: EndSessionReq, res: Response) {
         const user = req.auth.user;
-
-        const tokens = await TokenService.deleteTokens(user.id, req.auth.token, req.body.sessions);
+        const token = req.auth.token;
+        const sessions = req.body.sessions;
+        
+        await TokenService.deleteTokens(user.id, token, sessions);
 
         return res.status(RequestStatuses.OK).json({ message: "sessions_ended" });
     }

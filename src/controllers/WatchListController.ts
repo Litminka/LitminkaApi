@@ -1,6 +1,10 @@
 import { Response } from "express";
-import { AddToList, RequestUserWithIntegration, RequestWithUser, RequestWithUserAnimeList, watchListStatus, ListFilters } from "@/ts/index";
+import { RequestWithUserAnimeList, watchListStatus, ListFilters } from "@/ts/index";
 import WatchListService from "@services/WatchListService";
+import { IntegrationReq } from "@/requests/IntegrationRequest";
+import { AddToWatchListReq } from "@/requests/watchList/AddToWatchListRequest";
+import { EditWatchListReq } from "@/requests/watchList/EditWatchListRequest";
+import { DeleteFromWatchListReq } from "@/requests/watchList/DeleteFromWatchListRequest";
 
 export default class WatchListController {
     public static async getWatchList(req: RequestWithUserAnimeList, res: Response): Promise<Object> {
@@ -9,12 +13,12 @@ export default class WatchListController {
         const ratings: number[] = req.body.ratings as number[];
         const isFavorite: boolean = req.body.isFavorite as boolean;
 
-        const filteredWatchList = await WatchListService.getFilteredWatchList(user, {statuses, ratings, isFavorite} as ListFilters)
-       
+        const filteredWatchList = await WatchListService.getFilteredWatchList(user, { statuses, ratings, isFavorite } as ListFilters)
+
         return res.json(filteredWatchList);
     }
 
-    public static async importList(req: RequestUserWithIntegration, res: Response): Promise<any> {
+    public static async importList(req: IntegrationReq, res: Response): Promise<any> {
         const user = req.auth.user;
 
         WatchListService.startImport(user);
@@ -24,29 +28,35 @@ export default class WatchListController {
         });
     }
 
-    public static async addToList(req: RequestUserWithIntegration, res: Response) {
-        const addingParameters = req.body as AddToList
+    public static async addToList(req: AddToWatchListReq, res: Response) {
         const user = req.auth.user;
-        const animeId: number = req.params.animeId as unknown as number;
-        const animeList = await WatchListService.addAnimeToListWithParams(user, animeId, addingParameters);
+
+        const addParameters = req.body;
+        const animeId = req.params.animeId;
+
+        const animeList = await WatchListService.addAnimeToListWithParams(user, animeId, addParameters);
         return res.json({
             data: animeList
         });
     }
 
-    public static async editList(req: RequestUserWithIntegration, res: Response) {
-        const editParameters = req.body as AddToList
+    public static async editList(req: EditWatchListReq, res: Response) {
         const user = req.auth.user;
-        const animeId: number = req.params.animeId as unknown as number;
+
+        const editParameters = req.body;
+        const animeId = req.params.animeId;
+
         const animeList = await WatchListService.editAnimeListWithParams(user, animeId, editParameters);
         return res.json({
             data: animeList
         });
     }
 
-    public static async deleteFromList(req: RequestUserWithIntegration, res: Response) {
+    public static async deleteFromList(req: DeleteFromWatchListReq, res: Response) {
         const user = req.auth.user;
-        const animeId = req.params.animeId as unknown as number;
+
+        const animeId = req.params.animeId;
+
         await WatchListService.removeAnimeFromList(user, animeId);
         return res.json({
             message: "Entry deleted successfully"

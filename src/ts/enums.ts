@@ -9,10 +9,44 @@ export enum AnimeStatuses {
     Ongoing = "ongoing"
 }
 
+export enum AnimeSeasons {
+    Winter = "winter",
+    Spring = "spring",
+    Summer = "summer",
+    Fall = "fall"
+}
+
+export enum AnimePgaRatings {
+    G = "g",
+    PG = "pg",
+    PG_13 = "pg_13",
+    R = "r",
+    R_plus = "r_plus",
+    RX = "rx"
+}
+
+export enum AnimeMediaTypes {
+    TV = "tv",
+    TV_special = "tv_special",
+    Special = "special",
+    ONA = "ona",
+    OVA = "ova",
+    Movie = "movie",
+}
+
 export enum NotifyStatuses {
     AnimeRelease = "anime_released",
     EpisodeRelease = "episode_released",
     FinalEpisodeReleased = "final_episode_released"
+}
+
+export enum AnimeListStatuses {
+    planned = "planned",
+    watching = "watching",
+    rewatching = "rewatching",
+    completed = "completed",
+    on_hold = "on_hold",
+    dropped = "dropped"
 }
 
 export enum RequestStatuses {
@@ -97,4 +131,13 @@ export enum Permissions {
     ViewLists = "view_lists",
     SyncShikimori = "sync_shikimori",
     ApiServiceBot = "api_service_bot",
+}
+
+export enum WatchListStatuses {
+    Planned = "planned",
+    Watching = "watching",
+    Rewatching = "rewatching",
+    Completed = "completed",
+    OnHold = "on_hold",
+    Dropped = "dropped"
 }

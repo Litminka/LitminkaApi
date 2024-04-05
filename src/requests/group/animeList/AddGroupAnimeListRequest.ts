@@ -1,24 +1,52 @@
-import AuthRequest from "@requests/AuthRequest";
 import prisma from "@/db";
-import { AddToGroupListValidator } from "@validators/GroupListValidator";
+import { ValidationChain } from "express-validator";
+import { minmax } from "@/ts";
+import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
+import { WatchListStatuses } from "@/ts/enums";
+import { bodyStringValidator, bodyIntValidator, bodyBoolValidator } from "@/validators/BodyBaseValidator";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 
-export default class AddGroupAnimeListRequest extends AuthRequest {
-
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
+export interface AddGroupAnimeListReq extends GroupReq {
+    params: {
+        groupId: number,
+        animeId: number,
+    },
+    body: {
+        status: WatchListStatuses,
+        watchedEpisodes: number,
+        rating: number,
+        isFavorite: boolean
     }
+}
+
+export class AddGroupAnimeListRequest extends GroupRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * Define validation rules for this request
      */
-    protected rules(): any[] {
-        return AddToGroupListValidator();
+    protected rules(): ValidationChain[] {
+        const watchedRange: minmax = { min: 0 };
+        return [
+            paramIntValidator("groupId"),
+            paramIntValidator("animeId").custom(async value => {
+                const anime = await prisma.anime.findFirst({
+                    where: { id: value }
+                });
+                if (!anime) throw new Error("Anime doesn't exist");
+                watchedRange.max = anime.maxEpisodes;
+            }),
+
+            bodyStringValidator("status").isIn(Object.values(WatchListStatuses)),
+
+            bodyIntValidator("watchedEpisodes", {
+                typeParams: watchedRange,
+            }),
+
+            bodyIntValidator("rating", {
+                typeParams: { min: 0, max: 10 },
+            }),
+
+            bodyBoolValidator("isFavorite")
+        ]
     }
 }

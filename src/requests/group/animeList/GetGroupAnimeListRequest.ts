@@ -1,28 +1,38 @@
-import { GetFilteredWatchListValidator } from "@validators/WatchListValidator";
-import AuthRequest from "@requests/AuthRequest";
-import prisma from "@/db";
-import { GroupListIdValidator,  } from "@validators/GroupListValidator";
+import { ValidationChain } from "express-validator";
+import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
+import { WatchListStatuses } from "@/ts/enums";
+import { bodyArrayValidator, bodyStringValidator, bodyIntValidator, bodyBoolValidator } from "@/validators/BodyBaseValidator";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 
-export default class GetGroupAnimeListRequest extends AuthRequest {
-
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
+export interface GetGroupAnimeListReq extends GroupReq {
+    params: {
+        groupId: number
+    },
+    body: {
+        statuses?: WatchListStatuses[],
+        ratings?: number[],
+        isFavorite?: boolean
     }
+}
+
+
+export class GetGroupAnimeListRequest extends GroupRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * Define validation rules for this request
      */
-    protected rules(): any[] {
+    protected rules(): ValidationChain[] {
         return [
-            GroupListIdValidator(),
-            GetFilteredWatchListValidator()
-        ];
+            paramIntValidator("groupId"),
+            bodyArrayValidator("statuses").optional(),
+            bodyStringValidator("statuses.*").isIn(Object.values(WatchListStatuses)),
+            
+            bodyArrayValidator("ratings").optional(),
+            bodyIntValidator("ratings.*", {
+                typeParams: { min: 0, max: 10 }
+            }),
+
+            bodyBoolValidator("isFavorite").optional()
+        ]
     }
 }

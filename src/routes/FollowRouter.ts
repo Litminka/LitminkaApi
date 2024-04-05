@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import FollowController from '@controllers/FollowController';
 import { wrap } from '@/middleware/errorHandler';
-import FollowAnimeRequest from '@requests/follows/FollowAnimeRequest';
-import UnFollowAnimeRequest from '@requests/follows/UnfollowAnimeRequest';
+import { FollowAnimeRequest } from '@requests/anime/FollowAnimeRequest';
+import { UnFollowAnimeRequest } from '@requests/anime/UnfollowAnimeRequest';
 const router = Router();
 
 router.post("/:animeId", new FollowAnimeRequest().send(), wrap(FollowController.follow));

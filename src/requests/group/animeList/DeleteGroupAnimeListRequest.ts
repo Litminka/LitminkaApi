@@ -1,25 +1,29 @@
-import AuthRequest from "@requests/AuthRequest";
+import { param, ValidationChain } from "express-validator";
 import prisma from "@/db";
-import { GroupListIdValidator } from "@validators/GroupListValidator";
-import { DeleteFromWatchListValidator } from "@validators/WatchListValidator";
+import { GroupReq, GroupRequest } from "@requests/group/GroupRequest";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 
-export default class DeleteGroupAnimeListRequest extends AuthRequest {
+export interface DeleteGroupAnimeListReq extends GroupReq {
+    params: {
+        animeId: number,
+        groupId: number
+    },
+}
 
-    /**
-     *  if authType is not None 
-     *  Define prisma user request for this method
-     * 
-     *  @returns Prisma User Variant
-     */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserWithOwnedGroups(userId);
-    }
+export class DeleteGroupAnimeListRequest extends GroupRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * Define validation rules for this request
      */
-    protected rules(): any[] {
-        return [...GroupListIdValidator(), ...DeleteFromWatchListValidator()];
+    protected rules(): ValidationChain[] {
+        return [
+            paramIntValidator("groupId"),
+            paramIntValidator("animeId").custom(async value => {
+                const anime = await prisma.anime.findFirst({
+                    where: { id: value }
+                });
+                if (!anime) throw new Error("Anime doesn't exist");
+            })
+        ]
     }
 }

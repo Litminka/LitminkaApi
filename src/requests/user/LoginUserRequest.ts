@@ -1,13 +1,24 @@
-import { LoginValidator } from "@validators/UserValidator";
 import Request from "@requests/Request";
+import { Request as ExpressRequest } from "express";
+import { ValidationChain } from "express-validator";
+import { bodyStringValidator } from "@/validators/BodyBaseValidator";
 
-export default class LoginUserRequest extends Request {
+export interface LoginUserReq extends ExpressRequest {
+    body: {
+        login: string,
+        password: string,
+    }
+}
+
+export class LoginUserRequest extends Request {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * Define validation rules for this request
      */
-    protected rules(): any[] {
-        return LoginValidator();
+    protected rules(): ValidationChain[] {
+        return [
+            bodyStringValidator("login"),
+            bodyStringValidator("password"),
+        ]
     }
 }

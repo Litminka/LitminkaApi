@@ -1,13 +1,22 @@
-import { GroupListIdValidator } from "@validators/GroupListValidator";
-import AuthRequest from "@requests/AuthRequest";
+import { param, ValidationChain } from "express-validator";
+import { AuthReq, AuthRequest } from "@requests/AuthRequest";
+import { paramIntValidator } from "@/validators/ParamBaseValidator";
 
-export default class DeleteGroupRequest extends AuthRequest {
+export interface DeleteGroupReq extends AuthReq {
+    params: {
+        groupId: number
+    }
+}
+
+export class DeleteGroupRequest extends AuthRequest {
 
     /**
-     * define validation rules for this request
-     * @returns ValidationChain
+     * Define validation rules for this request
      */
-    protected rules(): any[] {
-        return GroupListIdValidator();
+    protected rules(): ValidationChain[] {
+
+        return [
+            paramIntValidator("groupId")
+        ]
     }
 }

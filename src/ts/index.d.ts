@@ -1,6 +1,22 @@
 import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, SessionToken, User } from "@prisma/client";
 import { Request } from "express";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
+import { ValidationError, Location } from "express-validator";
+import { ErrorMessage } from "express-validator/src/base";
+
+export declare type AdditionalValidationError = {
+    type: string;
+    additional: object;
+    location: Location;
+    path: string;
+    value: any;
+    msg: any;
+} | ValidationError
+
+export declare type ValidatorErrorMessage = {
+    msg: string,
+    [key: string]: any
+} | ErrorMessage
 
 export interface RequestWithBot extends Request {
     auth?: {
@@ -41,13 +57,6 @@ type UserWithTokens = User & {
     sessionTokens: SessionToken[]
 }
 
-export interface RequestWithUserPermissions extends Request {
-    auth: {
-        user: UserWithPermissions
-        id: number
-    }
-}
-
 export interface RequestWithUserOwnedGroups extends Request {
     auth: {
         user: User & {
@@ -73,17 +82,13 @@ export interface RequestWithTokenAndCode extends Request {
     }
 }
 
-export interface RequestUserWithIntegration extends Request {
-    auth: {
-        user: UserWithIntegration
-    }
-}
 
 export interface RequestWithUserAnimeList extends Request {
     auth: {
         user: User & {
             animeList: AnimeList | null
         }
+        id: number,
     }
 }
 
@@ -117,7 +122,7 @@ export interface ShikimoriWhoAmI {
     locale: string;
 }
 
-export interface ListFilters{
+export interface ListFilters {
     statuses?: watchListStatus[],
     ratings?: number[],
     isFavorite?: boolean
@@ -366,4 +371,9 @@ export interface FollowAnime {
 
 export type UserWithIntegration = User & {
     integration: Integration | null
+}
+
+export interface minmax {
+    min: number,
+    max?: number
 }
