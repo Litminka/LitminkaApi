@@ -18,7 +18,7 @@
         "src/*"
       ],
       "@services/*": [
-        "src/services/*"
+        "src/http/services/*"
       ],
       "@validators/*": [
         "src/validators/*"
@@ -27,13 +27,13 @@
         "src/routers/*"
       ],
       "@controllers/*": [
-        "src/controllers/*"
+        "src/http/controllers/*"
       ],
       "@requests/*": [
-        "src/requests/*"
+        "src/http/requests/*"
       ],
       "@models/*": [
-        "src/models/*"
+        "src/http/models/*"
       ],
       "@errors/*": [
         "src/errors/*"

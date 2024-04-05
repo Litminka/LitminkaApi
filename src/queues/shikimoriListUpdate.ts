@@ -1,6 +1,6 @@
 import { logger } from '@/loggerConf';
 import { Job, Worker } from "bullmq";
-import ShikimoriListSyncService from '@/services/shikimori/ShikimoriListSyncService';
+import ShikimoriListSyncService from '@services/shikimori/ShikimoriListSyncService';
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 
 const worker = new Worker("shikimoriListUpdate", async (job: Job) => {

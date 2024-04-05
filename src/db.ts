@@ -6,7 +6,7 @@ import { IntegrationExt } from '@models/Integration';
 import { AnimeNotificationExt } from '@models/AnimeNotificatons';
 import { UserNotificationExt } from '@models/AnimeUserNotifications';
 import { AnimeListExt } from '@models/AnimeList';
-import { SessionTokenExt } from '@/models/SessionToken';
+import { SessionTokenExt } from '@models/SessionToken';
 import { ShikimoriLinkTokenExt } from '@models/ShikimoriLinkToken';
 import { UserExt } from '@models/User';
 
