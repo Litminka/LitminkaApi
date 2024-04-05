@@ -3,7 +3,7 @@ import UserController from "@controllers/UserController";
 import { wrap } from '@/middleware/errorHandler';
 import { RegisterUserRequest } from '@requests/user/RegisterUserRequest';
 import { LoginUserRequest } from '@requests/user/LoginUserRequest';
-import { WithPermissionsRequest } from '@/requests/WithPermissionsRequest';
+import { WithPermissionsRequest } from '@requests/WithPermissionsRequest';
 const router = Router();
 
 // Public methods

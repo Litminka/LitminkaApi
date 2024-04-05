@@ -8,8 +8,8 @@ import { CreateGroupRequest } from "@requests/group/list/CreateGroupRequest";
 import { DeleteGroupRequest } from "@requests/group/list/DeleteGroupRequest";
 import { UpdateGroupRequest } from "@requests/group/list/UpdateGroupRequest";
 import { GroupRequest } from "@requests/group/GroupRequest";
-import { KickGroupMemberRequest } from "@/requests/group/member/KickGroupMemberRequest";
-import { GroupMemberRequest } from "@/requests/group/member/GroupMemberRequest";
+import { KickGroupMemberRequest } from "@requests/group/member/KickGroupMemberRequest";
+import { GroupMemberRequest } from "@requests/group/member/GroupMemberRequest";
 import { DeleteInviteRequest } from "@requests/group/invite/DeleteInviteRequest";
 import { DenyInviteRequest } from "@requests/group/invite/DenyInviteRequest";
 import { AcceptInviteRequest } from "@requests/group/invite/AcceptInviteRequest";
@@ -19,7 +19,7 @@ import { AddGroupAnimeListRequest } from "@requests/group/animeList/AddGroupAnim
 import { UpdateGroupAnimeListRequest } from "@requests/group/animeList/UpdateGroupAnimeListRequest";
 import { DeleteGroupAnimeListRequest } from "@requests/group/animeList/DeleteGroupAnimeListRequest";
 import { AuthRequest } from "@requests/AuthRequest";
-import { UpdateGroupMemberRequest } from "@/requests/group/member/UpdateGroupMemberRequest";
+import { UpdateGroupMemberRequest } from "@requests/group/member/UpdateGroupMemberRequest";
 
 const router = Router();
 

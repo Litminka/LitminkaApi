@@ -1,7 +1,7 @@
 
 import { Worker, Job } from 'bullmq';
 import { logger } from "@/loggerConf"
-import AnimeUpdateService from '@/services/anime/AnimeUpdateService';
+import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { config } from '@/config';
 import { shikimoriCheckQueue } from './queues';
 

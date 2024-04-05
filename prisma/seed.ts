@@ -8,8 +8,8 @@ import capitalize from "@/helper/capitalize";
 import KodikApiService from "@services/KodikApiService";
 import { KodikGenresRequest } from '@/ts/kodik';
 import { config } from '@/config'
-import AnimeUpdateService from '@/services/anime/AnimeUpdateService';
-import AutoCheckService from '@/services/AutoCheckService';
+import AnimeUpdateService from '@services/anime/AnimeUpdateService';
+import AutoCheckService from '@services/AutoCheckService';
 
 async function main() {
     const adminRole = await prisma.role.upsert({
