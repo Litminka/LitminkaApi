@@ -3,7 +3,7 @@ import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
 import { Encrypt } from "@/helper/encrypt";
 import { CreateUser, LoginUser } from "@/ts";
 import crypto from "crypto";
-import TokenService from "./TokenService";
+import TokenService from "@services/TokenService";
 
 export default class UserService {
 
@@ -19,7 +19,7 @@ export default class UserService {
     public static async login(userData: LoginUser) {
         const { login, password } = userData;
         const user = await prisma.user.findUserByLogin(login) ?? undefined;
-        
+
         // protection against time based attack
         if (!await Encrypt.comparePassword(password, user?.password ?? '')) throw new UnauthorizedError("Login or password incorrect");
         if (!user) throw new UnauthorizedError("Login or password incorrect");

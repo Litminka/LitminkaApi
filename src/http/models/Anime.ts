@@ -1,4 +1,3 @@
-
 import { Anime, Prisma } from "@prisma/client";
 import { KodikAnime } from "@/ts/kodik";
 import capitalize from "@/helper/capitalize";
@@ -228,7 +227,7 @@ const extention = Prisma.defineExtension({
             async createFromShikimoriGraph(shikimori: ShikimoriGraphAnime, hasRelation: boolean = false, kodikAnime?: KodikAnime) {
                 let name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
-                
+
                 shikimori.licensors = shikimori.licensors.filter(licensor => !config.ignoreLicensors.includes(licensor));
                 let isBanned = shikimori.licensors.length > 0;
                 let isCensored = shikimori.isCensored;

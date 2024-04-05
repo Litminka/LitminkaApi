@@ -1,4 +1,4 @@
-import { CreateUser, FollowAnime, LoginUser, UserNotify } from "@/ts";
+import { CreateUser, FollowAnime } from "@/ts";
 import prisma from "@/db";
 import { Prisma } from "@prisma/client";
 

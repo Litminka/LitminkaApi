@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import prisma from "@/db";
-import { ShikimoriAnimeWithRelation, ShikimoriRelation } from "@/ts/shikimori";
+import { ShikimoriAnimeWithRelation } from "@/ts/shikimori";
 
 const extention = Prisma.defineExtension({
     name: "AnimeRelationModel",

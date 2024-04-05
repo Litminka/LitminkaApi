@@ -1,4 +1,4 @@
-import { Notify, UserNotify } from "@/ts";
+import { Notify } from "@/ts";
 import prisma from "@/db";
 import { Prisma } from "@prisma/client";
 
