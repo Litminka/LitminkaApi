@@ -5,8 +5,8 @@ import Request from "@requests/Request";
 
 export interface OptionalReq  {
     auth?: {
-        user?: User,
-        id?: number,
+        user: User,
+        id: number,
     }
 }  
 
