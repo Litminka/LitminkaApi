@@ -1,12 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const { parseArgs } = require('util');
+const fs = require("fs");
+const path = require("path");
+const { parseArgs } = require("util");
 
 function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const src = path.relative('./', 'src');
+const src = path.relative("./", "src");
 const args = parseArgs({
     options: {
         service: {
@@ -28,7 +28,7 @@ const args = parseArgs({
             short: "o"
         },
         path: {
-            type: 'string',
+            type: "string",
             default: "./",
             multiple: false,
             short: "p"
@@ -51,7 +51,7 @@ make>command
     `)
 }
 if (!fileName) {
-    return console.log('Error: No name specified')
+    return console.log("Error: No name specified")
 }
 const options = args.values;
 
@@ -59,7 +59,7 @@ execute(command, options)
 
 function execute(command, options) {
     if (!command) return console.log("Error: No command")
-    const split = command.split(':');
+    const split = command.split(":");
     if (!split[0]) return console.log("Error: No command");
     const commandType = split[0];
     command = split[1];
@@ -71,26 +71,26 @@ function execute(command, options) {
 
 function executeMake(command, options) {
     switch (command) {
-        case 'controller':
+        case "controller":
             generateGenericFile(command, fileName, options)
             break;
-        case 'request':
+        case "request":
             generateRequest(command, fileName, options)
             break;
-        case 'model':
-        case 'router':
-        case 'service':
+        case "model":
+        case "router":
+        case "service":
             generateGenericFile(command, fileName);
             break;
         default:
-            return console.log('Unknown command')
+            return console.log("Unknown command")
     }
 }
 
 function generateGenericFile(command, fileName, options) {
     const stubPath = `./stubs/${command}.stub`;
-    const file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
-    fileName = fileName.replaceAll(capitalize(command), '');
+    const file = fs.readFileSync(stubPath, { encoding: "utf8" }).toString();
+    fileName = fileName.replaceAll(capitalize(command), "");
     const nw = file.replaceAll(`Stub`, fileName)
     if (typeof options !== "undefined") {
         if (options.service && command !== "service") {
@@ -107,10 +107,10 @@ function generateGenericFile(command, fileName, options) {
 
 function generateRequest(command, fileName, options) {
     let stubPath = `./stubs/${command}.stub`;
-    fileName = fileName.replaceAll(capitalize(command), '');
+    fileName = fileName.replaceAll(capitalize(command), "");
     if (typeof options !== "undefined") {
         if (options.auth && options.optional) {
-            return console.log('Pick one! optional or auth')
+            return console.log("Pick one! optional or auth")
         }
         if (options.auth) {
             stubPath = `./stubs/auth${capitalize(command)}.stub`;
@@ -119,8 +119,8 @@ function generateRequest(command, fileName, options) {
             stubPath = `./stubs/optional${capitalize(command)}.stub`;
         }
     }
-    let file = fs.readFileSync(stubPath, { encoding: 'utf8' }).toString();
-    const fileReq = fileName.replace('Request', '') + "Req";
+    let file = fs.readFileSync(stubPath, { encoding: "utf8" }).toString();
+    const fileReq = fileName.replace("Request", "") + "Req";
     file = file.replace(`StubReq`, fileReq);
     file = file.replaceAll("Stub", fileName);
     const savePath = `${src}/${command}s/${fileName}${capitalize(command)}.ts`;
