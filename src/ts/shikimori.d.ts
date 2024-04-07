@@ -74,7 +74,7 @@ type animeKind = "tv" | "movie" | "ova" | "ona" | "special" | "tv_special" | "mu
 
 type animeRating = "none" | "g" | "pg" | "pg_13" | "r" | "r_plus" | "rx"
 
-type animeStatus = "anons" | "ongoing" | "released"
+type animeStatus = "anons" | "ongoing" | "released" | "announced"
 
 interface shikimoriDate {
     year?: number,

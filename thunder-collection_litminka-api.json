@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "LitminkaApi",
-    "dateExported": "2024-03-10T11:06:53.166Z",
+    "dateExported": "2024-04-07T16:17:16.196Z",
     "version": "1.1",
     "folders": [
         {
@@ -80,6 +80,20 @@
             "containerId": "",
             "created": "2024-03-09T14:19:00.474Z",
             "sortNum": 100000
+        },
+        {
+            "_id": "59c44a91-fe00-434a-bcd6-0bef7063bee2",
+            "name": "Admin",
+            "containerId": "",
+            "created": "2024-03-18T16:54:35.547Z",
+            "sortNum": 110000
+        },
+        {
+            "_id": "56f423b0-feec-4999-aaf1-2963fb3c2f83",
+            "name": "Anime",
+            "containerId": "59c44a91-fe00-434a-bcd6-0bef7063bee2",
+            "created": "2024-03-18T16:54:39.043Z",
+            "sortNum": 120000
         }
     ],
     "requests": [
@@ -92,7 +106,7 @@
             "method": "POST",
             "sortNum": 10000,
             "created": "2022-07-05T17:33:49.173Z",
-            "modified": "2024-03-10T07:15:23.744Z",
+            "modified": "2024-04-03T06:40:41.923Z",
             "headers": [],
             "params": [],
             "body": {
@@ -100,7 +114,6 @@
                 "raw": "{\n  \"login\": \"Test1\",\n  \"email\": \"test1@test.ru\",\n  \"name\": \"Testing1\",\n  \"password\": \"test123\",\n  \"passwordConfirm\": \"test123\"\n}",
                 "form": []
             },
-            "reqType": "post",
             "tests": []
         },
         {
@@ -112,10 +125,13 @@
             "method": "GET",
             "sortNum": 10000,
             "created": "2024-03-05T15:44:07.966Z",
-            "modified": "2024-03-09T13:45:15.717Z",
+            "modified": "2024-03-31T09:51:01.175Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiYm90IjpmYWxzZSwidG9rZW4iOiI0ZGJjOGQzOC1hN2Q1LTRhYmUtYjliNi1mNjRhMzEwNDcyYmYiLCJpYXQiOjE3MTE4Nzg2NTMsImV4cCI6MTcxMTk2NTA1M30.Ru3mppOLt0JSONl-T-iazPje1eDp1EJLLDjuC97S0dY"
+            },
             "tests": []
         },
         {
@@ -127,10 +143,27 @@
             "method": "GET",
             "sortNum": 10000,
             "created": "2024-03-08T12:21:02.172Z",
-            "modified": "2024-03-09T13:47:23.339Z",
+            "modified": "2024-03-31T09:51:19.798Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiYm90IjpmYWxzZSwidG9rZW4iOiI0ZGJjOGQzOC1hN2Q1LTRhYmUtYjliNi1mNjRhMzEwNDcyYmYiLCJpYXQiOjE3MTE4Nzg2NTMsImV4cCI6MTcxMTk2NTA1M30.Ru3mppOLt0JSONl-T-iazPje1eDp1EJLLDjuC97S0dY"
+            },
+            "tests": []
+        },
+        {
+            "_id": "a68b7787-f66e-416c-ba05-3fa932e4bf9f",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "",
+            "name": "index",
+            "url": "https://api.litminka.ru",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-03-10T16:11:28.244Z",
+            "modified": "2024-03-10T16:11:28.244Z",
+            "headers": [],
+            "params": [],
             "tests": []
         },
         {
@@ -138,11 +171,11 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "708d4ad9-b90b-450e-a332-bcb3b70e942b",
             "name": "Invite user",
-            "url": "group-list/2/invite",
+            "url": "group-list/13/invite",
             "method": "POST",
             "sortNum": 15000,
             "created": "2024-03-05T15:06:51.725Z",
-            "modified": "2024-03-10T07:34:30.052Z",
+            "modified": "2024-03-31T09:50:35.556Z",
             "headers": [],
             "params": [],
             "body": {
@@ -150,7 +183,6 @@
                 "raw": "{\n  \"userId\": 3\n}",
                 "form": []
             },
-            "reqType": "post",
             "tests": []
         },
         {
@@ -162,15 +194,14 @@
             "method": "POST",
             "sortNum": 20000,
             "created": "2022-07-10T14:14:57.244Z",
-            "modified": "2024-03-10T07:15:33.476Z",
+            "modified": "2024-04-03T06:41:11.001Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"login\": \"Test1\",\n    \"password\": \"test123\"\n}",
+                "raw": "{\n    \"login\": \"Thenk0\",\n    \"password\": \"admin\"\n}",
                 "form": []
             },
-            "reqType": "post",
             "tests": []
         },
         {
@@ -178,11 +209,11 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "708d4ad9-b90b-450e-a332-bcb3b70e942b",
             "name": "Accept Invite",
-            "url": "group-list/invites/9/accept",
+            "url": "group-list/invites/2/accept",
             "method": "POST",
             "sortNum": 20000,
             "created": "2024-03-07T14:10:41.035Z",
-            "modified": "2024-03-09T13:53:00.192Z",
+            "modified": "2024-03-31T09:51:14.534Z",
             "headers": [],
             "params": [],
             "body": {
@@ -190,7 +221,10 @@
                 "raw": "{\n  \"modifyList\": true\n}",
                 "form": []
             },
-            "reqType": "post",
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiYm90IjpmYWxzZSwidG9rZW4iOiI0ZGJjOGQzOC1hN2Q1LTRhYmUtYjliNi1mNjRhMzEwNDcyYmYiLCJpYXQiOjE3MTE4Nzg2NTMsImV4cCI6MTcxMTk2NTA1M30.Ru3mppOLt0JSONl-T-iazPje1eDp1EJLLDjuC97S0dY"
+            },
             "tests": []
         },
         {
@@ -237,9 +271,10 @@
             "method": "GET",
             "sortNum": 70000,
             "created": "2022-07-10T15:33:29.715Z",
-            "modified": "2024-03-04T13:00:27.458Z",
+            "modified": "2024-03-20T17:55:53.288Z",
             "headers": [],
             "params": [],
+            "reqType": "get",
             "tests": []
         },
         {
@@ -251,10 +286,9 @@
             "method": "GET",
             "sortNum": 80000,
             "created": "2022-07-28T09:15:26.130Z",
-            "modified": "2024-03-10T07:19:32.721Z",
+            "modified": "2024-04-03T06:42:01.946Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
             "tests": []
         },
         {
@@ -262,21 +296,21 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "b60e8291-6e7e-46ab-a6c5-4452769be93c",
             "name": "link",
-            "url": "https://api.litminka.ru:8001/shikimori/link?token=fdce56d1f8dc0e21ac04e9ddb427899fca0b0168118ef5e1&code=BMm7sR4wy-l1sMIsHWHAwRo7mZt6v_EH8zPuuhF_IyY",
+            "url": "https://api.litminka.ru:8001/shikimori/link?token=[]&code=[]",
             "method": "GET",
             "sortNum": 90000,
             "created": "2022-07-28T09:31:11.867Z",
-            "modified": "2022-07-28T09:31:20.857Z",
+            "modified": "2024-04-03T06:41:49.557Z",
             "headers": [],
             "params": [
                 {
                     "name": "token",
-                    "value": "fdce56d1f8dc0e21ac04e9ddb427899fca0b0168118ef5e1",
+                    "value": "[]",
                     "isPath": false
                 },
                 {
                     "name": "code",
-                    "value": "BMm7sR4wy-l1sMIsHWHAwRo7mZt6v_EH8zPuuhF_IyY",
+                    "value": "[]",
                     "isPath": false
                 }
             ],
@@ -291,7 +325,7 @@
             "method": "GET",
             "sortNum": 100000,
             "created": "2022-07-28T10:47:46.272Z",
-            "modified": "2024-03-04T13:00:43.533Z",
+            "modified": "2024-04-01T16:42:56.047Z",
             "headers": [
                 {
                     "name": "User-Agent",
@@ -310,14 +344,9 @@
             "method": "GET",
             "sortNum": 120000,
             "created": "2022-07-29T14:21:16.431Z",
-            "modified": "2024-03-08T03:58:53.739Z",
+            "modified": "2024-04-03T06:42:18.432Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
-            "auth": {
-                "type": "bearer",
-                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzA5ODcwMjAzLCJleHAiOjE3MTEwNzk4MDN9.kQJZjj_vb7G9x3MM11KQOxdF85NozkVY_OHK4gaYFJ0"
-            },
             "tests": []
         },
         {
@@ -329,9 +358,13 @@
             "method": "POST",
             "sortNum": 130000,
             "created": "2022-07-29T19:25:51.618Z",
-            "modified": "2024-03-04T13:01:29.454Z",
+            "modified": "2024-03-30T16:25:51.426Z",
             "headers": [],
             "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYm90IjpmYWxzZSwidG9rZW4iOiJiM2E0MmRiZi0xNjZjLTRhNTEtYmQxYi1mZGFkNzllMmI4ZGMiLCJpYXQiOjE3MTE4MTU5NDUsImV4cCI6MTcxMTkwMjM0NX0.aDG0tqHQXBcn64I_Oaf-8zqsGy3V8MqAzGL4aU72-GI"
+            },
             "tests": []
         },
         {
@@ -343,7 +376,7 @@
             "method": "GET",
             "sortNum": 140000,
             "created": "2022-07-30T12:07:07.049Z",
-            "modified": "2024-03-04T13:12:08.265Z",
+            "modified": "2024-03-31T09:18:12.912Z",
             "headers": [],
             "params": [],
             "tests": []
@@ -353,19 +386,18 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "f379dff5-cbbd-402f-aab4-17cb2daefc79",
             "name": "Add to List",
-            "url": "watch-list/2",
+            "url": "watch-list/28269",
             "method": "POST",
             "sortNum": 155000,
             "created": "2022-07-30T16:25:05.083Z",
-            "modified": "2024-03-10T10:59:21.857Z",
+            "modified": "2024-03-31T09:19:41.217Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"status\": \"completed\",\n    \"watchedEpisodes\": 0,\n    \"rating\": 7,\n    \"isFavorite\": true\n}",
+                "raw": "{\n    \"status\": \"completed\",\n    \"watchedEpisodes\": 6,\n    \"rating\": 10,\n    \"isFavorite\": true\n}",
                 "form": []
             },
-            "reqType": "post",
             "tests": []
         },
         {
@@ -373,19 +405,18 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "f379dff5-cbbd-402f-aab4-17cb2daefc79",
             "name": "Edit list",
-            "url": "watch-list/1",
+            "url": "watch-list/28269",
             "method": "PATCH",
             "sortNum": 160000,
             "created": "2022-08-01T14:30:06.031Z",
-            "modified": "2024-03-10T07:24:06.437Z",
+            "modified": "2024-03-31T09:32:40.917Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"status\": \"planned\",\n    \"watchedEpisodes\": 1,\n    \"rating\": 7,\n    \"isFavorite\": false\n}",
+                "raw": "{\n    \"status\": \"completed\",\n    \"watchedEpisodes\": 18,\n    \"rating\": 10,\n    \"isFavorite\": false\n}",
                 "form": []
             },
-            "reqType": "patch",
             "tests": []
         },
         {
@@ -393,14 +424,13 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "f379dff5-cbbd-402f-aab4-17cb2daefc79",
             "name": "Delete from list",
-            "url": "watch-list/1",
+            "url": "watch-list/28269",
             "method": "DELETE",
             "sortNum": 170000,
             "created": "2022-08-01T20:44:20.506Z",
-            "modified": "2024-03-09T10:50:41.806Z",
+            "modified": "2024-03-31T09:22:54.063Z",
             "headers": [],
             "params": [],
-            "reqType": "del",
             "tests": []
         },
         {
@@ -408,14 +438,13 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "451d1f1b-071e-43ee-b22c-319ebdd6195e",
             "name": "Get members",
-            "url": "group-list/2/members",
+            "url": "group-list/13/members",
             "method": "GET",
             "sortNum": 170000,
             "created": "2024-03-08T13:52:44.854Z",
-            "modified": "2024-03-10T07:27:36.170Z",
+            "modified": "2024-03-31T09:50:43.532Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
             "tests": []
         },
         {
@@ -423,14 +452,13 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "a42214da-db20-4237-8715-3abf4d1d05ff",
             "name": "Get Single",
-            "url": "anime/1",
+            "url": "anime/25025",
             "method": "GET",
             "sortNum": 190000,
             "created": "2022-08-01T21:51:03.667Z",
-            "modified": "2024-03-07T14:55:34.804Z",
+            "modified": "2024-04-07T11:58:38.316Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
             "tests": []
         },
         {
@@ -438,19 +466,18 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "65fa9715-f31e-449a-af36-121baff725eb",
             "name": "Follow",
-            "url": "anime/follow/1",
+            "url": "anime/follow/43663",
             "method": "POST",
             "sortNum": 200000,
             "created": "2022-08-16T18:02:26.866Z",
-            "modified": "2024-03-10T07:20:26.199Z",
+            "modified": "2024-04-03T07:00:51.895Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"groupName\": \"Amazing Dubbing\",\n  \"type\": \"follow\"\n}",
+                "raw": "{\n  \"type\": \"follow\",\n  \"groupName\": \"AnimeVost\"\n}",
                 "form": []
             },
-            "reqType": "post",
             "tests": []
         },
         {
@@ -513,14 +540,19 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "65fa9715-f31e-449a-af36-121baff725eb",
             "name": "Unfollow",
-            "url": "anime/follow/1",
+            "url": "anime/follow/151",
             "method": "DELETE",
             "sortNum": 290000,
             "created": "2024-03-08T03:59:02.419Z",
-            "modified": "2024-03-10T07:20:36.327Z",
+            "modified": "2024-03-11T14:42:01.793Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
+            "body": {
+                "type": "json",
+                "raw": "{\n \"groupName\": \"ТО Дубляжная\"\n}",
+                "form": []
+            },
+            "reqType": "del",
             "tests": []
         },
         {
@@ -598,14 +630,13 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "7eb1b3ee-00c3-4221-824b-d650970da684",
             "name": "get",
-            "url": "group-list/2/list",
+            "url": "group-list/13/list",
             "method": "GET",
             "sortNum": 385000,
             "created": "2024-03-09T13:28:46.775Z",
-            "modified": "2024-03-10T07:26:24.368Z",
+            "modified": "2024-03-31T09:52:23.827Z",
             "headers": [],
             "params": [],
-            "reqType": "get",
             "tests": []
         },
         {
@@ -613,19 +644,18 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "7eb1b3ee-00c3-4221-824b-d650970da684",
             "name": "add",
-            "url": "group-list/2/list/1",
+            "url": "group-list/13/list/28269",
             "method": "POST",
             "sortNum": 395000,
             "created": "2024-03-09T13:48:08.681Z",
-            "modified": "2024-03-10T07:26:40.257Z",
+            "modified": "2024-03-31T10:08:48.384Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"status\": \"watching\",\n    \"rating\": 0,\n    \"isFavorite\": false,\n    \"watchedEpisodes\": 1\n}",
+                "raw": "{\n    \"status\": \"rewatching\",\n    \"rating\": 10,\n    \"isFavorite\": false,\n    \"watchedEpisodes\": 12\n}",
                 "form": []
             },
-            "reqType": "post",
             "tests": []
         },
         {
@@ -633,19 +663,18 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "7eb1b3ee-00c3-4221-824b-d650970da684",
             "name": "update",
-            "url": "group-list/2/list/1",
+            "url": "group-list/13/list/28269",
             "method": "PATCH",
             "sortNum": 405000,
             "created": "2024-03-09T13:53:41.487Z",
-            "modified": "2024-03-10T07:27:20.927Z",
+            "modified": "2024-03-31T10:09:05.567Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n    \"status\": \"watching\",\n    \"rating\": 2,\n    \"isFavorite\": true,\n    \"watchedEpisodes\": 1\n}",
+                "raw": "{\n    \"status\": \"rewatching\",\n    \"rating\": 10,\n    \"isFavorite\": true,\n    \"watchedEpisodes\": 13\n}",
                 "form": []
             },
-            "reqType": "patch",
             "tests": []
         },
         {
@@ -653,14 +682,13 @@
             "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
             "containerId": "7eb1b3ee-00c3-4221-824b-d650970da684",
             "name": "delete",
-            "url": "group-list/20/list/1",
+            "url": "group-list/13/list/28269",
             "method": "DELETE",
             "sortNum": 415000,
             "created": "2024-03-09T13:55:27.806Z",
-            "modified": "2024-03-09T13:59:02.100Z",
+            "modified": "2024-03-31T09:53:13.115Z",
             "headers": [],
             "params": [],
-            "reqType": "del",
             "tests": []
         },
         {
@@ -721,12 +749,200 @@
                 "form": []
             },
             "tests": []
+        },
+        {
+            "_id": "921229d0-63c5-4f7c-8195-f38002413435",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "b60e8291-6e7e-46ab-a6c5-4452769be93c",
+            "name": "unlink",
+            "url": "shikimori/unlink",
+            "method": "DELETE",
+            "sortNum": 455000,
+            "created": "2024-03-13T15:21:33.382Z",
+            "modified": "2024-03-13T15:21:42.435Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "52b48993-de8f-4358-983c-758c88693ffa",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "56f423b0-feec-4999-aaf1-2963fb3c2f83",
+            "name": "Ban Anime",
+            "url": "admin/anime/3264/ban",
+            "method": "POST",
+            "sortNum": 485000,
+            "created": "2024-03-18T16:54:42.637Z",
+            "modified": "2024-03-18T16:58:36.454Z",
+            "headers": [],
+            "params": [],
+            "reqType": "get",
+            "tests": []
+        },
+        {
+            "_id": "fd335df5-d914-46c3-92a2-b649c7053424",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "56f423b0-feec-4999-aaf1-2963fb3c2f83",
+            "name": "UnBan Anime",
+            "url": "admin/anime/3264/ban",
+            "method": "DELETE",
+            "sortNum": 495000,
+            "created": "2024-03-18T16:54:47.310Z",
+            "modified": "2024-03-18T16:57:09.122Z",
+            "headers": [],
+            "params": [],
+            "reqType": "get",
+            "tests": []
+        },
+        {
+            "_id": "a08f40d3-bef8-44f2-b763-76bd61190f94",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "607232af-44cf-4caa-8b66-b6e321e4dd5a",
+            "name": "Get sessions",
+            "url": "token",
+            "method": "GET",
+            "sortNum": 505000,
+            "created": "2024-03-20T17:30:08.795Z",
+            "modified": "2024-03-20T17:37:50.785Z",
+            "headers": [],
+            "params": [],
+            "reqType": "get",
+            "tests": []
+        },
+        {
+            "_id": "c84502eb-1093-4100-9e1b-1c5d0f389ef8",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "607232af-44cf-4caa-8b66-b6e321e4dd5a",
+            "name": "End session",
+            "url": "token",
+            "method": "DELETE",
+            "sortNum": 515000,
+            "created": "2024-03-20T17:30:15.909Z",
+            "modified": "2024-04-01T16:48:48.572Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"sessions\": []\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "07f0486e-c809-414b-b197-8491d7cc643b",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "a42214da-db20-4237-8715-3abf4d1d05ff",
+            "name": "Search",
+            "url": "anime?page=1",
+            "method": "GET",
+            "sortNum": 525000,
+            "created": "2024-04-03T07:01:11.363Z",
+            "modified": "2024-04-07T15:49:33.626Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "page",
+                    "value": "1",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"withCensored\": true,\n  \"statuses\": [\"anons\"],\n  \"seasons\": [\"summer_2024\"]\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "3fa9e723-3b5e-46f7-be6d-4e225b515cce",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "4e3788df-74bb-4178-aa53-a496410e24f3",
+            "name": "updateSettings",
+            "url": "users/settings",
+            "method": "PATCH",
+            "sortNum": 535000,
+            "created": "2024-04-07T09:08:03.815Z",
+            "modified": "2024-04-07T09:10:45.364Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"watchListMode\": \"manual\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "05941e80-4a94-4119-a2db-24abc7b04251",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "a42214da-db20-4237-8715-3abf4d1d05ff",
+            "name": "Top 100",
+            "url": "anime/top",
+            "method": "GET",
+            "sortNum": 545000,
+            "created": "2024-04-07T14:51:48.279Z",
+            "modified": "2024-04-07T14:53:05.379Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"shikimori\": true\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "86a37a0a-2965-43f0-b461-4b802295acf4",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "a42214da-db20-4237-8715-3abf4d1d05ff",
+            "name": "seasonal",
+            "url": "anime/seasonal",
+            "method": "GET",
+            "sortNum": 555000,
+            "created": "2024-04-07T15:10:00.532Z",
+            "modified": "2024-04-07T15:23:22.654Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"withCensored\": true\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "0c332dbd-ee1e-486f-b1ad-435806210a21",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "a42214da-db20-4237-8715-3abf4d1d05ff",
+            "name": "popular seasonal",
+            "url": "anime/seasonal/popular",
+            "method": "GET",
+            "sortNum": 565000,
+            "created": "2024-04-07T16:09:26.701Z",
+            "modified": "2024-04-07T16:09:33.154Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "9ba08259-d75c-4c43-8b31-475ff1c87995",
+            "colId": "17420964-fc2f-4214-b653-47d626dbd7a0",
+            "containerId": "a42214da-db20-4237-8715-3abf4d1d05ff",
+            "name": "announced",
+            "url": "anime/seasonal/announced",
+            "method": "GET",
+            "sortNum": 575000,
+            "created": "2024-04-07T16:09:48.763Z",
+            "modified": "2024-04-07T16:11:26.651Z",
+            "headers": [],
+            "params": [],
+            "tests": []
         }
     ],
     "settings": {
         "auth": {
             "type": "bearer",
-            "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzEwMDU0OTA1LCJleHAiOjE3MTAxNDEzMDV9.9s8TqmJP1DAysr6yBR393CcVTGSRA0ZderS78Wy4AqA"
+            "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYm90IjpmYWxzZSwidG9rZW4iOiIyNDQyYzg4My05Yjk1LTQ2MmQtOGRlNS1iYTk5ZTQwN2I0OTEiLCJpYXQiOjE3MTI0ODA4OTcsImV4cCI6MTcxMjU2NzI5N30.9DPHVgA312UJS_V-A60gbVS2JvK4FaW6A8dbUepjnw8"
         },
         "options": {
             "baseUrl": "https://api.litminka.ru/"
