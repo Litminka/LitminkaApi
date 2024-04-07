@@ -1,7 +1,7 @@
 import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
 import { Request as ExpressRequest } from "express";
 import { ValidationChain } from "express-validator";
-import Request from "../Request";
+import Request from "@requests/Request";
 
 export interface GetNotificationsReq extends ExpressRequest {
     body: {

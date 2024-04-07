@@ -1,7 +1,7 @@
 import BadRequestError from "@errors/clienterrors/BadRequestError";
 import NotFoundError from "@errors/clienterrors/NotFoundError";
 import groupArrSplice from "@/helper/groupsplice";
-import { AddToList, ListFilters, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration } from "@/ts";
+import { AddToList, ListFilters, ShikimoriAnime, ShikimoriWatchList, UserWithIntegration, UserWithIntegrationSettings } from "@/ts";
 import AnimeUpdateService from "@services/anime/AnimeUpdateService";
 import KodikApiService from "@services/KodikApiService";
 import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
@@ -184,7 +184,7 @@ export default class WatchListService {
         await prisma.animeList.createUserWatchListByMap(user.id, shikimoriDBAnimeMap, watchList);
     }
 
-    public static async addAnimeToListWithParams(user: UserWithIntegration, animeId: number, addingParameters: AddToList) {
+    public static async addAnimeToListWithParams(user: UserWithIntegrationSettings, animeId: number, addingParameters: AddToList) {
         const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
         const { shikimoriId } = await prisma.anime.findFirstOrThrow({
             where: {
@@ -209,7 +209,7 @@ export default class WatchListService {
         return await prisma.animeList.findWatchListByIdsWithAnime(user.id, animeId);
     }
 
-    public static async removeAnimeFromList(user: UserWithIntegration, animeId: number) {
+    public static async removeAnimeFromList(user: UserWithIntegrationSettings, animeId: number) {
         const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
 
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
@@ -221,7 +221,7 @@ export default class WatchListService {
         await prisma.animeList.removeAnimeFromListById(animeId);
     }
 
-    public static async editAnimeListWithParams(user: UserWithIntegration, animeId: number, editParameters: AddToList) {
+    public static async editAnimeListWithParams(user: UserWithIntegrationSettings, animeId: number, editParameters: AddToList) {
         const animeListEntry = await prisma.animeList.findWatchListByIds(user.id, animeId);
         const { shikimoriId } = await prisma.anime.findFirstOrThrow({
             where: {
@@ -247,6 +247,6 @@ export default class WatchListService {
     }
 
     public static async getFilteredWatchList(user: User, filters: ListFilters) {
-        return await prisma.animeList.findFilteredWatchList(user.id, filters);
+        return await prisma.animeList.findFilteredWatchList(user.id, filters, 0);
     }
 }

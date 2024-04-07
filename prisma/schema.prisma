@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,221 +8,238 @@ datasource db {
 }
 
 model User {
-  id                     Int                      @id @default(autoincrement())
-  createdAt              DateTime                 @default(now())
-  email                  String                   @unique
-  login                  String                   @unique
-  password               String
-  name                   String?
-  roleId                 Int
-  role                   Role                     @relation(fields: [roleId], references: [id])
-  integration            Integration?
-  shikimoriLink          ShikimoriLinkToken?
-  sessionTokens          SessionToken[]
-  animeList              AnimeList[]
-  follows                Follow[]
-  UserAnimeNotifications UserAnimeNotifications[]
-  ownedGroups            GroupList[]
-  groupMember            GroupListMembers[]
-  groupInvites           GroupListInvites[]
+  id                 Int                      @id @default(autoincrement())
+  email              String                   @unique
+  login              String                   @unique
+  password           String
+  name               String?
+  createdAt          DateTime                 @default(now())
+  roleId             Int
+  animeList          AnimeList[]
+  follows            Follow[]
+  ownedGroups        GroupList[]
+  groupInvites       GroupListInvites[]
+  groupMember        GroupListMembers[]
+  integration        Integration?
+  sessionTokens      SessionToken[]
+  shikimoriLink      ShikimoriLinkToken?
+  role               Role                     @relation(fields: [roleId], references: [id])
+  animeNotifications UserAnimeNotifications[]
+  settings           UserSettings?
+}
+
+model UserSettings {
+  id                        Int     @id @default(autoincrement())
+  watchListMode             String  @default("auto")
+  watchListAddAfterEpisodes Int     @default(3)
+  watchListAskAboutRating   Boolean @default(true)
+  showCensoredContent       Boolean @default(false)
+  notifyDiscord             Boolean @default(false)
+  notifyPush                Boolean @default(false)
+  notifyTelegram            Boolean @default(false)
+  notifyVK                  Boolean @default(false)
+  siteTheme                 String  @default("dark")
+  userId                    Int     @unique
+  shikimoriExportList       Boolean @default(false)
+  user                      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Role {
   id          Int          @id @default(autoincrement())
   name        String       @unique
-  permissions Permission[]
   users       User[]
+  permissions Permission[] @relation("PermissionToRole")
 }
 
 model Permission {
   id    Int    @id @default(autoincrement())
   name  String @unique
-  roles Role[]
+  roles Role[] @relation("PermissionToRole")
 }
 
 model SessionToken {
   id     Int    @id @default(autoincrement())
   token  String @unique
   userId Int
-  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Integration {
   id                     Int      @id @default(autoincrement())
-  shikimoriToken         String?
-  shikimoriRefreshToken  String?
+  discordId              String?
   shikimoriCode          String?
   shikimoriId            Int?     @unique
-  shikimoriCanChangeList Boolean? @default(false)
-  discordId              String?
+  shikimoriRefreshToken  String?
+  shikimoriToken         String?
   telegramId             String?
-  vkId                   String?
   userId                 Int      @unique
-  user                   User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  vkId                   String?
+  shikimoriCanChangeList Boolean? @default(false)
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ShikimoriLinkToken {
   id     Int    @id @default(autoincrement())
   userId Int    @unique
-  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   token  String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Anime {
   id                     Int                      @id @default(autoincrement())
-  shikimoriId            Int                      @unique
   image                  String?
-  japaneseName           String?
-  englishName            String?
   name                   String?
   description            String?
-  slug                   String                   @unique
   status                 String
-  rpaRating              String?
-  mediaType              String?
-  season                 String?
-  maxEpisodes            Int
+  slug                   String                   @unique
   currentEpisodes        Int
+  englishName            String?
   firstEpisodeAired      DateTime?
-  lastEpisodeAired       DateTime?
-  shikimoriRating        Float
-  rating                 Float                    @default(0)
   franchiseName          String?
+  japaneseName           String?
   kodikLink              String?
-  censored               Boolean                  @default(false)
+  lastEpisodeAired       DateTime?
+  maxEpisodes            Int
+  mediaType              String?
+  rpaRating              String?
+  shikimoriId            Int                      @unique
+  shikimoriRating        Float
   banned                 Boolean                  @default(false)
+  censored               Boolean                  @default(false)
   hasRelation            Boolean                  @default(false)
-  genres                 Genre[]
-  animeTranslations      AnimeTranslation[]
+  rating                 Float                    @default(0)
+  season                 String?
   animeLists             AnimeList[]
-  follows                Follow[]
-  userAnimeNotifications UserAnimeNotifications[]
   animeNotifications     AnimeNotifications[]
+  relations              AnimeRelation[]          @relation("animeRelation")
+  relatesTo              AnimeRelation[]          @relation("relatedAnimeRelation")
+  animeTranslations      AnimeTranslation[]
+  follows                Follow[]
   groupLists             GroupAnimeList[]
-  relations              AnimeRelation[]          @relation(name: "animeRelation")
-  relatesTo              AnimeRelation[]          @relation(name: "relatedAnimeRelation")
+  userAnimeNotifications UserAnimeNotifications[]
+  genres                 Genre[]                  @relation("AnimeToGenre")
 }
 
 model AnimeRelation {
   id           Int    @id @default(autoincrement())
   animeId      Int
-  relatedTo    Int
   name         String
-  relatedAnime Anime  @relation(fields: [animeId], references: [shikimoriId], name: "animeRelation")
-  anime        Anime  @relation(fields: [relatedTo], references: [shikimoriId], name: "relatedAnimeRelation")
+  relatedTo    Int
+  relatedAnime Anime  @relation("animeRelation", fields: [animeId], references: [shikimoriId])
+  anime        Anime  @relation("relatedAnimeRelation", fields: [relatedTo], references: [shikimoriId])
 }
 
 model Genre {
   id    Int     @id @default(autoincrement())
   name  String  @unique
-  anime Anime[]
+  anime Anime[] @relation("AnimeToGenre")
 }
 
 model AnimeTranslation {
   id              Int      @id @default(autoincrement())
   currentEpisodes Int
   groupId         Int
-  link            String
-  group           Group    @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   animeId         Int
-  anime           Anime    @relation(fields: [animeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  link            String
+  anime           Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   follow          Follow[]
 }
 
 model Group {
   id                     Int                      @id
-  name                   String                   @unique
   type                   String
+  name                   String                   @unique
+  animeNotifications     AnimeNotifications[]
   AnimeTranslation       AnimeTranslation[]
   UserAnimeNotifications UserAnimeNotifications[]
-  animeNotifications     AnimeNotifications[]
 }
 
 model Follow {
   id            Int               @id @default(autoincrement())
   status        String
-  userId        Int
-  user          User              @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   animeId       Int
-  anime         Anime             @relation(fields: [animeId], references: [id])
   translationId Int?
+  userId        Int
+  anime         Anime             @relation(fields: [animeId], references: [id])
   translation   AnimeTranslation? @relation(fields: [translationId], references: [id])
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AnimeList {
   id              Int     @id @default(autoincrement())
-  shikimoriId     Int?    @unique
   animeId         Int
-  anime           Anime   @relation(fields: [animeId], references: [id])
   userId          Int
-  user            User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   status          String
   isFavorite      Boolean
   watchedEpisodes Int
   rating          Int?
+  shikimoriId     Int?    @unique
+  anime           Anime   @relation(fields: [animeId], references: [id])
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GroupList {
   id          Int                @id @default(autoincrement())
-  owner       User               @relation(fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   ownerId     Int
   description String
   name        String
   list        GroupAnimeList[]
-  members     GroupListMembers[]
+  owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   invites     GroupListInvites[]
+  members     GroupListMembers[]
 }
 
 model GroupListInvites {
   id      Int       @id @default(autoincrement())
-  user    User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId  Int
   groupId Int
   group   GroupList @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GroupListMembers {
   id           Int       @id @default(autoincrement())
-  user         User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId       Int
   groupId      Int
-  group        GroupList @relation(fields: [groupId], references: [id], onDelete: Cascade)
   overrideList Boolean   @default(false)
+  group        GroupList @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GroupAnimeList {
   id              Int       @id @default(autoincrement())
   animeId         Int
-  anime           Anime     @relation(fields: [animeId], references: [id])
   groupId         Int
-  group           GroupList @relation(fields: [groupId], references: [id], onDelete: Cascade)
   status          String
   isFavorite      Boolean
   watchedEpisodes Int
   rating          Int?
+  anime           Anime     @relation(fields: [animeId], references: [id])
+  group           GroupList @relation(fields: [groupId], references: [id], onDelete: Cascade)
 }
 
 model UserAnimeNotifications {
   id        Int      @id @default(autoincrement())
   animeId   Int
-  anime     Anime    @relation(fields: [animeId], references: [id])
   status    String
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   episode   Int?
   groupId   Int?
-  group     Group?   @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  group     Group?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AnimeNotifications {
   id        Int      @id @default(autoincrement())
   animeId   Int
-  anime     Anime    @relation(fields: [animeId], references: [id])
   status    String
   episode   Int?
   groupId   Int?
-  group     Group?   @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   createdAt DateTime @default(now())
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  group     Group?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
 }

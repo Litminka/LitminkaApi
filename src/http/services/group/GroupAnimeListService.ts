@@ -3,7 +3,7 @@ import prisma from "@/db"
 import BaseError from "@errors/BaseError"
 import { AddWithAnime, ListFilters } from "@/ts"
 import { RequestStatuses } from "@/ts/enums"
-import ShikimoriListSyncService from "../shikimori/ShikimoriListSyncService"
+import ShikimoriListSyncService from "@services/shikimori/ShikimoriListSyncService"
 
 interface AddToGroupList {
     userId: number,
@@ -145,7 +145,7 @@ export default class GroupAnimeListService {
         const memberIds = members.map(user => user.userId)
 
 
-        
+
         const userListEntries = await prisma.animeList.findMany({
             where: {
                 animeId,
@@ -161,10 +161,11 @@ export default class GroupAnimeListService {
                 }
             },
             include: {
-                integration: true
+                integration: true,
+                settings: true
             }
         })
-        
+
         for (const entry of userListEntries) {
             if (!entry.shikimoriId) continue;
             const user = memberIntegrations.find(user => user.id === entry.userId);
@@ -245,9 +246,10 @@ export default class GroupAnimeListService {
             },
             include: {
                 integration: true,
+                settings: true
             }
         });
-        
+
 
         for (const user of membersWithIntegrations) {
             ShikimoriListSyncService.createAddUpdateJob(user, {

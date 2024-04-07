@@ -4,9 +4,9 @@ import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { WatchListStatuses } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
-import { IntegrationReq, IntegrationRequest } from "@requests/IntegrationRequest";
+import { IntegrationSettingsReq, IntegrationSettingsRequest } from "@requests/IntegrationSettingsRequest";
 
-export interface EditWatchListReq extends IntegrationReq {
+export interface EditWatchListReq extends IntegrationSettingsReq {
     params: {
         animeId: number,
     },
@@ -18,7 +18,7 @@ export interface EditWatchListReq extends IntegrationReq {
     }
 }
 
-export class EditWatchListRequest extends IntegrationRequest {
+export class EditWatchListRequest extends IntegrationSettingsRequest {
 
     /**
      * Define validation rules for this request

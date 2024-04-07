@@ -2,7 +2,7 @@ import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { ValidationChain } from "express-validator";
 import { RequestAuthTypes } from "@/ts/enums";
 import { IntegrationReq, IntegrationRequest } from "@requests/IntegrationRequest";
-import { OptionalReq } from "../OptionalRequest";
+import { OptionalReq } from "@requests/OptionalRequest";
 
 export interface GetSingleAnimeReq extends OptionalReq {
     auth?: IntegrationReq['auth'],

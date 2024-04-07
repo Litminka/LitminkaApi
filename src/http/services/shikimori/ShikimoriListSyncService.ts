@@ -2,7 +2,7 @@ import prisma from "@/db";
 import ShikimoriApiService from "./ShikimoriApiService";
 import { shikimoriList } from "@/ts/shikimori";
 import { shikimoriListUpdateQueue } from "@/queues/queues";
-import { UserWithIntegration } from "@/ts";
+import { UserWithIntegration, UserWithIntegrationSettings } from "@/ts";
 
 export default class ShikimoriListSyncService {
     public static async addOrUpdateList(userId: number, list: shikimoriList) {
@@ -42,18 +42,18 @@ export default class ShikimoriListSyncService {
         await shikimoriApi.deleteListEntry(shikimoriId);
     }
 
-    public static createAddUpdateJob(user: UserWithIntegration, list: shikimoriList) {
+    public static createAddUpdateJob(user: UserWithIntegrationSettings, list: shikimoriList) {
 
-        if (!user || !user.integration || !user.integration.shikimoriCanChangeList) return;
+        if (!user || !user.integration || !user.integration.shikimoriCanChangeList || !user.settings || !user.settings?.shikimoriExportList) return;
 
         shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, list, type: "add-update" }, {
             removeOnComplete: 10,
             removeOnFail: 100
         })
     }
-    public static createDeleteJob(user: UserWithIntegration, id: number) {
+    public static createDeleteJob(user: UserWithIntegrationSettings, id: number) {
 
-        if (!user || !user.integration || !user.integration.shikimoriCanChangeList) return;
+        if (!user || !user.integration || !user.integration.shikimoriCanChangeList || !user.settings || !user.settings?.shikimoriExportList) return;
 
         shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, shikimoriId: id, type: "delete" }, {
             removeOnComplete: 10,

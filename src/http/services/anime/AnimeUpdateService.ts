@@ -3,7 +3,6 @@ import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import { ShikimoriAnimeFull, ShikimoriAnime } from "@/ts/index";
 import { KodikAnime, KodikAnimeFull, animeWithTranslation, _translation } from "@/ts/kodik";
 import prisma from "@/db";
-import { RequestStatuses } from "@/ts/enums";
 import InternalServerError from "@errors/servererrors/InternalServerError";
 import { cyrillicSlug } from "@/helper/cyrillic-slug";
 import { ShikimoriAnimeWithRelation, ShikimoriGraphAnime, ShikimoriRelation } from "@/ts/shikimori";
@@ -11,7 +10,7 @@ import { config } from "@/config";
 import groupArrSplice from "@/helper/groupsplice";
 import sleep from "@/helper/sleep";
 import { logger } from "@/loggerConf";
-import KodikApiService from "../KodikApiService";
+import KodikApiService from "@services/KodikApiService";
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined
@@ -33,7 +32,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
      */
     async update(anime: Anime): Promise<boolean> {
         if (!this.shikimoriApi) throw new InternalServerError("No shikimori api specified");
-        const resAnime: ShikimoriAnimeFull= await this.shikimoriApi.getAnimeById(anime.shikimoriId);
+        const resAnime: ShikimoriAnimeFull = await this.shikimoriApi.getAnimeById(anime.shikimoriId);
         if (!resAnime) return false;
         const update = resAnime as ShikimoriAnimeFull;
         prisma.anime.updateShikimori(anime.id, update);

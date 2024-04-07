@@ -1,4 +1,4 @@
-import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, SessionToken, User } from "@prisma/client";
+import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, SessionToken, User, UserSettings } from "@prisma/client";
 import { Request } from "express";
 import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
 import { ValidationError, Location } from "express-validator";
@@ -371,6 +371,11 @@ export interface FollowAnime {
 
 export type UserWithIntegration = User & {
     integration: Integration | null
+}
+
+export type UserWithIntegrationSettings = User & {
+    integration: Integration | null,
+    settings: UserSettings | null,
 }
 
 export interface minmax {
