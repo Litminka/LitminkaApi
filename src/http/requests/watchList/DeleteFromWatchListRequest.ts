@@ -2,7 +2,7 @@ import prisma from "@/db";
 import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { baseMsg } from "@/ts/messages";
 import { ValidationChain } from "express-validator";
-import { IntegrationSettingsReq, IntegrationSettingsRequest } from "../IntegrationSettingsRequest";
+import { IntegrationSettingsReq, IntegrationSettingsRequest } from "@requests/IntegrationSettingsRequest";
 
 export interface DeleteFromWatchListReq extends IntegrationSettingsReq {
     params: {
