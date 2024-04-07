@@ -1,5 +1,5 @@
 import { body, ValidationChain } from "express-validator";
-import { arrayValidator, BaseValidator, DateValidator, dateValidator, genMessage } from "@validators/BaseValidator";
+import { arrayValidator, DateValidator, dateValidator, genMessage } from "@validators/BaseValidator";
 import { baseMsg } from "@/ts/messages";
 
 /**
