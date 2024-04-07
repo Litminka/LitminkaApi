@@ -11,7 +11,7 @@ import { logger } from "@/loggerConf";
 import prisma from "@/db";
 import { User, Anime } from "@prisma/client";
 import { importWatchListQueue } from "@/queues/queues"
-import ShikimoriListSyncService from "./shikimori/ShikimoriListSyncService";
+import ShikimoriListSyncService from "@services/shikimori/ShikimoriListSyncService";
 
 export default class WatchListService {
 
@@ -214,7 +214,7 @@ export default class WatchListService {
 
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
 
-        if (animeListEntry.shikimoriId !== null ) {
+        if (animeListEntry.shikimoriId !== null) {
             ShikimoriListSyncService.createDeleteJob(user, animeListEntry.shikimoriId);
         }
 

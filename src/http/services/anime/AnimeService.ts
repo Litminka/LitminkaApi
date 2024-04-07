@@ -4,9 +4,9 @@ import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import prisma from "@/db";
 import { UserWithIntegration } from "@/ts";
 import { Prisma } from "@prisma/client";
-import AnimeSearchService from "./AnimeSearchService";
-import { AnimePgaRatings, AnimeStatuses } from "@/ts/enums";
-import { getCurrentSeason, getNextSeason, getSeason } from "@/helper/animeseason";
+import AnimeSearchService from "@services/anime/AnimeSearchService";
+import { AnimePgaRatings } from "@/ts/enums";
+import { getCurrentSeason, getNextSeason } from "@/helper/animeseason";
 
 export default class AnimeService {
     public static async getSingleAnime(slug: string, user?: UserWithIntegration) {
@@ -41,7 +41,7 @@ export default class AnimeService {
     }
 
     public static async getPopularSeasonal(censor: boolean, showBanned: boolean) {
-        return  AnimeSearchService.filterShortSelector({
+        return AnimeSearchService.filterShortSelector({
             withCensored: censor,
             seasons: [getCurrentSeason()],
             banInRussia: showBanned,
