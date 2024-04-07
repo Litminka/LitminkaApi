@@ -113,7 +113,7 @@ export default class AnimeSearchService {
                 id: true
             }
         });
-        return anime._count;
+        return anime._count.id;
     }
 
     public static async filterSelector(filters: AnimeFilterBody, query: PaginationQuery) {
@@ -140,10 +140,10 @@ export default class AnimeSearchService {
         });
     }
 
-    public static async filterShortSelector(filters: AnimeFilterBody, query: AnimeFilterQuery, order?: Prisma.AnimeFindManyArgs['orderBy']) {
+    public static async filterShortSelector(filters: AnimeFilterBody, query: PaginationQuery, order?: Prisma.AnimeFindManyArgs['orderBy']) {
         return await prisma.anime.findMany({
-            take: Number(query.pageLimit),
-            skip: (Number(query.page) - 1) * Number(query.pageLimit),
+            take: query.pageLimit,
+            skip: (query.page - 1) * query.pageLimit,
             where: this.generateFilters(filters),
             select: {
                 id: true,
@@ -156,6 +156,7 @@ export default class AnimeSearchService {
                 rating: true,
                 mediaType: true,
             },
+            orderBy: order
         })
     }
 }
