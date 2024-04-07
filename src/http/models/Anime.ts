@@ -157,9 +157,9 @@ const extention = Prisma.defineExtension({
 
                 const where = {
                     slug: findBySlug ? slug : undefined,
-                    id: !findBySlug ? Number(slug) : undefined,
+                    shikimoriId: !findBySlug ? Number(slug) : undefined,
                 } satisfies Prisma.AnimeWhereInput;
-                
+
                 return await prisma.anime.findFirst({
                     where,
                     include: {
