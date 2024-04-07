@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "@/db";
 import Period from "@/helper/period";
 import dayjs from "dayjs";
+import { PaginationQuery } from "@/ts";
 
 export interface AnimeFilterBody {
     name?: string, // Complete
@@ -14,11 +15,6 @@ export interface AnimeFilterBody {
     period?: Date[], // Complete
     isCensored: boolean,
     banInRussia?: boolean, //WIP
-}
-
-export interface AnimeFilterQuery {
-    page?: number,
-    pageLimit?: number
 }
 
 export default class AnimeSearchFilter {
@@ -68,7 +64,7 @@ export default class AnimeSearchFilter {
         }
     }
 
-    public static async filterSelector(filterIn: AnimeFilterBody, query: AnimeFilterQuery) {
+    public static async filterSelector(filterIn: AnimeFilterBody, query: PaginationQuery) {
         const filters = {
             AND: [
                 this.byInGenre(filterIn.includeGenres),
@@ -91,8 +87,8 @@ export default class AnimeSearchFilter {
             })
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
         return prisma.anime.findMany({
-            take: Number(query.pageLimit),
-            skip: (Number(query.page) - 1) * Number(query.pageLimit),
+            take: query.pageLimit,
+            skip: (query.page - 1) * query.pageLimit,
             where: filter(),
             select: {
                 firstEpisodeAired: true,

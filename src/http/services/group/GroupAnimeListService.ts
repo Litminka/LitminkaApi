@@ -1,9 +1,9 @@
-import { GroupList, GroupListMembers } from "@prisma/client"
+import { GroupList, GroupListMembers, Prisma } from "@prisma/client"
 import prisma from "@/db"
 import BaseError from "@errors/BaseError"
-import { AddWithAnime, ListFilters } from "@/ts"
+import { AddWithAnime, ListFilters, PaginationQuery } from "@/ts"
 import { RequestStatuses } from "@/ts/enums"
-import ShikimoriListSyncService from "../shikimori/ShikimoriListSyncService"
+import ShikimoriListSyncService from "@services/shikimori/ShikimoriListSyncService"
 
 interface AddToGroupList {
     userId: number,
@@ -22,7 +22,43 @@ type GroupWithMembers = GroupList & {
 }
 
 export default class GroupAnimeListService {
-    public static async get(userId: number, groupId: number, filters: ListFilters) {
+
+    private static getFilters(groupId: number, filters: ListFilters) {
+        const { statuses, ratings, isFavorite } = filters as ListFilters;
+        const { filter } = {
+            filter: () => ({
+                AND: {
+                    groupId,
+                    isFavorite,
+                    status: statuses === undefined ? undefined : { in: statuses },
+                    rating: ratings === undefined ? undefined : {
+                        gte: ratings ? ratings[0] : 1,
+                        lte: ratings ? ratings[1] : 10
+                    }
+                }
+            })
+        } satisfies Record<string, (...args: any) => Prisma.GroupAnimeListWhereInput>;
+        return filter()
+    }
+
+    public static async getCount(
+        groupId: number,
+        filters: ListFilters
+    ) {
+        const { _count } = await prisma.groupAnimeList.aggregate({
+            _count: {
+                id: true
+            },
+            where: this.getFilters(groupId, filters)
+        });
+        return _count.id
+    }
+
+    public static async get(
+        userId: number,
+        groupId: number,
+        filters: ListFilters,
+        query: PaginationQuery) {
         await prisma.groupListMembers.findFirstOrThrow({
             where: {
                 AND: {
@@ -31,22 +67,10 @@ export default class GroupAnimeListService {
                 }
             }
         })
-
-        const { statuses, ratings, isFavorite } = filters as ListFilters;
-        const statusFilter = {
-            in: statuses
-        }
-        const ratingFilter = {
-            gte: ratings ? ratings[0] : 1,
-            lte: ratings ? ratings[1] : 10
-        }
         return await prisma.groupAnimeList.findMany({
-            where: {
-                groupId,
-                rating: ratings === undefined ? undefined : ratingFilter,
-                isFavorite,
-                status: statuses === undefined ? undefined : statusFilter
-            },
+            take: query.pageLimit,
+            skip: (query.page - 1) * query.pageLimit,
+            where: this.getFilters(groupId, filters),
             include: {
                 anime: true
             }
@@ -145,7 +169,7 @@ export default class GroupAnimeListService {
         const memberIds = members.map(user => user.userId)
 
 
-        
+
         const userListEntries = await prisma.animeList.findMany({
             where: {
                 animeId,
@@ -165,7 +189,7 @@ export default class GroupAnimeListService {
                 settings: true
             }
         })
-        
+
         for (const entry of userListEntries) {
             if (!entry.shikimoriId) continue;
             const user = memberIntegrations.find(user => user.id === entry.userId);
@@ -249,7 +273,7 @@ export default class GroupAnimeListService {
                 settings: true
             }
         });
-        
+
 
         for (const user of membersWithIntegrations) {
             ShikimoriListSyncService.createAddUpdateJob(user, {

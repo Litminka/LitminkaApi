@@ -15,10 +15,12 @@ export default class GroupAnimeListController {
         const statuses = req.body.statuses;
         const ratings = req.body.ratings;
         const isFavorite = req.body.isFavorite;
+        const query = req.query
 
-        const filteredGroupAnimeList = await GroupAnimeListService.get(user.id, groupId, { statuses, ratings, isFavorite })
+        const groupAnimeList = await GroupAnimeListService.get(user.id, groupId, { statuses, ratings, isFavorite }, query)
+        const groupAnimeListCount = await GroupAnimeListService.getCount(groupId, { statuses, ratings, isFavorite })
 
-        return res.status(RequestStatuses.OK).json(filteredGroupAnimeList);
+        return res.status(RequestStatuses.OK).json({ count: groupAnimeListCount, body: groupAnimeList });
     }
 
     public static async add(req: AddGroupAnimeListReq, res: Response) {
