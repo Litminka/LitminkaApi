@@ -14,7 +14,7 @@ export interface AnimeFilterBody {
     seasons?: string[], 
     period?: Date[], 
     withCensored: boolean,
-    banInRussia?: boolean, //WIP
+    banInRussia?: boolean,
 }
 
 export interface AnimeFilterQuery {
@@ -80,6 +80,7 @@ export default class AnimeSearchService {
     }
 
     private static generateFilters(filters: AnimeFilterBody) {
+        console.log(filters);
         const andFilter = {
             AND: [
                 this.byInGenre(filters.includeGenres),
@@ -91,6 +92,7 @@ export default class AnimeSearchService {
                 this.byName(filters.name),
                 this.bySeasons(filters.seasons),
                 this.isCensored(filters.withCensored),
+                this.byBan(filters.banInRussia),
             ].flat().filter(filter => filter),
         }
 
@@ -103,6 +105,10 @@ export default class AnimeSearchService {
             })
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
         return filter();
+    }
+
+    private static byBan(arg?: boolean) {
+        return (!arg) ? { banned: arg } : undefined;
     }
 
     public static async getFilteredCount(filters: AnimeFilterBody) {

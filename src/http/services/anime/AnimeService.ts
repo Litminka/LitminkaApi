@@ -32,27 +32,30 @@ export default class AnimeService {
         return await prisma.anime.findMany(query)
     }
 
-    public static async getSeasonal(censor: boolean) {
+    public static async getSeasonal(censor: boolean, showBanned: boolean) {
         return AnimeSearchService.filterShortSelector({
             withCensored: censor,
             seasons: [getCurrentSeason()],
+            banInRussia: showBanned,
             rpaRatings: !censor ? [AnimePgaRatings.None, AnimePgaRatings.G, AnimePgaRatings.PG, AnimePgaRatings.PG_13] : undefined
         }, { page: 1, pageLimit: 30 });
     }
 
-    public static async getPopularSeasonal(censor: boolean) {
+    public static async getPopularSeasonal(censor: boolean, showBanned: boolean) {
         return  AnimeSearchService.filterShortSelector({
             withCensored: censor,
             seasons: [getCurrentSeason()],
+            banInRussia: showBanned,
             rpaRatings: !censor ? [AnimePgaRatings.None, AnimePgaRatings.G, AnimePgaRatings.PG, AnimePgaRatings.PG_13] : undefined
         }, { page: 1, pageLimit: 5 }, { rating: "desc" });
     }
 
-    public static async getNextSeasonAnnounced(censor: boolean) {
+    public static async getNextSeasonAnnounced(censor: boolean, showBanned: boolean) {
         return AnimeSearchService.filterShortSelector({
             withCensored: censor,
             seasons: [getNextSeason(new Date())],
             statuses: ["announced"],
+            banInRussia: showBanned,
             rpaRatings: !censor ? [AnimePgaRatings.None, AnimePgaRatings.G, AnimePgaRatings.PG, AnimePgaRatings.PG_13] : undefined
         }, { page: 1, pageLimit: 30 });
     }

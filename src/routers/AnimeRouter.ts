@@ -4,7 +4,7 @@ import AnimeController from '@controllers/anime/AnimeController';
 import GetTopAnimeRequest from '@requests/anime/GetTopAnimeRequest';
 import { GetAnimeRequest } from '@requests/anime/GetAnimeRequest';
 import { GetSingleAnimeRequest } from '@requests/anime/GetSingleAnimeRequest';
-import FrontPageAnimeRequest from '@/http/requests/FrontPageAnimeRequest';
+import FrontPageAnimeRequest from '@/http/requests/anime/FrontPageAnimeRequest';
 const router = Router();
 
 router.get("", new GetAnimeRequest().send(), wrap(AnimeController.getAnime));

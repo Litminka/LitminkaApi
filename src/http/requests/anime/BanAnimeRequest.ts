@@ -11,7 +11,7 @@ export interface BanAnimeReq extends WithPermissionsRequest {
 
 export class BanAnimeRequest extends WithPermissionsRequest {
 
-    protected permissions: string[] = [Permissions.ManageAnime];
+    protected permissions: Permissions[] = [Permissions.ManageAnime];
 
     /**
      * Define validation rules for this request

@@ -1,4 +1,3 @@
-import Request from "@requests/Request";
 import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
 import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { queryIntValidator } from "@validators/QueryBaseValidator";
@@ -6,11 +5,11 @@ import { searchMsg } from "@/ts/messages"
 import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
 import { Request as ExpressRequest } from "express";
-import { OptionalReq, OptionalRequest } from "@requests/OptionalRequest";
 import { isSeason } from "@/helper/animeseason";
+import FrontPageAnimeRequest, { FrontPageAnimeReq } from "./FrontPageAnimeRequest";
 
 type queryType = ExpressRequest<{}, {}, {}, {}> // workaround on query
-export interface GetAnimeReq extends queryType, OptionalReq {
+export interface GetAnimeReq extends queryType, FrontPageAnimeReq {
     body: {
         name?: string,
         seasons?: string[],
@@ -21,6 +20,7 @@ export interface GetAnimeReq extends queryType, OptionalReq {
         excludeGenres?: number[],
         period?: Date[],
         withCensored: boolean,
+        banInRussia: boolean,
     },
     query: {
         page?: number,
@@ -28,7 +28,7 @@ export interface GetAnimeReq extends queryType, OptionalReq {
     }
 }
 
-export class GetAnimeRequest extends OptionalRequest {
+export class GetAnimeRequest extends FrontPageAnimeRequest {
 
     /**
      * Define validation rules for this request
