@@ -4,7 +4,7 @@ import { paramIntValidator } from "@validators/ParamBaseValidator";
 import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { WatchListStatuses } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
-import { IntegrationSettingsReq, IntegrationSettingsRequest } from "../IntegrationSettingsRequest";
+import { IntegrationSettingsReq, IntegrationSettingsRequest } from "@requests/IntegrationSettingsRequest";
 
 export interface EditWatchListReq extends IntegrationSettingsReq {
     params: {

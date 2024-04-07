@@ -5,7 +5,7 @@ import ForbiddenError from "@errors/clienterrors/ForbiddenError";
 import { WithPermissionsReq } from "@requests/WithPermissionsRequest";
 import { LoginUserReq } from "@requests/user/LoginUserRequest";
 import { RegisterUserReq } from "@requests/user/RegisterUserRequest";
-import { UpdateSettingsReq } from "../requests/UpdateSettingsRequest";
+import { UpdateSettingsReq } from "@requests/user/UpdateSettingsRequest";
 
 export default class UserController {
     static async createUser(req: RegisterUserReq, res: Response): Promise<Object> {
@@ -47,7 +47,7 @@ export default class UserController {
     static async updateSettings(req: UpdateSettingsReq, res: Response) {
         const user = req.auth.user;
         const data = req.body;
-        
+
         const settings = await UserService.updateSettings(user, data);
 
         return res.status(RequestStatuses.OK).json({

@@ -4,7 +4,7 @@ import { wrap } from '@/middleware/errorHandler';
 import { RegisterUserRequest } from '@requests/user/RegisterUserRequest';
 import { LoginUserRequest } from '@requests/user/LoginUserRequest';
 import { WithPermissionsRequest } from '@requests/WithPermissionsRequest';
-import { UpdateSettingsRequest } from '@/http/requests/UpdateSettingsRequest';
+import { UpdateSettingsRequest } from '@/http/requests/user/UpdateSettingsRequest';
 const router = Router();
 
 // Public methods

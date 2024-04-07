@@ -6,7 +6,7 @@ import { optionalAuth } from "@/middleware/optionalAuth";
 import { RequestWithAuth } from "@/ts";
 import { checkExact, ValidationChain } from "express-validator";
 import { validatorData } from "@/middleware/validatorData";
-import { WithPermissionsReq } from "./WithPermissionsRequest";
+import { WithPermissionsReq } from "@requests/WithPermissionsRequest";
 
 export default class Request {
     protected authType: RequestAuthTypes;

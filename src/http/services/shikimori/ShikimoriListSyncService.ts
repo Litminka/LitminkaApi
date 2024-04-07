@@ -44,7 +44,7 @@ export default class ShikimoriListSyncService {
 
     public static createAddUpdateJob(user: UserWithIntegrationSettings, list: shikimoriList) {
 
-        if (!user || !user.integration || !user.integration.shikimoriCanChangeList || !user.settings || !user.settings?.shikimoriImportList) return;
+        if (!user || !user.integration || !user.integration.shikimoriCanChangeList || !user.settings || !user.settings?.shikimoriExportList) return;
 
         shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, list, type: "add-update" }, {
             removeOnComplete: 10,
@@ -53,7 +53,7 @@ export default class ShikimoriListSyncService {
     }
     public static createDeleteJob(user: UserWithIntegrationSettings, id: number) {
 
-        if (!user || !user.integration || !user.integration.shikimoriCanChangeList || !user.settings || !user.settings?.shikimoriImportList) return;
+        if (!user || !user.integration || !user.integration.shikimoriCanChangeList || !user.settings || !user.settings?.shikimoriExportList) return;
 
         shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, shikimoriId: id, type: "delete" }, {
             removeOnComplete: 10,

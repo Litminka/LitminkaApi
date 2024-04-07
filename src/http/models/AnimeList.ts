@@ -95,7 +95,15 @@ const extention = Prisma.defineExtension({
                 await prisma.animeList.deleteMany({
                     where: { userId, animeId },
                 });
-
+            },
+            async getListLengthByUserId(userId: number) {
+                const list = await prisma.animeList.aggregate({
+                    where: { userId },
+                    _count: {
+                        id: true
+                    }
+                })
+                return list._count;
             }
         }
     }
