@@ -1,6 +1,6 @@
 import { ValidationChain } from "express-validator";
-import { bodyBoolValidator } from "@/validators/BodyBaseValidator";
-import { OptionalReq, OptionalRequest } from "../OptionalRequest";
+import { bodyBoolValidator } from "@validators/BodyBaseValidator";
+import { OptionalReq, OptionalRequest } from "@requests/OptionalRequest";
 import prisma from "@/db";
 import { Permission, Role, User } from "@prisma/client";
 

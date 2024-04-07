@@ -6,7 +6,7 @@ import { GetSingleAnimeReq } from "@requests/anime/GetSingleAnimeRequest";
 import { GetAnimeReq } from "@requests/anime/GetAnimeRequest";
 import { BanAnimeReq } from "@requests/anime/BanAnimeRequest";
 import { GetTopAnimeReq } from "@requests/anime/GetTopAnimeRequest";
-import { FrontPageAnimeReq } from "@/http/requests/anime/FrontPageAnimeRequest";
+import { FrontPageAnimeReq } from "@requests/anime/FrontPageAnimeRequest";
 import hasPermissions from "@/helper/hasPermission";
 
 export default class AnimeController {

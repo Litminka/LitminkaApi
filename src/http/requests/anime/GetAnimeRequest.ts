@@ -1,12 +1,12 @@
 import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
 import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { queryIntValidator } from "@validators/QueryBaseValidator";
-import { searchMsg } from "@/ts/messages"
+import { baseMsg, searchMsg } from "@/ts/messages"
 import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
 import { Request as ExpressRequest } from "express";
 import { isSeason } from "@/helper/animeseason";
-import FrontPageAnimeRequest, { FrontPageAnimeReq } from "./FrontPageAnimeRequest";
+import FrontPageAnimeRequest, { FrontPageAnimeReq } from "@requests/anime/FrontPageAnimeRequest";
 
 type queryType = ExpressRequest<{}, {}, {}, {}> // workaround on query
 export interface GetAnimeReq extends queryType, FrontPageAnimeReq {
@@ -36,16 +36,20 @@ export class GetAnimeRequest extends FrontPageAnimeRequest {
     protected rules(): ValidationChain[] {
         return [
             bodyStringValidator("name").optional(),
+
             bodyArrayValidator("seasons", {
                 typeParams: { max: 2 },
             }).optional(),
             bodyStringValidator("seasons.*").custom((value) => {
-                return isSeason(value);
-            }).withMessage(searchMsg.unknownType),
+                if (!isSeason(value)) throw new Error(baseMsg.valueNotInRange)
+                return true;
+            }),
+
             bodyArrayValidator("statuses", {
                 typeParams: { max: 3 },
             }).optional(),
             bodyStringValidator("statuses.*").isIn(Object.values(AnimeStatuses)).withMessage(searchMsg.unknownType),
+
             bodyArrayValidator("rpaRatings", {
                 typeParams: { max: 6 },
             }).optional(),
@@ -55,6 +59,7 @@ export class GetAnimeRequest extends FrontPageAnimeRequest {
                 typeParams: { max: 6 },
             }).optional(),
             bodyStringValidator("mediaTypes.*").isIn(Object.values(AnimeMediaTypes)).withMessage(searchMsg.unknownType),
+
             bodyArrayValidator("includeGenres").optional(),
             bodyIntValidator("includeGenres.*"),
 
