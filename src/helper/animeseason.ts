@@ -1,3 +1,4 @@
+import UnprocessableContentError from "@/errors/clienterrors/UnprocessableContentError";
 import dayjs from "dayjs";
 const seasons = [
     "winter",
@@ -5,6 +6,10 @@ const seasons = [
     "summer",
     "fall"
 ];
+function getSeasonIndex(season: string) {
+    return seasons.indexOf(season);
+}
+
 export function getSeason(date: Date) {
 
     const d = dayjs(date);
@@ -106,4 +111,71 @@ export function getSeasonNameByDate(date: Date) {
     const year = d.year();
     const season = getSeason(date);
     return `${season}_${year}`;
+}
+
+export function getSeasonPeriod(seasons?: string[]) {
+    if (!seasons) return [];
+    if (seasons.length < 2) return seasons;
+
+    const [start, finish] = seasons;
+
+    const [startSeason, startYear] = start.split("_");
+    const [finishSeason, finishYear] = finish.split("_");
+
+    if (startYear > finishYear) throw new UnprocessableContentError("start_cant_be_larger");
+
+    const finalList: string[] = [];
+
+    let current = seasons[0];
+
+    while (current !== seasons[1]) {
+        finalList.push(current);
+        let [currentSeason, year] = current.split("_");
+        let nextSeason = getNextSeasonName(currentSeason);
+        if (typeof nextSeason === "undefined") nextSeason = "winter";
+        if (nextSeason === "winter") {
+            year = (Number(year) + 1).toString();
+        }
+        current = `${nextSeason}_${year}`;
+    }
+
+    finalList.push(seasons[1]);
+
+    return finalList;
+}
+
+export function isSeason(season?: string) {
+    if (!season) return false;
+
+    if (!season.includes("_")) return false;
+
+    const splt = season.split("_");
+
+    const index = getSeasonIndex(splt[0]);
+    if (index < 0) return false;
+
+    if (isNaN(Number(splt[1]))) return false;
+
+    const year = Number(splt[1]);
+    if (year < 1970 || year > dayjs().year()) return false;
+
+    return true;
+}
+
+export function getCurrentSeason() {
+    const season = getSeason(new Date());
+    const year = new Date().getFullYear();
+    return `${season}_${year}`;
+}
+
+export function getNextSeason(date: Date) {
+    const season = getNextSeasonDate(date);
+    const name = seasons[season.nextIndex];
+    return `${name}_${season.d.year()}`;
+}
+
+export function getPreviousSeason(date: Date) {
+    const season = getPreviousSeasonDate(date);
+    const name = seasons[season.prevIndex];
+    return `${name}_${season.d.year()}`;
 }

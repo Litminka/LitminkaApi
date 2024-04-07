@@ -8,6 +8,7 @@ import { ShikimoriAnime, ShikimoriAnimeFull } from "@/ts";
 import { ShikimoriGraphAnime } from "@/ts/shikimori";
 import dayjs from "dayjs";
 import { getSeasonNameByDate } from "@/helper/animeseason";
+import { AnimeStatuses } from "@/ts/enums";
 
 const extention = Prisma.defineExtension({
     name: "AnimeModel",
@@ -189,6 +190,8 @@ const extention = Prisma.defineExtension({
                     isCensored = true;
                 }
 
+                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
+
                 let season = shikimori.season === "?" ? null : shikimori.season;
                 if ((season === null) && shikimori.airedOn.date !== null) {
                     const date = dayjs(shikimori.airedOn.date);
@@ -241,6 +244,8 @@ const extention = Prisma.defineExtension({
                     const date = dayjs(shikimori.airedOn.date);
                     if (date.startOf('year') !== date) season = getSeasonNameByDate(date.toDate());
                 }
+
+                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
 
                 return await prisma.anime.create({
                     data: {

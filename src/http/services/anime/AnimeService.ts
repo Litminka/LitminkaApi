@@ -4,6 +4,9 @@ import ShikimoriApiService from "@services/shikimori/ShikimoriApiService";
 import prisma from "@/db";
 import { UserWithIntegration } from "@/ts";
 import { Prisma } from "@prisma/client";
+import AnimeSearchService from "./AnimeSearchService";
+import { AnimePgaRatings, AnimeStatuses } from "@/ts/enums";
+import { getCurrentSeason, getNextSeason, getSeason } from "@/helper/animeseason";
 
 export default class AnimeService {
     public static async getSingleAnime(animeId: number, user?: UserWithIntegration) {
@@ -27,6 +30,31 @@ export default class AnimeService {
         query.orderBy = { rating: 'desc' }
         if (shikimori) { query.orderBy = { shikimoriRating: 'desc' } }
         return await prisma.anime.findMany(query)
+    }
+
+    public static async getSeasonal(censor: boolean) {
+        return AnimeSearchService.filterShortSelector({
+            withCensored: censor,
+            seasons: [getCurrentSeason()],
+            rpaRatings: !censor ? [AnimePgaRatings.None, AnimePgaRatings.G, AnimePgaRatings.PG, AnimePgaRatings.PG_13] : undefined
+        }, { page: 1, pageLimit: 30 });
+    }
+
+    public static async getPopularSeasonal(censor: boolean) {
+        return  AnimeSearchService.filterShortSelector({
+            withCensored: censor,
+            seasons: [getCurrentSeason()],
+            rpaRatings: !censor ? [AnimePgaRatings.None, AnimePgaRatings.G, AnimePgaRatings.PG, AnimePgaRatings.PG_13] : undefined
+        }, { page: 1, pageLimit: 5 }, { rating: "desc" });
+    }
+
+    public static async getNextSeasonAnnounced(censor: boolean) {
+        return AnimeSearchService.filterShortSelector({
+            withCensored: censor,
+            seasons: [getNextSeason(new Date())],
+            statuses: ["announced"],
+            rpaRatings: !censor ? [AnimePgaRatings.None, AnimePgaRatings.G, AnimePgaRatings.PG, AnimePgaRatings.PG_13] : undefined
+        }, { page: 1, pageLimit: 30 });
     }
 
     public static async banAnime(animeId: number) {

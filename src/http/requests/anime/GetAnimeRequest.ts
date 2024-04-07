@@ -3,23 +3,24 @@ import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
 import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { queryIntValidator } from "@validators/QueryBaseValidator";
 import { searchMsg } from "@/ts/messages"
-import { AnimeStatuses, AnimeSeasons, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
+import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
 import { Request as ExpressRequest } from "express";
 import { OptionalReq, OptionalRequest } from "@requests/OptionalRequest";
+import { isSeason } from "@/helper/animeseason";
 
 type queryType = ExpressRequest<{}, {}, {}, {}> // workaround on query
 export interface GetAnimeReq extends queryType, OptionalReq {
     body: {
         name?: string,
-        seasons?: AnimeSeasons[],
+        seasons?: string[],
         statuses?: AnimeStatuses[],
         rpaRatings?: AnimePgaRatings[],
         mediaTypes?: AnimeMediaTypes[],
         includeGenres?: number[],
         excludeGenres?: number[],
         period?: Date[],
-        isCensored: boolean,
+        withCensored: boolean,
     },
     query: {
         page?: number,
@@ -36,9 +37,11 @@ export class GetAnimeRequest extends OptionalRequest {
         return [
             bodyStringValidator("name").optional(),
             bodyArrayValidator("seasons", {
-                typeParams: { max: 4 },
+                typeParams: { max: 2 },
             }).optional(),
-            bodyStringValidator("seasons.*").isIn(Object.values(AnimeSeasons)).withMessage(searchMsg.unknownType),
+            bodyStringValidator("seasons.*").custom((value) => {
+                return isSeason(value);
+            }).withMessage(searchMsg.unknownType),
             bodyArrayValidator("statuses", {
                 typeParams: { max: 3 },
             }).optional(),
@@ -60,7 +63,7 @@ export class GetAnimeRequest extends OptionalRequest {
 
             ...bodySoftPeriodValidator("period"),
 
-            bodyBoolValidator('isCensored', { defValue: true }),
+            bodyBoolValidator('withCensored', { defValue: false }),
 
             queryIntValidator("page", {
                 defValue: 1,

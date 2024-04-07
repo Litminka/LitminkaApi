@@ -32,7 +32,7 @@ export default class AutoCheckService {
 
         if (haveFollow && follow.status === FollowTypes.Announcement) {
             const changedStatus = anime.status !== status;
-            if (changedStatus && anime.status === AnimeStatuses.Announced && status === "ongoing") {
+            if (changedStatus && anime.status === AnimeStatuses.Announced && status === AnimeStatuses.Ongoing) {
                 // if status changed to ongoing
                 NotificationService.notifyRelease(anime.id);
                 // notify all followers about it

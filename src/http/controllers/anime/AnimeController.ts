@@ -6,7 +6,7 @@ import { GetSingleAnimeReq } from "@requests/anime/GetSingleAnimeRequest";
 import { GetAnimeReq } from "@requests/anime/GetAnimeRequest";
 import { BanAnimeReq } from "@requests/anime/BanAnimeRequest";
 import { GetTopAnimeReq } from "@requests/anime/GetTopAnimeRequest";
-
+import { FrontPageAnimeReq } from "@/http/requests/FrontPageAnimeRequest";
 
 export default class AnimeController {
     public static async getSingleAnime(req: GetSingleAnimeReq, res: Response) {
@@ -23,10 +23,10 @@ export default class AnimeController {
     public static async getAnime(req: GetAnimeReq, res: Response) {
         const query = req.query;
         const body = req.body;
-
+        const count = await AnimeSearchService.getFilteredCount(body);
         const anime = await AnimeSearchService.filterSelector(body, query)
-
         return res.status(RequestStatuses.OK).json({
+            count: count.id,
             body: anime
         });
     }
@@ -57,5 +57,29 @@ export default class AnimeController {
         return res.status(RequestStatuses.OK).json({
             message: "anime_unbanned"
         })
+    }
+
+    public static async getSeasonal(req: FrontPageAnimeReq, res: Response) {
+        const withCensored = req.body.withCensored;
+
+        const anime = await AnimeService.getSeasonal(withCensored);
+
+        return res.status(RequestStatuses.OK).json({ data: anime });
+    }
+
+    public static async getPopularSeasonal(req: FrontPageAnimeReq, res: Response) {
+        const withCensored = req.body.withCensored;
+
+        const anime = await AnimeService.getPopularSeasonal(withCensored);
+
+        return res.status(RequestStatuses.OK).json({ data: anime });
+    }
+
+    public static async getNextSeasonAnnounced(req: FrontPageAnimeReq, res: Response) {
+        const withCensored = req.body.withCensored;
+
+        const anime = await AnimeService.getNextSeasonAnnounced(withCensored);
+
+        return res.status(RequestStatuses.OK).json({ data: anime });
     }
 }

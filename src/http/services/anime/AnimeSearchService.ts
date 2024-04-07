@@ -2,17 +2,18 @@ import { Prisma } from "@prisma/client";
 import prisma from "@/db";
 import Period from "@/helper/period";
 import dayjs from "dayjs";
+import { getSeasonPeriod } from "@/helper/animeseason";
 
 export interface AnimeFilterBody {
-    name?: string, // Complete
-    includeGenres?: number[], // Complete
-    excludeGenres?: number[], // Complete
-    statuses?: string[], // Complete
-    rpaRatings?: string[], // Complete
-    mediaTypes?: string[], // Complete
-    seasons?: string[], // WIP
-    period?: Date[], // Complete
-    isCensored: boolean,
+    name?: string, 
+    includeGenres?: number[], 
+    excludeGenres?: number[], 
+    statuses?: string[],
+    rpaRatings?: string[],
+    mediaTypes?: string[], 
+    seasons?: string[], 
+    period?: Date[], 
+    withCensored: boolean,
     banInRussia?: boolean, //WIP
 }
 
@@ -21,7 +22,7 @@ export interface AnimeFilterQuery {
     pageLimit?: number
 }
 
-export default class AnimeSearchFilter {
+export default class AnimeSearchService {
 
     private static byInGenre(arg?: number[]) {
         const filter = arg?.map(genre => { return { genres: { some: { id: genre } } } })
@@ -44,6 +45,11 @@ export default class AnimeSearchFilter {
         return (arg !== undefined) ? [{ status: { in: arg } }] : []
     }
 
+    private static bySeasons(arg?: string[]) {
+        if (arg === undefined) return [];
+        return (arg !== undefined) ? [{ season: { in: getSeasonPeriod(arg) } }] : []
+    }
+
     private static byName(arg?: string) {
         return (arg !== undefined) ? {
             OR: [
@@ -54,9 +60,14 @@ export default class AnimeSearchFilter {
         } : []
     }
 
+    private static isCensored(arg: boolean) {
+        return (!arg) ? { censored: arg } : undefined;
+    }
+
     private static byPeriod(arg?: Date[]) {
+        if (arg === undefined || arg.length < 1) return [];
         const period = ((arg?: Date[] | string[]) => {
-            if (arg === undefined || arg[0] === undefined)
+            if (arg![0] === undefined)
                 return Period.getPeriod([dayjs("1970-01-01").toDate(), dayjs().toDate()])
             return Period.getPeriod(arg)
         })(arg)
@@ -68,32 +79,48 @@ export default class AnimeSearchFilter {
         }
     }
 
-    public static async filterSelector(filterIn: AnimeFilterBody, query: AnimeFilterQuery) {
-        const filters = {
+    private static generateFilters(filters: AnimeFilterBody) {
+        const andFilter = {
             AND: [
-                this.byInGenre(filterIn.includeGenres),
-                this.byExGenre(filterIn.excludeGenres),
-                this.byMediaType(filterIn.mediaTypes),
-                this.byRpaRating(filterIn.rpaRatings),
-                this.byStatus(filterIn.statuses),
-                this.byPeriod(filterIn.period),
-                this.byName(filterIn.name),
-                { censored: filterIn.isCensored },
+                this.byInGenre(filters.includeGenres),
+                this.byExGenre(filters.excludeGenres),
+                this.byMediaType(filters.mediaTypes),
+                this.byRpaRating(filters.rpaRatings),
+                this.byStatus(filters.statuses),
+                this.byPeriod(filters.period),
+                this.byName(filters.name),
+                this.bySeasons(filters.seasons),
+                this.isCensored(filters.withCensored),
             ].flat().filter(filter => filter),
         }
 
         const { filter } = {
             filter: () => ({
-                AND: filters.AND.flatMap(filter => {
+                AND: andFilter.AND.flatMap(filter => {
                     if (filter === undefined) return []
                     return filter
                 }),
             })
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
-        return prisma.anime.findMany({
+        return filter();
+    }
+
+    public static async getFilteredCount(filters: AnimeFilterBody) {
+        const anime = await prisma.anime.aggregate({
+            where: this.generateFilters(filters),
+            _count: {
+                id: true
+            }
+        });
+        return anime._count;
+    }
+
+    public static async filterSelector(filters: AnimeFilterBody, query: AnimeFilterQuery) {
+
+        return await prisma.anime.findMany({
             take: Number(query.pageLimit),
             skip: (Number(query.page) - 1) * Number(query.pageLimit),
-            where: filter(),
+            where: this.generateFilters(filters),
             select: {
                 firstEpisodeAired: true,
                 lastEpisodeAired: true,
@@ -103,10 +130,32 @@ export default class AnimeSearchFilter {
                 slug: true,
                 genres: true,
                 shikimoriRating: true,
+                rating: true,
+                shikimoriId: true,
                 rpaRating: true,
                 image: true,
-                mediaType: true
-            }
+                mediaType: true,
+                description: true,
+            },
+        });
+    }
+
+    public static async filterShortSelector(filters: AnimeFilterBody, query: AnimeFilterQuery, order?: Prisma.AnimeFindManyArgs['orderBy']) {
+        return await prisma.anime.findMany({
+            take: Number(query.pageLimit),
+            skip: (Number(query.page) - 1) * Number(query.pageLimit),
+            where: this.generateFilters(filters),
+            select: {
+                id: true,
+                slug: true,
+                image: true,
+                name: true,
+                status: true,
+                rpaRating: true,
+                shikimoriId: true,
+                rating: true,
+                mediaType: true,
+            },
         })
     }
 }

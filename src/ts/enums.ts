@@ -4,19 +4,14 @@ export enum FollowTypes {
 }
 
 export enum AnimeStatuses {
-    Announced = "anons",
+    Announced = "announced",
     Released = "released",
     Ongoing = "ongoing"
 }
 
-export enum AnimeSeasons {
-    Winter = "winter",
-    Spring = "spring",
-    Summer = "summer",
-    Fall = "fall"
-}
 
 export enum AnimePgaRatings {
+    None = "none",
     G = "g",
     PG = "pg",
     PG_13 = "pg_13",
