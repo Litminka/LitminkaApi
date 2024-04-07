@@ -5,14 +5,14 @@ import dayjs from "dayjs";
 import { getSeasonPeriod } from "@/helper/animeseason";
 
 export interface AnimeFilterBody {
-    name?: string, 
-    includeGenres?: number[], 
-    excludeGenres?: number[], 
+    name?: string,
+    includeGenres?: number[],
+    excludeGenres?: number[],
     statuses?: string[],
     rpaRatings?: string[],
-    mediaTypes?: string[], 
-    seasons?: string[], 
-    period?: Date[], 
+    mediaTypes?: string[],
+    seasons?: string[],
+    period?: Date[],
     withCensored: boolean,
     banInRussia?: boolean,
 }
@@ -79,6 +79,10 @@ export default class AnimeSearchService {
         }
     }
 
+    private static byBan(arg?: boolean) {
+        return (!arg) ? { banned: arg } : undefined;
+    }
+
     private static generateFilters(filters: AnimeFilterBody) {
         console.log(filters);
         const andFilter = {
@@ -107,10 +111,6 @@ export default class AnimeSearchService {
         return filter();
     }
 
-    private static byBan(arg?: boolean) {
-        return (!arg) ? { banned: arg } : undefined;
-    }
-
     public static async getFilteredCount(filters: AnimeFilterBody) {
         const anime = await prisma.anime.aggregate({
             where: this.generateFilters(filters),
@@ -122,7 +122,6 @@ export default class AnimeSearchService {
     }
 
     public static async filterSelector(filters: AnimeFilterBody, query: AnimeFilterQuery) {
-
         return await prisma.anime.findMany({
             take: Number(query.pageLimit),
             skip: (Number(query.page) - 1) * Number(query.pageLimit),
