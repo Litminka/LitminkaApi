@@ -11,23 +11,40 @@ datasource db {
 }
 
 model User {
-  id                     Int                      @id @default(autoincrement())
-  createdAt              DateTime                 @default(now())
-  email                  String                   @unique
-  login                  String                   @unique
-  password               String
-  name                   String?
-  roleId                 Int
-  role                   Role                     @relation(fields: [roleId], references: [id])
-  integration            Integration?
-  shikimoriLink          ShikimoriLinkToken?
-  sessionTokens          SessionToken[]
-  animeList              AnimeList[]
-  follows                Follow[]
-  UserAnimeNotifications UserAnimeNotifications[]
-  ownedGroups            GroupList[]
-  groupMember            GroupListMembers[]
-  groupInvites           GroupListInvites[]
+  id                 Int                      @id @default(autoincrement())
+  createdAt          DateTime                 @default(now())
+  email              String                   @unique
+  login              String                   @unique
+  password           String
+  name               String?
+  roleId             Int
+  role               Role                     @relation(fields: [roleId], references: [id])
+  integration        Integration?
+  shikimoriLink      ShikimoriLinkToken?
+  sessionTokens      SessionToken[]
+  animeList          AnimeList[]
+  follows            Follow[]
+  settings           UserSettings?
+  animeNotifications UserAnimeNotifications[]
+  ownedGroups        GroupList[]
+  groupMember        GroupListMembers[]
+  groupInvites       GroupListInvites[]
+}
+
+model UserSettings {
+  id                        Int     @id @default(autoincrement())
+  watchListMode             String  @default("auto")
+  watchListAddAfterEpisodes Int     @default(3)
+  watchListAskAboutRating   Boolean @default(true)
+  showCensoredContent       Boolean @default(false)
+  shikimoriImportList       Boolean @default(false)
+  notifyDiscord             Boolean @default(false)
+  notifyPush                Boolean @default(false)
+  notifyTelegram            Boolean @default(false)
+  notifyVK                  Boolean @default(false)
+  siteTheme                 String  @default("light")
+  userId                    Int     @unique
+  user                      User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model Role {

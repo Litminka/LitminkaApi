@@ -107,6 +107,7 @@ function generateGenericFile(command, fileName, options) {
 }
 
 function generateRequest(command, fileName, options) {
+    let basePath = `${src}/http`
     let stubPath = `./stubs/${command}.stub`;
     fileName = fileName.replaceAll(capitalize(command), "");
     if (typeof options !== "undefined") {
@@ -124,7 +125,7 @@ function generateRequest(command, fileName, options) {
     const fileReq = fileName.replace("Request", "") + "Req";
     file = file.replace(`StubReq`, fileReq);
     file = file.replaceAll("Stub", fileName);
-    const savePath = `${src}/${command}s/${fileName}${capitalize(command)}.ts`;
+    const savePath = `${basePath}/${command}s/${fileName}${capitalize(command)}.ts`;
     if (fs.existsSync(savePath)) return console.error(`File ${savePath} already exists!`);
     console.log(`File: ${savePath} created!`)
     fs.writeFileSync(savePath, file);

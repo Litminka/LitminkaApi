@@ -24,7 +24,8 @@ const extention = Prisma.defineExtension({
                                 }
                             }
                         },
-                        integration: { create: {} }
+                        integration: { create: {} },
+                        settings: { create: {} }
                     }
                 });
             },
@@ -50,6 +51,14 @@ const extention = Prisma.defineExtension({
                     include: {
                         integration: true,
                         shikimoriLink: true
+                    }
+                });
+            },
+            async findWithSettings(id: number) {
+                return prisma.user.findFirstOrThrow({
+                    where: { id },
+                    include: {
+                        settings: true
                     }
                 });
             },
