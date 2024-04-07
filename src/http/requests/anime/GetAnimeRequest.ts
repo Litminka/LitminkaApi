@@ -22,8 +22,8 @@ export interface GetAnimeReq extends queryType, OptionalReq {
         isCensored: boolean,
     },
     query: {
-        page?: number,
-        pageLimit?: number,
+        page: number,
+        pageLimit: number,
     }
 }
 
