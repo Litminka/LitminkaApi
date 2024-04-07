@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "@/db";
 import Period from "@/helper/period";
 import dayjs from "dayjs";
+import { PaginationQuery } from "@/ts";
 import { getSeasonPeriod } from "@/helper/animeseason";
 
 export interface AnimeFilterBody {
@@ -17,13 +18,7 @@ export interface AnimeFilterBody {
     banInRussia?: boolean,
 }
 
-export interface AnimeFilterQuery {
-    page?: number,
-    pageLimit?: number
-}
-
 export default class AnimeSearchService {
-
     private static byInGenre(arg?: number[]) {
         const filter = arg?.map(genre => { return { genres: { some: { id: genre } } } })
         return (filter !== undefined) ? filter : []
@@ -118,13 +113,13 @@ export default class AnimeSearchService {
                 id: true
             }
         });
-        return anime._count;
+        return anime._count.id;
     }
 
-    public static async filterSelector(filters: AnimeFilterBody, query: AnimeFilterQuery) {
+    public static async filterSelector(filters: AnimeFilterBody, query: PaginationQuery) {
         return await prisma.anime.findMany({
-            take: Number(query.pageLimit),
-            skip: (Number(query.page) - 1) * Number(query.pageLimit),
+            take: query.pageLimit,
+            skip: (query.page - 1) * query.pageLimit,
             where: this.generateFilters(filters),
             select: {
                 firstEpisodeAired: true,
@@ -145,10 +140,10 @@ export default class AnimeSearchService {
         });
     }
 
-    public static async filterShortSelector(filters: AnimeFilterBody, query: AnimeFilterQuery, order?: Prisma.AnimeFindManyArgs['orderBy']) {
+    public static async filterShortSelector(filters: AnimeFilterBody, query: PaginationQuery, order?: Prisma.AnimeFindManyArgs['orderBy']) {
         return await prisma.anime.findMany({
-            take: Number(query.pageLimit),
-            skip: (Number(query.page) - 1) * Number(query.pageLimit),
+            take: query.pageLimit,
+            skip: (query.page - 1) * query.pageLimit,
             where: this.generateFilters(filters),
             select: {
                 id: true,
@@ -161,6 +156,7 @@ export default class AnimeSearchService {
                 rating: true,
                 mediaType: true,
             },
+            orderBy: order
         })
     }
 }

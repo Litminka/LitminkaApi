@@ -5,7 +5,7 @@ import WatchListService from "@services/WatchListService";
 const worker = new Worker("importWatchList", async (job: Job) => {
     const started = Date.now();
     try {
-        await WatchListService.importListV2(job.data.id);
+        await WatchListService.import(job.data.id);
     } catch (error) {
         logger.error("ImportList has failed! Error" + error);
         throw (error);

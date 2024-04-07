@@ -23,8 +23,8 @@ export interface GetAnimeReq extends queryType, FrontPageAnimeReq {
         banInRussia: boolean,
     },
     query: {
-        page?: number,
-        pageLimit?: number,
+        page: number,
+        pageLimit: number,
     }
 }
 

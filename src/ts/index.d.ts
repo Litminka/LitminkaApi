@@ -1,6 +1,6 @@
 import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, SessionToken, User, UserSettings } from "@prisma/client";
 import { Request } from "express";
-import { FollowTypes, NotifyStatuses, RequestStatuses } from "@/ts/enums";
+import { FollowTypes, NotifyStatuses } from "@/ts/enums";
 import { ValidationError, Location } from "express-validator";
 import { ErrorMessage } from "express-validator/src/base";
 
@@ -121,13 +121,11 @@ export interface ShikimoriWhoAmI {
     full_years: number | null;
     locale: string;
 }
-
 export interface ListFilters {
+    isFavorite?: boolean,
     statuses?: watchListStatus[],
     ratings?: number[],
-    isFavorite?: boolean
 }
-
 export type watchListStatus =
     | "planned"
     | "watching"
@@ -171,6 +169,11 @@ export interface ShikimoriWatchList {
     text_html: string;
     created_at: string;
     updated_at: string;
+}
+
+export interface PaginationQuery {
+    page: number,
+    pageLimit: number
 }
 
 export interface ShikimoriAnime {
@@ -278,12 +281,14 @@ interface screenshot {
     original: string;
     preview: string;
 }
+
 interface genre {
     id: number;
     name: string;
     russian: string;
     kind: "anime";
 }
+
 interface video {
     url: string;
     id: number;
@@ -293,6 +298,7 @@ interface video {
     kind: string;
     hosting: string;
 }
+
 interface studio {
     id: number;
     name: string;
@@ -312,15 +318,6 @@ export interface AddWithAnime extends AddToList {
     animeId: number
 }
 
-export interface Follow {
-    groupName: string;
-    type: FollowTypes.Follow | FollowTypes.Announcement
-}
-
-export interface DeleteFollow {
-    groupName?: string
-}
-
 export interface options {
     method: string;
     body?: any;
@@ -330,6 +327,7 @@ export type info = {
     translation?: AnimeTranslation,
     userId: number
 }
+
 export type followType = {
     anime: {
         shikimoriId: number;

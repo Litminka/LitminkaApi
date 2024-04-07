@@ -30,7 +30,7 @@ export default class AnimeController {
         const count = await AnimeSearchService.getFilteredCount(body);
         const anime = await AnimeSearchService.filterSelector(body, query)
         return res.status(RequestStatuses.OK).json({
-            count: count.id,
+            count: count,
             body: anime
         });
     }
