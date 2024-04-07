@@ -12,9 +12,9 @@ import hasPermissions from "@/helper/hasPermission";
 export default class AnimeController {
     public static async getSingleAnime(req: GetSingleAnimeReq, res: Response) {
         const user = req.auth?.user;
-        const animeId = req.params.animeId;
+        const slug = req.params.slug;
 
-        const anime = await AnimeService.getSingleAnime(animeId, user);
+        const anime = await AnimeService.getSingleAnime(slug, user);
 
         return res.status(RequestStatuses.OK).json({
             body: anime

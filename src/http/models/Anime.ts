@@ -151,9 +151,17 @@ const extention = Prisma.defineExtension({
                     }
                 })
             },
-            async findWithTranlsationsAndGenres(animeId: number) {
+            async findWithTranlsationsAndGenres(slug: string) {
+                let findBySlug = true;
+                if (!isNaN(Number(slug))) findBySlug = false;
+
+                const where = {
+                    slug: findBySlug ? slug : undefined,
+                    id: !findBySlug ? Number(slug) : undefined,
+                } satisfies Prisma.AnimeWhereInput;
+                
                 return await prisma.anime.findFirst({
-                    where: { id: animeId },
+                    where,
                     include: {
                         genres: true,
                         animeTranslations: {

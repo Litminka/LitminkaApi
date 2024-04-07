@@ -14,5 +14,5 @@ router.get("/seasonal", new FrontPageAnimeRequest().send(), wrap(AnimeController
 router.get("/seasonal/popular", new FrontPageAnimeRequest().send(), wrap(AnimeController.getPopularSeasonal));
 router.get("/seasonal/announced", new FrontPageAnimeRequest().send(), wrap(AnimeController.getNextSeasonAnnounced));
 
-router.get("/:animeId", new GetSingleAnimeRequest().send(), wrap(AnimeController.getSingleAnime));
+router.get("/:slug", new GetSingleAnimeRequest().send(), wrap(AnimeController.getSingleAnime));
 export { router as animeRouter };

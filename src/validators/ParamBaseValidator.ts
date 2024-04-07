@@ -1,6 +1,6 @@
 import { ValidationChain, param } from "express-validator";
 import { baseMsg } from '@/ts/messages';
-import { IntValidator, intValidator } from "@validators/BaseValidator";
+import { IntValidator, intValidator, stringValidator } from "@validators/BaseValidator";
 
 /**
  * Validate required `number` param parameter.
@@ -13,6 +13,22 @@ export const paramIntValidator = (fieldName: string, options?: IntValidator): Va
     const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({
+        validator: param(fieldName, message),
+        typeParams
+    })
+};
+
+/**
+ * Validate required `string` body parameter.
+ * @param fieldName Parameter name
+ * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
+ * @param message Error message for validation exceptions.
+ */
+export const paramStringValidator = (fieldName: string, options?: IntValidator): ValidationChain => {
+    const typeParams = options?.typeParams ?? { min: 1, max: 2147483647 };
+    const message = options?.message ?? baseMsg.valueMustBeInt;
+
+    return stringValidator({
         validator: param(fieldName, message),
         typeParams
     })

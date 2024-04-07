@@ -9,9 +9,8 @@ import { AnimePgaRatings, AnimeStatuses } from "@/ts/enums";
 import { getCurrentSeason, getNextSeason, getSeason } from "@/helper/animeseason";
 
 export default class AnimeService {
-    public static async getSingleAnime(animeId: number, user?: UserWithIntegration) {
-
-        let anime = await prisma.anime.findWithTranlsationsAndGenres(animeId);
+    public static async getSingleAnime(slug: string, user?: UserWithIntegration) {
+        let anime = await prisma.anime.findWithTranlsationsAndGenres(slug);
         if (!anime) throw new NotFoundError("This anime doesn't exist");
         if (!user) return anime;
         // TODO: add user role checking, and setting check to allow shikimori requests only to specific users
@@ -20,7 +19,7 @@ export default class AnimeService {
         const animeUpdateService = new AnimeUpdateService(shikimoriApi, user);
         const updated = await animeUpdateService.update(anime);
         if (updated) {
-            anime = await prisma.anime.findWithTranlsationsAndGenres(animeId);
+            anime = await prisma.anime.findWithTranlsationsAndGenres(slug);
         }
         return anime;
     }
