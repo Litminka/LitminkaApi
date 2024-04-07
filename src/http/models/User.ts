@@ -54,6 +54,15 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
+            async findWithIntegrationSettings(id: number) {
+                return prisma.user.findFirstOrThrow({
+                    where: { id },
+                    include: {
+                        settings: true,
+                        integration: true,
+                    }
+                });
+            },
             async findWithSettings(id: number) {
                 return prisma.user.findFirstOrThrow({
                     where: { id },

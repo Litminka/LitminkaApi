@@ -48,10 +48,10 @@ export default class UserController {
         const user = req.auth.user;
         const data = req.body;
         
-        await UserService.updateSettings(user, data);
+        const settings = await UserService.updateSettings(user, data);
 
         return res.status(RequestStatuses.OK).json({
-            message: "settings_updated"
+            data: settings
         });
     }
 }

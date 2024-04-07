@@ -161,7 +161,8 @@ export default class GroupAnimeListService {
                 }
             },
             include: {
-                integration: true
+                integration: true,
+                settings: true
             }
         })
         
@@ -245,6 +246,7 @@ export default class GroupAnimeListService {
             },
             include: {
                 integration: true,
+                settings: true
             }
         });
         

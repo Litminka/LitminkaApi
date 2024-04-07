@@ -67,9 +67,14 @@ export default class UserService {
             throw new UnprocessableContentError("no_shikimori_integration");
         }
 
-        await prisma.userSettings.update({
+        return prisma.userSettings.upsert({
             where: { userId: user.id },
-            data: {
+            update: {
+                siteTheme, showCensoredContent, watchListMode, watchListAddAfterEpisodes, watchListAskAboutRating,
+                notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriImportList
+            },
+            create: {
+                userId: user.id,
                 siteTheme, showCensoredContent, watchListMode, watchListAddAfterEpisodes, watchListAskAboutRating,
                 notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriImportList
             }
