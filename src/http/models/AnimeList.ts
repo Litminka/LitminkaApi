@@ -107,7 +107,16 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
-            async findFilteredWatchList(userId:number, filters: ListFilters){
+            async getListLengthByUserId(userId: number) {
+                const list = await prisma.animeList.aggregate({
+                    where: { userId},
+                    _count: {
+                        id: true
+                    }
+                })
+                return list._count;
+            },
+            async findFilteredWatchList(userId:number, filters: ListFilters, page: number){
                 const { statuses, ratings, isFavorite } = filters as ListFilters;
                 const statusFilter = {
                     in: statuses
@@ -117,6 +126,7 @@ const extention = Prisma.defineExtension({
                     lte: ratings ? ratings[1] : 10
                 }
                 return await prisma.animeList.findMany({
+                    take: 200,
                     where: {
                         userId, 
                         rating: ratings === undefined ? undefined : ratingFilter, 

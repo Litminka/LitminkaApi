@@ -1,6 +1,6 @@
 import { ValidationChain } from "express-validator";
 import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@/validators/BodyBaseValidator";
-import { IntegrationReq, IntegrationRequest } from "./IntegrationRequest";
+import { IntegrationReq, IntegrationRequest } from "@requests/IntegrationRequest";
 
 export interface UpdateSettingsReq extends IntegrationReq {
     body: {
@@ -9,7 +9,7 @@ export interface UpdateSettingsReq extends IntegrationReq {
         watchListAddAfterEpisodes?: number,
         watchListAskAboutRating?: boolean,
         showCensoredContent?: boolean,
-        shikimoriImportList?: boolean,
+        shikimoriExportList?: boolean,
         notifyDiscord?: boolean,
         notifyTelegram?: boolean,
         notifyVK?: boolean,
@@ -30,7 +30,7 @@ export class UpdateSettingsRequest extends IntegrationRequest {
             bodyIntValidator("watchListAddAfterEpisodes").optional(),
             bodyBoolValidator("watchListAskAboutRating").optional(),
             bodyBoolValidator("showCensoredContent").optional(),
-            bodyBoolValidator("shikimoriImportList").optional(),
+            bodyBoolValidator("shikimoriExportList").optional(),
             bodyBoolValidator("notifyDiscord").optional(),
             bodyBoolValidator("notifyTelegram").optional(),
             bodyBoolValidator("notifyVK").optional(),

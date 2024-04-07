@@ -53,7 +53,7 @@ async function main() {
                         create: { name: "api_service_bot" }
                     }
                 ]
-            }
+            },
         }
     });
     const userRole = await prisma.role.upsert({
@@ -75,7 +75,9 @@ async function main() {
                 connect: {
                     id: adminRole.id
                 }
-            }
+            },
+            settings: {},
+            integration: {}
         },
     });
     const botUser = await prisma.user.upsert({
@@ -90,7 +92,9 @@ async function main() {
                 connect: {
                     id: botRole.id
                 }
-            }
+            },
+            settings: {},
+            integration: {}
         }
     })
     const user = await prisma.user.upsert({
@@ -105,7 +109,9 @@ async function main() {
                 connect: {
                     id: userRole.id
                 }
-            }
+            },
+            settings: {},
+            integration: {}
         },
     });
 
@@ -158,7 +164,9 @@ async function main() {
                         connect: {
                             id: userRole.id
                         }
-                    }
+                    },
+                    settings: {},
+                    integration: {}
                 }
             })
 

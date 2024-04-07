@@ -12,7 +12,7 @@ interface UpdateSettings {
     watchListAddAfterEpisodes?: number,
     watchListAskAboutRating?: boolean,
     showCensoredContent?: boolean,
-    shikimoriImportList?: boolean,
+    shikimoriExportList?: boolean,
     notifyDiscord?: boolean,
     notifyTelegram?: boolean,
     notifyVK?: boolean,
@@ -55,7 +55,7 @@ export default class UserService {
 
         const { siteTheme, showCensoredContent, watchListMode, watchListAskAboutRating, watchListAddAfterEpisodes } = data;
 
-        const { notifyDiscord, notifyTelegram, notifyVK, notifyPush, shikimoriImportList } = data;
+        const { notifyDiscord, notifyTelegram, notifyVK, notifyPush, shikimoriExportList } = data;
 
         if (notifyDiscord && !user.integration?.discordId) throw new UnprocessableContentError("no_discord_integration");
 
@@ -63,7 +63,7 @@ export default class UserService {
 
         if (notifyTelegram && !user.integration?.telegramId) throw new UnprocessableContentError("no_telegram_integration");
 
-        if (shikimoriImportList && (!user.integration?.shikimoriId || !user.integration?.shikimoriCanChangeList)) {
+        if (shikimoriExportList && (!user.integration?.shikimoriId || !user.integration?.shikimoriCanChangeList)) {
             throw new UnprocessableContentError("no_shikimori_integration");
         }
 
@@ -71,12 +71,12 @@ export default class UserService {
             where: { userId: user.id },
             update: {
                 siteTheme, showCensoredContent, watchListMode, watchListAddAfterEpisodes, watchListAskAboutRating,
-                notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriImportList
+                notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriExportList
             },
             create: {
                 userId: user.id,
                 siteTheme, showCensoredContent, watchListMode, watchListAddAfterEpisodes, watchListAskAboutRating,
-                notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriImportList
+                notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriExportList
             }
         })
 

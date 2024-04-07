@@ -247,6 +247,6 @@ export default class WatchListService {
     }
 
     public static async getFilteredWatchList(user: User, filters: ListFilters) {
-        return await prisma.animeList.findFilteredWatchList(user.id, filters);
+        return await prisma.animeList.findFilteredWatchList(user.id, filters, 0);
     }
 }
