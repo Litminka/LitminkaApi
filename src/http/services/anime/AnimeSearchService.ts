@@ -12,7 +12,7 @@ export interface AnimeFilterBody {
     mediaTypes?: string[], // Complete
     seasons?: string[], // WIP
     period?: Date[], // Complete
-    isCensored: boolean, //WIP
+    isCensored: boolean,
     banInRussia?: boolean, //WIP
 }
 
@@ -78,6 +78,7 @@ export default class AnimeSearchFilter {
                 this.byStatus(filterIn.statuses),
                 this.byPeriod(filterIn.period),
                 this.byName(filterIn.name),
+                { censored: filterIn.isCensored },
             ].flat().filter(filter => filter),
         }
 
