@@ -1,5 +1,5 @@
 import { ValidationChain } from "express-validator";
-import { OptionalReq, OptionalRequest } from "./OptionalRequest";
+import { OptionalReq, OptionalRequest } from "@requests/OptionalRequest";
 import prisma from "@/db";
 
 export interface StubReq extends OptionalReq {

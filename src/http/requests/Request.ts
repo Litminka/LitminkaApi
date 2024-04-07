@@ -1,4 +1,4 @@
-import { RequestAuthTypes, RequestStatuses } from "@/ts/enums";
+import { Permissions, RequestAuthTypes, RequestStatuses } from "@/ts/enums";
 import { NextFunction, Response } from "express";
 import { validatorError } from "@/middleware/validatorError";
 import { auth } from "@/middleware/auth";
@@ -7,6 +7,7 @@ import { RequestWithAuth } from "@/ts";
 import { checkExact, ValidationChain } from "express-validator";
 import { validatorData } from "@/middleware/validatorData";
 import { WithPermissionsReq } from "@requests/WithPermissionsRequest";
+import hasPermissions from "@/helper/hasPermission";
 
 export default class Request {
     protected authType: RequestAuthTypes;
@@ -14,7 +15,7 @@ export default class Request {
     /**
      * define permissons for this request
      */
-    protected permissions: string[];
+    protected permissions: Permissions[];
 
     constructor() {
         this.authType = RequestAuthTypes.None;
@@ -80,20 +81,9 @@ export default class Request {
     }
 
     private checkPermissions(req: WithPermissionsReq, res: Response, next: NextFunction) {
-        if (this.permissions.length < 1) return next();
-
-        if (req.auth.user.role === undefined || req.auth.user.role.permissions === undefined) {
-            return res.status(RequestStatuses.Forbidden).json({ message: "no_permissions" })
-        }
-
-        const permissionNames = req.auth.user.role.permissions.map(perm => perm.name);
-
-        const hasPermissions = this.permissions.every(permission => permissionNames.includes(permission));
-
-        if (hasPermissions) {
-            return next();
-        }
-
+        const hasPermission = hasPermissions(this.permissions, req.auth?.user);
+    
+        if (hasPermission) return next();
         return res.status(RequestStatuses.Forbidden).json({ message: "no_permissions" })
     }
 

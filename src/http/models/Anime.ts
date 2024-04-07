@@ -8,6 +8,7 @@ import { ShikimoriAnime, ShikimoriAnimeFull } from "@/ts";
 import { ShikimoriGraphAnime } from "@/ts/shikimori";
 import dayjs from "dayjs";
 import { getSeasonNameByDate } from "@/helper/animeseason";
+import { AnimeStatuses } from "@/ts/enums";
 
 const extention = Prisma.defineExtension({
     name: "AnimeModel",
@@ -150,9 +151,17 @@ const extention = Prisma.defineExtension({
                     }
                 })
             },
-            async findWithTranlsationsAndGenres(animeId: number) {
+            async findWithTranlsationsAndGenres(slug: string) {
+                let findBySlug = true;
+                if (!isNaN(Number(slug))) findBySlug = false;
+
+                const where = {
+                    slug: findBySlug ? slug : undefined,
+                    shikimoriId: !findBySlug ? Number(slug) : undefined,
+                } satisfies Prisma.AnimeWhereInput;
+
                 return await prisma.anime.findFirst({
-                    where: { id: animeId },
+                    where,
                     include: {
                         genres: true,
                         animeTranslations: {
@@ -188,6 +197,8 @@ const extention = Prisma.defineExtension({
                 if (anime.censored) {
                     isCensored = true;
                 }
+
+                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
 
                 let season = shikimori.season === "?" ? null : shikimori.season;
                 if ((season === null) && shikimori.airedOn.date !== null) {
@@ -241,6 +252,8 @@ const extention = Prisma.defineExtension({
                     const date = dayjs(shikimori.airedOn.date);
                     if (date.startOf('year') !== date) season = getSeasonNameByDate(date.toDate());
                 }
+
+                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
 
                 return await prisma.anime.create({
                     data: {
