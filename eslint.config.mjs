@@ -1,36 +1,25 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import parser from "@typescript-eslint/parser";
+import parser from '@typescript-eslint/parser';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default tseslint.config(
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
+    eslintPluginPrettierRecommended,
+    eslintConfigPrettier,
     {
-        ignores: [
-            "**/*/config.ts",
-            "**/*/config.js",
-            "tests",
-        ],
+        ignores: ['**/*/config.ts', '**/*/config.js', 'tests']
     },
     {
-        plugins: {
-            tseslint,
-            eslint
-        },
-        files: [
-            "src/**/*.ts",
-            "src/**/*.js",
-        ],
+        files: ['src/**/*.ts', 'src/**/*.js'],
         languageOptions: {
             parser,
             parserOptions: {
-                "project": "./tsconfig.json",
-                "tsconfigRootDir": "./"
-            },
-
-        },
-        rules: {
-            semi: "error"
+                project: './tsconfig.json',
+                tsconfigRootDir: './'
+            }
         }
     }
 );
