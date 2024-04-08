@@ -37,7 +37,11 @@ export default class GroupInviteService {
             });
         }
 
-        if (!owner.ownedGroups.some((group) => group.id === groupId)) {
+        if (
+            !owner.ownedGroups.some((group) => {
+                return group.id === groupId;
+            })
+        ) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
             });
@@ -83,7 +87,11 @@ export default class GroupInviteService {
             });
         }
 
-        if (!owner.ownedGroups.some((group) => group.id === groupId)) {
+        if (
+            !owner.ownedGroups.some((group) => {
+                return group.id === groupId;
+            })
+        ) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
             });
@@ -110,7 +118,9 @@ export default class GroupInviteService {
     }
 
     public static async acceptInvite({ user, inviteId, modifyList = false }: InviteAction) {
-        const invite = user.groupInvites.find((invite) => invite.id === inviteId);
+        const invite = user.groupInvites.find((invite) => {
+            return invite.id === inviteId;
+        });
         if (!invite) {
             throw new BaseError('no invite found', {
                 status: RequestStatuses.NotFound
@@ -129,7 +139,9 @@ export default class GroupInviteService {
     }
 
     public static async denyInvite({ user, inviteId }: InviteAction) {
-        const invite = user.groupInvites.find((invite) => invite.id === inviteId);
+        const invite = user.groupInvites.find((invite) => {
+            return invite.id === inviteId;
+        });
 
         if (!invite) {
             throw new BaseError('no invite found', {

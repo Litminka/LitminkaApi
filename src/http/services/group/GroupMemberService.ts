@@ -61,7 +61,11 @@ export default class GroupMemberService {
                 status: RequestStatuses.UnprocessableContent
             });
 
-        if (!group.members.some((member) => member.userId === userId)) {
+        if (
+            !group.members.some((member) => {
+                return member.userId === userId;
+            })
+        ) {
             throw new BaseError('you_are_not_a_member', {
                 status: RequestStatuses.UnprocessableContent
             });
@@ -97,7 +101,11 @@ export default class GroupMemberService {
     public static async kickUser({ user, groupId, kickId }: KickUser) {
         if (user.id === kickId) throw new UnprocessableContentError('cant_kick_yourself');
 
-        if (!user.ownedGroups.some((group) => group.id === groupId)) {
+        if (
+            !user.ownedGroups.some((group) => {
+                return group.id === groupId;
+            })
+        ) {
             throw new BaseError('not_an_owner', {
                 status: RequestStatuses.Forbidden
             });

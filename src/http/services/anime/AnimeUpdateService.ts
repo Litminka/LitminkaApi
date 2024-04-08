@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Anime, Prisma, User } from '@prisma/client';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import { ShikimoriAnimeFull, ShikimoriAnime } from '@/ts/index';
@@ -316,7 +317,9 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 const relations = new Map<number, ShikimoriRelation>();
                 const createAnime = new Map<number, ShikimoriGraphAnime>();
 
-                shikimori.related = shikimori.related.filter((relation) => relation.anime !== null);
+                shikimori.related = shikimori.related.filter((relation) => {
+                    return relation.anime !== null;
+                });
                 for (const relation of shikimori.related) {
                     relations.set(relation.id, relation);
 
@@ -395,9 +398,13 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 }
             });
 
-            const dbAnimeIds = dbAnime.map((single) => single.shikimoriId);
+            const dbAnimeIds = dbAnime.map((single) => {
+                return single.shikimoriId;
+            });
 
-            const addIds = [...animeMap.keys()].filter((x) => !dbAnimeIds.includes(x));
+            const addIds = [...animeMap.keys()].filter((x) => {
+                return !dbAnimeIds.includes(x);
+            });
 
             const createAnime: ShikimoriGraphAnime[] = [];
 

@@ -57,13 +57,19 @@ export interface UUIDValidator extends Omit<TypeUUIDValidator, 'validator'> {
  * @returns ValidatorErrorMessage
  */
 export function genMessage(arg: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     message: string | ValidationError | ValidatorErrorMessage | any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     typeParams: { min?: number; max?: number; [key: string]: any };
 }): ValidatorErrorMessage {
     const setRange = (arg: { min?: number; max?: number }) => {
         return [
-            arg.hasOwnProperty('min') || typeof arg.min !== 'undefined' ? arg.min! : null,
-            arg.hasOwnProperty('max') || typeof arg.max !== 'undefined' ? arg.max! : null
+            Object.prototype.hasOwnProperty.call(arg, 'min') || typeof arg.min !== 'undefined'
+                ? arg.min!
+                : null,
+            Object.prototype.hasOwnProperty.call(arg, 'max') || typeof arg.max !== 'undefined'
+                ? arg.max!
+                : null
         ];
     };
 
@@ -98,6 +104,7 @@ export const arrayValidator = ({
 
             if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray);
             if (value.length < options.min || value.length > options.max) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const message: any = genMessage({
                     message: baseMsg.valueNotInRange,
                     typeParams
@@ -157,6 +164,7 @@ export const intValidator = ({ validator, typeParams = {} }: TypeIntValidator): 
 
             if (!Number.isInteger(value)) throw new Error(baseMsg.valueMustBeInt);
             if (value < options.min || value > options.max) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const message: any = genMessage({
                     message: baseMsg.valueNotInRange,
                     typeParams

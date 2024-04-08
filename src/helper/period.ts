@@ -10,6 +10,8 @@ export default class Period {
         if (period === undefined || period.length == 0)
             period = [dayjs().toDate(), dayjs().toDate()];
         if (period.length != 2) period[1] = dayjs().toDate();
-        return period.map((date) => dayjs(date).toDate());
+        return period.map((date) => {
+            return dayjs(date).toDate();
+        });
     }
 }

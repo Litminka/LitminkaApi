@@ -1,6 +1,6 @@
 import { Anime, Prisma } from '@prisma/client';
 import prisma from '@/db';
-import { AddToList, ShikimoriWatchList, ListFilters } from '@/ts';
+import { AddToList, ShikimoriWatchList } from '@/ts';
 
 const extention = Prisma.defineExtension({
     name: 'AnimeListModel',
@@ -24,9 +24,9 @@ const extention = Prisma.defineExtension({
                             status: listEntry.status,
                             watchedEpisodes: listEntry.episodes,
                             userId,
-                            animeId: dbAnime.find(
-                                (anime) => anime.shikimoriId == listEntry.target_id
-                            )!.id,
+                            animeId: dbAnime.find((anime) => {
+                                return anime.shikimoriId == listEntry.target_id;
+                            })!.id,
                             rating: listEntry.score,
                             shikimoriId: listEntry.id
                         } satisfies Prisma.AnimeListCreateManyInput;

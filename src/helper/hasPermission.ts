@@ -8,9 +8,13 @@ export default function hasPermissions(permissions: Permissions[], user?: UserWi
 
     if (user.role === undefined || user.role.permissions === undefined) return false;
 
-    const permissionNames = user.role.permissions.map((perm) => perm.name);
+    const permissionNames = user.role.permissions.map((perm) => {
+        return perm.name;
+    });
 
-    const hasPermissions = permissions.every((permission) => permissionNames.includes(permission));
+    const hasPermissions = permissions.every((permission) => {
+        return permissionNames.includes(permission);
+    });
 
     return hasPermissions;
 }

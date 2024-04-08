@@ -191,9 +191,9 @@ const extention = Prisma.defineExtension({
                 const name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
 
-                shikimori.licensors = shikimori.licensors.filter(
-                    (licensor) => !config.ignoreLicensors.includes(licensor)
-                );
+                shikimori.licensors = shikimori.licensors.filter((licensor) => {
+                    return !config.ignoreLicensors.includes(licensor);
+                });
 
                 let isBanned = shikimori.licensors.length > 0;
                 if (anime.banned) {
@@ -253,9 +253,9 @@ const extention = Prisma.defineExtension({
                 const name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
 
-                shikimori.licensors = shikimori.licensors.filter(
-                    (licensor) => !config.ignoreLicensors.includes(licensor)
-                );
+                shikimori.licensors = shikimori.licensors.filter((licensor) => {
+                    return !config.ignoreLicensors.includes(licensor);
+                });
                 const isBanned = shikimori.licensors.length > 0;
                 const isCensored = shikimori.isCensored;
 

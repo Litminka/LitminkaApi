@@ -1,4 +1,4 @@
-import { Worker, Job } from 'bullmq';
+import { Worker } from 'bullmq';
 import prisma from '@/db';
 import AutoCheckService from '@services/AutoCheckService';
 import FollowService from '@services/FollowService';
@@ -88,7 +88,9 @@ new Worker(
         const ids = [
             ...followIds,
             ...announcementsIds,
-            ...defaultAnime.map((anime) => Number(anime.id))
+            ...defaultAnime.map((anime) => {
+                return Number(anime.id);
+            })
         ];
         const anime = await prisma.anime.findMany({
             where: {

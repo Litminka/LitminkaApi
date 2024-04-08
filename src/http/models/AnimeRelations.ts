@@ -8,9 +8,9 @@ const extention = Prisma.defineExtension({
         animeRelation: {
             async createFromShikimoriMap(shikimoriMap: Map<number, ShikimoriAnimeWithRelation>) {
                 for (const [id, shikimoriAnime] of shikimoriMap) {
-                    const relations = shikimoriAnime.related.filter(
-                        (relation) => relation.anime !== null
-                    );
+                    const relations = shikimoriAnime.related.filter((relation) => {
+                        return relation.anime !== null;
+                    });
                     await prisma.animeRelation.createMany({
                         data: relations.map((anime) => {
                             return {
