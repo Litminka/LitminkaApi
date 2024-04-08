@@ -20,6 +20,20 @@ export default tseslint.config(
                 project: './tsconfig.json',
                 tsconfigRootDir: './'
             }
+        },
+        linterOptions: {
+            reportUnusedDisableDirectives: 'warn'
+        },
+        rules: {
+            'arrow-body-style': ['error', 'always'],
+            camelcase: [
+                'error',
+                {
+                    properties: 'always',
+                    ignoreImports: true
+                }
+            ],
+            'no-var': ['error']
         }
     }
 );

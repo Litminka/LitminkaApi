@@ -4,5 +4,15 @@
     "singleQuote": true,
     "printWidth": 100,
     "tabWidth": 4,
-    "useTabs": false
+    "useTabs": false,
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "overrides": [
+        {
+            "files": [
+                "src/**/*.ts",
+                "src/**/*.js"
+            ]
+        }
+    ]
 }
