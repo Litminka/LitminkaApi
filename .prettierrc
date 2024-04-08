@@ -10,7 +10,9 @@
     "overrides": [
         {
             "files": [
-                "src/**/*.ts",
+                "src/**/*.ts"
+            ],
+            "excludeFiles": [
                 "src/**/*.js"
             ]
         }

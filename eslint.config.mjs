@@ -10,10 +10,10 @@ export default tseslint.config(
     eslintPluginPrettierRecommended,
     eslintConfigPrettier,
     {
-        ignores: ['**/*/config.ts', '**/*/config.js', 'tests']
+        ignores: ['**/*/config.ts', '**/*/config.js', 'src/**/*.js', 'tests', 'seed.js']
     },
     {
-        files: ['src/**/*.ts', 'src/**/*.js'],
+        files: ['src/**/*.ts'],
         languageOptions: {
             parser,
             parserOptions: {

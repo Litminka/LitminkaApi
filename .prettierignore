@@ -2,3 +2,4 @@ node_modules
 # Ignore artifacts:
 dist
 Coverage
+*.js
