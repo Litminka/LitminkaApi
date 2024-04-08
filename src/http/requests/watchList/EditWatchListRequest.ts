@@ -1,49 +1,54 @@
-import { minmax } from "@/ts";
-import prisma from "@/db";
-import { paramIntValidator } from "@validators/ParamBaseValidator";
-import { bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
-import { WatchListStatuses } from "@/ts/enums";
-import { ValidationChain } from "express-validator";
-import { IntegrationSettingsReq, IntegrationSettingsRequest } from "@requests/IntegrationSettingsRequest";
+import { minmax } from '@/ts';
+import prisma from '@/db';
+import { paramIntValidator } from '@validators/ParamBaseValidator';
+import {
+    bodyBoolValidator,
+    bodyIntValidator,
+    bodyStringValidator
+} from '@validators/BodyBaseValidator';
+import { WatchListStatuses } from '@/ts/enums';
+import { ValidationChain } from 'express-validator';
+import {
+    IntegrationSettingsReq,
+    IntegrationSettingsRequest
+} from '@requests/IntegrationSettingsRequest';
 
 export interface EditWatchListReq extends IntegrationSettingsReq {
     params: {
-        animeId: number,
-    },
+        animeId: number;
+    };
     body: {
-        status: WatchListStatuses,
-        watchedEpisodes: number,
-        rating: number,
-        isFavorite: boolean
-    }
+        status: WatchListStatuses;
+        watchedEpisodes: number;
+        rating: number;
+        isFavorite: boolean;
+    };
 }
 
 export class EditWatchListRequest extends IntegrationSettingsRequest {
-
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
         const watchedRange: minmax = { min: 0 };
         return [
-            paramIntValidator("animeId").custom(async value => {
+            paramIntValidator('animeId').custom(async (value) => {
                 const anime = await prisma.anime.findFirst({
                     where: { id: value }
                 });
                 if (!anime) throw new Error("Anime doesn't exist");
                 watchedRange.max = anime.maxEpisodes;
             }),
-            bodyStringValidator("status").isIn(Object.values(WatchListStatuses)),
-            bodyIntValidator("watchedEpisodes", {
-                typeParams: watchedRange,
+            bodyStringValidator('status').isIn(Object.values(WatchListStatuses)),
+            bodyIntValidator('watchedEpisodes', {
+                typeParams: watchedRange
             }),
 
-            bodyIntValidator("rating", {
+            bodyIntValidator('rating', {
                 typeParams: { min: 0, max: 10 }
             }),
 
-            bodyBoolValidator("isFavorite")
+            bodyBoolValidator('isFavorite')
         ];
     }
 }

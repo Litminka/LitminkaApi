@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from 'express';
-const helmet = require("helmet");
+const helmet = require('helmet');
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import * as fs from 'fs';
@@ -26,19 +26,19 @@ export const app: Express = express();
 
 const port: string | undefined = process.env.PORT;
 
-if (!process.env.SHIKIMORI_AGENT) throw new Error("No agent specified in ENV");
-if (!process.env.SHIKIMORI_CLIENT_ID) throw new Error("No client id specified in ENV");
-if (!process.env.SHIKIMORI_CLIENT_SECRET) throw new Error("No client secret specified in ENV");
-if (!process.env.SHIKIMORI_URL) throw new Error("Shikimori base url is not specified");
-if (!process.env.APP_URL) throw new Error("App Url not specified");
-
+if (!process.env.SHIKIMORI_AGENT) throw new Error('No agent specified in ENV');
+if (!process.env.SHIKIMORI_CLIENT_ID) throw new Error('No client id specified in ENV');
+if (!process.env.SHIKIMORI_CLIENT_SECRET) throw new Error('No client secret specified in ENV');
+if (!process.env.SHIKIMORI_URL) throw new Error('Shikimori base url is not specified');
+if (!process.env.APP_URL) throw new Error('App Url not specified');
 
 app.use(helmet());
 app.use((req, res, next) => {
     bodyParser.json()(req, res, (err) => {
-        if (err) return res.status(RequestStatuses.BadRequest).json({
-            error: err.message
-        });
+        if (err)
+            return res.status(RequestStatuses.BadRequest).json({
+                error: err.message
+            });
         next();
     });
 });
@@ -46,23 +46,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 function helloWorld(req: Request, res: Response) {
     res.json({
-        res: "Hello world!"
+        res: 'Hello world!'
     });
 }
 
 app.get('/', wrap(helloWorld));
 
-app.use("/users", userRouter);
-app.use("/watch-list", watchListRouter);
-app.use("/group-list", groupListRouter);
-app.use("/anime", animeRouter);
-app.use("/anime/follow", followRouter);
-app.use("/shikimori", shikimoriRouter);
-app.use("/token", tokenRouter);
-app.use("/notifications", notificationRouter);
-app.use("/admin", adminRouter);
+app.use('/users', userRouter);
+app.use('/watch-list', watchListRouter);
+app.use('/group-list', groupListRouter);
+app.use('/anime', animeRouter);
+app.use('/anime/follow', followRouter);
+app.use('/shikimori', shikimoriRouter);
+app.use('/token', tokenRouter);
+app.use('/notifications', notificationRouter);
+app.use('/admin', adminRouter);
 
-app.get("/shikimori_token", (req: Request, res: Response) => {
+app.get('/shikimori_token', (req: Request, res: Response) => {
     logger.debug(`shikimori_token ${req.query}`);
 });
 
@@ -86,5 +86,5 @@ switch (process.env.SSL) {
         });
         break;
     default:
-        throw new Error("SSL parameter must be bool");
+        throw new Error('SSL parameter must be bool');
 }

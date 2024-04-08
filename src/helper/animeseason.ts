@@ -1,17 +1,11 @@
-import UnprocessableContentError from "@/errors/clienterrors/UnprocessableContentError";
-import dayjs from "dayjs";
-const seasons = [
-    "winter",
-    "spring",
-    "summer",
-    "fall"
-];
+import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
+import dayjs from 'dayjs';
+const seasons = ['winter', 'spring', 'summer', 'fall'];
 function getSeasonIndex(season: string) {
     return seasons.indexOf(season);
 }
 
 export function getSeason(date: Date) {
-
     const d = dayjs(date);
     const month: number = d.month();
     const index = Math.floor(month / 3);
@@ -23,7 +17,7 @@ function getNextSeasonDate(date: Date) {
     const index = seasons.indexOf(season) + 1;
     const nextIndex = index > seasons.length ? 0 : index;
     let d = dayjs(date);
-    if (index > seasons.length) d = d.set("year", d.year() + 1);
+    if (index > seasons.length) d = d.set('year', d.year() + 1);
     return { d, nextIndex };
 }
 
@@ -32,7 +26,7 @@ function getPreviousSeasonDate(date: Date) {
     const index = seasons.indexOf(season) - 1;
     const prevIndex = index < 0 ? 3 : index;
     let d = dayjs(date);
-    if (index < 0) d = d.set("year", d.year() - 1);
+    if (index < 0) d = d.set('year', d.year() - 1);
     return { d, prevIndex };
 }
 
@@ -47,7 +41,7 @@ export function getNextSeasonEnd(date: Date) {
     const index = seasons.indexOf(season) + 1;
     const nextIndex = index > seasons.length ? 0 : index;
     let d = dayjs(date);
-    if (index > seasons.length) d = d.set("year", d.year() + 1);
+    if (index > seasons.length) d = d.set('year', d.year() + 1);
     const nextSeasonStart = getSeasonEnd(d.toDate(), seasons[nextIndex]);
     return nextSeasonStart.toDate();
 }
@@ -102,7 +96,7 @@ export function getSeasonEnd(date: Date, season: string) {
     const month = seasons.indexOf(season) * 3 + 2;
     d = d.set('year', year);
     d = d.set('month', month);
-    d = d.endOf("month");
+    d = d.endOf('month');
     return d;
 }
 
@@ -119,10 +113,10 @@ export function getSeasonPeriod(seasons?: string[]) {
 
     const [start, finish] = seasons;
 
-    const [startSeason, startYear] = start.split("_");
-    const [finishSeason, finishYear] = finish.split("_");
+    const [startSeason, startYear] = start.split('_');
+    const [finishSeason, finishYear] = finish.split('_');
 
-    if (startYear > finishYear) throw new UnprocessableContentError("start_cant_be_larger");
+    if (startYear > finishYear) throw new UnprocessableContentError('start_cant_be_larger');
 
     const finalList: string[] = [];
 
@@ -130,10 +124,10 @@ export function getSeasonPeriod(seasons?: string[]) {
 
     while (current !== seasons[1]) {
         finalList.push(current);
-        let [currentSeason, year] = current.split("_");
+        let [currentSeason, year] = current.split('_');
         let nextSeason = getNextSeasonName(currentSeason);
-        if (typeof nextSeason === "undefined") nextSeason = "winter";
-        if (nextSeason === "winter") {
+        if (typeof nextSeason === 'undefined') nextSeason = 'winter';
+        if (nextSeason === 'winter') {
             year = (Number(year) + 1).toString();
         }
         current = `${nextSeason}_${year}`;
@@ -147,9 +141,9 @@ export function getSeasonPeriod(seasons?: string[]) {
 export function isSeason(season?: string) {
     if (!season) return false;
 
-    if (!season.includes("_")) return false;
+    if (!season.includes('_')) return false;
 
-    const splt = season.split("_");
+    const splt = season.split('_');
 
     const index = getSeasonIndex(splt[0]);
     if (index < 0) return false;

@@ -1,9 +1,9 @@
-import { Notify } from "@/ts";
-import prisma from "@/db";
-import { Prisma } from "@prisma/client";
+import { Notify } from '@/ts';
+import prisma from '@/db';
+import { Prisma } from '@prisma/client';
 
 const extention = Prisma.defineExtension({
-    name: "AnimeNotificationModel",
+    name: 'AnimeNotificationModel',
     model: {
         animeNotifications: {
             async createAnimeNotifications({ animeId, status, groupId, episode }: Notify) {
@@ -12,7 +12,7 @@ const extention = Prisma.defineExtension({
                         animeId,
                         status,
                         groupId,
-                        episode,
+                        episode
                     }
                 });
             },

@@ -1,14 +1,12 @@
-import { Response } from "express";
-import { RequestStatuses } from "@/ts/enums";
-import GroupListService from "@services/group/GroupListService";
-import { AuthReq } from "@requests/AuthRequest";
-import { CreateGroupReq } from "@requests/group/list/CreateGroupRequest";
-import { DeleteGroupReq } from "@requests/group/list/DeleteGroupRequest";
-import { UpdateGroupReq } from "@requests/group/list/UpdateGroupRequest";
-
+import { Response } from 'express';
+import { RequestStatuses } from '@/ts/enums';
+import GroupListService from '@services/group/GroupListService';
+import { AuthReq } from '@requests/AuthRequest';
+import { CreateGroupReq } from '@requests/group/list/CreateGroupRequest';
+import { DeleteGroupReq } from '@requests/group/list/DeleteGroupRequest';
+import { UpdateGroupReq } from '@requests/group/list/UpdateGroupRequest';
 
 export default class GroupListController {
-
     public static async getOwnedGroups(req: AuthReq, res: Response) {
         const user = req.auth.user;
 
@@ -21,7 +19,11 @@ export default class GroupListController {
         const user = req.auth.user;
         const { description, name } = req.body;
 
-        const result = await GroupListService.createGroup({ description, name, user });
+        const result = await GroupListService.createGroup({
+            description,
+            name,
+            user
+        });
 
         return res.status(RequestStatuses.OK).json(result);
     }
@@ -32,7 +34,7 @@ export default class GroupListController {
 
         await GroupListService.deleteGroup(groupId, user.id);
 
-        return res.status(RequestStatuses.OK).json({ message: "group_deleted" });
+        return res.status(RequestStatuses.OK).json({ message: 'group_deleted' });
     }
 
     public static async updateGroup(req: UpdateGroupReq, res: Response) {
@@ -40,7 +42,12 @@ export default class GroupListController {
         const groupId = req.params.groupId;
         const { description, name } = req.body;
 
-        const result = await GroupListService.updateGroup({ description, name, user, groupId });
+        const result = await GroupListService.updateGroup({
+            description,
+            name,
+            user,
+            groupId
+        });
 
         return res.status(RequestStatuses.OK).json(result);
     }

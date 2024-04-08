@@ -1,11 +1,11 @@
-import { Response } from "express";
-import { RequestStatuses } from "@/ts/enums";
-import UserService from "@services/UserService";
-import ForbiddenError from "@errors/clienterrors/ForbiddenError";
-import { WithPermissionsReq } from "@requests/WithPermissionsRequest";
-import { LoginUserReq } from "@requests/user/LoginUserRequest";
-import { RegisterUserReq } from "@requests/user/RegisterUserRequest";
-import { UpdateSettingsReq } from "@requests/user/UpdateSettingsRequest";
+import { Response } from 'express';
+import { RequestStatuses } from '@/ts/enums';
+import UserService from '@services/UserService';
+import ForbiddenError from '@errors/clienterrors/ForbiddenError';
+import { WithPermissionsReq } from '@requests/WithPermissionsRequest';
+import { LoginUserReq } from '@requests/user/LoginUserRequest';
+import { RegisterUserReq } from '@requests/user/RegisterUserRequest';
+import { UpdateSettingsReq } from '@requests/user/UpdateSettingsRequest';
 
 export default class UserController {
     static async createUser(req: RegisterUserReq, res: Response): Promise<Object> {
@@ -13,7 +13,7 @@ export default class UserController {
         UserService.create({ email, login, password, name });
         return res.json({
             data: {
-                message: "User created successfully"
+                message: 'User created successfully'
             }
         });
     }
@@ -21,7 +21,10 @@ export default class UserController {
     static async loginUser(req: LoginUserReq, res: Response): Promise<Object> {
         const { login, password } = req.body;
 
-        const { token, refreshToken } = await UserService.login({ login, password });
+        const { token, refreshToken } = await UserService.login({
+            login,
+            password
+        });
 
         return res.status(RequestStatuses.OK).json({
             data: {

@@ -8,11 +8,7 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 const loggerConf = {
     level: 'debug',
     // format: format.json(),
-    format: combine(
-        label({ label: 'litminka-api' }),
-        timestamp(),
-        myFormat
-    ),
+    format: combine(label({ label: 'litminka-api' }), timestamp(), myFormat),
     defaultMeta: { service: 'litminka-api' },
     transports: [
         //
@@ -21,8 +17,8 @@ const loggerConf = {
         //
         new transports.File({ filename: 'logs/error.log', level: 'error' }),
         new transports.File({ filename: 'logs/litminka-api.log' }),
-        new transports.Console(),
-    ],
+        new transports.Console()
+    ]
 };
 
 const logger: Logger = createLogger(loggerConf);

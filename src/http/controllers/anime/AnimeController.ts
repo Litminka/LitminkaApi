@@ -1,13 +1,13 @@
-import { Response } from "express";
-import AnimeService from "@services/anime/AnimeService";
-import { Permissions, RequestStatuses } from "@/ts/enums";
-import AnimeSearchService from "@services/anime/AnimeSearchService";
-import { GetSingleAnimeReq } from "@requests/anime/GetSingleAnimeRequest";
-import { GetAnimeReq } from "@requests/anime/GetAnimeRequest";
-import { BanAnimeReq } from "@requests/anime/BanAnimeRequest";
-import { GetTopAnimeReq } from "@requests/anime/GetTopAnimeRequest";
-import { FrontPageAnimeReq } from "@requests/anime/FrontPageAnimeRequest";
-import hasPermissions from "@/helper/hasPermission";
+import { Response } from 'express';
+import AnimeService from '@services/anime/AnimeService';
+import { Permissions, RequestStatuses } from '@/ts/enums';
+import AnimeSearchService from '@services/anime/AnimeSearchService';
+import { GetSingleAnimeReq } from '@requests/anime/GetSingleAnimeRequest';
+import { GetAnimeReq } from '@requests/anime/GetAnimeRequest';
+import { BanAnimeReq } from '@requests/anime/BanAnimeRequest';
+import { GetTopAnimeReq } from '@requests/anime/GetTopAnimeRequest';
+import { FrontPageAnimeReq } from '@requests/anime/FrontPageAnimeRequest';
+import hasPermissions from '@/helper/hasPermission';
 
 export default class AnimeController {
     public static async getSingleAnime(req: GetSingleAnimeReq, res: Response) {
@@ -49,7 +49,7 @@ export default class AnimeController {
         await AnimeService.banAnime(animeId);
 
         return res.status(RequestStatuses.OK).json({
-            message: "anime_banned"
+            message: 'anime_banned'
         });
     }
 
@@ -59,7 +59,7 @@ export default class AnimeController {
         await AnimeService.unBanAnime(animeId);
 
         return res.status(RequestStatuses.OK).json({
-            message: "anime_unbanned"
+            message: 'anime_unbanned'
         });
     }
 

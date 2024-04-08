@@ -1,8 +1,8 @@
-import { AnimeTranslation } from "@prisma/client";
-import { FollowAnime, followType, info } from "@/ts/index";
-import { AnimeStatuses, FollowTypes } from "@/ts/enums";
-import UnprocessableContentError from "@errors/clienterrors/UnprocessableContentError";
-import prisma from "@/db";
+import { AnimeTranslation } from '@prisma/client';
+import { FollowAnime, followType, info } from '@/ts/index';
+import { AnimeStatuses, FollowTypes } from '@/ts/enums';
+import UnprocessableContentError from '@errors/clienterrors/UnprocessableContentError';
+import prisma from '@/db';
 type follows = {
     anime: {
         shikimoriId: number;
@@ -10,11 +10,9 @@ type follows = {
     translation?: AnimeTranslation | null;
     userId: number;
     status: string;
-}[]
-
+}[];
 
 export default class FollowService {
-
     public getFollowsMap(follows: follows): Map<number, followType> {
         const followsMap = new Map<number, followType>();
         for (const follow of follows) {
@@ -39,34 +37,68 @@ export default class FollowService {
             };
             if (translation) info.translation = translation;
             const newFollow: followType = {
-                anime, info: [info], status,
+                anime,
+                info: [info],
+                status
             };
             followsMap.set(follow.anime.shikimoriId, newFollow);
         }
         return followsMap;
     }
 
-    private static async followUpdate(status: FollowTypes, animeId: number, userId: number, translationId?: number, translationGroupName?: string) {
-        const followAnime: FollowAnime = { animeId, userId, status, translationId, translationGroupName };
+    private static async followUpdate(
+        status: FollowTypes,
+        animeId: number,
+        userId: number,
+        translationId?: number,
+        translationGroupName?: string
+    ) {
+        const followAnime: FollowAnime = {
+            animeId,
+            userId,
+            status,
+            translationId,
+            translationGroupName
+        };
         const follow = await prisma.follow.findFollow(followAnime);
-        if (follow) throw new UnprocessableContentError(`This anime is already followed as \"${status}\"`);
+        if (follow)
+            throw new UnprocessableContentError(`This anime is already followed as \"${status}\"`);
         await prisma.user.followAnime(followAnime);
     }
 
-    public static async follow(animeId: number, userId: number, type: FollowTypes, groupName: string) {
+    public static async follow(
+        animeId: number,
+        userId: number,
+        type: FollowTypes,
+        groupName: string
+    ) {
         const anime = await prisma.anime.findWithTranlsations(animeId);
         if (type === FollowTypes.Follow) {
             if (groupName === undefined) {
-                throw new UnprocessableContentError("no_group_name_provided");
+                throw new UnprocessableContentError('no_group_name_provided');
             }
-            const translation = anime.animeTranslations.find(anime => anime.group.name == groupName);
+            const translation = anime.animeTranslations.find(
+                (anime) => anime.group.name == groupName
+            );
             if (translation === undefined)
                 throw new UnprocessableContentError("This anime doesn't have given group");
-            if (anime.status == AnimeStatuses.Released && translation.currentEpisodes >= anime.maxEpisodes)
+            if (
+                anime.status == AnimeStatuses.Released &&
+                translation.currentEpisodes >= anime.maxEpisodes
+            )
                 throw new UnprocessableContentError("Can't follow released anime");
-            if (anime.currentEpisodes >= anime.maxEpisodes && anime.currentEpisodes === translation.currentEpisodes)
+            if (
+                anime.currentEpisodes >= anime.maxEpisodes &&
+                anime.currentEpisodes === translation.currentEpisodes
+            )
                 throw new UnprocessableContentError("Can't follow non ongoing anime");
-            await FollowService.followUpdate(FollowTypes.Follow, anime.id, userId, translation.id, translation.group.name);
+            await FollowService.followUpdate(
+                FollowTypes.Follow,
+                anime.id,
+                userId,
+                translation.id,
+                translation.group.name
+            );
         }
         if (type === FollowTypes.Announcement) {
             if (anime.status !== AnimeStatuses.Announced)
@@ -81,10 +113,10 @@ export default class FollowService {
         if (!groupName) {
             return await prisma.follow.removeFollow(unfollow);
         }
-        const translation = anime.animeTranslations.find(anime => anime.group.name == groupName);
-        if (translation === undefined) throw new UnprocessableContentError("This anime doesn't have given group");
+        const translation = anime.animeTranslations.find((anime) => anime.group.name == groupName);
+        if (translation === undefined)
+            throw new UnprocessableContentError("This anime doesn't have given group");
         unfollow.translationId = translation.id;
         return await prisma.follow.removeFollow(unfollow);
     }
-
 }

@@ -1,35 +1,42 @@
-import { UserNotify } from "@/ts";
-import prisma from "@/db";
-import { Prisma } from "@prisma/client";
-import { getUserNotifications } from "@services/NotificationService";
+import { UserNotify } from '@/ts';
+import prisma from '@/db';
+import { Prisma } from '@prisma/client';
+import { getUserNotifications } from '@services/NotificationService';
 
 const extention = Prisma.defineExtension({
-    name: "UserNotificationModel",
+    name: 'UserNotificationModel',
     model: {
         userAnimeNotifications: {
-            async createUserAnimeNotifications({ userId, animeId, status, groupId, episode }: UserNotify) {
+            async createUserAnimeNotifications({
+                userId,
+                animeId,
+                status,
+                groupId,
+                episode
+            }: UserNotify) {
                 return prisma.userAnimeNotifications.create({
                     data: {
                         userId,
                         animeId,
                         status,
                         groupId,
-                        episode,
+                        episode
                     }
                 });
             },
             async readNotifications(ids: number[], userId: number) {
                 const query: Prisma.UserAnimeNotificationsUpdateManyArgs = {
                     where: {
-                        userId,
+                        userId
                     },
                     data: { isRead: true }
                 };
 
-                if (ids.length === 0) query.where = {
-                    userId,
-                    id: { in: ids }
-                };
+                if (ids.length === 0)
+                    query.where = {
+                        userId,
+                        id: { in: ids }
+                    };
                 return prisma.userAnimeNotifications.updateMany(query);
             },
             async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {

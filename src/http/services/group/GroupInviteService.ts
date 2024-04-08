@@ -1,26 +1,26 @@
-import BaseError from "@errors/BaseError";
-import { RequestStatuses } from "@/ts/enums";
-import prisma from "@/db";
-import { User, GroupList, GroupListInvites } from "@prisma/client";
+import BaseError from '@errors/BaseError';
+import { RequestStatuses } from '@/ts/enums';
+import prisma from '@/db';
+import { User, GroupList, GroupListInvites } from '@prisma/client';
 
 type UserWithGroup = User & {
-    ownedGroups: GroupList[]
-}
+    ownedGroups: GroupList[];
+};
 
 type UserWithInvites = User & {
-    groupInvites: GroupListInvites[],
-}
+    groupInvites: GroupListInvites[];
+};
 
 interface InviteUser {
-    owner: UserWithGroup,
-    userId: number,
-    groupId: number
+    owner: UserWithGroup;
+    userId: number;
+    groupId: number;
 }
 
 interface InviteAction {
-    user: UserWithInvites,
-    inviteId: number,
-    modifyList?: boolean
+    user: UserWithInvites;
+    inviteId: number;
+    modifyList?: boolean;
 }
 
 export default class GroupInviteService {
@@ -37,7 +37,7 @@ export default class GroupInviteService {
             });
         }
 
-        if (!owner.ownedGroups.some(group => group.id === groupId)) {
+        if (!owner.ownedGroups.some((group) => group.id === groupId)) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
             });
@@ -83,7 +83,7 @@ export default class GroupInviteService {
             });
         }
 
-        if (!owner.ownedGroups.some(group => group.id === groupId)) {
+        if (!owner.ownedGroups.some((group) => group.id === groupId)) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
             });
@@ -110,10 +110,11 @@ export default class GroupInviteService {
     }
 
     public static async acceptInvite({ user, inviteId, modifyList = false }: InviteAction) {
-
-        const invite = user.groupInvites.find(invite => invite.id === inviteId);
+        const invite = user.groupInvites.find((invite) => invite.id === inviteId);
         if (!invite) {
-            throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
+            throw new BaseError('no invite found', {
+                status: RequestStatuses.NotFound
+            });
         }
 
         await prisma.groupListInvites.delete({ where: { id: invite.id } });
@@ -125,14 +126,15 @@ export default class GroupInviteService {
                 overrideList: modifyList
             }
         });
-
     }
 
     public static async denyInvite({ user, inviteId }: InviteAction) {
-        const invite = user.groupInvites.find(invite => invite.id === inviteId);
+        const invite = user.groupInvites.find((invite) => invite.id === inviteId);
 
         if (!invite) {
-            throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
+            throw new BaseError('no invite found', {
+                status: RequestStatuses.NotFound
+            });
         }
 
         await prisma.groupListInvites.delete({ where: { id: invite.id } });

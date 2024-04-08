@@ -1,6 +1,6 @@
-import { Anime, AnimeTranslation } from "@prisma/client";
-import { animeKind, animeStatus, pgCapitalizedRating } from "@/ts";
-import { RequestStatuses } from "@/ts/enums";
+import { Anime, AnimeTranslation } from '@prisma/client';
+import { animeKind, animeStatus, pgCapitalizedRating } from '@/ts';
+import { RequestStatuses } from '@/ts/enums';
 
 export interface _KodikAnimeRequest {
     time: string;
@@ -39,8 +39,6 @@ export interface KodikGenresRequest {
     results: KodikGenre[];
 }
 
-
-
 interface KodikGenre {
     title: string;
     count: number;
@@ -48,12 +46,12 @@ interface KodikGenre {
 
 interface _KodikAnime {
     id: string;
-    type: "anime-serial";
+    type: 'anime-serial';
     link: string;
     title: string;
     title_orig: string;
     other_title: string;
-    translation: _translation
+    translation: _translation;
     year: number;
     last_season: number;
     last_episode: number;
@@ -65,10 +63,9 @@ interface _KodikAnime {
     screenshots: string[];
 }
 
-
 interface KodikAnimeWithTranslationsN {
     id: string;
-    type: "anime-serial";
+    type: 'anime-serial';
     link: string;
     title: string;
     title_orig: string;
@@ -81,9 +78,9 @@ interface KodikAnimeWithTranslationsN {
     created_at: string;
     updated_at: string;
     screenshots: string[];
-    translations: translation[]
+    translations: translation[];
 }
-type KodikAnime = Omit<KodikAnimeWithTranslationsN, "translation">;
+type KodikAnime = Omit<KodikAnimeWithTranslationsN, 'translation'>;
 
 interface _KodikAnimeFull extends _KodikAnime {
     material_data: {
@@ -125,29 +122,26 @@ interface _KodikAnimeFull extends _KodikAnime {
     };
 }
 
-interface KodikAnimeWithTranslationsFullN extends _KodikAnimeFull, KodikAnime {
-
-}
-type KodikAnimeFull = Omit<KodikAnimeWithTranslationsFullN, "translation">;
-
+interface KodikAnimeWithTranslationsFullN extends _KodikAnimeFull, KodikAnime {}
+type KodikAnimeFull = Omit<KodikAnimeWithTranslationsFullN, 'translation'>;
 
 export type _translation = {
     id: number;
     title: string;
-    type: "voice" | "subtitles";
+    type: 'voice' | 'subtitles';
 };
 
-export type animeWithTranslation = (Anime & {
+export type animeWithTranslation = Anime & {
     animeTranslations: AnimeTranslation[];
-});
+};
 
 export type translation = {
     /**
      * id of the group
      */
-    id: number 
+    id: number;
     title: string;
-    type: "voice" | "subtitles";
+    type: 'voice' | 'subtitles';
     episodes_count: number;
-    link: string,
-}
+    link: string;
+};

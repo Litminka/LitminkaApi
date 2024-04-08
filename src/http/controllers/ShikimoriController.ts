@@ -1,8 +1,8 @@
-import { Response } from "express";
-import { RequestStatuses } from "@/ts/enums";
-import ShikimoriLinkService from "@services/shikimori/ShikimoriLinkService";
-import { IntegrationReq } from "@requests/IntegrationRequest";
-import { LinkShikimoriReq } from "@requests/shikimori/LinkShikimoriRequest";
+import { Response } from 'express';
+import { RequestStatuses } from '@/ts/enums';
+import ShikimoriLinkService from '@services/shikimori/ShikimoriLinkService';
+import { IntegrationReq } from '@requests/IntegrationRequest';
+import { LinkShikimoriReq } from '@requests/shikimori/LinkShikimoriRequest';
 
 export default class ShikimoriController {
     static async generateLink(req: IntegrationReq, res: Response): Promise<Object> {
@@ -21,7 +21,7 @@ export default class ShikimoriController {
         await ShikimoriLinkService.link(token, code);
 
         return res.status(RequestStatuses.OK).json({
-            message: "Account linked!"
+            message: 'Account linked!'
         });
     }
 
@@ -31,8 +31,8 @@ export default class ShikimoriController {
         ShikimoriLinkService.unlink(user);
 
         return res.status(RequestStatuses.OK).json({
-            message: "Account unlinked",
-            link: `${process.env.SHIKIMORI_URL}/oauth/applications/${process.env.SHIKIMORI_APP_ID}`,
+            message: 'Account unlinked',
+            link: `${process.env.SHIKIMORI_URL}/oauth/applications/${process.env.SHIKIMORI_APP_ID}`
         });
     }
 

@@ -1,14 +1,12 @@
 import * as bcrypt from 'bcryptjs';
 
 export const Encrypt = {
-
     cryptPassword: (password: string) =>
-        bcrypt.genSalt(10)
-            .then((salt => bcrypt.hash(password, salt)))
-            .then(hash => hash),
+        bcrypt
+            .genSalt(10)
+            .then((salt) => bcrypt.hash(password, salt))
+            .then((hash) => hash),
 
     comparePassword: (password: string, hashPassword: string) =>
-        bcrypt.compare(password, hashPassword)
-            .then(resp => resp)
-
+        bcrypt.compare(password, hashPassword).then((resp) => resp)
 };

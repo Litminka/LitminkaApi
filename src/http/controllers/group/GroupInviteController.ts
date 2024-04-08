@@ -1,12 +1,12 @@
-import { Response } from "express";
-import { RequestWithUserGroupInvites, RequestWithUserOwnedGroups } from "@/ts";
-import { RequestStatuses } from "@/ts/enums";
-import GroupInviteService from "@services/group/GroupInviteService";
-import { AuthReq } from "@requests/AuthRequest";
-import { SendInviteReq } from "@requests/group/invite/SendInviteRequest";
-import { DeleteInviteReq } from "@requests/group/invite/DeleteInviteRequest";
-import { AcceptInviteReq } from "@requests/group/invite/AcceptInviteRequest";
-import { DenyInviteReq } from "@requests/group/invite/DenyInviteRequest";
+import { Response } from 'express';
+import { RequestWithUserGroupInvites, RequestWithUserOwnedGroups } from '@/ts';
+import { RequestStatuses } from '@/ts/enums';
+import GroupInviteService from '@services/group/GroupInviteService';
+import { AuthReq } from '@requests/AuthRequest';
+import { SendInviteReq } from '@requests/group/invite/SendInviteRequest';
+import { DeleteInviteReq } from '@requests/group/invite/DeleteInviteRequest';
+import { AcceptInviteReq } from '@requests/group/invite/AcceptInviteRequest';
+import { DenyInviteReq } from '@requests/group/invite/DenyInviteRequest';
 
 export default class GroupInviteController {
     public static async getInvites(req: AuthReq, res: Response) {
@@ -36,7 +36,7 @@ export default class GroupInviteController {
 
         await GroupInviteService.deleteInvite({ owner: user, userId, groupId });
 
-        return res.status(RequestStatuses.OK).json({ message: "user_uninvited" });
+        return res.status(RequestStatuses.OK).json({ message: 'user_uninvited' });
     }
 
     public static async acceptInvite(req: AcceptInviteReq, res: Response) {
@@ -47,7 +47,7 @@ export default class GroupInviteController {
 
         await GroupInviteService.acceptInvite({ user, inviteId, modifyList });
 
-        return res.status(RequestStatuses.OK).json({ data: "invite_accepted" });
+        return res.status(RequestStatuses.OK).json({ data: 'invite_accepted' });
     }
 
     public static async denyInvite(req: DenyInviteReq, res: Response) {
@@ -57,6 +57,6 @@ export default class GroupInviteController {
 
         await GroupInviteService.denyInvite({ user, inviteId });
 
-        return res.status(RequestStatuses.OK).json({ data: "invite_denied" });
+        return res.status(RequestStatuses.OK).json({ data: 'invite_denied' });
     }
 }

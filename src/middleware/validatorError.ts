@@ -27,6 +27,7 @@ export function validatorError(req: Request, res: Response, next: NextFunction) 
     });
     // const result = validationResult(req);
     const result = customValidationResult(req);
-    if (!result.isEmpty()) return res.status(RequestStatuses.UnprocessableContent).json({ errors: result.array() });
+    if (!result.isEmpty())
+        return res.status(RequestStatuses.UnprocessableContent).json({ errors: result.array() });
     next();
 }

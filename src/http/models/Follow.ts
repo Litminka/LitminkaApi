@@ -1,9 +1,9 @@
-import { Prisma } from "@prisma/client";
-import prisma from "@/db";
-import { FollowAnime } from "@/ts";
+import { Prisma } from '@prisma/client';
+import prisma from '@/db';
+import { FollowAnime } from '@/ts';
 
 const extention = Prisma.defineExtension({
-    name: "FollowModel",
+    name: 'FollowModel',
     model: {
         follow: {
             async findFollow({ animeId, userId, status, translationGroupName }: FollowAnime) {

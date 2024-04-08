@@ -1,5 +1,5 @@
-import { UserWithPermissions } from "@/ts";
-import { Permissions } from "@/ts/enums";
+import { UserWithPermissions } from '@/ts';
+import { Permissions } from '@/ts/enums';
 
 export default function hasPermissions(permissions: Permissions[], user?: UserWithPermissions) {
     if (permissions.length < 1) return true;
@@ -8,9 +8,9 @@ export default function hasPermissions(permissions: Permissions[], user?: UserWi
 
     if (user.role === undefined || user.role.permissions === undefined) return false;
 
-    const permissionNames = user.role.permissions.map(perm => perm.name);
+    const permissionNames = user.role.permissions.map((perm) => perm.name);
 
-    const hasPermissions = permissions.every(permission => permissionNames.includes(permission));
+    const hasPermissions = permissions.every((permission) => permissionNames.includes(permission));
 
     return hasPermissions;
 }
