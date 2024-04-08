@@ -19,6 +19,6 @@ export class LoginUserRequest extends Request {
         return [
             bodyStringValidator("login"),
             bodyStringValidator("password"),
-        ]
+        ];
     }
 }

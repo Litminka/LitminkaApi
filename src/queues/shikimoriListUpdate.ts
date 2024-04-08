@@ -3,7 +3,7 @@ import { Job, Worker } from "bullmq";
 import ShikimoriListSyncService from '@services/shikimori/ShikimoriListSyncService';
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 
-const worker = new Worker("shikimoriListUpdate", async (job: Job) => {
+new Worker("shikimoriListUpdate", async (job: Job) => {
     const data = job.data;
     try {
         if (data.type === "add-update") {

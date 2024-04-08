@@ -15,7 +15,7 @@ export const paramIntValidator = (fieldName: string, options?: IntValidator): Va
     return intValidator({
         validator: param(fieldName, message),
         typeParams
-    })
+    });
 };
 
 /**
@@ -31,5 +31,5 @@ export const paramStringValidator = (fieldName: string, options?: IntValidator):
     return stringValidator({
         validator: param(fieldName, message),
         typeParams
-    })
+    });
 };

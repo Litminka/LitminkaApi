@@ -14,25 +14,25 @@ export default class NotificationController {
 
         const notifications = await NotificationService.getUserNotifications({
             isRead, userId, period
-        })
+        });
 
-        return res.json(notifications)
+        return res.json(notifications);
     }
 
     public static async getNotifications(req: GetNotificationsReq, res: Response): Promise<Object> {
         const period = req.body.period;
 
-        const notifications = await NotificationService.getNotifications(Period.getPeriod(period))
+        const notifications = await NotificationService.getNotifications(Period.getPeriod(period));
 
-        return res.json(notifications)
+        return res.json(notifications);
     }
 
     public static async readNotifications(req: ReadNotificationsReq, res: Response) {
         const ids = req.body.id;
         const user = req.auth.user;
 
-        await NotificationService.readNotifications(user.id, ids)
+        await NotificationService.readNotifications(user.id, ids);
 
-        return res.status(RequestStatuses.OK).json({ message: "notifications_read" })
+        return res.status(RequestStatuses.OK).json({ message: "notifications_read" });
     }
 }

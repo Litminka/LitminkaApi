@@ -16,7 +16,7 @@ type follows = {
 export default class FollowService {
 
     public getFollowsMap(follows: follows): Map<number, followType> {
-        const followsMap = new Map<number, followType>()
+        const followsMap = new Map<number, followType>();
         for (const follow of follows) {
             if (followsMap.has(follow.anime.shikimoriId)) {
                 const element = followsMap.get(follow.anime.shikimoriId);
@@ -36,19 +36,19 @@ export default class FollowService {
             const { anime, userId, status, translation } = follow;
             const info: info = {
                 userId
-            }
-            if (translation) info.translation = translation
+            };
+            if (translation) info.translation = translation;
             const newFollow: followType = {
                 anime, info: [info], status,
-            }
+            };
             followsMap.set(follow.anime.shikimoriId, newFollow);
         }
         return followsMap;
     }
 
     private static async followUpdate(status: FollowTypes, animeId: number, userId: number, translationId?: number, translationGroupName?: string) {
-        const followAnime: FollowAnime = { animeId, userId, status, translationId, translationGroupName }
-        const follow = await prisma.follow.findFollow(followAnime)
+        const followAnime: FollowAnime = { animeId, userId, status, translationId, translationGroupName };
+        const follow = await prisma.follow.findFollow(followAnime);
         if (follow) throw new UnprocessableContentError(`This anime is already followed as \"${status}\"`);
         await prisma.user.followAnime(followAnime);
     }
@@ -59,7 +59,7 @@ export default class FollowService {
             if (groupName === undefined) {
                 throw new UnprocessableContentError("no_group_name_provided");
             }
-            const translation = anime.animeTranslations.find(anime => anime.group.name == groupName)
+            const translation = anime.animeTranslations.find(anime => anime.group.name == groupName);
             if (translation === undefined)
                 throw new UnprocessableContentError("This anime doesn't have given group");
             if (anime.status == AnimeStatuses.Released && translation.currentEpisodes >= anime.maxEpisodes)
@@ -77,14 +77,14 @@ export default class FollowService {
 
     public static async unfollow(animeId: number, userId: number, groupName?: string) {
         const anime = await prisma.anime.findWithTranlsations(animeId);
-        let unfollow: FollowAnime = { userId, animeId } as FollowAnime;
+        const unfollow: FollowAnime = { userId, animeId } as FollowAnime;
         if (!groupName) {
             return await prisma.follow.removeFollow(unfollow);
         }
         const translation = anime.animeTranslations.find(anime => anime.group.name == groupName);
         if (translation === undefined) throw new UnprocessableContentError("This anime doesn't have given group");
         unfollow.translationId = translation.id;
-        return await prisma.follow.removeFollow(unfollow)
+        return await prisma.follow.removeFollow(unfollow);
     }
 
 }

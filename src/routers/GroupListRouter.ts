@@ -39,8 +39,8 @@ groupIdRouter.delete('/invite', new DeleteInviteRequest().send(), wrap(GroupInvi
 
 groupIdRouter.get('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.getMembers));
 groupIdRouter.patch('/members', new UpdateGroupMemberRequest().send(), wrap(GroupMemberController.updateState));
-groupIdRouter.delete('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.leaveGroup))
-groupIdRouter.delete('/members/kick', new KickGroupMemberRequest().send(), wrap(GroupMemberController.kickUser))
+groupIdRouter.delete('/members', new GroupMemberRequest().send(), wrap(GroupMemberController.leaveGroup));
+groupIdRouter.delete('/members/kick', new KickGroupMemberRequest().send(), wrap(GroupMemberController.kickUser));
 
 const groupListRouter = Router({ mergeParams: true });
 groupIdRouter.use('/list', groupListRouter);
@@ -57,4 +57,4 @@ invitesRouter.get('', new AuthRequest().send(), wrap(GroupInviteController.getIn
 invitesRouter.post('/:inviteId/accept', new AcceptInviteRequest().send(), wrap(GroupInviteController.acceptInvite));
 invitesRouter.delete('/:inviteId/deny', new DenyInviteRequest().send(), wrap(GroupInviteController.denyInvite));
 
-export { router as groupListRouter }
+export { router as groupListRouter };

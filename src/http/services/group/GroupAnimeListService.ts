@@ -1,9 +1,9 @@
-import { GroupList, GroupListMembers, Prisma } from "@prisma/client"
-import prisma from "@/db"
-import BaseError from "@errors/BaseError"
-import { AddWithAnime, ListFilters, PaginationQuery } from "@/ts"
-import { RequestStatuses } from "@/ts/enums"
-import ShikimoriListSyncService from "@services/shikimori/ShikimoriListSyncService"
+import { GroupList, GroupListMembers, Prisma } from "@prisma/client";
+import prisma from "@/db";
+import BaseError from "@errors/BaseError";
+import { AddWithAnime, ListFilters, PaginationQuery } from "@/ts";
+import { RequestStatuses } from "@/ts/enums";
+import ShikimoriListSyncService from "@services/shikimori/ShikimoriListSyncService";
 
 interface AddToGroupList {
     userId: number,
@@ -38,7 +38,7 @@ export default class GroupAnimeListService {
                 }
             })
         } satisfies Record<string, (...args: any) => Prisma.GroupAnimeListWhereInput>;
-        return filter()
+        return filter();
     }
 
     public static async getCount(
@@ -51,7 +51,7 @@ export default class GroupAnimeListService {
             },
             where: this.getFilters(groupId, filters)
         });
-        return _count.id
+        return _count.id;
     }
 
     public static async get(
@@ -66,7 +66,7 @@ export default class GroupAnimeListService {
                     userId
                 }
             }
-        })
+        });
         return await prisma.groupAnimeList.findMany({
             take: query.pageLimit,
             skip: (query.page - 1) * query.pageLimit,
@@ -87,7 +87,7 @@ export default class GroupAnimeListService {
                 list: true,
                 members: true,
             }
-        })
+        });
 
         if (group.list.some(list => list.animeId == data.animeId)) {
             throw new BaseError('anime_already_in_list', { status: RequestStatuses.UnprocessableContent });
@@ -105,7 +105,7 @@ export default class GroupAnimeListService {
                 status,
                 watchedEpisodes
             }
-        })
+        });
     }
 
     public static async update({ userId, groupId, data }: AddToGroupList) {
@@ -118,7 +118,7 @@ export default class GroupAnimeListService {
                 list: true,
                 members: true,
             }
-        })
+        });
 
         if (!group.list.some(list => list.animeId == data.animeId)) {
             throw new BaseError('no_anime_in_list', { status: RequestStatuses.UnprocessableContent });
@@ -138,7 +138,7 @@ export default class GroupAnimeListService {
                 status,
                 watchedEpisodes
             }
-        })
+        });
 
 
     }
@@ -153,7 +153,7 @@ export default class GroupAnimeListService {
                 list: true,
                 members: true,
             }
-        })
+        });
 
         if (!group.list.some(list => list.animeId == animeId)) {
             throw new BaseError('no_anime_in_list', { status: RequestStatuses.UnprocessableContent });
@@ -163,10 +163,10 @@ export default class GroupAnimeListService {
             where: {
                 animeId, groupId
             }
-        })
+        });
 
         const members = group.members.filter(member => member.overrideList);
-        const memberIds = members.map(user => user.userId)
+        const memberIds = members.map(user => user.userId);
 
 
 
@@ -188,7 +188,7 @@ export default class GroupAnimeListService {
                 integration: true,
                 settings: true
             }
-        })
+        });
 
         for (const entry of userListEntries) {
             if (!entry.shikimoriId) continue;
@@ -220,7 +220,7 @@ export default class GroupAnimeListService {
         });
 
         const members = group.members.filter(member => member.overrideList);
-        const memberIds = members.map(user => user.userId)
+        const memberIds = members.map(user => user.userId);
 
         const membersListEntries = await prisma.animeList.findMany({
             where: {
@@ -229,7 +229,7 @@ export default class GroupAnimeListService {
                 },
                 animeId
             }
-        })
+        });
 
         const membersWithListEntries: number[] = membersListEntries.map(list => list.userId);
         const membersWithoutListEntries: number[] = memberIds.filter(id => membersWithListEntries.indexOf(id) === -1);
@@ -247,7 +247,7 @@ export default class GroupAnimeListService {
                 status,
                 watchedEpisodes
             }
-        })
+        });
 
         for (const id of membersWithoutListEntries) {
             await prisma.animeList.create({
@@ -259,7 +259,7 @@ export default class GroupAnimeListService {
                     rating,
                     userId: id
                 }
-            })
+            });
         }
 
         const membersWithIntegrations = await prisma.user.findMany({

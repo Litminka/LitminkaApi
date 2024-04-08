@@ -14,7 +14,7 @@ const extention = Prisma.defineExtension({
                         groupId,
                         episode,
                     }
-                })
+                });
             },
             async getNotifications(period: Date[]) {
                 return prisma.animeNotifications.findMany({
@@ -24,10 +24,10 @@ const extention = Prisma.defineExtension({
                             lte: period[1]
                         }
                     }
-                })
+                });
             }
         }
     }
-})
+});
 
-export { extention as AnimeNotificationExt }
+export { extention as AnimeNotificationExt };

@@ -27,20 +27,20 @@ export default class GroupInviteService {
     public static async getUserInvites(userId: number) {
         return prisma.groupListInvites.findMany({
             where: { userId }
-        })
+        });
     }
 
     public static async inviteUser({ owner, userId, groupId }: InviteUser) {
         if (userId === owner.id) {
             throw new BaseError('cant_invite_yourself', {
                 status: RequestStatuses.UnprocessableContent
-            })
+            });
         }
 
         if (!owner.ownedGroups.some(group => group.id === groupId)) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
-            })
+            });
         }
 
         await prisma.user.findFirstOrThrow({ where: { id: userId } });
@@ -50,12 +50,12 @@ export default class GroupInviteService {
                 groupId,
                 userId
             }
-        })
+        });
 
         if (userInvite.length > 0) {
             throw new BaseError('user_already_invited', {
                 status: RequestStatuses.UnprocessableContent
-            })
+            });
         }
 
         const member = await prisma.groupListMembers.findFirst({
@@ -63,12 +63,12 @@ export default class GroupInviteService {
                 userId,
                 groupId
             }
-        })
+        });
 
         if (member) {
             throw new BaseError('user_already_member', {
                 status: RequestStatuses.UnprocessableContent
-            })
+            });
         }
 
         await prisma.groupListInvites.create({
@@ -80,13 +80,13 @@ export default class GroupInviteService {
         if (userId === owner.id) {
             throw new BaseError('cant_delete_yourself', {
                 status: RequestStatuses.UnprocessableContent
-            })
+            });
         }
 
         if (!owner.ownedGroups.some(group => group.id === groupId)) {
             throw new BaseError('not_found', {
                 status: RequestStatuses.NotFound
-            })
+            });
         }
 
         await prisma.user.findFirstOrThrow({ where: { id: userId } });
@@ -96,12 +96,12 @@ export default class GroupInviteService {
                 groupId,
                 userId
             }
-        })
+        });
 
         if (userInvite.length < 1) {
             throw new BaseError('user_not_invited', {
                 status: RequestStatuses.UnprocessableContent
-            })
+            });
         }
 
         await prisma.groupListInvites.deleteMany({
@@ -116,7 +116,7 @@ export default class GroupInviteService {
             throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
         }
 
-        await prisma.groupListInvites.delete({ where: { id: invite.id } })
+        await prisma.groupListInvites.delete({ where: { id: invite.id } });
 
         await prisma.groupListMembers.create({
             data: {
@@ -124,7 +124,7 @@ export default class GroupInviteService {
                 userId: user.id,
                 overrideList: modifyList
             }
-        })
+        });
 
     }
 
@@ -135,8 +135,8 @@ export default class GroupInviteService {
             throw new BaseError("no invite found", { status: RequestStatuses.NotFound });
         }
 
-        await prisma.groupListInvites.delete({ where: { id: invite.id } })
+        await prisma.groupListInvites.delete({ where: { id: invite.id } });
     }
 }
 
-export { GroupInviteService as GroupInvitesService }
+export { GroupInviteService as GroupInvitesService };

@@ -23,6 +23,6 @@ export class UpdateGroupMemberRequest extends GroupRequest {
             paramIntValidator("groupId"),
             bodyIntValidator("userId"),
             bodyBoolValidator("modifyList")
-        ]
+        ];
     }
 }

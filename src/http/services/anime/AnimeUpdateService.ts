@@ -59,7 +59,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         if (typeof kodikAnime !== "undefined") {
             await this.updateTranslationGroups([kodikAnime]);
         }
-        return await prisma.anime.updateFromShikimoriGraph(shikimoriAnime, false, dbAnime, kodikAnime)
+        return await prisma.anime.updateFromShikimoriGraph(shikimoriAnime, false, dbAnime, kodikAnime);
     }
 
     /**
@@ -93,7 +93,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     type: translation.type,
                     name: translation.title
                 }
-            })
+            });
 
         }
     }
@@ -138,7 +138,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                                     groupId: translation.id,
                                     currentEpisodes: translation.episodes_count ?? 0,
                                     link: translation.link
-                                } satisfies Prisma.AnimeTranslationCreateManyAnimeInput
+                                } satisfies Prisma.AnimeTranslationCreateManyAnimeInput;
                             })
                         }
                     },
@@ -147,7 +147,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                             return {
                                 where: { name },
                                 create: { name }
-                            }
+                            };
                         })
                     }
                 },
@@ -167,7 +167,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             });
         });
         // Insert kodik anime
-        let animeInList = await prisma.$transaction(listTransaction);
+        const animeInList = await prisma.$transaction(listTransaction);
         return animeInList;
     }
 
@@ -183,7 +183,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 data: {
                     currentEpisodes: translation.episodes_count,
                 }
-            })
+            });
             if (update.count) continue;
             await prisma.animeTranslation.create({
                 data: {
@@ -219,7 +219,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
     }
 
     static async updateRating() {
-        prisma.animeList.count()
+        prisma.animeList.count();
         const avgByAll = await prisma.anime.aggregate({
             _avg: {
                 shikimoriRating: true
@@ -227,15 +227,15 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             where: {
                 shikimoriRating: { not: 0 }
             }
-        })
+        });
 
         const avgByTitle = await prisma.animeList.groupBy({
             by: "animeId",
             _avg: { rating: true },
             where: { rating: { not: 0 } }
-        })
+        });
 
-        const splitedAvgByTitle = groupArrSplice(avgByTitle, 50)
+        const splitedAvgByTitle = groupArrSplice(avgByTitle, 50);
 
         for (const pack of splitedAvgByTitle) {
             for (const anime of pack) {
@@ -246,23 +246,23 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                         animeId: anime.animeId
                     },
                     _count: { _all: true }
-                })
+                });
                 const ratingsCount = (() => {
-                    let count = 0
+                    let count = 0;
                     for (const rate of ratings) {
-                        count += rate._count._all
+                        count += rate._count._all;
                     }
-                    return count
-                })()
+                    return count;
+                })();
                 const rating = (anime._avg.rating! * ratingsCount +
                     avgByAll._avg.shikimoriRating! * config.ratingMinVotes
-                ) / (ratingsCount + config.ratingMinVotes)
+                ) / (ratingsCount + config.ratingMinVotes);
                 await prisma.anime.update({
                     where: { id: anime.animeId },
                     data: { rating: Number(rating.toFixed(2)) }
-                })
+                });
             }
-            await sleep(1000)
+            await sleep(1000);
         }
     }
 
@@ -290,14 +290,14 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 checkMap.add(single.shikimoriId);
                 shikimoriIds.push(single.shikimoriId);
             }
-            logger.info(`Requesting batch: ${page} from shikimori`)
+            logger.info(`Requesting batch: ${page} from shikimori`);
             const shikimoriRequest = await shikimoriApi.getBatchGraphAnime(shikimoriIds);
             const shikimoriAnime = shikimoriRequest.data.animes;
             const shikimoriMap = new Map<number, ShikimoriAnimeWithRelation>();
 
             for (const shikimori of shikimoriAnime) {
                 shikimoriMap.set(Number(shikimori.id), shikimori);
-                logger.info(`Writing relations for anime ${shikimori.russian ?? shikimori.name}`)
+                logger.info(`Writing relations for anime ${shikimori.russian ?? shikimori.name}`);
                 const relations = new Map<number, ShikimoriRelation>();
                 const createAnime = new Map<number, ShikimoriGraphAnime>();
 
@@ -309,7 +309,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
 
                     createAnime.set(Number(relation.anime!.id), relation.anime!);
                 }
-                logger.info(`Getting anime from kodik`)
+                logger.info(`Getting anime from kodik`);
 
                 const animeInDb = await prisma.anime.findMany({
                     where: {
@@ -317,7 +317,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                             in: [...createAnime.keys()]
                         }
                     }
-                })
+                });
 
                 for (const db of animeInDb) {
                     checkMap.add(db.shikimoriId);
@@ -343,7 +343,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     data: {
                         hasRelation: true
                     }
-                })
+                });
             }
 
             await prisma.animeRelation.createFromShikimoriMap(shikimoriMap);
@@ -360,7 +360,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
         const kodikApi = new KodikApiService();
 
         do {
-            logger.info(`seeding anime batch: ${page}`)
+            logger.info(`seeding anime batch: ${page}`);
             const animeRequest = await shikimoriApi.getGraphAnimeByPage(page);
             const anime = animeRequest.data.animes;
 

@@ -24,6 +24,6 @@ export class DeleteGroupAnimeListRequest extends GroupRequest {
                 });
                 if (!anime) throw new Error("Anime doesn't exist");
             })
-        ]
+        ];
     }
 }

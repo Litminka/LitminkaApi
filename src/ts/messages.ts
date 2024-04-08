@@ -31,7 +31,7 @@ export const validation = {
             invalidSessionToken: "invalid_session_token"
         }
     }
-}
+};
 
 export const baseMsg = validation.errors.base;
 export const searchMsg = validation.errors.search;

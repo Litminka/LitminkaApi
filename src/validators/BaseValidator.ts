@@ -61,16 +61,16 @@ export function genMessage(
         return [
             arg.hasOwnProperty("min") || typeof arg.min !== "undefined" ? arg.min! : null,
             arg.hasOwnProperty("max") || typeof arg.max !== "undefined" ? arg.max! : null,
-        ]
-    }
+        ];
+    };
 
     if (typeof arg.message === "string") return {
         msg: arg.message,
         range: setRange(arg.typeParams)
-    }
+    };
 
-    arg.message.range = setRange(arg.typeParams)
-    return arg.message
+    arg.message.range = setRange(arg.typeParams);
+    return arg.message;
 }
 
 /**
@@ -90,17 +90,17 @@ export const arrayValidator = ({
             const options = {
                 min: typeof typeParams.min === "undefined" ? 1 : typeParams.min,
                 max: typeof typeParams.max === "undefined" ? 50 : typeParams.max
-            }
+            };
 
-            if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray)
+            if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray);
             if (value.length < options.min || value.length > options.max) {
-                let message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams })
-                const msg: string = message.msg; delete message.msg
-                throw new Error(msg, message)
+                const message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams });
+                const msg: string = message.msg; delete message.msg;
+                throw new Error(msg, message);
             }
             return true;
         })
-        .withMessage(genMessage({ message: baseMsg.valueMustBeAnArray, typeParams }))
+        .withMessage(genMessage({ message: baseMsg.valueMustBeAnArray, typeParams }));
 };
 
 /**
@@ -140,13 +140,13 @@ export const intValidator = ({
             const options: { min: number, max: number } = {
                 min: typeof typeParams.min === "undefined" ? -2147483648 : typeParams.min,
                 max: typeof typeParams.max === "undefined" ? 2147483647 : typeParams.max
-            }
+            };
 
-            if (!Number.isInteger(value)) throw new Error(baseMsg.valueMustBeInt)
+            if (!Number.isInteger(value)) throw new Error(baseMsg.valueMustBeInt);
             if (value < options.min || value > options.max) {
-                let message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams })
-                const msg: string = message.msg; delete message.msg
-                throw new Error(msg, message)
+                const message: any = genMessage({ message: baseMsg.valueNotInRange, typeParams });
+                const msg: string = message.msg; delete message.msg;
+                throw new Error(msg, message);
             }
             return true;
         })
@@ -167,8 +167,8 @@ export const boolValidator = ({
 }: TypeBoolValidator): ValidationChain => {
     return validator
         .isBoolean(typeParams)
-        .withMessage(baseMsg.valueMustBeBool)
-}
+        .withMessage(baseMsg.valueMustBeBool);
+};
 
 /**
  * Validate uuid parameter.
@@ -181,8 +181,8 @@ export const uuidValidator = ({
 }: TypeUUIDValidator): ValidationChain => {
     return validator
         .notEmpty().withMessage(baseMsg.valueIsNotProvided).bail()
-        .isUUID().withMessage(baseMsg.valueMustBeUUID)
-}
+        .isUUID().withMessage(baseMsg.valueMustBeUUID);
+};
 
 /**
  * Validate date parameter.
@@ -196,6 +196,6 @@ export const dateValidator = ({
     typeParams,
 }: TypeDateValidator): ValidationChain => {
     return validator
-        .isDate(typeParams).withMessage(baseMsg.valueMustBeDate)
+        .isDate(typeParams).withMessage(baseMsg.valueMustBeDate);
 };
 

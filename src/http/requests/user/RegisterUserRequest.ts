@@ -23,13 +23,13 @@ export class RegisterUserRequest extends Request {
     protected rules(): ValidationChain[] {
         return [
             bodyStringValidator("login").custom(async value => {
-                const user = await prisma.user.findFirst({ where: { login: value } })
+                const user = await prisma.user.findFirst({ where: { login: value } });
                 if (user) throw new Error(registrationMsg.loginTaken);
                 return true;
             }),
             bodyStringValidator("email").isEmail().bail().withMessage(registrationMsg.invalidEmail)
                 .custom(async value => {
-                    const user = await prisma.user.findFirst({ where: { email: value } })
+                    const user = await prisma.user.findFirst({ where: { email: value } });
                     if (user) throw new Error(registrationMsg.emailTaken);
                     return true;
                 }).normalizeEmail(),
@@ -44,6 +44,6 @@ export class RegisterUserRequest extends Request {
                     throw new Error(registrationMsg.passwordsDontMatch);
                 return true;
             })
-        ]
+        ];
     }
 }

@@ -22,6 +22,6 @@ export class AcceptInviteRequest extends GroupInviteRequest {
         return [
             paramIntValidator("inviteId"),
             bodyBoolValidator("modifyList", { defValue: true })
-        ]
+        ];
     }
 }

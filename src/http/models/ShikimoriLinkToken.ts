@@ -24,7 +24,7 @@ const extention = Prisma.defineExtension({
                             }
                         }
                     }
-                })
+                });
             },
             async removeToken(token: string) {
                 await prisma.shikimoriLinkToken.delete({
@@ -41,10 +41,10 @@ const extention = Prisma.defineExtension({
                         userId,
                         token,
                     }
-                })
+                });
             }
         }
     }
-})
+});
 
-export { extention as ShikimoriLinkTokenExt }
+export { extention as ShikimoriLinkTokenExt };

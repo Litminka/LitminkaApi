@@ -17,6 +17,6 @@ export class GetNotificationsRequest extends Request {
     protected rules(): ValidationChain[] {
         return [
             ...bodySoftPeriodValidator("period")
-        ]
+        ];
     }
 }

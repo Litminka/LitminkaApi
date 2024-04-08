@@ -48,7 +48,7 @@ export default class UserService {
 
         return {
             token, refreshToken
-        }
+        };
     }
 
     public static async updateSettings(user: UserWithIntegration, data: UpdateSettings) {
@@ -78,7 +78,7 @@ export default class UserService {
                 siteTheme, showCensoredContent, watchListMode, watchListAddAfterEpisodes, watchListAskAboutRating,
                 notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriExportList
             }
-        })
+        });
 
     }
 }

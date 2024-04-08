@@ -48,7 +48,7 @@ export default class GroupListService {
                 name,
                 ownerId: user.id,
             }
-        })
+        });
 
         await prisma.groupListMembers.create({
             data: {
@@ -56,7 +56,7 @@ export default class GroupListService {
                 userId: user.id,
                 overrideList: true, // TODO: add variable to change
             }
-        })
+        });
 
         return group;
 
@@ -66,7 +66,7 @@ export default class GroupListService {
 
         const group = await prisma.groupList.findFirstOrThrow({
             where: { id }
-        })
+        });
 
         if (group.ownerId !== ownerId) {
             throw new BaseError("not_an_owner", { status: RequestStatuses.Forbidden });
@@ -90,7 +90,7 @@ export default class GroupListService {
                 description,
                 name
             }
-        })
+        });
     }
 
 }

@@ -21,7 +21,7 @@ export const queryIntValidator = (fieldName: string, options?: QueryIntValidator
     return intValidator({
         validator: query(fieldName, message).default(defValue),
         typeParams
-    })
+    });
 
 };
 
@@ -38,5 +38,5 @@ export const queryStringValidator = (fieldName: string, options?: BaseValidator)
     return stringValidator({
         validator: query(fieldName, message),
         typeParams
-    })
+    });
 };

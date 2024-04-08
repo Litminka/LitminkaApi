@@ -19,14 +19,14 @@ export default class Request {
 
     constructor() {
         this.authType = RequestAuthTypes.None;
-        this.permissions = []
+        this.permissions = [];
     }
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-        return []
+        return [];
     }
 
     /**
@@ -69,22 +69,22 @@ export default class Request {
     private getAuthMethod() {
         const middleware: any = [];
         if (this.authType === RequestAuthTypes.Auth) {
-            middleware.push(auth)
-            middleware.push(this.constructAuthMiddleware.bind(this)) // Yea yea, this is a mistake... Too bad!
+            middleware.push(auth);
+            middleware.push(this.constructAuthMiddleware.bind(this)); // Yea yea, this is a mistake... Too bad!
         }
         if (this.authType === RequestAuthTypes.Optional) {
             middleware.push(optionalAuth);
-            middleware.push(this.constructOptionalAuthMiddleware.bind(this)) // Yea yea, this is a mistake... Too bad!
+            middleware.push(this.constructOptionalAuthMiddleware.bind(this)); // Yea yea, this is a mistake... Too bad!
         }
 
-        return middleware
+        return middleware;
     }
 
     private checkPermissions(req: WithPermissionsReq, res: Response, next: NextFunction) {
         const hasPermission = hasPermissions(this.permissions, req.auth?.user);
     
         if (hasPermission) return next();
-        return res.status(RequestStatuses.Forbidden).json({ message: "no_permissions" })
+        return res.status(RequestStatuses.Forbidden).json({ message: "no_permissions" });
     }
 
     /**
@@ -98,6 +98,6 @@ export default class Request {
             checkExact([], { message: 'Additional fields are not allowed' }),
             validatorError,
             validatorData
-        ]
+        ];
     }
 }

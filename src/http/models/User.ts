@@ -129,7 +129,7 @@ const extention = Prisma.defineExtension({
                     where: {
                         id
                     }
-                })
+                });
             },
             async findUserByLogin(login: string) {
                 return prisma.user.findFirst({
@@ -149,7 +149,7 @@ const extention = Prisma.defineExtension({
                 });
             },
             async followAnime(follow: FollowAnime) {
-                const { animeId, userId, status, translationId } = follow
+                const { animeId, userId, status, translationId } = follow;
                 await prisma.user.update({
                     where: { id: userId },
                     data: {
@@ -176,7 +176,7 @@ const extention = Prisma.defineExtension({
                             }
                         }
                     }
-                })
+                });
             },
             async disableShikimoriListUpdate(id: number) {
                 await prisma.user.update({
@@ -190,10 +190,10 @@ const extention = Prisma.defineExtension({
                             }
                         }
                     }
-                })
+                });
             }
         }
     }
-})
+});
 
-export { extention as UserExt }
+export { extention as UserExt };

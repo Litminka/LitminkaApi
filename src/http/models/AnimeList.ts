@@ -23,7 +23,7 @@ const extention = Prisma.defineExtension({
                             animeId: dbAnime.find((anime) => anime.shikimoriId == listEntry.target_id)!.id,
                             rating: listEntry.score,
                             shikimoriId: listEntry.id,
-                        } satisfies Prisma.AnimeListCreateManyInput
+                        } satisfies Prisma.AnimeListCreateManyInput;
                     })
                 });
             },
@@ -38,7 +38,7 @@ const extention = Prisma.defineExtension({
                             animeId: animeMap.get(Number(listEntry.target_id))!,
                             rating: listEntry.score,
                             shikimoriId: listEntry.id,
-                        } satisfies Prisma.AnimeListCreateManyInput
+                        } satisfies Prisma.AnimeListCreateManyInput;
                     })
                 });
             },
@@ -102,11 +102,11 @@ const extention = Prisma.defineExtension({
                     _count: {
                         id: true
                     }
-                })
+                });
                 return list._count;
             }
         }
     }
 });
 
-export { extention as AnimeListExt }
+export { extention as AnimeListExt };

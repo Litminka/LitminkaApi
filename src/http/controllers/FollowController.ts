@@ -9,13 +9,13 @@ export default class FollowController {
     public static async follow(req: FollowAnimeReq, res: Response) {
         const user = req.auth.user;
         const animeId = req.params.animeId;
-        const { groupName, type } = req.body
+        const { groupName, type } = req.body;
 
-        await FollowService.follow(animeId, user.id, type, groupName)
+        await FollowService.follow(animeId, user.id, type, groupName);
 
         return res.status(RequestStatuses.OK).json({
             message: "Anime followed successfully"
-        })
+        });
     }
 
     public static async unfollow(req: UnFollowAnimeReq, res: Response) {
@@ -24,7 +24,7 @@ export default class FollowController {
         const { groupName } = req.body;
         const animeId = req.params.animeId;
 
-        await FollowService.unfollow(animeId, user.id, groupName)
+        await FollowService.unfollow(animeId, user.id, groupName);
 
         return res.status(RequestStatuses.OK).json({
             message: "Anime unfollowed successfully"

@@ -20,6 +20,6 @@ export class BanAnimeRequest extends WithPermissionsRequest {
 
         return [
             paramIntValidator("animeId")
-        ]
+        ];
     }
 }

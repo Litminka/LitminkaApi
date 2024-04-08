@@ -5,7 +5,7 @@ const connection = {
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT!),
     }
-}
+};
 
 export const autoCheckQueue = new Queue("autocheck", connection);
 

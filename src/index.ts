@@ -8,17 +8,17 @@ import * as http from 'http';
 
 import { RequestStatuses } from '@/ts/enums';
 import { wrap } from '@/middleware/errorHandler';
-import { logger } from '@/loggerConf'
+import { logger } from '@/loggerConf';
 
-import { userRouter } from '@/routers/UserRouter';
-import { shikimoriRouter } from '@/routers/ShikimoriRouter';
-import { tokenRouter } from '@/routers/TokenRouter';
-import { watchListRouter } from '@/routers/WatchListRouter';
-import { followRouter } from '@/routers/FollowRouter';
-import { animeRouter } from '@/routers/AnimeRouter';
-import { groupListRouter } from '@/routers/GroupListRouter';
-import { notificationRouter } from '@/routers/NotificationRouter';
-import { adminRouter } from './routers/AdminRouter';
+import { userRouter } from '@routers/UserRouter';
+import { shikimoriRouter } from '@routers/ShikimoriRouter';
+import { tokenRouter } from '@routers/TokenRouter';
+import { watchListRouter } from '@routers/WatchListRouter';
+import { followRouter } from '@routers/FollowRouter';
+import { animeRouter } from '@routers/AnimeRouter';
+import { groupListRouter } from '@routers/GroupListRouter';
+import { notificationRouter } from '@routers/NotificationRouter';
+import { adminRouter } from '@routers/AdminRouter';
 
 dotenv.config();
 
@@ -38,7 +38,7 @@ app.use((req, res, next) => {
     bodyParser.json()(req, res, (err) => {
         if (err) return res.status(RequestStatuses.BadRequest).json({
             error: err.message
-        })
+        });
         next();
     });
 });
@@ -63,8 +63,8 @@ app.use("/notifications", notificationRouter);
 app.use("/admin", adminRouter);
 
 app.get("/shikimori_token", (req: Request, res: Response) => {
-    logger.debug(`shikimori_token ${req.query}`)
-})
+    logger.debug(`shikimori_token ${req.query}`);
+});
 
 switch (process.env.SSL) {
     case '0':
@@ -80,11 +80,11 @@ switch (process.env.SSL) {
         const httpsOptions = {
             key: fs.readFileSync(process.env.SSL_KEY as string),
             cert: fs.readFileSync(process.env.SSL_CERT as string)
-        }
+        };
         https.createServer(httpsOptions, app).listen(port, () => {
             logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
         });
         break;
     default:
-        throw new Error("SSL parameter must be bool")
+        throw new Error("SSL parameter must be bool");
 }

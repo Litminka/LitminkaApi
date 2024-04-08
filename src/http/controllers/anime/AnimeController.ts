@@ -28,7 +28,7 @@ export default class AnimeController {
         body.banInRussia = showBanned;
 
         const count = await AnimeSearchService.getFilteredCount(body);
-        const anime = await AnimeSearchService.filterSelector(body, query)
+        const anime = await AnimeSearchService.filterSelector(body, query);
         return res.status(RequestStatuses.OK).json({
             count: count,
             body: anime
@@ -36,11 +36,11 @@ export default class AnimeController {
     }
 
     public static async getTopAnime(req: GetTopAnimeReq, res: Response) {
-        const shikimori = req.body.shikimori
+        const shikimori = req.body.shikimori;
 
-        const top = await AnimeService.getTopAnime(shikimori)
+        const top = await AnimeService.getTopAnime(shikimori);
 
-        return res.status(RequestStatuses.OK).json(top)
+        return res.status(RequestStatuses.OK).json(top);
     }
 
     public static async banAnime(req: BanAnimeReq, res: Response) {
@@ -50,7 +50,7 @@ export default class AnimeController {
 
         return res.status(RequestStatuses.OK).json({
             message: "anime_banned"
-        })
+        });
     }
 
     public static async unBanAnime(req: BanAnimeReq, res: Response) {
@@ -60,7 +60,7 @@ export default class AnimeController {
 
         return res.status(RequestStatuses.OK).json({
             message: "anime_unbanned"
-        })
+        });
     }
 
     public static async getSeasonal(req: FrontPageAnimeReq, res: Response) {

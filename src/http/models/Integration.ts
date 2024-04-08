@@ -39,6 +39,6 @@ const extention = Prisma.defineExtension({
             }
         }
     }
-})
+});
 
-export { extention as IntegrationExt }
+export { extention as IntegrationExt };

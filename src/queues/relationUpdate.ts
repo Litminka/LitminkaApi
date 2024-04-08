@@ -1,11 +1,11 @@
 
 import { Worker, Job } from 'bullmq';
-import { logger } from "@/loggerConf"
+import { logger } from "@/loggerConf";
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { config } from '@/config';
 import { shikimoriCheckQueue } from './queues';
 
-const worker = new Worker("relationUpdate", async (job: Job) => {
+new Worker("relationUpdate", async () => {
     try {
         await AnimeUpdateService.updateRelations();
     } catch (error) {
@@ -27,4 +27,4 @@ shikimoriCheckQueue.add("relationUpdate", {}, {
     removeOnComplete: 10,
     removeOnFail: 100,
     repeat: config.updateShikimoriSchedule
-})
+});

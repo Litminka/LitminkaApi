@@ -45,6 +45,6 @@ export class UpdateGroupAnimeListRequest extends GroupRequest {
             }),
 
             bodyBoolValidator("isFavorite")
-        ]
+        ];
     }
 }

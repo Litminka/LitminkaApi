@@ -16,7 +16,7 @@ interface SignedTokens {
 export default class TokenService {
 
     public static async refreshToken(token?: string) {
-        if (!token) throw new ForbiddenError("No token provided")
+        if (!token) throw new ForbiddenError("No token provided");
         const result = token.split(" ")[1];
         let userToken, userRefreshToken;
         const tokens = await new Promise((resolve, reject) => {
@@ -34,8 +34,8 @@ export default class TokenService {
 
                 const { token, refreshToken } = TokenService.signTokens(user!, auth.token);
                 userToken = token;
-                userRefreshToken = refreshToken
-                resolve({ token: userToken, refreshToken: userRefreshToken })
+                userRefreshToken = refreshToken;
+                resolve({ token: userToken, refreshToken: userRefreshToken });
             });
         });
 
@@ -48,13 +48,13 @@ export default class TokenService {
             id: user.id,
             bot: user.role.permissions.some(perm => perm.name == Permissions.ApiServiceBot),
             token: sessionToken
-        }
+        };
 
-        const token = jwt.sign(signObject, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE })
-        const refreshToken = jwt.sign({ id: user.id, token: sessionToken }, process.env.REFRESH_TOKEN_SECRET!, { expiresIn: process.env.REFRESH_TOKEN_LIFE })
+        const token = jwt.sign(signObject, process.env.TOKEN_SECRET!, { expiresIn: process.env.TOKEN_LIFE });
+        const refreshToken = jwt.sign({ id: user.id, token: sessionToken }, process.env.REFRESH_TOKEN_SECRET!, { expiresIn: process.env.REFRESH_TOKEN_LIFE });
         return {
             token, refreshToken
-        }
+        };
     }
 
     public static async getTokens(id: number) {
@@ -62,7 +62,7 @@ export default class TokenService {
             where: {
                 userId: id
             }
-        })
+        });
     }
 
     public static async deleteTokens(id: number, currentToken: string, deleteTokens?: string[]) {
@@ -83,6 +83,6 @@ export default class TokenService {
                     notIn: [currentToken]
                 }
             }
-        })
+        });
     }
 }

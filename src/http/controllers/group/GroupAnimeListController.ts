@@ -10,21 +10,21 @@ import { DeleteGroupAnimeListReq } from "@requests/group/animeList/DeleteGroupAn
 export default class GroupAnimeListController {
 
     public static async get(req: GetGroupAnimeListReq, res: Response) {
-        const user = req.auth.user
+        const user = req.auth.user;
         const groupId = req.params.groupId;
         const statuses = req.body.statuses;
         const ratings = req.body.ratings;
         const isFavorite = req.body.isFavorite;
-        const query = req.query
+        const query = req.query;
 
-        const groupAnimeList = await GroupAnimeListService.get(user.id, groupId, { statuses, ratings, isFavorite }, query)
-        const groupAnimeListCount = await GroupAnimeListService.getCount(groupId, { statuses, ratings, isFavorite })
+        const groupAnimeList = await GroupAnimeListService.get(user.id, groupId, { statuses, ratings, isFavorite }, query);
+        const groupAnimeListCount = await GroupAnimeListService.getCount(groupId, { statuses, ratings, isFavorite });
 
         return res.status(RequestStatuses.OK).json({ count: groupAnimeListCount, body: groupAnimeList });
     }
 
     public static async add(req: AddGroupAnimeListReq, res: Response) {
-        const user = req.auth.user
+        const user = req.auth.user;
 
         const groupId = req.params.groupId;
         const animeId = req.params.animeId;
@@ -38,7 +38,7 @@ export default class GroupAnimeListController {
     }
 
     public static async update(req: UpdateGroupAnimeListReq, res: Response) {
-        const user = req.auth.user
+        const user = req.auth.user;
 
         const groupId = req.params.groupId;
         const animeId = req.params.animeId;
@@ -51,7 +51,7 @@ export default class GroupAnimeListController {
     }
 
     public static async delete(req: DeleteGroupAnimeListReq, res: Response) {
-        const user = req.auth.user
+        const user = req.auth.user;
 
         const groupId = req.params.groupId;
         const animeId = req.params.animeId;

@@ -24,6 +24,6 @@ export class UpdateGroupRequest extends GroupRequest {
             paramIntValidator("groupId"),
             bodyStringValidator("name").optional(),
             bodyStringValidator("description").optional(),
-        ]
+        ];
     }
 }

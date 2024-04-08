@@ -1,5 +1,5 @@
 import { format, transports, createLogger, Logger } from 'winston';
-const { combine, timestamp, label, printf } = format
+const { combine, timestamp, label, printf } = format;
 
 const myFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
@@ -23,7 +23,7 @@ const loggerConf = {
         new transports.File({ filename: 'logs/litminka-api.log' }),
         new transports.Console(),
     ],
-}
+};
 
-const logger: Logger = createLogger(loggerConf)
-export { logger }
+const logger: Logger = createLogger(loggerConf);
+export { logger };

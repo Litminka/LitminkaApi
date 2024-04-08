@@ -39,6 +39,6 @@ export class AddGroupAnimeListRequest extends GroupRequest {
             bodyIntValidator("watchedEpisodes", { typeParams: watchedRange }),
             bodyIntValidator("rating", { typeParams: { min: 0, max: 10 } }),
             bodyBoolValidator("isFavorite")
-        ]
+        ];
     }
 }

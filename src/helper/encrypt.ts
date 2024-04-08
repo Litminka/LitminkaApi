@@ -11,4 +11,4 @@ export const Encrypt = {
         bcrypt.compare(password, hashPassword)
             .then(resp => resp)
 
-}
+};

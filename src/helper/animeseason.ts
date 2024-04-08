@@ -102,7 +102,7 @@ export function getSeasonEnd(date: Date, season: string) {
     const month = seasons.indexOf(season) * 3 + 2;
     d = d.set('year', year);
     d = d.set('month', month);
-    d = d.endOf("month")
+    d = d.endOf("month");
     return d;
 }
 

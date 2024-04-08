@@ -44,6 +44,6 @@ export class EditWatchListRequest extends IntegrationSettingsRequest {
             }),
 
             bodyBoolValidator("isFavorite")
-        ]
+        ];
     }
 }

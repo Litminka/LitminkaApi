@@ -21,6 +21,6 @@ export class UnFollowAnimeRequest extends AuthRequest {
         return [
             paramIntValidator("animeId"),
             bodyStringValidator("groupName").optional(),
-        ]
+        ];
     }
 }

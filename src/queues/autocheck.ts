@@ -5,7 +5,7 @@ import AutoCheckService from '@services/AutoCheckService';
 import FollowService from '@services/FollowService';
 import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
 import { FollowTypes } from '@/ts/enums';
-import { logger } from "@/loggerConf"
+import { logger } from "@/loggerConf";
 import { config } from '@/config';
 import { autoCheckQueue } from './queues';
 
@@ -22,7 +22,7 @@ import { autoCheckQueue } from './queues';
  * send notification ->
  * update title
  */
-const worker = new Worker("autocheck", async (job: Job) => {
+new Worker("autocheck", async () => {
 
     logger.info("started a job");
     logger.info("updating translations");
@@ -58,7 +58,7 @@ const worker = new Worker("autocheck", async (job: Job) => {
                 }
             }
         },
-    })
+    });
     const followsMap = followService.getFollowsMap(follows);
     console.dir(followsMap);
     const announcementMap = followService.getFollowsMap(announcements);
@@ -66,24 +66,24 @@ const worker = new Worker("autocheck", async (job: Job) => {
     const followIds = [...followsMap.keys()];
     const announcementsIds = [...announcementMap.keys()];
     const defaultAnime = await autoCheckService.getDefaultAnime();
-    logger.info(`Got basic check anime, amount: ${defaultAnime.length}`)
+    logger.info(`Got basic check anime, amount: ${defaultAnime.length}`);
 
     const followedAnime = await autoCheckService.getAnime(followIds);
-    logger.info(`Got follows, amount: ${followedAnime.length}`)
+    logger.info(`Got follows, amount: ${followedAnime.length}`);
 
-    const announcedAnime = await autoCheckService.getAnime(announcementsIds)
-    logger.info(`Got announcements, amount: ${announcedAnime.length}`)
+    const announcedAnime = await autoCheckService.getAnime(announcementsIds);
+    logger.info(`Got announcements, amount: ${announcedAnime.length}`);
 
     logger.info(`Getting anime from kodik`);
     const kodikDefaultAnime = await autoCheckService.getKodikAnime(defaultAnime);
-    logger.info(`Got kodik anime, amount: ${kodikDefaultAnime.length}`)
+    logger.info(`Got kodik anime, amount: ${kodikDefaultAnime.length}`);
 
     logger.info(`Getting anime from kodik`);
     const kodikFollowedAnime = await autoCheckService.getKodikAnime(followedAnime);
-    logger.info(`Got kodik anime, amount: ${kodikFollowedAnime.length}`)
-    const kodikAnimeMap = new Map<number, KodikAnimeFull>()
+    logger.info(`Got kodik anime, amount: ${kodikFollowedAnime.length}`);
+    const kodikAnimeMap = new Map<number, KodikAnimeFull>();
     for (const anime of [...kodikDefaultAnime, ...kodikFollowedAnime]) {
-        kodikAnimeMap.set(parseInt(anime.shikimori_id), anime)
+        kodikAnimeMap.set(parseInt(anime.shikimori_id), anime);
     }
     const ids = [...followIds, ...announcementsIds, ...defaultAnime.map(anime => Number(anime.id))];
     const anime = await prisma.anime.findMany({
@@ -122,7 +122,7 @@ const worker = new Worker("autocheck", async (job: Job) => {
 
     // Do something with job
     const finished = Date.now();
-    logger.info(`Finished in: ${(finished - started) / 1000} seconds`)
+    logger.info(`Finished in: ${(finished - started) / 1000} seconds`);
     return 'some value';
 }, {
     connection: {
@@ -135,4 +135,4 @@ autoCheckQueue.add("autocheck", {}, {
     removeOnComplete: 10,
     removeOnFail: 100,
     repeat: config.autocheckSchedule
-})
+});

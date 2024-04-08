@@ -1,4 +1,4 @@
-import { watchListStatus } from "."
+import { watchListStatus } from ".";
 
 export interface ShikimoriGraphAnimeRequest {
     data: {

@@ -17,6 +17,6 @@ export default class GetTopAnimeRequest extends Request {
     protected rules(): ValidationChain[] {
         return [
             bodyBoolValidator("shikimori", { defValue: false })
-        ]
+        ];
     }
 }

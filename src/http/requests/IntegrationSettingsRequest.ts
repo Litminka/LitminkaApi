@@ -21,6 +21,6 @@ export class IntegrationSettingsRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findWithIntegrationSettings(userId)
+        return await prisma.user.findWithIntegrationSettings(userId);
     }
 }

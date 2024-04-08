@@ -36,6 +36,6 @@ export class UpdateSettingsRequest extends IntegrationRequest {
             bodyBoolValidator("notifyVK").optional(),
             bodyBoolValidator("notifyPush").optional(),
             bodyStringValidator("siteTheme").isIn(["light", "dark"]).optional(),
-        ]
+        ];
     }
 }

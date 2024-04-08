@@ -23,7 +23,7 @@ export default class GroupInviteController {
         const groupId = req.params.groupId;
         const { userId } = req.body;
 
-        await GroupInviteService.inviteUser({ owner: user, userId, groupId })
+        await GroupInviteService.inviteUser({ owner: user, userId, groupId });
 
         return res.status(RequestStatuses.Created).json();
     }

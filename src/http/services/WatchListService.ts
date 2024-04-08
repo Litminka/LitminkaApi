@@ -10,7 +10,7 @@ import { KodikAnime } from "@/ts/kodik";
 import { logger } from "@/loggerConf";
 import prisma from "@/db";
 import { Anime, Prisma } from "@prisma/client";
-import { importWatchListQueue } from "@/queues/queues"
+import { importWatchListQueue } from "@/queues/queues";
 import ShikimoriListSyncService from "@services/shikimori/ShikimoriListSyncService";
 
 export default class WatchListService {
@@ -30,7 +30,7 @@ export default class WatchListService {
                 }
             })
         } satisfies Record<string, (...args: any) => Prisma.AnimeListWhereInput>;
-        return filter()
+        return filter();
     }
 
     public static async getCount(
@@ -43,7 +43,7 @@ export default class WatchListService {
             },
             where: this.getFilters(userId, filters)
         });
-        return _count.id
+        return _count.id;
     }
 
     /**
@@ -55,14 +55,14 @@ export default class WatchListService {
         // Get current user
         const user = await prisma.user.findUserByIdWithIntegration(id);
         const shikimoriapi = new ShikimoriApiService(user);
-        let animeList = await shikimoriapi.getUserList();
+        const animeList = await shikimoriapi.getUserList();
         logger.info("Got list");
         let watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
         const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
 
         // Get all anime from kodik
         const kodik = new KodikApiService();
-        let result = await kodik.getFullBatchAnime(shikimoriAnimeIds);
+        const result = await kodik.getFullBatchAnime(shikimoriAnimeIds);
 
         logger.info("Got anime from kodik");
 
@@ -106,7 +106,7 @@ export default class WatchListService {
         importWatchListQueue.add("importWatchList", { id: user.id }, {
             removeOnComplete: 10,
             removeOnFail: 100
-        })
+        });
     }
 
     public static async import(id: number) {
@@ -133,7 +133,7 @@ export default class WatchListService {
             for (const anime of shikimoriData.data.animes) {
                 shikimoriMap.set(Number(anime.id), anime);
 
-                anime.related = anime.related.filter(relation => relation.anime !== null)
+                anime.related = anime.related.filter(relation => relation.anime !== null);
 
                 for (const relation of anime.related) {
                     const id = Number(relation.anime!.id);
@@ -197,7 +197,7 @@ export default class WatchListService {
                         hasRelation = true;
                     }
                     await prisma.anime.updateFromShikimoriGraph(shikimoriAnime!, hasRelation, anime, kodikAnime);
-                    shikimoriDBAnimeMap.set(Number(shikimoriAnime!.id), anime.id)
+                    shikimoriDBAnimeMap.set(Number(shikimoriAnime!.id), anime.id);
                     continue;
                 }
 
@@ -207,7 +207,7 @@ export default class WatchListService {
                     hasRelation = true;
                 }
                 const newAnime = await prisma.anime.createFromShikimoriGraph(shikimoriAnime!, hasRelation, kodikAnime);
-                shikimoriDBAnimeMap.set(Number(shikimoriAnime!.id), newAnime.id)
+                shikimoriDBAnimeMap.set(Number(shikimoriAnime!.id), newAnime.id);
                 if (hasRelation) writeRelations.set(id, shikimoriAnime! as ShikimoriAnimeWithRelation);
             }
         }
@@ -224,7 +224,7 @@ export default class WatchListService {
             select: {
                 shikimoriId: true
             }
-        })
+        });
 
         if (animeListEntry) throw new BadRequestError("List entry with this anime already exists");
 
@@ -261,11 +261,11 @@ export default class WatchListService {
             select: {
                 shikimoriId: true
             }
-        })
+        });
 
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
 
-        await prisma.animeList.updateWatchListEntry(user.id, animeId, editParameters)
+        await prisma.animeList.updateWatchListEntry(user.id, animeId, editParameters);
 
         ShikimoriListSyncService.createAddUpdateJob(user, {
             animeId: shikimoriId,

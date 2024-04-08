@@ -21,6 +21,6 @@ export class KickGroupMemberRequest extends GroupRequest {
         return [
             paramIntValidator("groupId"),
             bodyIntValidator("userId"),
-        ]
+        ];
     }
 }

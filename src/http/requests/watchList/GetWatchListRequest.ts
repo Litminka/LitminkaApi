@@ -41,6 +41,6 @@ export class GetWatchListRequest extends AuthRequest {
                 defValue: 25,
                 typeParams: { min: 1, max: 125 },
             }),
-        ]
+        ];
     }
 }

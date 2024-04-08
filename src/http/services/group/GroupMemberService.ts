@@ -58,7 +58,7 @@ export default class GroupMemberService {
             include: {
                 members: true
             }
-        })
+        });
 
         if (group.ownerId === userId) throw new BaseError("cant_leave_if_owner", { status: RequestStatuses.UnprocessableContent });
 
@@ -72,7 +72,7 @@ export default class GroupMemberService {
             where: {
                 groupId, userId
             }
-        })
+        });
     }
 
     public static async updateState({ userId, groupId, modifyList }: EditMember) {
@@ -81,7 +81,7 @@ export default class GroupMemberService {
             where: {
                 userId, groupId
             }
-        })
+        });
 
         return await prisma.groupListMembers.updateMany({
             where: {
@@ -90,7 +90,7 @@ export default class GroupMemberService {
             data: {
                 overrideList: modifyList
             }
-        })
+        });
     }
 
     public static async kickUser({ user, groupId, kickId }: KickUser) {
@@ -104,6 +104,6 @@ export default class GroupMemberService {
             where: {
                 groupId, userId: kickId
             }
-        })
+        });
     }
 }

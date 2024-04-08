@@ -1,13 +1,13 @@
-import { PrismaClient } from '@prisma/client'
-import { logger } from '@/loggerConf'
-const prisma = new PrismaClient()
+import { PrismaClient } from '@prisma/client';
+import { logger } from '@/loggerConf';
+const prisma = new PrismaClient();
 import dotenv from 'dotenv';
 dotenv.config();
 import { Encrypt } from "@/helper/encrypt";
 import capitalize from "@/helper/capitalize";
 import KodikApiService from "@services/KodikApiService";
 import { KodikGenresRequest } from '@/ts/kodik';
-import { config } from '@/config'
+import { config } from '@/config';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import AutoCheckService from '@services/AutoCheckService';
 
@@ -40,7 +40,7 @@ async function main() {
                 ]
             }
         }
-    })
+    });
     const botRole = await prisma.role.upsert({
         where: { name: "bot" },
         update: {},
@@ -62,7 +62,7 @@ async function main() {
         create: {
             name: "user",
         }
-    })
+    });
     const admin = await prisma.user.upsert({
         where: { email: 'admin@admin.ru' },
         update: {},
@@ -96,7 +96,7 @@ async function main() {
             settings: {},
             integration: {}
         }
-    })
+    });
     const user = await prisma.user.upsert({
         where: { email: 'user@user.ru' },
         update: {},
@@ -143,13 +143,13 @@ async function main() {
     if (config.createTestData) {
         const animes = await prisma.anime.findMany({
             select: { id: true }
-        })
+        });
 
-        let animesId = animes.flatMap(anime => anime.id)
+        const animesId = animes.flatMap(anime => anime.id);
 
         const random = (mn: number, mx: number) => {
             return Math.random() * (mx - mn) + mn;
-        }
+        };
 
         for (const i of Array(20).keys()) {
             const user = await prisma.user.upsert({
@@ -168,7 +168,7 @@ async function main() {
                     settings: {},
                     integration: {}
                 }
-            })
+            });
 
             await prisma.user.update({
                 where: {
@@ -186,22 +186,22 @@ async function main() {
                                             watchedEpisodes: 1,
                                             animeId: animesId[Math.floor(Math.random() * animesId.length)],
                                             rating: random(0, 10)
-                                        })
+                                        });
                                 }
                             }]
                         }
                     }
                 }
-            })
+            });
         }
     }
 }
 
 main()
     .catch((e) => {
-        console.error(e)
-        process.exit(1)
+        console.error(e);
+        process.exit(1);
     })
     .finally(async () => {
-        await prisma.$disconnect()
-    })
+        await prisma.$disconnect();
+    });

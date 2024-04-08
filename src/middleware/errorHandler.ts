@@ -29,5 +29,5 @@ function renderError(res: Response, err: Error, status: number) {
     return res.status(status).json({
         error: err.message,
         stack: !isProduction ? err.stack : undefined
-    })
+    });
 }

@@ -36,7 +36,7 @@ const extention = Prisma.defineExtension({
                                 return {
                                     where: { name },
                                     create: { name }
-                                }
+                                };
                             }),
                         }
                     }
@@ -67,7 +67,7 @@ const extention = Prisma.defineExtension({
                                     return {
                                         where: { name: name.russian },
                                         create: { name: name.russian }
-                                    }
+                                    };
                                 })
                             },
                             rpaRating: anime.rating,
@@ -149,7 +149,7 @@ const extention = Prisma.defineExtension({
                             }
                         }
                     }
-                })
+                });
             },
             async findWithTranlsationsAndGenres(slug: string) {
                 let findBySlug = true;
@@ -171,7 +171,7 @@ const extention = Prisma.defineExtension({
                         },
                         relations: true,
                     }
-                })
+                });
             },
             async getBatchAnimeShikimori(shikimoriIds: number[]) {
                 return prisma.anime.findMany({
@@ -183,7 +183,7 @@ const extention = Prisma.defineExtension({
                 });
             },
             async updateFromShikimoriGraph(shikimori: ShikimoriGraphAnime, hasRelation: boolean, anime: Anime, kodikAnime?: KodikAnime) {
-                let name = shikimori.russian ?? shikimori.name;
+                const name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
 
                 shikimori.licensors = shikimori.licensors.filter(licensor => !config.ignoreLicensors.includes(licensor));
@@ -198,7 +198,7 @@ const extention = Prisma.defineExtension({
                     isCensored = true;
                 }
 
-                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
+                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced; //shikimori...
 
                 let season = shikimori.season === "?" ? null : shikimori.season;
                 if ((season === null) && shikimori.airedOn.date !== null) {
@@ -236,12 +236,12 @@ const extention = Prisma.defineExtension({
 
             },
             async createFromShikimoriGraph(shikimori: ShikimoriGraphAnime, hasRelation: boolean = false, kodikAnime?: KodikAnime) {
-                let name = shikimori.russian ?? shikimori.name;
+                const name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
 
                 shikimori.licensors = shikimori.licensors.filter(licensor => !config.ignoreLicensors.includes(licensor));
-                let isBanned = shikimori.licensors.length > 0;
-                let isCensored = shikimori.isCensored;
+                const isBanned = shikimori.licensors.length > 0;
+                const isCensored = shikimori.isCensored;
 
                 const translations = kodikAnime?.translations;
 
@@ -253,7 +253,7 @@ const extention = Prisma.defineExtension({
                     if (date.startOf('year') !== date) season = getSeasonNameByDate(date.toDate());
                 }
 
-                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
+                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced; //shikimori...
 
                 return await prisma.anime.create({
                     data: {
@@ -298,7 +298,7 @@ const extention = Prisma.defineExtension({
                                         currentEpisodes: translation.episodes_count,
                                         groupId: translation.id,
                                         link: translation.link
-                                    }
+                                    };
                                 })
                             }
                         } : undefined
@@ -307,8 +307,8 @@ const extention = Prisma.defineExtension({
             }
         }
     }
-})
+});
 
 
 
-export { extention as AnimeExt }
+export { extention as AnimeExt };

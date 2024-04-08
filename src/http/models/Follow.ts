@@ -18,7 +18,7 @@ const extention = Prisma.defineExtension({
                             }
                         }
                     }
-                })
+                });
             },
             async removeFollow({ animeId, userId, translationId }: FollowAnime) {
                 await prisma.follow.deleteMany({
@@ -27,10 +27,10 @@ const extention = Prisma.defineExtension({
                         animeId,
                         translationId
                     }
-                })
+                });
             }
         }
     }
 });
 
-export { extention as FollowExt }
+export { extention as FollowExt };

@@ -8,7 +8,7 @@ import AnimeUpdateService from "@services/anime/AnimeUpdateService";
 import NotificationService from "@services/NotificationService";
 import prisma from "@/db";
 import { AnimeStatuses, FollowTypes, RequestStatuses } from "@/ts/enums";
-import { logger } from "@/loggerConf"
+import { logger } from "@/loggerConf";
 import { ShikimoriGraphAnime } from "@/ts/shikimori";
 
 
@@ -26,7 +26,7 @@ export default class AutoCheckService {
         // if we have no anime in db, create it and exit
         if (!haveDbAnime) {
             this.animeUpdateService.createShikimoriGraphAnime(shikimoriAnime, kodikAnime);
-            logger.info(`New anime found ${shikimoriAnime.name}`)
+            logger.info(`New anime found ${shikimoriAnime.name}`);
             return;
         }
 
@@ -39,7 +39,7 @@ export default class AutoCheckService {
                 for (const single of follow.info) {
 
                     NotificationService.notifyUserRelease(single.userId, anime.id);
-                    logger.info(`Need to notify user ${single.userId} that ${anime.name} began releasing`)
+                    logger.info(`Need to notify user ${single.userId} that ${anime.name} began releasing`);
 
                     // delete follow from db
                     prisma.follow.deleteMany({
@@ -47,7 +47,7 @@ export default class AutoCheckService {
                             animeId: anime.id,
                             userId: single.userId
                         },
-                    })
+                    });
                 }
             }
         }
@@ -55,12 +55,12 @@ export default class AutoCheckService {
             return this.animeUpdateService.updateShikimoriGraphAnime(shikimoriAnime, anime, kodikAnime);
         }
 
-        let followedTranslationIds: number[] = []
+        let followedTranslationIds: number[] = [];
         if (haveFollow && follow.status === FollowTypes.Follow) {
             followedTranslationIds = follow.info.map(single => single.translation!.groupId);
         }
         for (const translation of anime.animeTranslations) {
-            const kodikTranslation = kodikAnime.translations.find(kodikTranslation => translation.groupId === kodikTranslation.id)
+            const kodikTranslation = kodikAnime.translations.find(kodikTranslation => translation.groupId === kodikTranslation.id);
             if (kodikTranslation === undefined) continue;
             if (kodikTranslation.episodes_count === translation.currentEpisodes) continue;
             const isFinalEpisode = kodikTranslation.episodes_count === anime.maxEpisodes;
@@ -77,8 +77,8 @@ export default class AutoCheckService {
                 // notify users
                 if (!isFinalEpisode) {
 
-                    NotificationService.notifyUserEpisode(single.userId, anime.id, kodikTranslation.id, kodikTranslation.episodes_count)
-                    logger.info(`Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`)
+                    NotificationService.notifyUserEpisode(single.userId, anime.id, kodikTranslation.id, kodikTranslation.episodes_count);
+                    logger.info(`Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`);
 
                     continue;
                 }
@@ -95,8 +95,8 @@ export default class AutoCheckService {
                         userId: single.userId
 
                     }
-                })
-                logger.info(`Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`)
+                });
+                logger.info(`Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`);
             }
         }
 
@@ -112,7 +112,7 @@ export default class AutoCheckService {
         const checkAnime: ShikimoriGraphAnime[] = [];
         const date = new Date();
         const prevSeasonStart = getPreviousSeasonStart(date);
-        const currentSeasonEnd = getCurrentSeasonEnd(date)
+        const currentSeasonEnd = getCurrentSeasonEnd(date);
 
         const prevSeasonString = `${getSeason(prevSeasonStart)}_${prevSeasonStart.getFullYear()}`;
         const currentSeasonString = `${getSeason(currentSeasonEnd)}_${currentSeasonEnd.getFullYear()}`;
@@ -122,13 +122,13 @@ export default class AutoCheckService {
             const shikimoriAnimeRequest = await shikimoriApi.getGraphAnimeBySeason(page, seasonString);
             const shikimoriAnime = shikimoriAnimeRequest.data.animes;
             if ((shikimoriAnime.length == 0 || shikimoriAnime.length < 50) && seasonString != currentSeasonString) {
-                seasonString = currentSeasonString
+                seasonString = currentSeasonString;
                 page = 1;
                 continue;
             }
             logger.info(`Getting base anime from shikimori, page:${page}, season:${seasonString}`);
             checkAnime.push(...shikimoriAnime);
-            if (shikimoriAnime.length == 0 || shikimoriAnime.length < 50) break
+            if (shikimoriAnime.length == 0 || shikimoriAnime.length < 50) break;
             page += 1;
         } while (true);
         return checkAnime;
@@ -138,9 +138,9 @@ export default class AutoCheckService {
         const user: undefined = undefined; // No user is required
         const shikimoriApi = new ShikimoriApiService(user);
         const idsSpliced = groupArrSplice(ids, 50);
-        logger.info("Getting anime from shikimori")
+        logger.info("Getting anime from shikimori");
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async batch => {
-            let response = await shikimoriApi.getBatchGraphAnime(batch);
+            const response = await shikimoriApi.getBatchGraphAnime(batch);
             return response.data.animes;
         });
         let followedAnime: ShikimoriGraphAnime[] = await Promise.all(shikimoriRes.flatMap(async p => await p));
@@ -161,7 +161,7 @@ export default class AutoCheckService {
 
 
     async updateGroups() {
-        logger.info('began updating groups')
+        logger.info('began updating groups');
         const kodikApi = new KodikApiService();
         const translations = await kodikApi.getTranslationGroups();
         for (const translation of translations) {
@@ -179,9 +179,9 @@ export default class AutoCheckService {
                     name: translation.title,
                     type: translation.type,
                 }
-            })
+            });
 
         }
-        logger.info('finished updating groups')
+        logger.info('finished updating groups');
     }
 }

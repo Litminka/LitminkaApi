@@ -22,18 +22,18 @@ export default class ShikimoriController {
 
         return res.status(RequestStatuses.OK).json({
             message: "Account linked!"
-        })
+        });
     }
 
     static async unlink(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
-        ShikimoriLinkService.unlink(user)
+        ShikimoriLinkService.unlink(user);
 
         return res.status(RequestStatuses.OK).json({
             message: "Account unlinked",
             link: `${process.env.SHIKIMORI_URL}/oauth/applications/${process.env.SHIKIMORI_APP_ID}`,
-        })
+        });
     }
 
     static async getProfile(req: IntegrationReq, res: Response): Promise<Object> {

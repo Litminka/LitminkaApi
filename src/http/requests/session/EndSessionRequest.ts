@@ -22,6 +22,6 @@ export class EndSessionRequest extends AuthRequest {
             bodyUUIDValidator("sessions.*", {
                 message: sessionMsg.invalidSessionToken
             })
-        ]
+        ];
     }
 }

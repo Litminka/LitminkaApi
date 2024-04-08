@@ -10,7 +10,7 @@ import { UpdateSettingsReq } from "@requests/user/UpdateSettingsRequest";
 export default class UserController {
     static async createUser(req: RegisterUserReq, res: Response): Promise<Object> {
         const { email, login, password, name } = req.body;
-        UserService.create({ email, login, password, name })
+        UserService.create({ email, login, password, name });
         return res.json({
             data: {
                 message: "User created successfully"

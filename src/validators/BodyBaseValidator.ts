@@ -36,7 +36,7 @@ export const bodyArrayValidator = (fieldName: string, options?: BaseValidator): 
     return arrayValidator({
         validator: body(fieldName, message),
         typeParams
-    })
+    });
 };
 
 /**
@@ -52,7 +52,7 @@ export const bodyStringValidator = (fieldName: string, options?: BaseValidator):
     return stringValidator({
         validator: body(fieldName, message),
         typeParams
-    })
+    });
 };
 
 /**
@@ -68,7 +68,7 @@ export const bodyIntValidator = (fieldName: string, options?: IntValidator): Val
     return intValidator({
         validator: body(fieldName, message),
         typeParams
-    })
+    });
 };
 
 /**
@@ -84,7 +84,7 @@ export const bodyBoolValidator = (fieldName: string, options?: BoolValidator): V
     return boolValidator({
         validator: body(fieldName, message).default(defValue),
         typeParams: options?.typeParams
-    })
+    });
 };
 
 /**
@@ -97,5 +97,5 @@ export const bodyUUIDValidator = (fieldName: string, options?: UUIDValidator): V
 
     return uuidValidator({
         validator: body(fieldName, message)
-    })
+    });
 };

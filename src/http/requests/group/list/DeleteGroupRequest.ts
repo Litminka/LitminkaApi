@@ -17,6 +17,6 @@ export class DeleteGroupRequest extends AuthRequest {
 
         return [
             paramIntValidator("groupId")
-        ]
+        ];
     }
 }

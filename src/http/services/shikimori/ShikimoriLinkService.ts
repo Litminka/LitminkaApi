@@ -13,16 +13,16 @@ export default class ShikimoriLinkService {
         try {
             await prisma.shikimoriLinkToken.updateWithCode(token, code);
         } catch (error) {
-            throw new UnauthorizedError("Query param token must be string")
+            throw new UnauthorizedError("Query param token must be string");
         }
         const user = await prisma.user.findUserByShikimoriLinkToken(token);
         if (user.integration?.shikimoriId) throw new BadRequestError("User already has shikimori integration");
 
         const shikimoriapi = new ShikimoriApiService(user);
         const profile = await shikimoriapi.getProfile();
-        if (!profile) throw new UnauthorizedError("User does not have shikimori integration")
+        if (!profile) throw new UnauthorizedError("User does not have shikimori integration");
 
-        const integrated = await prisma.integration.findByShikimoriId((<ShikimoriWhoAmI>profile).id)
+        const integrated = await prisma.integration.findByShikimoriId((<ShikimoriWhoAmI>profile).id);
         // fix if user integrated this shikimori account on another user account
         if (integrated) {
             await prisma.integration.clearShikimoriIntegration(user.id);
@@ -48,7 +48,7 @@ export default class ShikimoriLinkService {
         if (user.integration?.shikimoriId) throw new BadRequestError("User already has shikimori integration");
 
         const token: string = crypto.randomBytes(24).toString('hex');
-        await prisma.shikimoriLinkToken.createShikimoriLinkTokenByUserId(token, user.id)
+        await prisma.shikimoriLinkToken.createShikimoriLinkTokenByUserId(token, user.id);
         return `${process.env.APP_URL}/shikimori/link?token=${token}`;
     }
 }

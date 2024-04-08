@@ -13,7 +13,7 @@ export async function optionalAuth(req: RequestWithBot, res: Response, next: Nex
             return res.status(RequestStatuses.Unauthorized).json({ "error": true, "message": 'Token expired' });
         }
         if (err) {
-            return res.status(RequestStatuses.InternalServerError).json({ "error": true, "message": "Failed to authenticate token" })
+            return res.status(RequestStatuses.InternalServerError).json({ "error": true, "message": "Failed to authenticate token" });
         }
         req.auth = <any>decoded;
         if (!req.auth || !req.auth.token) return res.status(RequestStatuses.Forbidden).json({

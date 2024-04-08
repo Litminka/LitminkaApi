@@ -19,6 +19,6 @@ export class LinkShikimoriRequest extends Request {
         return [
             queryStringValidator("token"),
             queryStringValidator("code"),
-        ]
+        ];
     }
 }

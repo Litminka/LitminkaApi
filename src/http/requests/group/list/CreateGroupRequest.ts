@@ -19,6 +19,6 @@ export class CreateGroupRequest extends GroupRequest {
         return [
             bodyStringValidator("name").optional(),
             bodyStringValidator("description").optional(),
-        ]
+        ];
     }
 }

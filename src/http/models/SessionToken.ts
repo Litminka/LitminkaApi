@@ -15,6 +15,6 @@ const extention = Prisma.defineExtension({
             }
         }
     }
-})
+});
 
-export { extention as SessionTokenExt }
+export { extention as SessionTokenExt };

@@ -16,21 +16,21 @@ const extention = Prisma.defineExtension({
                         groupId,
                         episode,
                     }
-                })
+                });
             },
             async readNotifications(ids: number[], userId: number) {
-                let query: Prisma.UserAnimeNotificationsUpdateManyArgs = {
+                const query: Prisma.UserAnimeNotificationsUpdateManyArgs = {
                     where: {
                         userId,
                     },
                     data: { isRead: true }
-                }
+                };
 
                 if (ids.length === 0) query.where = {
                     userId,
                     id: { in: ids }
-                }
-                return prisma.userAnimeNotifications.updateMany(query)
+                };
+                return prisma.userAnimeNotifications.updateMany(query);
             },
             async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {
                 return prisma.userAnimeNotifications.findMany({
@@ -42,10 +42,10 @@ const extention = Prisma.defineExtension({
                             gte: period[0]
                         }
                     }
-                })
+                });
             }
         }
     }
-})
+});
 
-export { extention as UserNotificationExt }
+export { extention as UserNotificationExt };

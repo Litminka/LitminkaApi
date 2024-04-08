@@ -29,7 +29,7 @@ export default class ShikimoriListSyncService {
             data: {
                 shikimoriId: id,
             }
-        })
+        });
     }
 
     public static async deleteList(userId: number, shikimoriId: number) {
@@ -49,7 +49,7 @@ export default class ShikimoriListSyncService {
         shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, list, type: "add-update" }, {
             removeOnComplete: 10,
             removeOnFail: 100
-        })
+        });
     }
     public static createDeleteJob(user: UserWithIntegrationSettings, id: number) {
 
@@ -58,6 +58,6 @@ export default class ShikimoriListSyncService {
         shikimoriListUpdateQueue.add("shikimoriListUpdate", { userId: user.id, shikimoriId: id, type: "delete" }, {
             removeOnComplete: 10,
             removeOnFail: 100
-        })
+        });
     }
 }

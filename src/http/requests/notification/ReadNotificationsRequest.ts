@@ -17,6 +17,6 @@ export class ReadNotificationsRequest extends AuthRequest {
         return [
             bodyArrayValidator("id").optional(),
             bodyIntValidator("id.*")
-        ]
+        ];
     }
 }

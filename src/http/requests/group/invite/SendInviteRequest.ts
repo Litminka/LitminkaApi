@@ -22,6 +22,6 @@ export class SendInviteRequest extends GroupRequest {
         return [
             paramIntValidator("groupId"),
             bodyIntValidator("userId"),
-        ]
+        ];
     }
 }

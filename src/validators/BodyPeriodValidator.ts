@@ -15,7 +15,7 @@ const bodyDateValidator = (fieldName: string, options?: DateValidator): Validati
     return dateValidator({
         validator: body(`${fieldName}.*`, message),
         typeParams: options?.typeParams
-    })
+    });
 };
 
 /**
@@ -39,7 +39,7 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: DateValidat
             typeParams: { min: 0, max: 2 },
         }).bail(),
         bodyDateValidator(`${fieldName}.*`, { message, typeParams: options?.typeParams })
-    ]
+    ];
 };
 
 /**
@@ -51,26 +51,26 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: DateValidat
  */
 export const bodyStrictPeriodValidator = (fieldName: string, options?: DateValidator): ValidationChain[] => {
     const message = options?.message ?? baseMsg.valueMustBeDate;
-    const typeParams = options?.typeParams
+    const typeParams = options?.typeParams;
 
     return [
         // Validator doesn't cast value to array except arrayValidator, using unique chain
         body(fieldName).optional()
             .custom(value => {
-                const options = { min: 2, max: 2 }
+                const options = { min: 2, max: 2 };
 
-                if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray)
+                if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray);
                 if (value.length < options.min || value.length > options.max) {
-                    let message: any = genMessage({
+                    const message: any = genMessage({
                         message: baseMsg.valueNotInRange,
                         typeParams: options
-                    })
-                    const msg: string = message.msg; delete message.msg
-                    throw new Error(msg, message)
+                    });
+                    const msg: string = message.msg; delete message.msg;
+                    throw new Error(msg, message);
                 }
                 return true;
             })
             .bail(),
         bodyDateValidator(`${fieldName}.*`, { message, typeParams })
-    ]
+    ];
 };

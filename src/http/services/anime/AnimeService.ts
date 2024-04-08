@@ -25,10 +25,10 @@ export default class AnimeService {
     }
 
     public static async getTopAnime(shikimori: boolean) {
-        let query: Prisma.AnimeFindManyArgs = { take: 100 }
-        query.orderBy = { rating: 'desc' }
-        if (shikimori) { query.orderBy = { shikimoriRating: 'desc' } }
-        return await prisma.anime.findMany(query)
+        const query: Prisma.AnimeFindManyArgs = { take: 100 };
+        query.orderBy = { rating: 'desc' };
+        if (shikimori) { query.orderBy = { shikimoriRating: 'desc' }; }
+        return await prisma.anime.findMany(query);
     }
 
     public static async getSeasonal(censor: boolean, showBanned: boolean) {
@@ -65,7 +65,7 @@ export default class AnimeService {
             data: {
                 banned: true,
             }
-        })
+        });
     }
 
     public static async unBanAnime(animeId: number) {
@@ -74,6 +74,6 @@ export default class AnimeService {
             data: {
                 banned: false,
             }
-        })
+        });
     }
 }

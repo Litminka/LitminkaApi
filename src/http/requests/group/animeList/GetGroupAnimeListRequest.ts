@@ -45,6 +45,6 @@ export class GetGroupAnimeListRequest extends GroupRequest {
                 defValue: 25,
                 typeParams: { min: 1, max: 125 },
             }),
-        ]
+        ];
     }
 }

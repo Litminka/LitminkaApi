@@ -1,7 +1,7 @@
 import { bodySoftPeriodValidator } from "@validators/BodyPeriodValidator";
 import { bodyArrayValidator, bodyBoolValidator, bodyIntValidator, bodyStringValidator } from "@validators/BodyBaseValidator";
 import { queryIntValidator } from "@validators/QueryBaseValidator";
-import { baseMsg, searchMsg } from "@/ts/messages"
+import { baseMsg, searchMsg } from "@/ts/messages";
 import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from "@/ts/enums";
 import { ValidationChain } from "express-validator";
 import { Request as ExpressRequest } from "express";
@@ -41,7 +41,7 @@ export class GetAnimeRequest extends FrontPageAnimeRequest {
                 typeParams: { max: 2 },
             }).optional(),
             bodyStringValidator("seasons.*").custom((value) => {
-                if (!isSeason(value)) throw new Error(baseMsg.valueNotInRange)
+                if (!isSeason(value)) throw new Error(baseMsg.valueNotInRange);
                 return true;
             }),
 
@@ -79,6 +79,6 @@ export class GetAnimeRequest extends FrontPageAnimeRequest {
                 defValue: 25,
                 typeParams: { min: 1, max: 125 },
             }),
-        ]
+        ];
     }
 }

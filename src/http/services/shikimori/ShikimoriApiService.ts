@@ -18,8 +18,8 @@ interface iShikimoriApi {
 }
 
 axios.defaults.validateStatus = (status) => {
-    return (status >= 400 && status <= 499) || (status >= 200 && status <= 299)
-}
+    return (status >= 400 && status <= 499) || (status >= 200 && status <= 299);
+};
 
 /**
  *  Documenting this api for the unfortunate soul that will maintain it in the future
@@ -69,7 +69,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             requestBody.append("code", this.user.integration!.shikimoriCode!);
             requestBody.append("redirect_uri", `${process.env.APP_URL}/shikimori/link?token=${token!.token}`);
         } else {
-            requestBody.append("refresh_token", this.user.integration!.shikimoriRefreshToken!)
+            requestBody.append("refresh_token", this.user.integration!.shikimoriRefreshToken!);
         }
         const response = await axios(`${process.env.SHIKIMORI_URL}/oauth/token`, {
             method: "POST",
@@ -160,7 +160,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
 
             if (status !== RequestStatuses.TooManyRequests) {
                 if (status === RequestStatuses.Forbidden) {
-                    throw new BadRequestError('no_shikimori_rights')
+                    throw new BadRequestError('no_shikimori_rights');
                 }
                 const data: any = response.data;
                 if (status !== RequestStatuses.Unauthorized) return data;
@@ -176,12 +176,12 @@ export default class ShikimoriApiService implements iShikimoriApi {
         try {
             return await this.makeRequest(uri, method, true, {
                 user_rate: data
-            })
+            });
         } catch (error) {
             if (error instanceof ForbiddenError) {
                 await prisma.user.disableShikimoriListUpdate(this.user.id);
             }
-            throw error
+            throw error;
         }
 
     }
@@ -329,7 +329,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             target_id: animeId,
             user_id: this.user!.integration!.shikimoriId,
             target_type: "Anime"
-        }
+        };
 
         return await this.makeListRequest('/v2/user_rates', "POST", requestData) as ShikimoriListResponse;
     }

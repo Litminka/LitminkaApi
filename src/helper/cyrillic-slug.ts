@@ -5,13 +5,13 @@ letterMap.set("ц", "ts");
 letterMap.set("у", "u");
 letterMap.set("к", "k");
 letterMap.set("е", "e");
-letterMap.set("н", "n")
-letterMap.set("г", "g")
-letterMap.set("ш", "sh")
-letterMap.set("щ", "sch")
-letterMap.set("з", "z")
-letterMap.set("х", "h")
-letterMap.set("ъ", "'")
+letterMap.set("н", "n");
+letterMap.set("г", "g");
+letterMap.set("ш", "sh");
+letterMap.set("щ", "sch");
+letterMap.set("з", "z");
+letterMap.set("х", "h");
+letterMap.set("ъ", "'");
 letterMap.set("ф", "f");
 letterMap.set("ы", "i");
 letterMap.set("в", "v");
@@ -47,4 +47,4 @@ export const cyrillicSlug = (word: string) => {
     }
 
     return answer.replace(/[^\w ]+/g, '').replace(/ +/g, '-');
-}
+};

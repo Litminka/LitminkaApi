@@ -17,6 +17,6 @@ export class DenyInviteRequest extends GroupInviteRequest {
 
         return [
             paramIntValidator("inviteId"),
-        ]
+        ];
     }
 }

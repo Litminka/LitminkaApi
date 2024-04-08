@@ -16,6 +16,6 @@ export class GroupMemberRequest extends AuthRequest {
     protected rules(): ValidationChain[] {
         return [
             paramIntValidator("groupId"),
-        ]
+        ];
     }
 }

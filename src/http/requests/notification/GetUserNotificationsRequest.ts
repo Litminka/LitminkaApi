@@ -19,6 +19,6 @@ export class GetUserNotificationsRequest extends AuthRequest {
         return [
             ...bodySoftPeriodValidator("period"),
             bodyBoolValidator("isRead")
-        ]
+        ];
     }
 }

@@ -22,6 +22,6 @@ export class DeleteInviteRequest extends GroupRequest {
         return [
             paramIntValidator("groupId"),
             bodyIntValidator("userId"),
-        ]
+        ];
     }
 }

@@ -15,13 +15,13 @@ const extention = Prisma.defineExtension({
                                 name: anime.relationRu,
                                 animeId: id,
                                 relatedTo: Number(anime.anime!.id),
-                            }
+                            };
                         }),
-                    })
+                    });
                 }
             },
         }
     }
 });
 
-export { extention as AnimeRelationExt }
+export { extention as AnimeRelationExt };

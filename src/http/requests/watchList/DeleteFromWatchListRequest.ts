@@ -29,6 +29,6 @@ export class DeleteFromWatchListRequest extends IntegrationSettingsRequest {
                 });
                 if (!anime) throw new Error("Anime doesn't exist");
             }),
-        ]
+        ];
     }
 }
