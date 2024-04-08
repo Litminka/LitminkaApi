@@ -23,7 +23,7 @@
       "@validators/*": [
         "src/validators/*"
       ],
-      "@routes/*": [
+      "@routers/*": [
         "src/routers/*"
       ],
       "@controllers/*": [

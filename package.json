@@ -15,7 +15,8 @@
     "relation-update": "npx ts-node src/queues/relationUpdate.ts",
     "rating-update": "npx ts-node src/queues/ratingUpdate.ts",
     "watchlist-importer": "npx ts-node src/queues/watchListWorker.ts",
-    "shikimori-watchlist-sync": "npx ts-node src/queues/shikimoriListUpdate.ts"
+    "shikimori-watchlist-sync": "npx ts-node src/queues/shikimoriListUpdate.ts",
+    "lint": "npx eslint . --config eslint.config.mjs --fix"
   },
   "repository": {
     "type": "git",
@@ -50,6 +51,8 @@
     "winston": "^3.12.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^9.0.0",
     "@types/bcrypt": "^5.0.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.13",
@@ -58,12 +61,23 @@
     "@types/node": "^18.0.1",
     "@types/node-fetch": "^2.6.2",
     "@types/supertest": "^6.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "globals": "^15.0.0",
     "nodemon": "^3.1.0",
+    "prettier": "3.2.5",
     "prisma": "^5.11.0",
     "supertest": "^6.3.4",
     "ts-node": "^10.8.2",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.5",
+    "typescript-eslint": "^7.5.0"
   }
 }
