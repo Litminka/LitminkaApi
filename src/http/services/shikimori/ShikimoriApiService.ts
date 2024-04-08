@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { User, Integration, Prisma } from '@prisma/client';
 import axios, { AxiosHeaders } from 'axios';
 import BadRequestError from '@/errors/clienterrors/BadRequestError';

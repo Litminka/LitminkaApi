@@ -33,7 +33,8 @@ export default tseslint.config(
                     ignoreImports: true
                 }
             ],
-            'no-var': ['error']
+            'no-var': ['error'],
+            'no-constant-condition': ['error', { checkLoops: false }]
         }
     }
 );

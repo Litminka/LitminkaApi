@@ -76,7 +76,6 @@ export const bodyStrictPeriodValidator = (
 
                 if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray);
                 if (value.length < options.min || value.length > options.max) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const message: any = genMessage({
                         message: baseMsg.valueNotInRange,
                         typeParams: options

@@ -25,20 +25,23 @@ export default class GroupAnimeListService {
     private static getFilters(groupId: number, filters: ListFilters) {
         const { statuses, ratings, isFavorite } = filters as ListFilters;
         const { filter } = {
-            filter: () => ({
-                AND: {
-                    groupId,
-                    isFavorite,
-                    status: statuses === undefined ? undefined : { in: statuses },
-                    rating:
-                        ratings === undefined
-                            ? undefined
-                            : {
-                                  gte: ratings ? ratings[0] : 1,
-                                  lte: ratings ? ratings[1] : 10
-                              }
-                }
-            })
+            filter: () => {
+                return {
+                    AND: {
+                        groupId,
+                        isFavorite,
+                        status: statuses === undefined ? undefined : { in: statuses },
+                        rating:
+                            ratings === undefined
+                                ? undefined
+                                : {
+                                      gte: ratings ? ratings[0] : 1,
+                                      lte: ratings ? ratings[1] : 10
+                                  }
+                    }
+                };
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } satisfies Record<string, (...args: any) => Prisma.GroupAnimeListWhereInput>;
         return filter();
     }
@@ -89,7 +92,11 @@ export default class GroupAnimeListService {
             }
         });
 
-        if (group.list.some((list) => list.animeId == data.animeId)) {
+        if (
+            group.list.some((list) => {
+                return list.animeId == data.animeId;
+            })
+        ) {
             throw new BaseError('anime_already_in_list', {
                 status: RequestStatuses.UnprocessableContent
             });
@@ -122,7 +129,11 @@ export default class GroupAnimeListService {
             }
         });
 
-        if (!group.list.some((list) => list.animeId == data.animeId)) {
+        if (
+            !group.list.some((list) => {
+                return list.animeId == data.animeId;
+            })
+        ) {
             throw new BaseError('no_anime_in_list', {
                 status: RequestStatuses.UnprocessableContent
             });
@@ -158,7 +169,11 @@ export default class GroupAnimeListService {
             }
         });
 
-        if (!group.list.some((list) => list.animeId == animeId)) {
+        if (
+            !group.list.some((list) => {
+                return list.animeId == animeId;
+            })
+        ) {
             throw new BaseError('no_anime_in_list', {
                 status: RequestStatuses.UnprocessableContent
             });
@@ -171,8 +186,12 @@ export default class GroupAnimeListService {
             }
         });
 
-        const members = group.members.filter((member) => member.overrideList);
-        const memberIds = members.map((user) => user.userId);
+        const members = group.members.filter((member) => {
+            return member.overrideList;
+        });
+        const memberIds = members.map((user) => {
+            return user.userId;
+        });
 
         const userListEntries = await prisma.animeList.findMany({
             where: {
@@ -196,7 +215,9 @@ export default class GroupAnimeListService {
 
         for (const entry of userListEntries) {
             if (!entry.shikimoriId) continue;
-            const user = memberIntegrations.find((user) => user.id === entry.userId);
+            const user = memberIntegrations.find((user) => {
+                return user.id === entry.userId;
+            });
             if (!user) continue;
             ShikimoriListSyncService.createDeleteJob(user, entry.shikimoriId);
         }
@@ -223,8 +244,12 @@ export default class GroupAnimeListService {
             }
         });
 
-        const members = group.members.filter((member) => member.overrideList);
-        const memberIds = members.map((user) => user.userId);
+        const members = group.members.filter((member) => {
+            return member.overrideList;
+        });
+        const memberIds = members.map((user) => {
+            return user.userId;
+        });
 
         const membersListEntries = await prisma.animeList.findMany({
             where: {
@@ -235,10 +260,12 @@ export default class GroupAnimeListService {
             }
         });
 
-        const membersWithListEntries: number[] = membersListEntries.map((list) => list.userId);
-        const membersWithoutListEntries: number[] = memberIds.filter(
-            (id) => membersWithListEntries.indexOf(id) === -1
-        );
+        const membersWithListEntries: number[] = membersListEntries.map((list) => {
+            return list.userId;
+        });
+        const membersWithoutListEntries: number[] = memberIds.filter((id) => {
+            return membersWithListEntries.indexOf(id) === -1;
+        });
 
         await prisma.animeList.updateMany({
             where: {

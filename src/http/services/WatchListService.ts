@@ -25,20 +25,22 @@ export default class WatchListService {
     private static getFilters(userId: number, filters: ListFilters) {
         const { statuses, ratings, isFavorite } = filters as ListFilters;
         const { filter } = {
-            filter: () => ({
-                AND: {
-                    userId,
-                    isFavorite,
-                    status: statuses === undefined ? undefined : { in: statuses },
-                    rating:
-                        ratings === undefined
-                            ? undefined
-                            : {
-                                  gte: ratings ? ratings[0] : 1,
-                                  lte: ratings ? ratings[1] : 10
-                              }
-                }
-            })
+            filter: () => {
+                return {
+                    AND: {
+                        userId,
+                        isFavorite,
+                        status: statuses === undefined ? undefined : { in: statuses },
+                        rating:
+                            ratings === undefined
+                                ? undefined
+                                : {
+                                      gte: ratings ? ratings[0] : 1,
+                                      lte: ratings ? ratings[1] : 10
+                                  }
+                    }
+                };
+            }
         } satisfies Record<string, (...args: any) => Prisma.AnimeListWhereInput>;
         return filter();
     }
@@ -64,7 +66,9 @@ export default class WatchListService {
         const animeList = await shikimoriapi.getUserList();
         logger.info('Got list');
         let watchList: ShikimoriWatchList[] = animeList as ShikimoriWatchList[];
-        const shikimoriAnimeIds: number[] = watchList.map((anime) => anime.target_id);
+        const shikimoriAnimeIds: number[] = watchList.map((anime) => {
+            return anime.target_id;
+        });
 
         // Get all anime from kodik
         const kodik = new KodikApiService();
@@ -73,8 +77,12 @@ export default class WatchListService {
         logger.info('Got anime from kodik');
 
         // Isolate all results that returned nothing
-        const kodikIds = result.map((anime) => parseInt(anime.shikimori_id));
-        const noResultIds = shikimoriAnimeIds.filter((id) => kodikIds.indexOf(id) < 0);
+        const kodikIds = result.map((anime) => {
+            return parseInt(anime.shikimori_id);
+        });
+        const noResultIds = shikimoriAnimeIds.filter((id) => {
+            return kodikIds.indexOf(id) < 0;
+        });
 
         // Request all isolated ids from shikimori
         // Splice all ids into groups of 50, so we can batch request anime from shikimori
@@ -83,13 +91,22 @@ export default class WatchListService {
             return await shikimoriapi.getBatchAnime(batch);
         });
         let noResultAnime: ShikimoriAnime[] = await Promise.all(
-            shikimoriRes.flatMap(async (p) => await p)
+            shikimoriRes.flatMap(async (p) => {
+                return await p;
+            })
         );
         noResultAnime = noResultAnime.flat();
 
         // remove all nasty stuff from watchlist, no pron for you >:)
-        const allIds = new Set([...kodikIds, ...noResultAnime.map((anime) => anime.id)]);
-        watchList = watchList.filter((list) => allIds.has(list.target_id));
+        const allIds = new Set([
+            ...kodikIds,
+            ...noResultAnime.map((anime) => {
+                return anime.id;
+            })
+        ]);
+        watchList = watchList.filter((list) => {
+            return allIds.has(list.target_id);
+        });
 
         const animeUpdateService = new AnimeUpdateService(shikimoriapi, user);
         let animeInList = await animeUpdateService.updateAnimeKodik(result);
@@ -98,9 +115,9 @@ export default class WatchListService {
         animeInList = animeInList.concat(shikimoriUpdate);
         for (let i = 0; i < watchList.length; i++) {
             const listEntry = watchList[i];
-            const animeId = animeInList.find(
-                (anime) => anime.shikimoriId == listEntry.target_id
-            )!.id;
+            const animeId = animeInList.find((anime) => {
+                return anime.shikimoriId == listEntry.target_id;
+            })!.id;
             const res = await prisma.animeList.updateUserWatchListEntry(
                 user.id,
                 animeId,
@@ -136,7 +153,9 @@ export default class WatchListService {
         const watchList = await shikimoriApi.getUserList();
         logger.info(`Got list of user ID:${user.id}:${user.login}`);
 
-        const watchListAnimeIds: number[] = watchList.map((anime) => anime.target_id);
+        const watchListAnimeIds: number[] = watchList.map((anime) => {
+            return anime.target_id;
+        });
         const groupedIds = groupArrSplice(watchListAnimeIds, 50);
 
         let batchNumber = 1;
@@ -151,7 +170,9 @@ export default class WatchListService {
             for (const anime of shikimoriData.data.animes) {
                 shikimoriMap.set(Number(anime.id), anime);
 
-                anime.related = anime.related.filter((relation) => relation.anime !== null);
+                anime.related = anime.related.filter((relation) => {
+                    return relation.anime !== null;
+                });
 
                 for (const relation of anime.related) {
                     const id = Number(relation.anime!.id);

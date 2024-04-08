@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable camelcase */
 import fetch from 'node-fetch';
 import {
     _KodikAnimeFullRequest,
@@ -8,8 +10,7 @@ import {
     _KodikAnimeRequest,
     translation,
     KodikAnime,
-    _translation,
-    _KodikAnimeFull
+    _translation
 } from '@/ts/kodik';
 import { RequestStatuses } from '@/ts/enums';
 import { logger } from '@/loggerConf';
@@ -203,7 +204,9 @@ export default class KodikApiService {
             awaitResult.push(promise);
         }
         let result: KodikAnimeFull[] = await Promise.all(awaitResult);
-        result = result.filter((anime) => anime !== undefined);
+        result = result.filter((anime) => {
+            return anime !== undefined;
+        });
         return result;
     }
 
@@ -214,7 +217,9 @@ export default class KodikApiService {
             awaitResult.push(promise);
         }
         let result: KodikAnimeFull[] = await Promise.all(awaitResult);
-        result = result.filter((anime) => anime !== undefined);
+        result = result.filter((anime) => {
+            return anime !== undefined;
+        });
         return result;
     }
 

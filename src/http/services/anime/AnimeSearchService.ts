@@ -105,16 +105,21 @@ export default class AnimeSearchService {
                 this.byBan(filters.banInRussia)
             ]
                 .flat()
-                .filter((filter) => filter)
+                .filter((filter) => {
+                    return filter;
+                })
         };
 
         const { filter } = {
-            filter: () => ({
-                AND: andFilter.AND.flatMap((filter) => {
-                    if (filter === undefined) return [];
-                    return filter;
-                })
-            })
+            filter: () => {
+                return {
+                    AND: andFilter.AND.flatMap((filter) => {
+                        if (filter === undefined) return [];
+                        return filter;
+                    })
+                };
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
         return filter();
     }

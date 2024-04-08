@@ -2,12 +2,12 @@ import { getPreviousSeasonStart, getCurrentSeasonEnd, getSeason } from '@/helper
 import groupArrSplice from '@/helper/groupsplice';
 import KodikApiService from '@services/KodikApiService';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
-import { ShikimoriAnime, followType } from '@/ts/index';
+import { followType } from '@/ts/index';
 import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import NotificationService from '@services/NotificationService';
 import prisma from '@/db';
-import { AnimeStatuses, FollowTypes, RequestStatuses } from '@/ts/enums';
+import { AnimeStatuses, FollowTypes } from '@/ts/enums';
 import { logger } from '@/loggerConf';
 import { ShikimoriGraphAnime } from '@/ts/shikimori';
 
@@ -70,12 +70,14 @@ export default class AutoCheckService {
 
         let followedTranslationIds: number[] = [];
         if (haveFollow && follow.status === FollowTypes.Follow) {
-            followedTranslationIds = follow.info.map((single) => single.translation!.groupId);
+            followedTranslationIds = follow.info.map((single) => {
+                return single.translation!.groupId;
+            });
         }
         for (const translation of anime.animeTranslations) {
-            const kodikTranslation = kodikAnime.translations.find(
-                (kodikTranslation) => translation.groupId === kodikTranslation.id
-            );
+            const kodikTranslation = kodikAnime.translations.find((kodikTranslation) => {
+                return translation.groupId === kodikTranslation.id;
+            });
             if (kodikTranslation === undefined) continue;
             if (kodikTranslation.episodes_count === translation.currentEpisodes) continue;
             const isFinalEpisode = kodikTranslation.episodes_count === anime.maxEpisodes;
@@ -176,12 +178,15 @@ export default class AutoCheckService {
         const shikimoriApi = new ShikimoriApiService(user);
         const idsSpliced = groupArrSplice(ids, 50);
         logger.info('Getting anime from shikimori');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async (batch) => {
             const response = await shikimoriApi.getBatchGraphAnime(batch);
             return response.data.animes;
         });
         let followedAnime: ShikimoriGraphAnime[] = await Promise.all(
-            shikimoriRes.flatMap(async (p) => await p)
+            shikimoriRes.flatMap(async (p) => {
+                return await p;
+            })
         );
         followedAnime = followedAnime.flat();
         return followedAnime;
@@ -190,7 +195,9 @@ export default class AutoCheckService {
     async getKodikAnime(anime: ShikimoriGraphAnime[]): Promise<KodikAnimeFull[]> {
         const kodikApi = new KodikApiService();
         const animeIds: number[][] = groupArrSplice(
-            anime.map((a) => a.id),
+            anime.map((a) => {
+                return a.id;
+            }),
             10
         );
         const animeResult: KodikAnimeFull[] = [];

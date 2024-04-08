@@ -74,7 +74,11 @@ export default class GroupListService {
     }
 
     public static async updateGroup({ description, name, user, groupId }: UpdateGroup) {
-        if (!user.ownedGroups.some((group) => group.id === groupId)) {
+        if (
+            !user.ownedGroups.some((group) => {
+                return group.id === groupId;
+            })
+        ) {
             throw new BaseError('not_an_owner', {
                 status: RequestStatuses.Forbidden
             });

@@ -4,8 +4,7 @@ import UnauthorizedError from '@errors/clienterrors/UnauthorizedError';
 import InternalServerError from '@errors/servererrors/InternalServerError';
 import { Permissions } from '@/ts/enums';
 
-import { RoleWithPermissions, UserWithPermissions } from '@/ts';
-import { User } from '@prisma/client';
+import { UserWithPermissions } from '@/ts';
 import prisma from '@/db';
 
 interface SignedTokens {
@@ -28,7 +27,11 @@ export default class TokenService {
 
                 const user = await prisma.user.findUserWithTokensAndPermissions(auth.id);
                 if (!user) return reject(new InternalServerError('Failed to authenticate token'));
-                if (!user.sessionTokens.some((token) => token.token === auth.token)) {
+                if (
+                    !user.sessionTokens.some((token) => {
+                        return token.token === auth.token;
+                    })
+                ) {
                     return reject(new ForbiddenError('Unauthorized'));
                 }
 
@@ -48,7 +51,9 @@ export default class TokenService {
     public static signTokens(user: UserWithPermissions, sessionToken: string): SignedTokens {
         const signObject = {
             id: user.id,
-            bot: user.role.permissions.some((perm) => perm.name == Permissions.ApiServiceBot),
+            bot: user.role.permissions.some((perm) => {
+                return perm.name == Permissions.ApiServiceBot;
+            }),
             token: sessionToken
         };
 

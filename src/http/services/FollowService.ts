@@ -62,7 +62,7 @@ export default class FollowService {
         };
         const follow = await prisma.follow.findFollow(followAnime);
         if (follow)
-            throw new UnprocessableContentError(`This anime is already followed as \"${status}\"`);
+            throw new UnprocessableContentError(`This anime is already followed as "${status}"`);
         await prisma.user.followAnime(followAnime);
     }
 
@@ -77,9 +77,9 @@ export default class FollowService {
             if (groupName === undefined) {
                 throw new UnprocessableContentError('no_group_name_provided');
             }
-            const translation = anime.animeTranslations.find(
-                (anime) => anime.group.name == groupName
-            );
+            const translation = anime.animeTranslations.find((anime) => {
+                return anime.group.name == groupName;
+            });
             if (translation === undefined)
                 throw new UnprocessableContentError("This anime doesn't have given group");
             if (
@@ -113,7 +113,9 @@ export default class FollowService {
         if (!groupName) {
             return await prisma.follow.removeFollow(unfollow);
         }
-        const translation = anime.animeTranslations.find((anime) => anime.group.name == groupName);
+        const translation = anime.animeTranslations.find((anime) => {
+            return anime.group.name == groupName;
+        });
         if (translation === undefined)
             throw new UnprocessableContentError("This anime doesn't have given group");
         unfollow.translationId = translation.id;
