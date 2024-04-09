@@ -3,11 +3,12 @@ import { NextFunction, Response } from "express";
 import { validatorError } from "@/middleware/validatorError";
 import { auth } from "@/middleware/auth";
 import { optionalAuth } from "@/middleware/optionalAuth";
-import { RequestWithAuth } from "@/ts";
 import { checkExact, ValidationChain } from "express-validator";
 import { validatorData } from "@/middleware/validatorData";
 import { WithPermissionsReq } from "@requests/WithPermissionsRequest";
 import hasPermissions from "@/helper/hasPermission";
+import { OptionalReq } from "./OptionalRequest";
+import { AuthReq } from "./AuthRequest";
 
 export default class Request {
     protected authType: RequestAuthTypes;
@@ -39,7 +40,7 @@ export default class Request {
 
     }
 
-    private async constructAuthMiddleware(req: RequestWithAuth, res: Response, next: NextFunction) {
+    private async constructAuthMiddleware(req: AuthReq, res: Response, next: NextFunction) {
         const { id }: { id: number } = req.auth!;
         const user = await this.auth(id);
 
@@ -51,8 +52,8 @@ export default class Request {
         next();
     }
 
-    private async constructOptionalAuthMiddleware(req: RequestWithAuth, res: Response, next: NextFunction) {
-        const { id }: { id: number } = req.auth!;
+    private async constructOptionalAuthMiddleware(req: OptionalReq, res: Response, next: NextFunction) {
+        const id = req.auth?.id;
         if (typeof id === "undefined") {
             return next();
         }
