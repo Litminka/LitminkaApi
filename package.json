@@ -22,9 +22,8 @@
         "prepare": "npx husky install"
     },
     "lint-staged": {
-        "*.{ts}": [
-            "npm run format",
-            "npm run lint"
+        "*": [
+            "npm run format"
         ]
     },
     "repository": {
