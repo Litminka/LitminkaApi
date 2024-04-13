@@ -6,6 +6,8 @@
     "tabWidth": 4,
     "useTabs": false,
     "bracketSpacing": true,
+    "bracketSameLine": true,
+    "experimentalTernaries": true,
     "endOfLine": "lf",
     "overrides": [
         {
