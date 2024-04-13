@@ -13,19 +13,7 @@ export default tseslint.config(
         ignores: ['**/*/config.ts', '**/*/config.js', 'src/**/*.js', 'tests', 'seed.js']
     },
     {
-        plugins: ['import'],
         files: ['src/**/*.ts'],
-        settings: {
-            'import/parsers': {
-                '@typescript-eslint/parser': ['.ts', '.tsx']
-            },
-            'import/resolver': {
-                typescript: {
-                    alwaysTryTypes: true,
-                    project: './tsconfig.json'
-                }
-            }
-        },
         languageOptions: {
             parser,
             parserOptions: {
@@ -46,8 +34,7 @@ export default tseslint.config(
                 }
             ],
             'no-var': ['error'],
-            'no-constant-condition': ['error', { checkLoops: false }],
-            'import/no-unresolved': 'error'
+            'no-constant-condition': ['error', { checkLoops: false }]
         }
     }
 );
