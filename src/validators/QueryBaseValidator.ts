@@ -1,10 +1,12 @@
-import { ValidationChain, query } from "express-validator";
+import { ValidationChain, query } from 'express-validator';
 import { baseMsg } from '@/ts/messages';
-import { stringValidator } from "@validators/BaseValidator";
-import { BaseValidator, IntValidator } from "@validators/BaseValidator";
-import { intValidator } from "@validators/BaseValidator";
+import { stringValidator } from '@/validators/BaseValidator';
+import { BaseValidator, IntValidator } from '@/validators/BaseValidator';
+import { intValidator } from '@/validators/BaseValidator';
 
-interface QueryIntValidator extends IntValidator { defValue: number };
+interface QueryIntValidator extends IntValidator {
+    defValue: number;
+}
 
 /**
  * Validate optional integer query parameter with default value
@@ -13,16 +15,21 @@ interface QueryIntValidator extends IntValidator { defValue: number };
  * @param typeParams Express [isint()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object.
  * @param message Error message for validation exceptions.
  */
-export const queryIntValidator = (fieldName: string, options?: QueryIntValidator): ValidationChain => {
+export const queryIntValidator = (
+    fieldName: string,
+    options?: QueryIntValidator
+): ValidationChain => {
     const defValue = options?.defValue ?? 0;
-    const typeParams = options?.typeParams ?? { min: -2147483648, max: 2147483647 };
+    const typeParams = options?.typeParams ?? {
+        min: -2147483648,
+        max: 2147483647
+    };
     const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({
         validator: query(fieldName, message).default(defValue),
         typeParams
-    })
-
+    });
 };
 
 /**
@@ -31,12 +38,15 @@ export const queryIntValidator = (fieldName: string, options?: QueryIntValidator
  * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
  * @param message Error message for validation exceptions.
  */
-export const queryStringValidator = (fieldName: string, options?: BaseValidator): ValidationChain => {
+export const queryStringValidator = (
+    fieldName: string,
+    options?: BaseValidator
+): ValidationChain => {
     const typeParams = options?.typeParams ?? { min: 0, max: 64 };
     const message = options?.message ?? baseMsg.valueMustBeString;
 
     return stringValidator({
         validator: query(fieldName, message),
         typeParams
-    })
+    });
 };

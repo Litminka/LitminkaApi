@@ -1,8 +1,8 @@
-import { Prisma } from "@prisma/client";
-import prisma from "@/db";
+import { Prisma } from '@prisma/client';
+import prisma from '@/db';
 
 const extention = Prisma.defineExtension({
-    name: "IntegrationModel",
+    name: 'IntegrationModel',
     model: {
         integration: {
             async findByShikimoriId(id: number) {
@@ -19,7 +19,7 @@ const extention = Prisma.defineExtension({
                     },
                     data: {
                         shikimoriId,
-                        shikimoriCanChangeList: true,
+                        shikimoriCanChangeList: true
                     }
                 });
             },
@@ -39,6 +39,6 @@ const extention = Prisma.defineExtension({
             }
         }
     }
-})
+});
 
-export { extention as IntegrationExt }
+export { extention as IntegrationExt };

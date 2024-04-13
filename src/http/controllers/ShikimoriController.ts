@@ -1,11 +1,11 @@
-import { Response } from "express";
-import { RequestStatuses } from "@/ts/enums";
-import ShikimoriLinkService from "@services/shikimori/ShikimoriLinkService";
-import { IntegrationReq } from "@requests/IntegrationRequest";
-import { LinkShikimoriReq } from "@requests/shikimori/LinkShikimoriRequest";
+import { Response } from 'express';
+import { RequestStatuses } from '@/ts/enums';
+import ShikimoriLinkService from '@services/shikimori/ShikimoriLinkService';
+import { IntegrationReq } from '@requests/IntegrationRequest';
+import { LinkShikimoriReq } from '@requests/shikimori/LinkShikimoriRequest';
 
 export default class ShikimoriController {
-    static async generateLink(req: IntegrationReq, res: Response): Promise<Object> {
+    static async generateLink(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         const link = await ShikimoriLinkService.generateLink(user);
@@ -15,28 +15,28 @@ export default class ShikimoriController {
         });
     }
 
-    static async link(req: LinkShikimoriReq, res: Response): Promise<Object> {
+    static async link(req: LinkShikimoriReq, res: Response) {
         const { token, code } = req.query;
 
         await ShikimoriLinkService.link(token, code);
 
         return res.status(RequestStatuses.OK).json({
-            message: "Account linked!"
-        })
+            message: 'Account linked!'
+        });
     }
 
     static async unlink(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
-        ShikimoriLinkService.unlink(user)
+        ShikimoriLinkService.unlink(user);
 
         return res.status(RequestStatuses.OK).json({
-            message: "Account unlinked",
-            link: `${process.env.SHIKIMORI_URL}/oauth/applications/${process.env.SHIKIMORI_APP_ID}`,
-        })
+            message: 'Account unlinked',
+            link: `${process.env.SHIKIMORI_URL}/oauth/applications/${process.env.SHIKIMORI_APP_ID}`
+        });
     }
 
-    static async getProfile(req: IntegrationReq, res: Response): Promise<Object> {
+    static async getProfile(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         const result = await ShikimoriLinkService.getProfile(user);

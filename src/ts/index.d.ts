@@ -1,30 +1,45 @@
-import { AnimeList, AnimeTranslation, GroupList, GroupListInvites, Integration, Permission, Role, SessionToken, User, UserSettings } from "@prisma/client";
-import { Request } from "express";
-import { FollowTypes, NotifyStatuses } from "@/ts/enums";
-import { ValidationError, Location } from "express-validator";
-import { ErrorMessage } from "express-validator/src/base";
+import {
+    AnimeList,
+    AnimeTranslation,
+    GroupList,
+    GroupListInvites,
+    Integration,
+    Permission,
+    Role,
+    SessionToken,
+    User,
+    UserSettings
+} from '@prisma/client';
+import { Request } from 'express';
+import { FollowTypes, NotifyStatuses } from '@/ts/enums';
+import { ValidationError, Location } from 'express-validator';
+import { ErrorMessage } from 'express-validator/src/base';
 
-export declare type AdditionalValidationError = {
-    type: string;
-    additional: object;
-    location: Location;
-    path: string;
-    value: any;
-    msg: any;
-} | ValidationError
+export declare type AdditionalValidationError =
+    | {
+          type: string;
+          additional: object;
+          location: Location;
+          path: string;
+          value: unknown;
+          msg: string;
+      }
+    | ValidationError;
 
-export declare type ValidatorErrorMessage = {
-    msg: string,
-    [key: string]: any
-} | ErrorMessage
+export declare type ValidatorErrorMessage =
+    | {
+          msg: string;
+          [key: string]: any;
+      }
+    | ErrorMessage;
 
 export interface RequestWithBot extends Request {
     auth?: {
-        user: undefined
-        id: number,
-        bot?: boolean
-        token: string
-    },
+        user: undefined;
+        id: number;
+        bot?: boolean;
+        token: string;
+    };
 }
 
 export interface RequestWithAuth extends Request {
@@ -36,65 +51,64 @@ export interface RequestWithAuth extends Request {
 
 export interface RequestWithUser extends Request {
     auth: {
-        user: User,
-        id: number
-    }
+        user: User;
+        id: number;
+    };
 }
 
 export interface RequestWithTokens extends Request {
     auth: {
-        user: UserWithTokens,
-        id: number,
-        token: string
-    }
+        user: UserWithTokens;
+        id: number;
+        token: string;
+    };
 }
 
 interface RoleWithPermissions extends Role {
-    permissions: Permission[]
+    permissions: Permission[];
 }
 
 type UserWithTokens = User & {
-    sessionTokens: SessionToken[]
-}
+    sessionTokens: SessionToken[];
+};
 
 export interface RequestWithUserOwnedGroups extends Request {
     auth: {
         user: User & {
-            ownedGroups: GroupList[]
-        },
-        id: number
-    }
+            ownedGroups: GroupList[];
+        };
+        id: number;
+    };
 }
 
 export interface RequestWithUserGroupInvites extends Request {
     auth: {
         user: User & {
-            groupInvites: GroupListInvites[]
-        },
-        id: number
-    }
+            groupInvites: GroupListInvites[];
+        };
+        id: number;
+    };
 }
 
 export interface RequestWithTokenAndCode extends Request {
     query: {
-        token: string,
-        code: string
-    }
+        token: string;
+        code: string;
+    };
 }
-
 
 export interface RequestWithUserAnimeList extends Request {
     auth: {
         user: User & {
-            animeList: AnimeList | null
-        }
-        id: number,
-    }
+            animeList: AnimeList | null;
+        };
+        id: number;
+    };
 }
 
 export type UserWithPermissions = User & {
-    role: RoleWithPermissions
-}
+    role: RoleWithPermissions;
+};
 
 export interface ShikimoriWhoAmI {
     id: number;
@@ -122,30 +136,30 @@ export interface ShikimoriWhoAmI {
     locale: string;
 }
 export interface ListFilters {
-    isFavorite?: boolean,
-    statuses?: watchListStatus[],
-    ratings?: number[],
+    isFavorite?: boolean;
+    statuses?: watchListStatus[];
+    ratings?: number[];
 }
 export type watchListStatus =
-    | "planned"
-    | "watching"
-    | "rewatching"
-    | "completed"
-    | "on_hold"
-    | "dropped";
+    | 'planned'
+    | 'watching'
+    | 'rewatching'
+    | 'completed'
+    | 'on_hold'
+    | 'dropped';
 type animeKind =
-    | "tv"
-    | "movie"
-    | "ova"
-    | "ona"
-    | "special"
-    | "music"
-    | "tv_13"
-    | "tv_24"
-    | "tv_48s";
-type animeStatus = "released" | "ongoing" | "anons";
-type pgRating = "none" | "g" | "pg" | "pg_13" | "r" | "r_plus" | "rx";
-type pgCapitalizedRating = "None" | "G" | "PG" | "PG_13" | "R" | "R+" | "RX";
+    | 'tv'
+    | 'movie'
+    | 'ova'
+    | 'ona'
+    | 'special'
+    | 'music'
+    | 'tv_13'
+    | 'tv_24'
+    | 'tv_48s';
+type animeStatus = 'released' | 'ongoing' | 'anons';
+type pgRating = 'none' | 'g' | 'pg' | 'pg_13' | 'r' | 'r_plus' | 'rx';
+type pgCapitalizedRating = 'None' | 'G' | 'PG' | 'PG_13' | 'R' | 'R+' | 'RX';
 interface ratingAmount {
     name: number;
     value: number;
@@ -172,8 +186,8 @@ export interface ShikimoriWatchList {
 }
 
 export interface PaginationQuery {
-    page: number,
-    pageLimit: number
+    page: number;
+    pageLimit: number;
 }
 
 export interface ShikimoriAnime {
@@ -233,7 +247,7 @@ export interface ShikimoriAnimeFull {
     url: string;
     kind: animeKind;
     /**
-     * Although type is a string, it's float number 
+     * Although type is a string, it's float number
      */
     score: string;
     status: animeStatus;
@@ -286,7 +300,7 @@ interface genre {
     id: number;
     name: string;
     russian: string;
-    kind: "anime";
+    kind: 'anime';
 }
 
 interface video {
@@ -315,7 +329,7 @@ export interface AddToList {
 }
 
 export interface AddWithAnime extends AddToList {
-    animeId: number
+    animeId: number;
 }
 
 export interface options {
@@ -324,59 +338,59 @@ export interface options {
 }
 
 export type info = {
-    translation?: AnimeTranslation,
-    userId: number
-}
+    translation?: AnimeTranslation;
+    userId: number;
+};
 
 export type followType = {
     anime: {
         shikimoriId: number;
     };
-    info: info[]
+    info: info[];
     status: string;
-}
+};
 
 export interface Notify {
-    animeId: number,
-    status: NotifyStatuses,
-    groupId?: number,
-    episode?: number,
+    animeId: number;
+    status: NotifyStatuses;
+    groupId?: number;
+    episode?: number;
 }
 
 export interface UserNotify extends Notify {
-    userId: number
+    userId: number;
 }
 
-export type RequestTypes = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+export type RequestTypes = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export interface LoginUser {
-    password: string,
-    login: string
+    password: string;
+    login: string;
 }
 
 export interface CreateUser extends LoginUser {
-    email: string,
-    name?: string,
+    email: string;
+    name?: string;
 }
 
 export interface FollowAnime {
-    userId: number,
-    animeId: number,
-    status: FollowTypes,
-    translationId?: number
-    translationGroupName?: string
+    userId: number;
+    animeId: number;
+    status: FollowTypes;
+    translationId?: number;
+    translationGroupName?: string;
 }
 
 export type UserWithIntegration = User & {
-    integration: Integration | null
-}
+    integration: Integration | null;
+};
 
 export type UserWithIntegrationSettings = User & {
-    integration: Integration | null,
-    settings: UserSettings | null,
-}
+    integration: Integration | null;
+    settings: UserSettings | null;
+};
 
 export interface minmax {
-    min: number,
-    max?: number
+    min: number;
+    max?: number;
 }

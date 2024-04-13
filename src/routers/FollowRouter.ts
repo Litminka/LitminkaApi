@@ -5,6 +5,6 @@ import { FollowAnimeRequest } from '@requests/anime/FollowAnimeRequest';
 import { UnFollowAnimeRequest } from '@requests/anime/UnfollowAnimeRequest';
 const router = Router();
 
-router.post("/:animeId", new FollowAnimeRequest().send(), wrap(FollowController.follow));
-router.delete("/:animeId", new UnFollowAnimeRequest().send(), wrap(FollowController.unfollow));
+router.post('/:animeId', new FollowAnimeRequest().send(), wrap(FollowController.follow));
+router.delete('/:animeId', new UnFollowAnimeRequest().send(), wrap(FollowController.unfollow));
 export { router as followRouter };

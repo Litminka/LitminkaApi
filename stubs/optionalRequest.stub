@@ -18,7 +18,7 @@ export class StubRequest extends OptionalRequest {
      * 
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number): Promise<any> {
+    protected async auth(userId: number) {
 
     }
 

@@ -1,30 +1,24 @@
-import { GroupList, GroupListInvites, User } from "@prisma/client";
-import prisma from "@/db";
-import BaseError from "@errors/BaseError";
-import { RequestStatuses } from "@/ts/enums";
+import { GroupList, User } from '@prisma/client';
+import prisma from '@/db';
+import BaseError from '@/errors/BaseError';
+import { RequestStatuses } from '@/ts/enums';
 
 type UserWithGroup = User & {
-    ownedGroups: GroupList[]
-}
-
-type UserWithInvites = User & {
-    groupInvites: GroupListInvites[],
-}
+    ownedGroups: GroupList[];
+};
 
 interface CreateGroup {
-    description: string,
-    name: string,
-    user: UserWithGroup
+    description: string;
+    name: string;
+    user: UserWithGroup;
 }
 
 interface UpdateGroup {
-    description?: string,
-    name?: string,
-    user: UserWithGroup,
-    groupId: number
+    description?: string;
+    name?: string;
+    user: UserWithGroup;
+    groupId: number;
 }
-
-
 
 export default class GroupListService {
     public static async getOwnedGroups(ownerId: number) {
@@ -32,8 +26,6 @@ export default class GroupListService {
             where: { ownerId }
         });
     }
-
-
 
     public static async createGroup({ description, name, user }: CreateGroup) {
         if (user.ownedGroups.length >= 10) {
@@ -46,30 +38,30 @@ export default class GroupListService {
             data: {
                 description,
                 name,
-                ownerId: user.id,
+                ownerId: user.id
             }
-        })
+        });
 
         await prisma.groupListMembers.create({
             data: {
                 groupId: group.id,
                 userId: user.id,
-                overrideList: true, // TODO: add variable to change
+                overrideList: true // TODO: add variable to change
             }
-        })
+        });
 
         return group;
-
     }
 
     public static async deleteGroup(id: number, ownerId: number) {
-
         const group = await prisma.groupList.findFirstOrThrow({
             where: { id }
-        })
+        });
 
         if (group.ownerId !== ownerId) {
-            throw new BaseError("not_an_owner", { status: RequestStatuses.Forbidden });
+            throw new BaseError('not_an_owner', {
+                status: RequestStatuses.Forbidden
+            });
         }
 
         await prisma.groupList.delete({
@@ -77,11 +69,15 @@ export default class GroupListService {
         });
     }
 
-
     public static async updateGroup({ description, name, user, groupId }: UpdateGroup) {
-
-        if (!user.ownedGroups.some(group => group.id === groupId)) {
-            throw new BaseError("not_an_owner", { status: RequestStatuses.Forbidden });
+        if (
+            !user.ownedGroups.some((group) => {
+                return group.id === groupId;
+            })
+        ) {
+            throw new BaseError('not_an_owner', {
+                status: RequestStatuses.Forbidden
+            });
         }
 
         return prisma.groupList.update({
@@ -90,7 +86,6 @@ export default class GroupListService {
                 description,
                 name
             }
-        })
+        });
     }
-
 }

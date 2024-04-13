@@ -1,23 +1,38 @@
-import fetch from "node-fetch";
-import { _KodikAnimeFullRequest, _KodikAnimeWithTranslationsFullRequest, _KodikAnimeWithTranslationsRequest, KodikAnimeFull, KodikGenresRequest, _KodikAnimeRequest, translation, KodikAnime, _translation, _KodikAnimeFull } from "@/ts/kodik";
-import { RequestStatuses } from "@/ts/enums";
-import { logger } from "@/loggerConf"
+/* eslint-disable camelcase */
+import fetch from 'node-fetch';
+import {
+    _KodikAnimeFullRequest,
+    _KodikAnimeWithTranslationsFullRequest,
+    _KodikAnimeWithTranslationsRequest,
+    KodikAnimeFull,
+    KodikGenresRequest,
+    _KodikAnimeRequest,
+    translation,
+    KodikAnime,
+    _translation
+} from '@/ts/kodik';
+import { RequestStatuses } from '@/ts/enums';
+import { logger } from '@/loggerConf';
 
 export default class KodikApiService {
-    baseurl = "https://kodikapi.com"
+    baseurl = 'https://kodikapi.com';
 
     private async _requestFullAnime(shikimori_id: number): Promise<_KodikAnimeFullRequest> {
         const params = new URLSearchParams({
-            "token": process.env.KODIK_API_KEY!,
-            "shikimori_id": shikimori_id.toString(),
-            "with_material_data": "true"
+            token: process.env.KODIK_API_KEY!,
+            shikimori_id: shikimori_id.toString(),
+            with_material_data: 'true'
         });
         const response = await fetch(`${this.baseurl}/search`, {
-            method: "POST",
+            method: 'POST',
             body: params,
             timeout: 10000
-        })
-        if (response.status !== RequestStatuses.OK) throw { reqStatus: RequestStatuses.InternalServerError, message: "Server error" };
+        });
+        if (response.status !== RequestStatuses.OK)
+            throw {
+                reqStatus: RequestStatuses.InternalServerError,
+                message: 'Server error'
+            };
         const res = await response.json();
         res.shikimori_request = shikimori_id;
         return res;
@@ -25,26 +40,29 @@ export default class KodikApiService {
 
     private async _requestAnime(shikimori_id: number): Promise<_KodikAnimeRequest> {
         const params = new URLSearchParams({
-            "token": process.env.KODIK_API_KEY!,
-            "shikimori_id": shikimori_id.toString(),
+            token: process.env.KODIK_API_KEY!,
+            shikimori_id: shikimori_id.toString()
         });
         const response = await fetch(`${this.baseurl}/search`, {
-            method: "POST",
+            method: 'POST',
             body: params
-        })
-        if (response.status !== RequestStatuses.OK) throw { reqStatus: RequestStatuses.InternalServerError, message: "Server error" };
+        });
+        if (response.status !== RequestStatuses.OK)
+            throw {
+                reqStatus: RequestStatuses.InternalServerError,
+                message: 'Server error'
+            };
         return await response.json();
     }
 
     private _packFullAnime(request: _KodikAnimeFullRequest) {
-        // FIXME: Todo Fix dublicate translations
         const { reqStatus, shikimori_request, time, total, results } = request;
         if (results.length == 0) {
             const newResult: any = request;
             newResult.result = null;
             delete newResult.results;
             return newResult as _KodikAnimeWithTranslationsFullRequest;
-        };
+        }
         const translations = new Map<number, translation>();
 
         for (const res of results) {
@@ -53,17 +71,19 @@ export default class KodikApiService {
                 episodes = res.material_data.episodes_aired;
             }
 
-            const { title, type, id } = res.translation
+            const { title, type, id } = res.translation;
 
             const translation = translations.get(id);
-            if (typeof translation !== "undefined" && translation.episodes_count <= episodes) {
+            if (typeof translation !== 'undefined' && translation.episodes_count <= episodes) {
                 continue;
             }
 
             translations.set(id, {
                 episodes_count: episodes,
                 link: res.link,
-                title, type, id
+                title,
+                type,
+                id
             });
         }
         const resultObj = results[0] as any;
@@ -71,9 +91,12 @@ export default class KodikApiService {
         delete resultObj.translation;
         delete resultObj.episodes_count;
         const newResult: _KodikAnimeWithTranslationsFullRequest = {
-            reqStatus, shikimori_request, time, total,
+            reqStatus,
+            shikimori_request,
+            time,
+            total,
             result: resultObj
-        }
+        };
         return newResult;
     }
 
@@ -84,21 +107,23 @@ export default class KodikApiService {
             newResult.result = null;
             delete newResult.results;
             return newResult as _KodikAnimeWithTranslationsRequest;
-        };
+        }
         const translations = new Map<number, translation>();
         for (const res of results) {
-            let episodes = res.episodes_count ?? 1;
-            const { title, type, id } = res.translation
+            const episodes = res.episodes_count ?? 1;
+            const { title, type, id } = res.translation;
 
             const translation = translations.get(id);
-            if (typeof translation !== "undefined" && translation.episodes_count <= episodes) {
+            if (typeof translation !== 'undefined' && translation.episodes_count <= episodes) {
                 continue;
             }
 
             translations.set(id, {
                 episodes_count: episodes,
                 link: res.link,
-                title, type, id
+                title,
+                type,
+                id
             });
         }
         const resultObj = results[0] as any;
@@ -106,9 +131,11 @@ export default class KodikApiService {
         delete resultObj.translation;
         delete resultObj.episodes_count;
         const newResult: _KodikAnimeWithTranslationsRequest = {
-            reqStatus, time, total,
+            reqStatus,
+            time,
+            total,
             result: resultObj
-        }
+        };
         return newResult;
     }
 
@@ -140,27 +167,31 @@ export default class KodikApiService {
 
     async getGenres(): Promise<KodikGenresRequest> {
         const params = new URLSearchParams({
-            "token": process.env.KODIK_API_KEY!,
-            "genres_type": "shikimori",
-            "types": "anime"
+            token: process.env.KODIK_API_KEY!,
+            genres_type: 'shikimori',
+            types: 'anime'
         });
         const response = await fetch(`${this.baseurl}/genres`, {
-            method: "POST",
+            method: 'POST',
             body: params
-        })
-        if (response.status !== RequestStatuses.OK) throw { reqStatus: RequestStatuses.InternalServerError, message: "Server error" };
+        });
+        if (response.status !== RequestStatuses.OK)
+            throw {
+                reqStatus: RequestStatuses.InternalServerError,
+                message: 'Server error'
+            };
         return await response.json();
     }
 
     async getTranslationGroups(): Promise<_translation[]> {
         const params = new URLSearchParams({
-            "token": process.env.KODIK_API_KEY!,
-            "genres_type": "shikimori",
+            token: process.env.KODIK_API_KEY!,
+            genres_type: 'shikimori'
         });
         const response = await fetch(`${this.baseurl}/translations`, {
-            method: "POST",
+            method: 'POST',
             body: params
-        })
+        });
         return await response.json();
     }
 
@@ -171,7 +202,9 @@ export default class KodikApiService {
             awaitResult.push(promise);
         }
         let result: KodikAnimeFull[] = await Promise.all(awaitResult);
-        result = result.filter(anime => anime !== undefined);
+        result = result.filter((anime) => {
+            return anime !== undefined;
+        });
         return result;
     }
 
@@ -182,7 +215,9 @@ export default class KodikApiService {
             awaitResult.push(promise);
         }
         let result: KodikAnimeFull[] = await Promise.all(awaitResult);
-        result = result.filter(anime => anime !== undefined);
+        result = result.filter((anime) => {
+            return anime !== undefined;
+        });
         return result;
     }
 

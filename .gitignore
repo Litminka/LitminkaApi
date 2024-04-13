@@ -1,12 +1,12 @@
 node_modules
 # Keep environment variables out of version control
 .env
-.vscode
 config.json
 nginx.conf
 cert/
 coverage/
 src/config.ts
+.eslintcache
 
 # Require to build app
 dist

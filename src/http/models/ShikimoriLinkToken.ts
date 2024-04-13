@@ -1,8 +1,8 @@
-import prisma from "@/db";
-import { Prisma } from "@prisma/client";
+import prisma from '@/db';
+import { Prisma } from '@prisma/client';
 
 const extention = Prisma.defineExtension({
-    name: "ShikimoriLinkToken",
+    name: 'ShikimoriLinkToken',
     model: {
         shikimoriLinkToken: {
             async updateWithCode(token: string, code: string) {
@@ -24,7 +24,7 @@ const extention = Prisma.defineExtension({
                             }
                         }
                     }
-                })
+                });
             },
             async removeToken(token: string) {
                 await prisma.shikimoriLinkToken.delete({
@@ -35,16 +35,16 @@ const extention = Prisma.defineExtension({
                 await prisma.shikimoriLinkToken.upsert({
                     where: { userId },
                     update: {
-                        token: token,
+                        token: token
                     },
                     create: {
                         userId,
-                        token,
+                        token
                     }
-                })
+                });
             }
         }
     }
-})
+});
 
-export { extention as ShikimoriLinkTokenExt }
+export { extention as ShikimoriLinkTokenExt };

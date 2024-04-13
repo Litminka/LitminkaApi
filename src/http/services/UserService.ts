@@ -1,29 +1,25 @@
-import prisma from "@/db";
-import UnauthorizedError from "@errors/clienterrors/UnauthorizedError";
-import { Encrypt } from "@/helper/encrypt";
-import { CreateUser, LoginUser, UserWithIntegration } from "@/ts";
-import crypto from "crypto";
-import TokenService from "@services/TokenService";
-import UnprocessableContentError from "@/errors/clienterrors/UnprocessableContentError";
+import prisma from '@/db';
+import { Encrypt } from '@/helper/encrypt';
+import { CreateUser, LoginUser, UserWithIntegration } from '@/ts';
+import crypto from 'crypto';
+import TokenService from '@services/TokenService';
+import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
 
 interface UpdateSettings {
-    siteTheme?: string,
-    watchListMode?: string,
-    watchListAddAfterEpisodes?: number,
-    watchListAskAboutRating?: boolean,
-    showCensoredContent?: boolean,
-    shikimoriExportList?: boolean,
-    notifyDiscord?: boolean,
-    notifyTelegram?: boolean,
-    notifyVK?: boolean,
-    notifyPush?: boolean,
+    siteTheme?: string;
+    watchListMode?: string;
+    watchListAddAfterEpisodes?: number;
+    watchListAskAboutRating?: boolean;
+    showCensoredContent?: boolean;
+    shikimoriExportList?: boolean;
+    notifyDiscord?: boolean;
+    notifyTelegram?: boolean;
+    notifyVK?: boolean;
+    notifyPush?: boolean;
 }
 
 export default class UserService {
-
-    constructor() {
-
-    }
+    constructor() {}
 
     public static async create(userData: CreateUser) {
         userData.password = await Encrypt.cryptPassword(userData.password);
@@ -32,11 +28,12 @@ export default class UserService {
 
     public static async login(userData: LoginUser) {
         const { login, password } = userData;
-        const user = await prisma.user.findUserByLogin(login) ?? undefined;
+        const user = (await prisma.user.findUserByLogin(login)) ?? undefined;
 
         // protection against time based attack
-        if (!await Encrypt.comparePassword(password, user?.password ?? '')) throw new UnauthorizedError("Login or password incorrect");
-        if (!user) throw new UnauthorizedError("Login or password incorrect");
+        if (!(await Encrypt.comparePassword(password, user?.password ?? '')))
+            throw new UnprocessableContentError('Login or password incorrect');
+        if (!user) throw new UnprocessableContentError('Login or password incorrect');
 
         const { id } = user;
 
@@ -47,38 +44,65 @@ export default class UserService {
         await prisma.sessionToken.createToken(sessionToken, id);
 
         return {
-            token, refreshToken
-        }
+            token,
+            refreshToken
+        };
     }
 
     public static async updateSettings(user: UserWithIntegration, data: UpdateSettings) {
-
-        const { siteTheme, showCensoredContent, watchListMode, watchListAskAboutRating, watchListAddAfterEpisodes } = data;
+        const {
+            siteTheme,
+            showCensoredContent,
+            watchListMode,
+            watchListAskAboutRating,
+            watchListAddAfterEpisodes
+        } = data;
 
         const { notifyDiscord, notifyTelegram, notifyVK, notifyPush, shikimoriExportList } = data;
 
-        if (notifyDiscord && !user.integration?.discordId) throw new UnprocessableContentError("no_discord_integration");
+        if (notifyDiscord && !user.integration?.discordId)
+            throw new UnprocessableContentError('no_discord_integration');
 
-        if (notifyVK && !user.integration?.vkId) throw new UnprocessableContentError("no_vk_integration");
+        if (notifyVK && !user.integration?.vkId)
+            throw new UnprocessableContentError('no_vk_integration');
 
-        if (notifyTelegram && !user.integration?.telegramId) throw new UnprocessableContentError("no_telegram_integration");
+        if (notifyTelegram && !user.integration?.telegramId)
+            throw new UnprocessableContentError('no_telegram_integration');
 
-        if (shikimoriExportList && (!user.integration?.shikimoriId || !user.integration?.shikimoriCanChangeList)) {
-            throw new UnprocessableContentError("no_shikimori_integration");
+        if (
+            shikimoriExportList &&
+            (!user.integration?.shikimoriId || !user.integration?.shikimoriCanChangeList)
+        ) {
+            throw new UnprocessableContentError('no_shikimori_integration');
         }
 
         return prisma.userSettings.upsert({
             where: { userId: user.id },
             update: {
-                siteTheme, showCensoredContent, watchListMode, watchListAddAfterEpisodes, watchListAskAboutRating,
-                notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriExportList
+                siteTheme,
+                showCensoredContent,
+                watchListMode,
+                watchListAddAfterEpisodes,
+                watchListAskAboutRating,
+                notifyDiscord,
+                notifyPush,
+                notifyTelegram,
+                notifyVK,
+                shikimoriExportList
             },
             create: {
                 userId: user.id,
-                siteTheme, showCensoredContent, watchListMode, watchListAddAfterEpisodes, watchListAskAboutRating,
-                notifyDiscord, notifyPush, notifyTelegram, notifyVK, shikimoriExportList
+                siteTheme,
+                showCensoredContent,
+                watchListMode,
+                watchListAddAfterEpisodes,
+                watchListAskAboutRating,
+                notifyDiscord,
+                notifyPush,
+                notifyTelegram,
+                notifyVK,
+                shikimoriExportList
             }
-        })
-
+        });
     }
 }

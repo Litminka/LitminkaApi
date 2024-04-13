@@ -1,8 +1,8 @@
-import { RequestStatuses } from "@/ts/enums";
-import BaseError from "@errors/BaseError";
+import { RequestStatuses } from '@/ts/enums';
+import BaseError from '@/errors/BaseError';
 
 export default class NotFoundError extends BaseError {
-    constructor(message = "Not found") {
+    constructor(message = 'Not found') {
         super(message, { status: RequestStatuses.NotFound });
     }
 }

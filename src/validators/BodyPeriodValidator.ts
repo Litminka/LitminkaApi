@@ -1,12 +1,17 @@
-import { body, ValidationChain } from "express-validator";
-import { arrayValidator, DateValidator, dateValidator, genMessage } from "@validators/BaseValidator";
-import { baseMsg } from "@/ts/messages";
+import { body, ValidationChain } from 'express-validator';
+import {
+    arrayValidator,
+    DateValidator,
+    dateValidator,
+    genMessage
+} from '@/validators/BaseValidator';
+import { baseMsg } from '@/ts/messages';
 
 /**
  * Base period validator
  * @param fieldName Parameter name
  * @param typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
- * @param message Error message for validation exceptions.  
+ * @param message Error message for validation exceptions.
  * @returns base date validation chain
  */
 const bodyDateValidator = (fieldName: string, options?: DateValidator): ValidationChain => {
@@ -15,7 +20,7 @@ const bodyDateValidator = (fieldName: string, options?: DateValidator): Validati
     return dateValidator({
         validator: body(`${fieldName}.*`, message),
         typeParams: options?.typeParams
-    })
+    });
 };
 
 /**
@@ -25,7 +30,10 @@ const bodyDateValidator = (fieldName: string, options?: DateValidator): Validati
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodySoftPeriodValidator = (fieldName: string, options?: DateValidator): ValidationChain[] => {
+export const bodySoftPeriodValidator = (
+    fieldName: string,
+    options?: DateValidator
+): ValidationChain[] => {
     const message = options?.message ?? baseMsg.valueMustBeDate;
 
     return [
@@ -36,10 +44,13 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: DateValidat
                 .bail()
                 .withMessage(baseMsg.valueIsNotProvided)
                 .optional(),
-            typeParams: { min: 0, max: 2 },
+            typeParams: { min: 0, max: 2 }
         }).bail(),
-        bodyDateValidator(`${fieldName}.*`, { message, typeParams: options?.typeParams })
-    ]
+        bodyDateValidator(`${fieldName}.*`, {
+            message,
+            typeParams: options?.typeParams
+        })
+    ];
 };
 
 /**
@@ -49,28 +60,33 @@ export const bodySoftPeriodValidator = (fieldName: string, options?: DateValidat
  * @param message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
-export const bodyStrictPeriodValidator = (fieldName: string, options?: DateValidator): ValidationChain[] => {
+export const bodyStrictPeriodValidator = (
+    fieldName: string,
+    options?: DateValidator
+): ValidationChain[] => {
     const message = options?.message ?? baseMsg.valueMustBeDate;
-    const typeParams = options?.typeParams
+    const typeParams = options?.typeParams;
 
     return [
         // Validator doesn't cast value to array except arrayValidator, using unique chain
-        body(fieldName).optional()
-            .custom(value => {
-                const options = { min: 2, max: 2 }
+        body(fieldName)
+            .optional()
+            .custom((value) => {
+                const options = { min: 2, max: 2 };
 
-                if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray)
+                if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray);
                 if (value.length < options.min || value.length > options.max) {
-                    let message: any = genMessage({
+                    const message: any = genMessage({
                         message: baseMsg.valueNotInRange,
                         typeParams: options
-                    })
-                    const msg: string = message.msg; delete message.msg
-                    throw new Error(msg, message)
+                    });
+                    const msg: string = message.msg;
+                    delete message.msg;
+                    throw new Error(msg, message);
                 }
                 return true;
             })
             .bail(),
         bodyDateValidator(`${fieldName}.*`, { message, typeParams })
-    ]
+    ];
 };

@@ -1,9 +1,9 @@
-import { Notify } from "@/ts";
-import prisma from "@/db";
-import { Prisma } from "@prisma/client";
+import { Notify } from '@/ts';
+import prisma from '@/db';
+import { Prisma } from '@prisma/client';
 
 const extention = Prisma.defineExtension({
-    name: "AnimeNotificationModel",
+    name: 'AnimeNotificationModel',
     model: {
         animeNotifications: {
             async createAnimeNotifications({ animeId, status, groupId, episode }: Notify) {
@@ -12,9 +12,9 @@ const extention = Prisma.defineExtension({
                         animeId,
                         status,
                         groupId,
-                        episode,
+                        episode
                     }
-                })
+                });
             },
             async getNotifications(period: Date[]) {
                 return prisma.animeNotifications.findMany({
@@ -24,10 +24,10 @@ const extention = Prisma.defineExtension({
                             lte: period[1]
                         }
                     }
-                })
+                });
             }
         }
     }
-})
+});
 
-export { extention as AnimeNotificationExt }
+export { extention as AnimeNotificationExt };

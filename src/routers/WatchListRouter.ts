@@ -9,9 +9,13 @@ import { IntegrationRequest } from '@requests/IntegrationRequest';
 const router = Router();
 
 // Private methods
-router.get("/", new GetWatchListRequest().send(), wrap(WatchListController.getWatchList));
-router.post("/import", new IntegrationRequest().send(), wrap(WatchListController.importList));
-router.post("/:animeId", new AddToWatchListRequest().send(), wrap(WatchListController.addToList));
-router.patch("/:animeId", new EditWatchListRequest().send(), wrap(WatchListController.editList));
-router.delete("/:animeId", new DeleteFromWatchListRequest().send(), wrap(WatchListController.deleteFromList));
+router.get('/', new GetWatchListRequest().send(), wrap(WatchListController.getWatchList));
+router.post('/import', new IntegrationRequest().send(), wrap(WatchListController.importList));
+router.post('/:animeId', new AddToWatchListRequest().send(), wrap(WatchListController.addToList));
+router.patch('/:animeId', new EditWatchListRequest().send(), wrap(WatchListController.editList));
+router.delete(
+    '/:animeId',
+    new DeleteFromWatchListRequest().send(),
+    wrap(WatchListController.deleteFromList)
+);
 export { router as watchListRouter };

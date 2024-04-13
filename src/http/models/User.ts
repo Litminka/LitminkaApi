@@ -1,9 +1,9 @@
-import { CreateUser, FollowAnime } from "@/ts";
-import prisma from "@/db";
-import { Prisma } from "@prisma/client";
+import { CreateUser, FollowAnime } from '@/ts';
+import prisma from '@/db';
+import { Prisma } from '@prisma/client';
 
 const extention = Prisma.defineExtension({
-    name: "UserModel",
+    name: 'UserModel',
     model: {
         user: {
             async createUser(createUser: CreateUser) {
@@ -17,10 +17,10 @@ const extention = Prisma.defineExtension({
                         role: {
                             connectOrCreate: {
                                 where: {
-                                    name: "user"
+                                    name: 'user'
                                 },
                                 create: {
-                                    name: "user"
+                                    name: 'user'
                                 }
                             }
                         },
@@ -59,7 +59,7 @@ const extention = Prisma.defineExtension({
                     where: { id },
                     include: {
                         settings: true,
-                        integration: true,
+                        integration: true
                     }
                 });
             },
@@ -79,7 +79,7 @@ const extention = Prisma.defineExtension({
                     include: {
                         integration: true,
                         shikimoriLink: true
-                    },
+                    }
                 });
             },
             async findUserByIdWithRolePermission(id: number) {
@@ -93,7 +93,7 @@ const extention = Prisma.defineExtension({
                                 permissions: true
                             }
                         }
-                    },
+                    }
                 });
             },
             async findUserWithTokensAndPermissions(id: number) {
@@ -109,7 +109,8 @@ const extention = Prisma.defineExtension({
             },
             async findUserById(id: number) {
                 return await prisma.user.findFirstOrThrow({
-                    where: { id }, include: {
+                    where: { id },
+                    include: {
                         role: {
                             include: {
                                 permissions: true
@@ -119,17 +120,23 @@ const extention = Prisma.defineExtension({
                 });
             },
             async findUserWithOwnedGroups(id: number) {
-                return await prisma.user.findFirstOrThrow({ where: { id }, include: { ownedGroups: true } });
+                return await prisma.user.findFirstOrThrow({
+                    where: { id },
+                    include: { ownedGroups: true }
+                });
             },
             async findUserWithGroupInvites(id: number) {
-                return await prisma.user.findFirstOrThrow({ where: { id }, include: { groupInvites: true } });
+                return await prisma.user.findFirstOrThrow({
+                    where: { id },
+                    include: { groupInvites: true }
+                });
             },
             async removeById(id: number) {
                 return await prisma.user.delete({
                     where: {
                         id
                     }
-                })
+                });
             },
             async findUserByLogin(login: string) {
                 return prisma.user.findFirst({
@@ -141,15 +148,12 @@ const extention = Prisma.defineExtension({
                         }
                     },
                     where: {
-                        OR: [
-                            { login: { equals: login } },
-                            { email: { equals: login } }
-                        ]
+                        OR: [{ login: { equals: login } }, { email: { equals: login } }]
                     }
                 });
             },
             async followAnime(follow: FollowAnime) {
-                const { animeId, userId, status, translationId } = follow
+                const { animeId, userId, status, translationId } = follow;
                 await prisma.user.update({
                     where: { id: userId },
                     data: {
@@ -172,11 +176,11 @@ const extention = Prisma.defineExtension({
                                 shikimoriCode: null,
                                 shikimoriId: null,
                                 shikimoriRefreshToken: null,
-                                shikimoriToken: null,
+                                shikimoriToken: null
                             }
                         }
                     }
-                })
+                });
             },
             async disableShikimoriListUpdate(id: number) {
                 await prisma.user.update({
@@ -186,14 +190,14 @@ const extention = Prisma.defineExtension({
                     data: {
                         integration: {
                             update: {
-                                shikimoriCanChangeList: false,
+                                shikimoriCanChangeList: false
                             }
                         }
                     }
-                })
+                });
             }
         }
     }
-})
+});
 
-export { extention as UserExt }
+export { extention as UserExt };

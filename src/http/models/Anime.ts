@@ -1,23 +1,23 @@
-import { Anime, Prisma } from "@prisma/client";
-import { KodikAnime } from "@/ts/kodik";
-import capitalize from "@/helper/capitalize";
-import { config } from "@/config";
-import prisma from "@/db";
-import { cyrillicSlug } from "@/helper/cyrillic-slug";
-import { ShikimoriAnime, ShikimoriAnimeFull } from "@/ts";
-import { ShikimoriGraphAnime } from "@/ts/shikimori";
-import dayjs from "dayjs";
-import { getSeasonNameByDate } from "@/helper/animeseason";
-import { AnimeStatuses } from "@/ts/enums";
+import { Anime, Prisma } from '@prisma/client';
+import { KodikAnime } from '@/ts/kodik';
+import capitalize from '@/helper/capitalize';
+import { config } from '@/config';
+import prisma from '@/db';
+import { cyrillicSlug } from '@/helper/cyrillic-slug';
+import { ShikimoriAnime, ShikimoriAnimeFull } from '@/ts';
+import { ShikimoriGraphAnime } from '@/ts/shikimori';
+import dayjs from 'dayjs';
+import { getSeasonNameByDate } from '@/helper/animeseason';
+import { AnimeStatuses } from '@/ts/enums';
 
 const extention = Prisma.defineExtension({
-    name: "AnimeModel",
+    name: 'AnimeModel',
     model: {
         anime: {
             /**
              * @deprecated
-             * @param id 
-             * @param update 
+             * @param id
+             * @param update
              */
             async updateShikimori(id: number, update: ShikimoriAnimeFull) {
                 await prisma.anime.update({
@@ -36,38 +36,38 @@ const extention = Prisma.defineExtension({
                                 return {
                                     where: { name },
                                     create: { name }
-                                }
-                            }),
+                                };
+                            })
                         }
                     }
                 });
             },
             /**
              * @deprecated
-             * @param animeArr 
-             * @returns 
+             * @param animeArr
+             * @returns
              */
             async upsertManyShikimoriFull(animeArr: ShikimoriAnimeFull[]) {
                 const shikimoriTransaction = animeArr.map((anime) => {
                     return prisma.anime.upsert({
                         where: {
-                            shikimoriId: anime.id,
+                            shikimoriId: anime.id
                         },
                         create: {
                             currentEpisodes: anime.episodes_aired,
                             maxEpisodes: anime.episodes,
                             shikimoriId: anime.id,
                             englishName: anime.name,
-                            japaneseName: anime.japanese[0] ?? "",
+                            japaneseName: anime.japanese[0] ?? '',
                             slug: `${anime.id}-${cyrillicSlug(anime.russian ? anime.russian : anime.name)}`,
                             description: anime.description,
                             franchiseName: anime.franchise,
                             genres: {
-                                connectOrCreate: anime.genres!.map(name => {
+                                connectOrCreate: anime.genres!.map((name) => {
                                     return {
                                         where: { name: name.russian },
                                         create: { name: name.russian }
-                                    }
+                                    };
                                 })
                             },
                             rpaRating: anime.rating,
@@ -77,7 +77,7 @@ const extention = Prisma.defineExtension({
                             mediaType: anime.kind,
                             shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
-                            lastEpisodeAired: new Date(anime.released_on),
+                            lastEpisodeAired: new Date(anime.released_on)
                         },
                         update: {
                             currentEpisodes: anime.episodes_aired,
@@ -86,11 +86,11 @@ const extention = Prisma.defineExtension({
                             description: anime.description,
                             franchiseName: anime.franchise,
                             mediaType: anime.kind,
-                            japaneseName: anime.japanese[0] ?? "",
+                            japaneseName: anime.japanese[0] ?? '',
                             image: anime.image.original,
                             shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
-                            lastEpisodeAired: new Date(anime.released_on),
+                            lastEpisodeAired: new Date(anime.released_on)
                         }
                     });
                 });
@@ -100,14 +100,14 @@ const extention = Prisma.defineExtension({
             },
             /**
              * @deprecated
-             * @param animeArr 
-             * @returns 
+             * @param animeArr
+             * @returns
              */
             async upsertMany(animeArr: ShikimoriAnime[]) {
                 const shikimoriTransaction = animeArr.map((anime) => {
                     return prisma.anime.upsert({
                         where: {
-                            shikimoriId: anime.id,
+                            shikimoriId: anime.id
                         },
                         create: {
                             currentEpisodes: anime.episodes_aired,
@@ -121,7 +121,7 @@ const extention = Prisma.defineExtension({
                             mediaType: anime.kind,
                             shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
-                            lastEpisodeAired: new Date(anime.released_on),
+                            lastEpisodeAired: new Date(anime.released_on)
                         },
                         update: {
                             currentEpisodes: anime.episodes_aired,
@@ -131,7 +131,7 @@ const extention = Prisma.defineExtension({
                             mediaType: anime.kind,
                             shikimoriRating: parseFloat(anime.score),
                             firstEpisodeAired: new Date(anime.aired_on),
-                            lastEpisodeAired: new Date(anime.released_on),
+                            lastEpisodeAired: new Date(anime.released_on)
                         }
                     });
                 });
@@ -149,7 +149,7 @@ const extention = Prisma.defineExtension({
                             }
                         }
                     }
-                })
+                });
             },
             async findWithTranlsationsAndGenres(slug: string) {
                 let findBySlug = true;
@@ -157,7 +157,7 @@ const extention = Prisma.defineExtension({
 
                 const where = {
                     slug: findBySlug ? slug : undefined,
-                    shikimoriId: !findBySlug ? Number(slug) : undefined,
+                    shikimoriId: !findBySlug ? Number(slug) : undefined
                 } satisfies Prisma.AnimeWhereInput;
 
                 return await prisma.anime.findFirst({
@@ -169,9 +169,9 @@ const extention = Prisma.defineExtension({
                                 group: true
                             }
                         },
-                        relations: true,
+                        relations: true
                     }
-                })
+                });
             },
             async getBatchAnimeShikimori(shikimoriIds: number[]) {
                 return prisma.anime.findMany({
@@ -182,11 +182,18 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
-            async updateFromShikimoriGraph(shikimori: ShikimoriGraphAnime, hasRelation: boolean, anime: Anime, kodikAnime?: KodikAnime) {
-                let name = shikimori.russian ?? shikimori.name;
+            async updateFromShikimoriGraph(
+                shikimori: ShikimoriGraphAnime,
+                hasRelation: boolean,
+                anime: Anime,
+                kodikAnime?: KodikAnime
+            ) {
+                const name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
 
-                shikimori.licensors = shikimori.licensors.filter(licensor => !config.ignoreLicensors.includes(licensor));
+                shikimori.licensors = shikimori.licensors.filter((licensor) => {
+                    return !config.ignoreLicensors.includes(licensor);
+                });
 
                 let isBanned = shikimori.licensors.length > 0;
                 if (anime.banned) {
@@ -198,17 +205,17 @@ const extention = Prisma.defineExtension({
                     isCensored = true;
                 }
 
-                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
+                if (shikimori.status === 'anons') shikimori.status = AnimeStatuses.Announced; //shikimori...
 
-                let season = shikimori.season === "?" ? null : shikimori.season;
-                if ((season === null) && shikimori.airedOn.date !== null) {
+                let season = shikimori.season === '?' ? null : shikimori.season;
+                if (season === null && shikimori.airedOn.date !== null) {
                     const date = dayjs(shikimori.airedOn.date);
                     if (date.startOf('year') !== date) season = getSeasonNameByDate(date.toDate());
                 }
 
                 return await prisma.anime.update({
                     where: {
-                        shikimoriId: Number(shikimori.id),
+                        shikimoriId: Number(shikimori.id)
                     },
                     data: {
                         slug,
@@ -225,35 +232,42 @@ const extention = Prisma.defineExtension({
                         mediaType: shikimori.kind,
                         rpaRating: shikimori.rating,
                         status: shikimori.status!,
-                        firstEpisodeAired: shikimori.airedOn.date ? new Date(shikimori.airedOn.date) : null,
-                        lastEpisodeAired: shikimori.releasedOn.date ? new Date(shikimori.releasedOn.date) : null,
+                        firstEpisodeAired:
+                            shikimori.airedOn.date ? new Date(shikimori.airedOn.date) : null,
+                        lastEpisodeAired:
+                            shikimori.releasedOn.date ? new Date(shikimori.releasedOn.date) : null,
                         banned: isBanned,
                         censored: isCensored,
                         kodikLink: kodikAnime?.link,
                         hasRelation: anime.hasRelation ? anime.hasRelation : hasRelation
                     }
                 });
-
             },
-            async createFromShikimoriGraph(shikimori: ShikimoriGraphAnime, hasRelation: boolean = false, kodikAnime?: KodikAnime) {
-                let name = shikimori.russian ?? shikimori.name;
+            async createFromShikimoriGraph(
+                shikimori: ShikimoriGraphAnime,
+                hasRelation: boolean = false,
+                kodikAnime?: KodikAnime
+            ) {
+                const name = shikimori.russian ?? shikimori.name;
                 const slug = `${shikimori.id}-${cyrillicSlug(name)}`;
 
-                shikimori.licensors = shikimori.licensors.filter(licensor => !config.ignoreLicensors.includes(licensor));
-                let isBanned = shikimori.licensors.length > 0;
-                let isCensored = shikimori.isCensored;
+                shikimori.licensors = shikimori.licensors.filter((licensor) => {
+                    return !config.ignoreLicensors.includes(licensor);
+                });
+                const isBanned = shikimori.licensors.length > 0;
+                const isCensored = shikimori.isCensored;
 
                 const translations = kodikAnime?.translations;
 
                 const hasTranslations = translations !== undefined;
 
                 let season = shikimori.season;
-                if ((season === null || season === "?") && shikimori.airedOn.date !== null) {
+                if ((season === null || season === '?') && shikimori.airedOn.date !== null) {
                     const date = dayjs(shikimori.airedOn.date);
                     if (date.startOf('year') !== date) season = getSeasonNameByDate(date.toDate());
                 }
 
-                if (shikimori.status === "anons") shikimori.status = AnimeStatuses.Announced //shikimori...
+                if (shikimori.status === 'anons') shikimori.status = AnimeStatuses.Announced; //shikimori...
 
                 return await prisma.anime.create({
                     data: {
@@ -272,43 +286,45 @@ const extention = Prisma.defineExtension({
                         mediaType: shikimori.kind,
                         rpaRating: shikimori.rating,
                         status: shikimori.status!,
-                        firstEpisodeAired: shikimori.airedOn.date ? new Date(shikimori.airedOn.date) : null,
-                        lastEpisodeAired: shikimori.releasedOn.date ? new Date(shikimori.releasedOn.date) : null,
+                        firstEpisodeAired:
+                            shikimori.airedOn.date ? new Date(shikimori.airedOn.date) : null,
+                        lastEpisodeAired:
+                            shikimori.releasedOn.date ? new Date(shikimori.releasedOn.date) : null,
                         kodikLink: kodikAnime?.link,
                         banned: isBanned,
                         censored: isCensored,
                         hasRelation, // this assumes that relation will be created after
                         genres: {
-                            connectOrCreate: shikimori.genres.map(genre => {
+                            connectOrCreate: shikimori.genres.map((genre) => {
                                 return {
                                     where: {
                                         name: capitalize(genre.russian)
                                     },
                                     create: {
                                         name: capitalize(genre.russian)
-                                    },
-
+                                    }
                                 };
                             })
                         },
-                        animeTranslations: hasTranslations ? {
-                            createMany: {
-                                data: translations!.map(translation => {
-                                    return {
-                                        currentEpisodes: translation.episodes_count,
-                                        groupId: translation.id,
-                                        link: translation.link
+                        animeTranslations:
+                            hasTranslations ?
+                                {
+                                    createMany: {
+                                        data: translations!.map((translation) => {
+                                            return {
+                                                currentEpisodes: translation.episodes_count,
+                                                groupId: translation.id,
+                                                link: translation.link
+                                            };
+                                        })
                                     }
-                                })
-                            }
-                        } : undefined
+                                }
+                            :   undefined
                     }
                 });
             }
         }
     }
-})
+});
 
-
-
-export { extention as AnimeExt }
+export { extention as AnimeExt };

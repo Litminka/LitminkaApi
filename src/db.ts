@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 import { AnimeRelationExt } from '@models/AnimeRelations';
-import { FollowExt } from '@models/Follow'
+import { FollowExt } from '@models/Follow';
 import { AnimeExt } from '@models/Anime';
 import { IntegrationExt } from '@models/Integration';
 import { AnimeNotificationExt } from '@models/AnimeNotificatons';
@@ -21,14 +21,15 @@ const prismaClientSingleton = () => {
         .$extends(SessionTokenExt)
         .$extends(ShikimoriLinkTokenExt)
         .$extends(UserExt)
-        .$extends(AnimeRelationExt)
-}
+        .$extends(AnimeRelationExt);
+};
 
 declare global {
-    var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
+    // eslint-disable-next-line no-var
+    var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;
 
-export default prisma
+export default prisma;

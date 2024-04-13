@@ -1,27 +1,31 @@
-import { Response } from "express";
-import WatchListService from "@services/WatchListService";
-import { IntegrationReq } from "@requests/IntegrationRequest";
-import { AddToWatchListReq } from "@requests/watchList/AddToWatchListRequest";
-import { EditWatchListReq } from "@requests/watchList/EditWatchListRequest";
-import { DeleteFromWatchListReq } from "@requests/watchList/DeleteFromWatchListRequest";
-import { GetWatchListReq } from "@requests/watchList/GetWatchListRequest";
-import { RequestStatuses } from "@/ts/enums";
+import { Response } from 'express';
+import WatchListService from '@services/WatchListService';
+import { IntegrationReq } from '@requests/IntegrationRequest';
+import { AddToWatchListReq } from '@requests/watchList/AddToWatchListRequest';
+import { EditWatchListReq } from '@requests/watchList/EditWatchListRequest';
+import { DeleteFromWatchListReq } from '@requests/watchList/DeleteFromWatchListRequest';
+import { GetWatchListReq } from '@requests/watchList/GetWatchListRequest';
+import { RequestStatuses } from '@/ts/enums';
 
 export default class WatchListController {
-    public static async getWatchList(req: GetWatchListReq, res: Response): Promise<Object> {
+    public static async getWatchList(req: GetWatchListReq, res: Response) {
         const userId = req.auth.user.id;
         const statuses = req.body.statuses;
         const ratings = req.body.ratings;
         const isFavorite = req.body.isFavorite;
-        const query = req.query
+        const query = req.query;
 
-        const list = await WatchListService.get(userId, { statuses, ratings, isFavorite }, query)
-        const listCount = await WatchListService.getCount(userId, { statuses, ratings, isFavorite })
+        const list = await WatchListService.get(userId, { statuses, ratings, isFavorite }, query);
+        const listCount = await WatchListService.getCount(userId, {
+            statuses,
+            ratings,
+            isFavorite
+        });
 
         return res.status(RequestStatuses.OK).json({ count: listCount, body: list });
     }
 
-    public static async importList(req: IntegrationReq, res: Response): Promise<any> {
+    public static async importList(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         WatchListService.startImport(user);
@@ -62,7 +66,7 @@ export default class WatchListController {
 
         await WatchListService.removeAnimeFromList(user, animeId);
         return res.json({
-            message: "Entry deleted successfully"
+            message: 'Entry deleted successfully'
         });
     }
 }

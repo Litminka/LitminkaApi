@@ -1,76 +1,75 @@
-import { PrismaClient } from '@prisma/client'
-import { logger } from '@/loggerConf'
-const prisma = new PrismaClient()
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 import dotenv from 'dotenv';
 dotenv.config();
-import { Encrypt } from "@/helper/encrypt";
-import capitalize from "@/helper/capitalize";
-import KodikApiService from "@services/KodikApiService";
+import { Encrypt } from '@/helper/encrypt';
+import capitalize from '@/helper/capitalize';
+import KodikApiService from '@services/KodikApiService';
 import { KodikGenresRequest } from '@/ts/kodik';
-import { config } from '@/config'
+import { config } from '@/config';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import AutoCheckService from '@services/AutoCheckService';
 
 async function main() {
     const adminRole = await prisma.role.upsert({
-        where: { name: "admin" },
+        where: { name: 'admin' },
         update: {},
         create: {
-            name: "admin",
+            name: 'admin',
             permissions: {
                 connectOrCreate: [
                     {
-                        where: { name: "manage_anime" },
+                        where: { name: 'manage_anime' },
                         create: {
-                            name: "manage_anime"
-                        },
+                            name: 'manage_anime'
+                        }
                     },
                     {
-                        where: { name: "view_lists" },
+                        where: { name: 'view_lists' },
                         create: {
-                            name: "view_lists"
-                        },
+                            name: 'view_lists'
+                        }
                     },
                     {
-                        where: { name: "sync_shikimori" },
+                        where: { name: 'sync_shikimori' },
                         create: {
-                            name: "sync_shikimori"
-                        },
-                    },
+                            name: 'sync_shikimori'
+                        }
+                    }
                 ]
             }
         }
-    })
+    });
     const botRole = await prisma.role.upsert({
-        where: { name: "bot" },
+        where: { name: 'bot' },
         update: {},
         create: {
-            name: "bot",
+            name: 'bot',
             permissions: {
                 connectOrCreate: [
                     {
-                        where: { name: "api_service_bot" },
-                        create: { name: "api_service_bot" }
+                        where: { name: 'api_service_bot' },
+                        create: { name: 'api_service_bot' }
                     }
                 ]
-            },
+            }
         }
     });
     const userRole = await prisma.role.upsert({
-        where: { name: "user" },
+        where: { name: 'user' },
         update: {},
         create: {
-            name: "user",
+            name: 'user'
         }
-    })
+    });
     const admin = await prisma.user.upsert({
         where: { email: 'admin@admin.ru' },
         update: {},
         create: {
-            email: "admin@admin.ru",
+            email: 'admin@admin.ru',
             login: process.env.ROOT_LOGIN!,
             password: await Encrypt.cryptPassword(process.env.ROOT_PASS!),
-            name: "Admin",
+            name: 'Admin',
             role: {
                 connect: {
                     id: adminRole.id
@@ -78,16 +77,16 @@ async function main() {
             },
             settings: {},
             integration: {}
-        },
+        }
     });
     const botUser = await prisma.user.upsert({
-        where: { email: "bot@bot.ru" },
+        where: { email: 'bot@bot.ru' },
         update: {},
         create: {
-            email: "bot@bot.ru",
-            login: "bot",
-            password: await Encrypt.cryptPassword("bot"),
-            name: "Bot",
+            email: 'bot@bot.ru',
+            login: 'bot',
+            password: await Encrypt.cryptPassword('bot'),
+            name: 'Bot',
             role: {
                 connect: {
                     id: botRole.id
@@ -96,15 +95,15 @@ async function main() {
             settings: {},
             integration: {}
         }
-    })
+    });
     const user = await prisma.user.upsert({
         where: { email: 'user@user.ru' },
         update: {},
         create: {
-            email: "user@user.ru",
-            login: "User",
-            password: await Encrypt.cryptPassword("password"),
-            name: "user",
+            email: 'user@user.ru',
+            login: 'User',
+            password: await Encrypt.cryptPassword('password'),
+            name: 'user',
             role: {
                 connect: {
                     id: userRole.id
@@ -112,7 +111,7 @@ async function main() {
             },
             settings: {},
             integration: {}
-        },
+        }
     });
 
     console.dir(admin);
@@ -123,7 +122,7 @@ async function main() {
     const genres = await kodik.getGenres();
     // Test new logger
     const { results } = genres as KodikGenresRequest;
-    results.forEach(async genre => {
+    results.forEach(async (genre) => {
         await prisma.genre.upsert({
             where: {
                 name: capitalize(genre.title)
@@ -143,13 +142,13 @@ async function main() {
     if (config.createTestData) {
         const animes = await prisma.anime.findMany({
             select: { id: true }
-        })
+        });
 
-        let animesId = animes.flatMap(anime => anime.id)
+        const animesId = animes.flatMap((anime) => anime.id);
 
         const random = (mn: number, mx: number) => {
             return Math.random() * (mx - mn) + mn;
-        }
+        };
 
         for (const i of Array(20).keys()) {
             const user = await prisma.user.upsert({
@@ -158,7 +157,7 @@ async function main() {
                 create: {
                     email: `test${i}@test.ru`,
                     login: `test${i}`,
-                    password: await Encrypt.cryptPassword("test"),
+                    password: await Encrypt.cryptPassword('test'),
                     name: `test${i}`,
                     role: {
                         connect: {
@@ -168,7 +167,7 @@ async function main() {
                     settings: {},
                     integration: {}
                 }
-            })
+            });
 
             await prisma.user.update({
                 where: {
@@ -177,31 +176,36 @@ async function main() {
                 data: {
                     animeList: {
                         createMany: {
-                            data: [...{
-                                *[Symbol.iterator]() {
-                                    for (let i = 0; i < 10; i++)
-                                        yield Object({
-                                            status: "completed",
-                                            isFavorite: false,
-                                            watchedEpisodes: 1,
-                                            animeId: animesId[Math.floor(Math.random() * animesId.length)],
-                                            rating: random(0, 10)
-                                        })
+                            data: [
+                                ...{
+                                    *[Symbol.iterator]() {
+                                        for (let i = 0; i < 10; i++)
+                                            yield Object({
+                                                status: 'completed',
+                                                isFavorite: false,
+                                                watchedEpisodes: 1,
+                                                animeId:
+                                                    animesId[
+                                                        Math.floor(Math.random() * animesId.length)
+                                                    ],
+                                                rating: random(0, 10)
+                                            });
+                                    }
                                 }
-                            }]
+                            ]
                         }
                     }
                 }
-            })
+            });
         }
     }
 }
 
 main()
     .catch((e) => {
-        console.error(e)
-        process.exit(1)
+        console.error(e);
+        process.exit(1);
     })
     .finally(async () => {
-        await prisma.$disconnect()
-    })
+        await prisma.$disconnect();
+    });
