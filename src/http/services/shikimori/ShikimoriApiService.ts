@@ -40,6 +40,11 @@ axios.defaults.validateStatus = (status) => {
     return (status >= 400 && status <= 499) || (status >= 200 && status <= 299);
 };
 
+interface ShikimoriResponse {
+    access_token: string;
+    refresh_token: string;
+}
+
 /**
  *  Documenting this api for the unfortunate soul that will maintain it in the future
  *  To be absolutely honest, shikimori's api is an absolute mess
@@ -116,13 +121,11 @@ export default class ShikimoriApiService implements iShikimoriApi {
             await prisma.integration.clearShikimoriIntegration(this.user.id);
             return false;
         }
-        const data: any = await response.data;
+        const data: ShikimoriResponse = await response.data;
         const integrationBody = {
             shikimoriToken: data.access_token,
-            shikimoriRefreshToken: undefined
+            shikimoriRefreshToken: token ? data.refresh_token : undefined
         } satisfies Prisma.IntegrationUpdateInput;
-        // If user doesn't have a refresh token, add it
-        if (token) integrationBody.shikimoriRefreshToken = data.refresh_token;
         this.user.integration = await prisma.integration.update({
             where: {
                 userId: this.user.integration!.userId
@@ -147,7 +150,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
      * @returns ServerError object if request fails
      * @returns false is request is unable to be made due to auth requirement
      */
-    private async makeRequest(url: string, method: RequestTypes, auth = false, data?: Object) {
+    private async makeRequest(url: string, method: RequestTypes, auth = false, data?: unknown) {
         if (auth) {
             if (!this.user) throw new BadRequestError('no_shikimori_integration');
             if (this.user.integration === null || this.user.integration.shikimoriCode === null)

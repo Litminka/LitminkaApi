@@ -1,5 +1,5 @@
-import { paramIntValidator, paramStringValidator } from '@validators/ParamBaseValidator';
-import { ValidationChain, oneOf } from 'express-validator';
+import { paramStringValidator } from '@/validators/ParamBaseValidator';
+import { ValidationChain } from 'express-validator';
 import { RequestAuthTypes } from '@/ts/enums';
 import { IntegrationReq, IntegrationRequest } from '@requests/IntegrationRequest';
 import { OptionalReq } from '@requests/OptionalRequest';

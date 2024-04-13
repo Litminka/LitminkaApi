@@ -1,9 +1,6 @@
-import ForbiddenError from '@errors/clienterrors/ForbiddenError';
+import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 import * as jwt from 'jsonwebtoken';
-import UnauthorizedError from '@errors/clienterrors/UnauthorizedError';
-import InternalServerError from '@errors/servererrors/InternalServerError';
 import { Permissions } from '@/ts/enums';
-
 import { UserWithPermissions } from '@/ts';
 import prisma from '@/db';
 
@@ -20,20 +17,21 @@ export default class TokenService {
         const tokens = await new Promise((resolve, reject) => {
             jwt.verify(result, process.env.REFRESH_TOKEN_SECRET!, async function (err, decoded) {
                 if (<any>err instanceof jwt.TokenExpiredError)
-                    throw new UnauthorizedError('Token expired');
-                if (err) return reject(new InternalServerError('Failed to authenticate token'));
+                    throw new ForbiddenError('Token expired');
+                if (err) return reject(new ForbiddenError('Failed to authenticate token'));
+
                 const auth = <any>decoded;
-                if (!auth) return reject(new InternalServerError('Failed to authenticate token'));
+                if (!auth) return reject(new ForbiddenError('Failed to authenticate token'));
 
                 const user = await prisma.user.findUserWithTokensAndPermissions(auth.id);
-                if (!user) return reject(new InternalServerError('Failed to authenticate token'));
+                if (!user) return reject(new ForbiddenError('Failed to authenticate token'));
+
                 if (
                     !user.sessionTokens.some((token) => {
                         return token.token === auth.token;
                     })
-                ) {
+                )
                     return reject(new ForbiddenError('Unauthorized'));
-                }
 
                 const { token, refreshToken } = TokenService.signTokens(user!, auth.token);
                 userToken = token;
@@ -91,13 +89,14 @@ export default class TokenService {
         return await prisma.sessionToken.deleteMany({
             where: {
                 userId: id,
-                token: isSpecificDelete
-                    ? {
-                          in: deleteTokens
-                      }
-                    : {
-                          notIn: [currentToken]
-                      }
+                token:
+                    isSpecificDelete ?
+                        {
+                            in: deleteTokens
+                        }
+                    :   {
+                            notIn: [currentToken]
+                        }
             }
         });
     }

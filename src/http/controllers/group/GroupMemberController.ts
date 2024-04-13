@@ -1,11 +1,9 @@
 import { Response } from 'express';
-import { RequestWithUser, RequestWithUserOwnedGroups } from '@/ts';
 import { RequestStatuses } from '@/ts/enums';
 import GroupMemberService from '@services/group/GroupMemberService';
 import { AuthReq } from '@requests/AuthRequest';
 import { GroupMemberReq } from '@requests/group/member/GroupMemberRequest';
 import { KickGroupMemberReq } from '@requests/group/member/KickGroupMemberRequest';
-import { AcceptInviteReq } from '@requests/group/invite/AcceptInviteRequest';
 import { UpdateGroupMemberReq } from '@requests/group/member/UpdateGroupMemberRequest';
 
 export default class GroupMemberController {

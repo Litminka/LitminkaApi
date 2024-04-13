@@ -6,6 +6,7 @@ nginx.conf
 cert/
 coverage/
 src/config.ts
+.eslintcache
 
 # Require to build app
 dist

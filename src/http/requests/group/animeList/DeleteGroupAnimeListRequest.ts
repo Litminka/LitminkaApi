@@ -1,7 +1,7 @@
-import { param, ValidationChain } from 'express-validator';
+import { ValidationChain } from 'express-validator';
 import prisma from '@/db';
 import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
 export interface DeleteGroupAnimeListReq extends GroupReq {
     params: {

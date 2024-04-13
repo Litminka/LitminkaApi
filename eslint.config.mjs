@@ -10,7 +10,7 @@ export default tseslint.config(
     eslintPluginPrettierRecommended,
     eslintConfigPrettier,
     {
-        ignores: ['**/*/config.ts', '**/*/config.js', 'src/**/*.js', 'tests', 'seed.js']
+        ignores: ['**/*/config.ts', '**/*/config.js', 'src/**/*.js', 'tests']
     },
     {
         files: ['src/**/*.ts'],
@@ -25,7 +25,6 @@ export default tseslint.config(
             reportUnusedDisableDirectives: 'warn'
         },
         rules: {
-            'arrow-body-style': ['error', 'always'],
             camelcase: [
                 'error',
                 {
@@ -33,8 +32,12 @@ export default tseslint.config(
                     ignoreImports: true
                 }
             ],
+            'no-constant-condition': ['error', { checkLoops: false }],
+            'arrow-body-style': ['error', 'always'],
+            'no-warning-comments': ['warn'],
             'no-var': ['error'],
-            'no-constant-condition': ['error', { checkLoops: false }]
+            '@typescript-eslint/no-explicit-any': ['warn'],
+            '@typescript-eslint/no-unused-vars': ['warn']
         }
     }
 );

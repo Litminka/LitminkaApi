@@ -4,7 +4,7 @@ import {
     DateValidator,
     dateValidator,
     genMessage
-} from '@validators/BaseValidator';
+} from '@/validators/BaseValidator';
 import { baseMsg } from '@/ts/messages';
 
 /**

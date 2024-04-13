@@ -21,7 +21,7 @@ export async function auth(req: RequestWithBot, res: Response, next: NextFunctio
                 .json({ error: true, message: 'Token expired' });
         }
         if (err) {
-            return res.status(RequestStatuses.InternalServerError).json({
+            return res.status(RequestStatuses.Forbidden).json({
                 error: true,
                 message: 'Failed to authenticate token'
             });

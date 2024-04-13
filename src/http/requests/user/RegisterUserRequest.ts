@@ -3,7 +3,7 @@ import { Request as ExpressRequest } from 'express';
 import { registrationMsg } from '@/ts/messages';
 import { ValidationChain } from 'express-validator';
 import prisma from '@/db';
-import { bodyStringValidator } from '@validators/BodyBaseValidator';
+import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 
 export interface RegisterUserReq extends ExpressRequest {
     body: {

@@ -1,5 +1,5 @@
-import BadRequestError from '@errors/clienterrors/BadRequestError';
-import NotFoundError from '@errors/clienterrors/NotFoundError';
+import BadRequestError from '@/errors/clienterrors/BadRequestError';
+import NotFoundError from '@/errors/clienterrors/NotFoundError';
 import groupArrSplice from '@/helper/groupsplice';
 import {
     AddToList,
@@ -32,12 +32,12 @@ export default class WatchListService {
                         isFavorite,
                         status: statuses === undefined ? undefined : { in: statuses },
                         rating:
-                            ratings === undefined
-                                ? undefined
-                                : {
-                                      gte: ratings ? ratings[0] : 1,
-                                      lte: ratings ? ratings[1] : 10
-                                  }
+                            ratings === undefined ? undefined : (
+                                {
+                                    gte: ratings ? ratings[0] : 1,
+                                    lte: ratings ? ratings[1] : 10
+                                }
+                            )
                     }
                 };
             }

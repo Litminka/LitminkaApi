@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const helmet = require('helmet');
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
@@ -10,15 +11,15 @@ import { RequestStatuses } from '@/ts/enums';
 import { wrap } from '@/middleware/errorHandler';
 import { logger } from '@/loggerConf';
 
-import { userRouter } from '@routers/UserRouter';
-import { shikimoriRouter } from '@routers/ShikimoriRouter';
-import { tokenRouter } from '@routers/TokenRouter';
-import { watchListRouter } from '@routers/WatchListRouter';
-import { followRouter } from '@routers/FollowRouter';
-import { animeRouter } from '@routers/AnimeRouter';
-import { groupListRouter } from '@routers/GroupListRouter';
-import { notificationRouter } from '@routers/NotificationRouter';
-import { adminRouter } from '@routers/AdminRouter';
+import { userRouter } from '@/routers/UserRouter';
+import { shikimoriRouter } from '@/routers/ShikimoriRouter';
+import { tokenRouter } from '@/routers/TokenRouter';
+import { watchListRouter } from '@/routers/WatchListRouter';
+import { followRouter } from '@/routers/FollowRouter';
+import { animeRouter } from '@/routers/AnimeRouter';
+import { groupListRouter } from '@/routers/GroupListRouter';
+import { notificationRouter } from '@/routers/NotificationRouter';
+import { adminRouter } from '@/routers/AdminRouter';
 
 dotenv.config();
 
@@ -62,27 +63,28 @@ app.use('/token', tokenRouter);
 app.use('/notifications', notificationRouter);
 app.use('/admin', adminRouter);
 
-app.get('/shikimori_token', (req: Request, res: Response) => {
+app.get('/shikimori_token', (req: Request) => {
     logger.debug(`shikimori_token ${req.query}`);
 });
 
 switch (process.env.SSL) {
-    case '0':
-    case 'false':
-    case 'False':
-        http.createServer(app).listen(port, () => {
-            logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
-        });
-        break;
     case '1':
     case 'true':
-    case 'True':
+    case 'True': {
         const httpsOptions = {
             key: fs.readFileSync(process.env.SSL_KEY as string),
             cert: fs.readFileSync(process.env.SSL_CERT as string)
         };
         https.createServer(httpsOptions, app).listen(port, () => {
             logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
+        });
+        break;
+    }
+    case '0':
+    case 'false':
+    case 'False':
+        http.createServer(app).listen(port, () => {
+            logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
         });
         break;
     default:

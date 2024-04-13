@@ -1,11 +1,11 @@
-import { bodySoftPeriodValidator } from '@validators/BodyPeriodValidator';
+import { bodySoftPeriodValidator } from '@/validators/BodyPeriodValidator';
 import {
     bodyArrayValidator,
     bodyBoolValidator,
     bodyIntValidator,
     bodyStringValidator
-} from '@validators/BodyBaseValidator';
-import { queryIntValidator } from '@validators/QueryBaseValidator';
+} from '@/validators/BodyBaseValidator';
+import { queryIntValidator } from '@/validators/QueryBaseValidator';
 import { baseMsg, searchMsg } from '@/ts/messages';
 import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from '@/ts/enums';
 import { ValidationChain } from 'express-validator';
@@ -13,7 +13,7 @@ import { Request as ExpressRequest } from 'express';
 import { isSeason } from '@/helper/animeseason';
 import FrontPageAnimeRequest, { FrontPageAnimeReq } from '@requests/anime/FrontPageAnimeRequest';
 
-type queryType = ExpressRequest<{}, {}, {}, {}>; // workaround on query
+type queryType = ExpressRequest<object, object, object, object>; // workaround on query
 export interface GetAnimeReq extends queryType, FrontPageAnimeReq {
     body: {
         name?: string;

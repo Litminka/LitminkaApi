@@ -1,5 +1,5 @@
 import Request from '@requests/Request';
-import { bodyBoolValidator } from '@validators/BodyBaseValidator';
+import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
 import { ValidationChain } from 'express-validator';
 import { Request as ExpressRequest } from 'express';
 

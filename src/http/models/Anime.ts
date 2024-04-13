@@ -232,12 +232,10 @@ const extention = Prisma.defineExtension({
                         mediaType: shikimori.kind,
                         rpaRating: shikimori.rating,
                         status: shikimori.status!,
-                        firstEpisodeAired: shikimori.airedOn.date
-                            ? new Date(shikimori.airedOn.date)
-                            : null,
-                        lastEpisodeAired: shikimori.releasedOn.date
-                            ? new Date(shikimori.releasedOn.date)
-                            : null,
+                        firstEpisodeAired:
+                            shikimori.airedOn.date ? new Date(shikimori.airedOn.date) : null,
+                        lastEpisodeAired:
+                            shikimori.releasedOn.date ? new Date(shikimori.releasedOn.date) : null,
                         banned: isBanned,
                         censored: isCensored,
                         kodikLink: kodikAnime?.link,
@@ -288,12 +286,10 @@ const extention = Prisma.defineExtension({
                         mediaType: shikimori.kind,
                         rpaRating: shikimori.rating,
                         status: shikimori.status!,
-                        firstEpisodeAired: shikimori.airedOn.date
-                            ? new Date(shikimori.airedOn.date)
-                            : null,
-                        lastEpisodeAired: shikimori.releasedOn.date
-                            ? new Date(shikimori.releasedOn.date)
-                            : null,
+                        firstEpisodeAired:
+                            shikimori.airedOn.date ? new Date(shikimori.airedOn.date) : null,
+                        lastEpisodeAired:
+                            shikimori.releasedOn.date ? new Date(shikimori.releasedOn.date) : null,
                         kodikLink: kodikAnime?.link,
                         banned: isBanned,
                         censored: isCensored,
@@ -310,19 +306,20 @@ const extention = Prisma.defineExtension({
                                 };
                             })
                         },
-                        animeTranslations: hasTranslations
-                            ? {
-                                  createMany: {
-                                      data: translations!.map((translation) => {
-                                          return {
-                                              currentEpisodes: translation.episodes_count,
-                                              groupId: translation.id,
-                                              link: translation.link
-                                          };
-                                      })
-                                  }
-                              }
-                            : undefined
+                        animeTranslations:
+                            hasTranslations ?
+                                {
+                                    createMany: {
+                                        data: translations!.map((translation) => {
+                                            return {
+                                                currentEpisodes: translation.episodes_count,
+                                                groupId: translation.id,
+                                                link: translation.link
+                                            };
+                                        })
+                                    }
+                                }
+                            :   undefined
                     }
                 });
             }

@@ -138,6 +138,8 @@ new Worker(
     }
 );
 
+autoCheckQueue.add('autocheck', {});
+
 autoCheckQueue.add(
     'autocheck',
     {},

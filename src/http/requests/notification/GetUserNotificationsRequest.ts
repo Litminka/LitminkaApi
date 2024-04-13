@@ -1,5 +1,5 @@
-import { bodyBoolValidator } from '@validators/BodyBaseValidator';
-import { bodySoftPeriodValidator } from '@validators/BodyPeriodValidator';
+import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
+import { bodySoftPeriodValidator } from '@/validators/BodyPeriodValidator';
 import { AuthReq, AuthRequest } from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
 

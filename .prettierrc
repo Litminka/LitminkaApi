@@ -8,15 +8,5 @@
     "bracketSpacing": true,
     "bracketSameLine": true,
     "experimentalTernaries": true,
-    "endOfLine": "lf",
-    "overrides": [
-        {
-            "files": [
-                "src/**/*.ts"
-            ],
-            "excludeFiles": [
-                "src/**/*.js"
-            ]
-        }
-    ]
+    "endOfLine": "lf"
 }

@@ -178,7 +178,7 @@ export default class AutoCheckService {
         const shikimoriApi = new ShikimoriApiService(user);
         const idsSpliced = groupArrSplice(ids, 50);
         logger.info('Getting anime from shikimori');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async (batch) => {
             const response = await shikimoriApi.getBatchGraphAnime(batch);
             return response.data.animes;

@@ -1,7 +1,7 @@
 import { ValidationChain } from 'express-validator';
 import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
-import { bodyStringValidator } from '@validators/BodyBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
+import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 
 export interface UpdateGroupReq extends GroupReq {
     params: {

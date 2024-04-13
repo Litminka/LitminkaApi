@@ -5,7 +5,7 @@ import {
     bodyBoolValidator,
     bodyIntValidator,
     bodyStringValidator
-} from '@validators/BodyBaseValidator';
+} from '@/validators/BodyBaseValidator';
 import { WatchListStatuses } from '@/ts/enums';
 import { queryIntValidator } from '@/validators/QueryBaseValidator';
 

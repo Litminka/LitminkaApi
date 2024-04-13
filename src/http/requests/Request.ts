@@ -36,6 +36,7 @@ export default class Request {
      *
      *  @returns Prisma User Variant
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected async auth(userId: number): Promise<any> {}
 
     private async constructAuthMiddleware(req: AuthReq, res: Response, next: NextFunction) {

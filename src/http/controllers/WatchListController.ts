@@ -8,7 +8,7 @@ import { GetWatchListReq } from '@requests/watchList/GetWatchListRequest';
 import { RequestStatuses } from '@/ts/enums';
 
 export default class WatchListController {
-    public static async getWatchList(req: GetWatchListReq, res: Response): Promise<Object> {
+    public static async getWatchList(req: GetWatchListReq, res: Response) {
         const userId = req.auth.user.id;
         const statuses = req.body.statuses;
         const ratings = req.body.ratings;
@@ -25,7 +25,7 @@ export default class WatchListController {
         return res.status(RequestStatuses.OK).json({ count: listCount, body: list });
     }
 
-    public static async importList(req: IntegrationReq, res: Response): Promise<any> {
+    public static async importList(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         WatchListService.startImport(user);

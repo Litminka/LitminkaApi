@@ -1,7 +1,7 @@
 import { AnimeTranslation } from '@prisma/client';
 import { FollowAnime, followType, info } from '@/ts/index';
 import { AnimeStatuses, FollowTypes } from '@/ts/enums';
-import UnprocessableContentError from '@errors/clienterrors/UnprocessableContentError';
+import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
 import prisma from '@/db';
 type follows = {
     anime: {

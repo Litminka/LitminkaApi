@@ -1,5 +1,5 @@
 import prisma from '@/db';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { baseMsg } from '@/ts/messages';
 import { ValidationChain } from 'express-validator';
 import {

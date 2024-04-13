@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable camelcase */
 import fetch from 'node-fetch';
 import {
@@ -57,7 +56,6 @@ export default class KodikApiService {
     }
 
     private _packFullAnime(request: _KodikAnimeFullRequest) {
-        // FIXME: Todo Fix dublicate translations
         const { reqStatus, shikimori_request, time, total, results } = request;
         if (results.length == 0) {
             const newResult: any = request;

@@ -1,7 +1,7 @@
 import { ValidationChain } from 'express-validator';
 import { AuthReq, AuthRequest } from '@requests/AuthRequest';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
-import { bodyStringValidator } from '@validators/BodyBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
+import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 import { FollowTypes } from '@/ts/enums';
 
 export interface FollowAnimeReq extends AuthReq {

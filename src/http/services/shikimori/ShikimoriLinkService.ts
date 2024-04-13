@@ -1,19 +1,17 @@
-import UnauthorizedError from '@errors/clienterrors/UnauthorizedError';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
-import { RequestStatuses } from '@/ts/enums';
-import InternalServerError from '@errors/servererrors/InternalServerError';
 import { ShikimoriWhoAmI, UserWithIntegration } from '@/ts';
-import UnprocessableContentError from '@errors/clienterrors/UnprocessableContentError';
+import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
 import crypto from 'crypto';
 import prisma from '@/db';
-import BadRequestError from '@errors/clienterrors/BadRequestError';
+import BadRequestError from '@/errors/clienterrors/BadRequestError';
+import NotFoundError from '@/errors/clienterrors/NotFoundError';
 
 export default class ShikimoriLinkService {
     public static async link(token: string, code: string) {
         try {
             await prisma.shikimoriLinkToken.updateWithCode(token, code);
         } catch (error) {
-            throw new UnauthorizedError('Query param token must be string');
+            throw new NotFoundError('Query param token must be string');
         }
         const user = await prisma.user.findUserByShikimoriLinkToken(token);
         if (user.integration?.shikimoriId)
@@ -21,7 +19,7 @@ export default class ShikimoriLinkService {
 
         const shikimoriapi = new ShikimoriApiService(user);
         const profile = await shikimoriapi.getProfile();
-        if (!profile) throw new UnauthorizedError('User does not have shikimori integration');
+        if (!profile) throw new BadRequestError('User does not have shikimori integration');
 
         const integrated = await prisma.integration.findByShikimoriId(
             (<ShikimoriWhoAmI>profile).id
@@ -42,7 +40,7 @@ export default class ShikimoriLinkService {
     public static async getProfile(user: UserWithIntegration) {
         const shikimori = new ShikimoriApiService(user);
         const profile = await shikimori.getProfile();
-        if (!profile) throw new UnauthorizedError('User does not have shikimori integration');
+        if (!profile) throw new BadRequestError('User does not have shikimori integration');
         return profile;
     }
 

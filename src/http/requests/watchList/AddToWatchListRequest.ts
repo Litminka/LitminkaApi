@@ -1,11 +1,11 @@
 import prisma from '@/db';
 import { minmax } from '@/ts';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import {
     bodyBoolValidator,
     bodyIntValidator,
     bodyStringValidator
-} from '@validators/BodyBaseValidator';
+} from '@/validators/BodyBaseValidator';
 import { WatchListStatuses } from '@/ts/enums';
 import { ValidationChain } from 'express-validator';
 import {

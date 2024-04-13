@@ -1,7 +1,7 @@
 import Request from '@requests/Request';
-import { query, ValidationChain } from 'express-validator';
+import { ValidationChain } from 'express-validator';
 import { Request as ExpressRequest } from 'express';
-import { queryIntValidator, queryStringValidator } from '@validators/QueryBaseValidator';
+import { queryStringValidator } from '@/validators/QueryBaseValidator';
 
 export interface LinkShikimoriReq extends ExpressRequest {
     query: {

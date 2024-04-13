@@ -1,4 +1,4 @@
-import NotFoundError from '@errors/clienterrors/NotFoundError';
+import NotFoundError from '@/errors/clienterrors/NotFoundError';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import prisma from '@/db';
@@ -39,14 +39,15 @@ export default class AnimeService {
                 withCensored: censor,
                 seasons: [getCurrentSeason()],
                 banInRussia: showBanned,
-                rpaRatings: !censor
-                    ? [
-                          AnimePgaRatings.None,
-                          AnimePgaRatings.G,
-                          AnimePgaRatings.PG,
-                          AnimePgaRatings.PG_13
-                      ]
-                    : undefined
+                rpaRatings:
+                    !censor ?
+                        [
+                            AnimePgaRatings.None,
+                            AnimePgaRatings.G,
+                            AnimePgaRatings.PG,
+                            AnimePgaRatings.PG_13
+                        ]
+                    :   undefined
             },
             { page: 1, pageLimit: 30 }
         );
@@ -58,14 +59,15 @@ export default class AnimeService {
                 withCensored: censor,
                 seasons: [getCurrentSeason()],
                 banInRussia: showBanned,
-                rpaRatings: !censor
-                    ? [
-                          AnimePgaRatings.None,
-                          AnimePgaRatings.G,
-                          AnimePgaRatings.PG,
-                          AnimePgaRatings.PG_13
-                      ]
-                    : undefined
+                rpaRatings:
+                    !censor ?
+                        [
+                            AnimePgaRatings.None,
+                            AnimePgaRatings.G,
+                            AnimePgaRatings.PG,
+                            AnimePgaRatings.PG_13
+                        ]
+                    :   undefined
             },
             { page: 1, pageLimit: 5 },
             { rating: 'desc' }
@@ -79,14 +81,15 @@ export default class AnimeService {
                 seasons: [getNextSeason(new Date())],
                 statuses: ['announced'],
                 banInRussia: showBanned,
-                rpaRatings: !censor
-                    ? [
-                          AnimePgaRatings.None,
-                          AnimePgaRatings.G,
-                          AnimePgaRatings.PG,
-                          AnimePgaRatings.PG_13
-                      ]
-                    : undefined
+                rpaRatings:
+                    !censor ?
+                        [
+                            AnimePgaRatings.None,
+                            AnimePgaRatings.G,
+                            AnimePgaRatings.PG,
+                            AnimePgaRatings.PG_13
+                        ]
+                    :   undefined
             },
             { page: 1, pageLimit: 30 }
         );

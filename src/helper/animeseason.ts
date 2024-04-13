@@ -113,8 +113,8 @@ export function getSeasonPeriod(seasons?: string[]) {
 
     const [start, finish] = seasons;
 
-    const [startSeason, startYear] = start.split('_');
-    const [finishSeason, finishYear] = finish.split('_');
+    const [, startYear] = start.split('_');
+    const [, finishYear] = finish.split('_');
 
     if (startYear > finishYear) throw new UnprocessableContentError('start_cant_be_larger');
 
@@ -124,6 +124,7 @@ export function getSeasonPeriod(seasons?: string[]) {
 
     while (current !== seasons[1]) {
         finalList.push(current);
+        // eslint-disable-next-line prefer-const
         let [currentSeason, year] = current.split('_');
         let nextSeason = getNextSeasonName(currentSeason);
         if (typeof nextSeason === 'undefined') nextSeason = 'winter';

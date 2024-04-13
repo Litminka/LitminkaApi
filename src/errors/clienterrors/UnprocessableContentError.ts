@@ -1,5 +1,5 @@
 import { RequestStatuses } from '@/ts/enums';
-import BaseError from '@errors/BaseError';
+import BaseError from '@/errors/BaseError';
 
 export default class UnprocessableContentError extends BaseError {
     constructor(message = 'Unprocessable Content') {

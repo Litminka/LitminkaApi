@@ -1,5 +1,6 @@
 node_modules
-# Ignore artifacts:
 dist
-Coverage
+thunder-collection_litminka-api.json
+package-lock.json
+*.yaml
 *.js

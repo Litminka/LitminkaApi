@@ -1,5 +1,5 @@
 import { RequestStatuses } from '@/ts/enums';
-import BaseError from '@errors/BaseError';
+import BaseError from '@/errors/BaseError';
 
 export default class TeapotError extends BaseError {
     constructor(message = 'Oopsie-woopsie i made a fucky-wucky') {

@@ -7,10 +7,7 @@ import { GetNotificationsReq } from '@requests/notification/GetNotificationsRequ
 import { ReadNotificationsReq } from '@requests/notification/ReadNotificationsRequest';
 
 export default class NotificationController {
-    public static async getUserNotifications(
-        req: GetUserNotificationsReq,
-        res: Response
-    ): Promise<Object> {
+    public static async getUserNotifications(req: GetUserNotificationsReq, res: Response) {
         const userId = req.auth.user.id;
         const isRead = req.body.isRead;
         const period = req.body.period;
@@ -24,7 +21,7 @@ export default class NotificationController {
         return res.json(notifications);
     }
 
-    public static async getNotifications(req: GetNotificationsReq, res: Response): Promise<Object> {
+    public static async getNotifications(req: GetNotificationsReq, res: Response) {
         const period = req.body.period;
 
         const notifications = await NotificationService.getNotifications(Period.getPeriod(period));

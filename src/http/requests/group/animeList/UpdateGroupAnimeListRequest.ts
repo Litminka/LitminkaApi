@@ -7,8 +7,8 @@ import {
     bodyStringValidator,
     bodyIntValidator,
     bodyBoolValidator
-} from '@validators/BodyBaseValidator';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
+} from '@/validators/BodyBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
 export interface UpdateGroupAnimeListReq extends GroupReq {
     params: {

@@ -1,7 +1,7 @@
 import Request from '@requests/Request';
 import { Request as ExpressRequest } from 'express';
 import { ValidationChain } from 'express-validator';
-import { bodyStringValidator } from '@validators/BodyBaseValidator';
+import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 
 export interface LoginUserReq extends ExpressRequest {
     body: {

@@ -5,7 +5,7 @@ import { IntegrationReq } from '@requests/IntegrationRequest';
 import { LinkShikimoriReq } from '@requests/shikimori/LinkShikimoriRequest';
 
 export default class ShikimoriController {
-    static async generateLink(req: IntegrationReq, res: Response): Promise<Object> {
+    static async generateLink(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         const link = await ShikimoriLinkService.generateLink(user);
@@ -15,7 +15,7 @@ export default class ShikimoriController {
         });
     }
 
-    static async link(req: LinkShikimoriReq, res: Response): Promise<Object> {
+    static async link(req: LinkShikimoriReq, res: Response) {
         const { token, code } = req.query;
 
         await ShikimoriLinkService.link(token, code);
@@ -36,7 +36,7 @@ export default class ShikimoriController {
         });
     }
 
-    static async getProfile(req: IntegrationReq, res: Response): Promise<Object> {
+    static async getProfile(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         const result = await ShikimoriLinkService.getProfile(user);

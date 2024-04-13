@@ -1,7 +1,7 @@
 import { ValidationChain } from 'express-validator';
 import { GroupInviteReq, GroupInviteRequest } from '@requests/group/GroupInviteRequest';
-import { bodyBoolValidator } from '@validators/BodyBaseValidator';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
+import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
 export interface AcceptInviteReq extends GroupInviteReq {
     params: {

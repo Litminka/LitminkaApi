@@ -1,10 +1,9 @@
-/* eslint-disable camelcase */
 import { Anime, Prisma, User } from '@prisma/client';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import { ShikimoriAnimeFull, ShikimoriAnime } from '@/ts/index';
 import { KodikAnime, KodikAnimeFull, animeWithTranslation, _translation } from '@/ts/kodik';
 import prisma from '@/db';
-import InternalServerError from '@errors/servererrors/InternalServerError';
+import InternalServerError from '@/errors/servererrors/InternalServerError';
 import { cyrillicSlug } from '@/helper/cyrillic-slug';
 import { ShikimoriAnimeWithRelation, ShikimoriGraphAnime, ShikimoriRelation } from '@/ts/shikimori';
 import { config } from '@/config';
@@ -116,10 +115,10 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
      */
     async updateAnimeKodik(result: KodikAnimeFull[]) {
         const listTransaction = result.map((anime) => {
-            const { material_data } = anime;
-            let animeSlugTitle = material_data.anime_title;
+            const { material_data: materialData } = anime;
+            let animeSlugTitle = materialData.anime_title;
             if (!animeSlugTitle) {
-                animeSlugTitle = material_data.title_en;
+                animeSlugTitle = materialData.title_en;
             }
             const slug = `${anime.shikimori_id}-${cyrillicSlug(animeSlugTitle)}`;
             return prisma.anime.upsert({
@@ -128,22 +127,21 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 },
                 create: {
                     slug,
-                    currentEpisodes: material_data.episodes_aired,
-                    maxEpisodes: material_data.episodes_total,
+                    currentEpisodes: materialData.episodes_aired,
+                    maxEpisodes: materialData.episodes_total,
                     shikimoriId: parseInt(anime.shikimori_id),
-                    englishName: material_data.title_en,
-                    status: material_data.anime_status,
-                    image: material_data.poster_url,
-                    name: material_data.anime_title,
-                    mediaType: material_data.anime_kind,
-                    shikimoriRating: material_data.shikimori_rating,
-                    firstEpisodeAired: new Date(material_data.aired_at),
+                    englishName: materialData.title_en,
+                    status: materialData.anime_status,
+                    image: materialData.poster_url,
+                    name: materialData.anime_title,
+                    mediaType: materialData.anime_kind,
+                    shikimoriRating: materialData.shikimori_rating,
+                    firstEpisodeAired: new Date(materialData.aired_at),
                     kodikLink: anime.link,
-                    rpaRating: material_data.rating_mpaa,
-                    description: material_data.anime_description,
-                    lastEpisodeAired: material_data.released_at
-                        ? new Date(material_data.released_at)
-                        : null,
+                    rpaRating: materialData.rating_mpaa,
+                    description: materialData.anime_description,
+                    lastEpisodeAired:
+                        materialData.released_at ? new Date(materialData.released_at) : null,
                     animeTranslations: {
                         createMany: {
                             data: anime.translations.map((translation) => {
@@ -156,7 +154,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                         }
                     },
                     genres: {
-                        connectOrCreate: material_data.anime_genres?.map((name) => {
+                        connectOrCreate: materialData.anime_genres?.map((name) => {
                             return {
                                 where: { name },
                                 create: { name }
@@ -165,19 +163,18 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     }
                 },
                 update: {
-                    currentEpisodes: material_data.episodes_aired,
-                    maxEpisodes: material_data.episodes_total,
-                    status: material_data.anime_status,
-                    rpaRating: material_data.rating_mpaa,
+                    currentEpisodes: materialData.episodes_aired,
+                    maxEpisodes: materialData.episodes_total,
+                    status: materialData.anime_status,
+                    rpaRating: materialData.rating_mpaa,
                     kodikLink: anime.link,
-                    mediaType: material_data.anime_kind,
-                    description: material_data.anime_description,
-                    image: material_data.poster_url,
-                    shikimoriRating: material_data.shikimori_rating,
-                    firstEpisodeAired: new Date(material_data.aired_at),
-                    lastEpisodeAired: material_data.released_at
-                        ? new Date(material_data.released_at)
-                        : null
+                    mediaType: materialData.anime_kind,
+                    description: materialData.anime_description,
+                    image: materialData.poster_url,
+                    shikimoriRating: materialData.shikimori_rating,
+                    firstEpisodeAired: new Date(materialData.aired_at),
+                    lastEpisodeAired:
+                        materialData.released_at ? new Date(materialData.released_at) : null
                 }
             });
         });

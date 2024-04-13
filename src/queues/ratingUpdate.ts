@@ -1,4 +1,4 @@
-import { Worker, Job } from 'bullmq';
+import { Worker } from 'bullmq';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { logger } from '@/loggerConf';
 import { config } from '@/config';
@@ -6,7 +6,7 @@ import { ratingUpdateQueue } from './queues';
 
 new Worker(
     'ratingUpdate',
-    async (job: Job) => {
+    async () => {
         try {
             await AnimeUpdateService.updateRating();
         } catch (err) {

@@ -15,7 +15,7 @@ export async function optionalAuth(req: RequestWithBot, res: Response, next: Nex
                 .json({ error: true, message: 'Token expired' });
         }
         if (err) {
-            return res.status(RequestStatuses.InternalServerError).json({
+            return res.status(RequestStatuses.Forbidden).json({
                 error: true,
                 message: 'Failed to authenticate token'
             });

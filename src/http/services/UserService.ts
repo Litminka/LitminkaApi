@@ -1,5 +1,4 @@
 import prisma from '@/db';
-import UnauthorizedError from '@errors/clienterrors/UnauthorizedError';
 import { Encrypt } from '@/helper/encrypt';
 import { CreateUser, LoginUser, UserWithIntegration } from '@/ts';
 import crypto from 'crypto';
@@ -33,8 +32,8 @@ export default class UserService {
 
         // protection against time based attack
         if (!(await Encrypt.comparePassword(password, user?.password ?? '')))
-            throw new UnauthorizedError('Login or password incorrect');
-        if (!user) throw new UnauthorizedError('Login or password incorrect');
+            throw new UnprocessableContentError('Login or password incorrect');
+        if (!user) throw new UnprocessableContentError('Login or password incorrect');
 
         const { id } = user;
 

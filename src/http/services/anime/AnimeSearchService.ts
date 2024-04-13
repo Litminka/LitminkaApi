@@ -48,15 +48,15 @@ export default class AnimeSearchService {
     }
 
     private static byName(arg?: string) {
-        return arg !== undefined
-            ? {
-                  OR: [
-                      { name: { contains: arg } },
-                      { englishName: { contains: arg } },
-                      { franchiseName: { contains: arg } }
-                  ]
-              }
-            : [];
+        return arg !== undefined ?
+                {
+                    OR: [
+                        { name: { contains: arg } },
+                        { englishName: { contains: arg } },
+                        { franchiseName: { contains: arg } }
+                    ]
+                }
+            :   [];
     }
 
     private static isCensored(arg: boolean) {
@@ -119,7 +119,6 @@ export default class AnimeSearchService {
                     })
                 };
             }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
         return filter();
     }

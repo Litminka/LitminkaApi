@@ -1,5 +1,5 @@
 import { ValidationChain } from 'express-validator';
-import { bodyBoolValidator } from '@validators/BodyBaseValidator';
+import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
 import { OptionalReq, OptionalRequest } from '@requests/OptionalRequest';
 import prisma from '@/db';
 import { Permission, Role, User } from '@prisma/client';
@@ -26,7 +26,8 @@ export default class FrontPageAnimeRequest extends OptionalRequest {
      *
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number): Promise<any> {
+
+    protected async auth(userId: number) {
         return await prisma.user.findUserByIdWithRolePermission(userId);
     }
 

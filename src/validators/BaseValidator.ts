@@ -15,7 +15,6 @@ interface TypeIntValidator extends TypeBaseValidator {
     typeParams?: {
         min?: number;
         max?: number;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [key: string]: any;
     };
 }
@@ -58,7 +57,7 @@ export interface UUIDValidator extends Omit<TypeUUIDValidator, 'validator'> {
  */
 export function genMessage(arg: {
     message: string | ValidationError | ValidatorErrorMessage | any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     typeParams: { min?: number; max?: number; [key: string]: any };
 }): ValidatorErrorMessage {
     const setRange = (arg: { min?: number; max?: number }) => {
@@ -158,7 +157,6 @@ export const intValidator = ({ validator, typeParams = {} }: TypeIntValidator): 
 
             if (!Number.isInteger(value)) throw new Error(baseMsg.valueMustBeInt);
             if (value < options.min || value > options.max) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const message: any = genMessage({
                     message: baseMsg.valueNotInRange,
                     typeParams

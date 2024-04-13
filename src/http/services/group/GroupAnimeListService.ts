@@ -1,6 +1,6 @@
 import { GroupList, GroupListMembers, Prisma } from '@prisma/client';
 import prisma from '@/db';
-import BaseError from '@errors/BaseError';
+import BaseError from '@/errors/BaseError';
 import { AddWithAnime, ListFilters, PaginationQuery } from '@/ts';
 import { RequestStatuses } from '@/ts/enums';
 import ShikimoriListSyncService from '@services/shikimori/ShikimoriListSyncService';
@@ -32,16 +32,15 @@ export default class GroupAnimeListService {
                         isFavorite,
                         status: statuses === undefined ? undefined : { in: statuses },
                         rating:
-                            ratings === undefined
-                                ? undefined
-                                : {
-                                      gte: ratings ? ratings[0] : 1,
-                                      lte: ratings ? ratings[1] : 10
-                                  }
+                            ratings === undefined ? undefined : (
+                                {
+                                    gte: ratings ? ratings[0] : 1,
+                                    lte: ratings ? ratings[1] : 10
+                                }
+                            )
                     }
                 };
             }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } satisfies Record<string, (...args: any) => Prisma.GroupAnimeListWhereInput>;
         return filter();
     }

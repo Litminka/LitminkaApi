@@ -1,4 +1,4 @@
-import { bodyArrayValidator, bodyIntValidator } from '@validators/BodyBaseValidator';
+import { bodyArrayValidator, bodyIntValidator } from '@/validators/BodyBaseValidator';
 import { AuthReq, AuthRequest } from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
 

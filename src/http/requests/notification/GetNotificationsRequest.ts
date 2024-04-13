@@ -1,4 +1,4 @@
-import { bodySoftPeriodValidator } from '@validators/BodyPeriodValidator';
+import { bodySoftPeriodValidator } from '@/validators/BodyPeriodValidator';
 import { Request as ExpressRequest } from 'express';
 import { ValidationChain } from 'express-validator';
 import Request from '@requests/Request';

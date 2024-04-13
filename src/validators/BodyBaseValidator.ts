@@ -10,7 +10,7 @@ import {
     BoolValidator,
     UUIDValidator,
     IntValidator
-} from '@validators/BaseValidator';
+} from '@/validators/BaseValidator';
 
 // 🕷️: Why are we still here?
 // 🕷️: Just to suffer?

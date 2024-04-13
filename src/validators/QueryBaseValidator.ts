@@ -1,8 +1,8 @@
 import { ValidationChain, query } from 'express-validator';
 import { baseMsg } from '@/ts/messages';
-import { stringValidator } from '@validators/BaseValidator';
-import { BaseValidator, IntValidator } from '@validators/BaseValidator';
-import { intValidator } from '@validators/BaseValidator';
+import { stringValidator } from '@/validators/BaseValidator';
+import { BaseValidator, IntValidator } from '@/validators/BaseValidator';
+import { intValidator } from '@/validators/BaseValidator';
 
 interface QueryIntValidator extends IntValidator {
     defValue: number;

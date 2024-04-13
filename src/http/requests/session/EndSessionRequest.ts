@@ -1,5 +1,5 @@
 import { sessionMsg } from '@/ts/messages';
-import { bodyArrayValidator, bodyUUIDValidator } from '@validators/BodyBaseValidator';
+import { bodyArrayValidator, bodyUUIDValidator } from '@/validators/BodyBaseValidator';
 import { AuthReq, AuthRequest } from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
 

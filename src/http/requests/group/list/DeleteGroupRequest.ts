@@ -1,6 +1,6 @@
-import { param, ValidationChain } from 'express-validator';
+import { ValidationChain } from 'express-validator';
 import { AuthReq, AuthRequest } from '@requests/AuthRequest';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
 export interface DeleteGroupReq extends AuthReq {
     params: {

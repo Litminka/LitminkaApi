@@ -21,8 +21,8 @@ export declare type AdditionalValidationError =
           additional: object;
           location: Location;
           path: string;
-          value: any;
-          msg: any;
+          value: unknown;
+          msg: string;
       }
     | ValidationError;
 

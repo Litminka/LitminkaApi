@@ -6,9 +6,9 @@ import {
     bodyStringValidator,
     bodyIntValidator,
     bodyBoolValidator
-} from '@validators/BodyBaseValidator';
-import { paramIntValidator } from '@validators/ParamBaseValidator';
-import { queryIntValidator } from '@validators/QueryBaseValidator';
+} from '@/validators/BodyBaseValidator';
+import { paramIntValidator } from '@/validators/ParamBaseValidator';
+import { queryIntValidator } from '@/validators/QueryBaseValidator';
 
 export interface GetGroupAnimeListReq extends GroupReq {
     params: {
