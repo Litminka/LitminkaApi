@@ -18,6 +18,7 @@
     "prettier.requireConfig": true,
     "editor.formatOnSave": false,
     "prettier.configPath": ".prettierrc",
+    "files.eol": "\n",
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
