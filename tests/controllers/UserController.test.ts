@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe } from 'node:test';
 import { app } from '@/index';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import prisma from '@/db';
 import crypto from 'crypto';
 import { registrationMsg } from '@/ts/messages';

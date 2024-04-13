@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import ShikimoriLinkService from '@services/shikimori/ShikimoriLinkService';
 import { IntegrationReq } from '@requests/IntegrationRequest';
 import { LinkShikimoriReq } from '@requests/shikimori/LinkShikimoriRequest';

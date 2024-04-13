@@ -8,8 +8,8 @@ import { UpdateSettingsRequest } from '@/http/requests/user/UpdateSettingsReques
 const router = Router();
 
 // Public methods
-router.post('/register', new RegisterUserRequest().send(), wrap(UserController.createUser));
-router.post('/login', new LoginUserRequest().send(), wrap(UserController.loginUser));
+router.post('/register', new RegisterUserRequest().send(), wrap(UserController.create));
+router.post('/login', new LoginUserRequest().send(), wrap(UserController.login));
 
 // Private methods
 router.get('/profile', new WithPermissionsRequest().send(), wrap(UserController.profile));

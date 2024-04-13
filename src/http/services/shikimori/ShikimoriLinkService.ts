@@ -1,5 +1,6 @@
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
-import { ShikimoriWhoAmI, UserWithIntegration } from '@/ts';
+import { UserWithIntegration } from '@/ts/user';
+import { ShikimoriProfile } from '@/ts/shikimori';
 import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
 import crypto from 'crypto';
 import prisma from '@/db';
@@ -22,14 +23,14 @@ export default class ShikimoriLinkService {
         if (!profile) throw new BadRequestError('User does not have shikimori integration');
 
         const integrated = await prisma.integration.findByShikimoriId(
-            (<ShikimoriWhoAmI>profile).id
+            (<ShikimoriProfile>profile).id
         );
         // fix if user integrated this shikimori account on another user account
         if (integrated) {
             await prisma.integration.clearShikimoriIntegration(user.id);
             throw new UnprocessableContentError('Account already linked');
         }
-        await prisma.integration.updateUserShikimoriId(user.id, (<ShikimoriWhoAmI>profile).id);
+        await prisma.integration.updateUserShikimoriId(user.id, (<ShikimoriProfile>profile).id);
         await prisma.shikimoriLinkToken.removeToken(token);
     }
 

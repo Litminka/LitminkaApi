@@ -1,4 +1,4 @@
-import { ValidatorErrorMessage } from '@/ts';
+import { ValidatorErrorMessage } from '@/ts/errors';
 import { baseMsg } from '@/ts/messages';
 import { ValidationChain, ValidationError } from 'express-validator';
 import { IsBooleanOptions, IsDateOptions, MinMaxOptions } from 'express-validator/src/options';

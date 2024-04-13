@@ -4,11 +4,11 @@ import capitalize from '@/helper/capitalize';
 import { config } from '@/config';
 import prisma from '@/db';
 import { cyrillicSlug } from '@/helper/cyrillic-slug';
-import { ShikimoriAnime, ShikimoriAnimeFull } from '@/ts';
+import { ShikimoriAnime, ShikimoriAnimeFull } from '@/ts/shikimori';
 import { ShikimoriGraphAnime } from '@/ts/shikimori';
 import dayjs from 'dayjs';
 import { getSeasonNameByDate } from '@/helper/animeseason';
-import { AnimeStatuses } from '@/ts/enums';
+import { AnimeStatuses } from '@enums';
 
 const extention = Prisma.defineExtension({
     name: 'AnimeModel',

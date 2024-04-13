@@ -6,7 +6,7 @@ import {
     bodyIntValidator,
     bodyStringValidator
 } from '@/validators/BodyBaseValidator';
-import { WatchListStatuses } from '@/ts/enums';
+import { WatchListStatuses } from '@enums';
 import { ValidationChain } from 'express-validator';
 import {
     IntegrationSettingsReq,

@@ -2,10 +2,10 @@ import NotFoundError from '@/errors/clienterrors/NotFoundError';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import prisma from '@/db';
-import { UserWithIntegration } from '@/ts';
+import { UserWithIntegration } from '@/ts/user';
 import { Prisma } from '@prisma/client';
 import AnimeSearchService from '@services/anime/AnimeSearchService';
-import { AnimePgaRatings } from '@/ts/enums';
+import { AnimePgaRatings } from '@enums';
 import { getCurrentSeason, getNextSeason } from '@/helper/animeseason';
 
 export default class AnimeService {

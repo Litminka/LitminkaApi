@@ -1,6 +1,7 @@
 import { Anime, Prisma } from '@prisma/client';
 import prisma from '@/db';
-import { AddToList, ShikimoriWatchList } from '@/ts';
+import { AddToList } from '@/ts/watchList';
+import { ShikimoriWatchList } from '@/ts/shikimori';
 
 const extention = Prisma.defineExtension({
     name: 'AnimeListModel',

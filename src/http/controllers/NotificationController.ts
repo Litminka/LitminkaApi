@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import Period from '@/helper/period';
 import NotificationService from '@services/NotificationService';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import { GetUserNotificationsReq } from '@requests/notification/GetUserNotificationsRequest';
 import { GetNotificationsReq } from '@requests/notification/GetNotificationsRequest';
 import { ReadNotificationsReq } from '@requests/notification/ReadNotificationsRequest';

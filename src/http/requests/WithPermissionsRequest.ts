@@ -1,5 +1,5 @@
 import prisma from '@/db';
-import { UserWithPermissions } from '@/ts';
+import { UserWithPermissions } from '@/ts/user';
 import { AuthRequest } from '@requests/AuthRequest';
 
 export interface WithPermissionsReq {

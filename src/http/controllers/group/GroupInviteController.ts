@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import GroupInviteService from '@services/group/GroupInviteService';
 import { AuthReq } from '@requests/AuthRequest';
 import { SendInviteReq } from '@requests/group/invite/SendInviteRequest';

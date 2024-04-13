@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { RequestWithBot } from '@/ts/index';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import isBot from '@/helper/isBot';
 import prisma from '@/db';
 

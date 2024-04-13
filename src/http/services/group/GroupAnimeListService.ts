@@ -1,8 +1,9 @@
 import { GroupList, GroupListMembers, Prisma } from '@prisma/client';
 import prisma from '@/db';
 import BaseError from '@/errors/BaseError';
-import { AddWithAnime, ListFilters, PaginationQuery } from '@/ts';
-import { RequestStatuses } from '@/ts/enums';
+import { PaginationQuery } from '@/ts';
+import { AddWithAnime, WatchListFilters } from '@/ts/watchList';
+import { RequestStatuses } from '@enums';
 import ShikimoriListSyncService from '@services/shikimori/ShikimoriListSyncService';
 
 interface AddToGroupList {
@@ -22,8 +23,8 @@ type GroupWithMembers = GroupList & {
 };
 
 export default class GroupAnimeListService {
-    private static getFilters(groupId: number, filters: ListFilters) {
-        const { statuses, ratings, isFavorite } = filters as ListFilters;
+    private static getFilters(groupId: number, filters: WatchListFilters) {
+        const { statuses, ratings, isFavorite } = filters as WatchListFilters;
         const { filter } = {
             filter: () => {
                 return {
@@ -45,7 +46,7 @@ export default class GroupAnimeListService {
         return filter();
     }
 
-    public static async getCount(groupId: number, filters: ListFilters) {
+    public static async getCount(groupId: number, filters: WatchListFilters) {
         const { _count } = await prisma.groupAnimeList.aggregate({
             _count: {
                 id: true
@@ -58,7 +59,7 @@ export default class GroupAnimeListService {
     public static async get(
         userId: number,
         groupId: number,
-        filters: ListFilters,
+        filters: WatchListFilters,
         query: PaginationQuery
     ) {
         await prisma.groupListMembers.findFirstOrThrow({

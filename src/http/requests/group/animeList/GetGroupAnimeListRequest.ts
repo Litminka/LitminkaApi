@@ -1,6 +1,6 @@
 import { ValidationChain } from 'express-validator';
 import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
-import { WatchListStatuses } from '@/ts/enums';
+import { WatchListStatuses } from '@enums';
 import {
     bodyArrayValidator,
     bodyStringValidator,

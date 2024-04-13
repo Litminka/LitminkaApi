@@ -2,7 +2,7 @@ import prisma from '@/db';
 import { ValidationChain } from 'express-validator';
 import { minmax } from '@/ts';
 import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
-import { WatchListStatuses } from '@/ts/enums';
+import { WatchListStatuses } from '@enums';
 import {
     bodyStringValidator,
     bodyIntValidator,

@@ -1,7 +1,7 @@
 import { GroupList, User } from '@prisma/client';
 import prisma from '@/db';
 import BaseError from '@/errors/BaseError';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 
 type UserWithGroup = User & {
     ownedGroups: GroupList[];

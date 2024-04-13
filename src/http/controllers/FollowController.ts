@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import FollowService from '@services/FollowService';
 import { FollowAnimeReq } from '@requests/anime/FollowAnimeRequest';
 import { UnFollowAnimeReq } from '@requests/anime/UnfollowAnimeRequest';

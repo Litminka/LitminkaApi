@@ -1,7 +1,7 @@
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 import * as jwt from 'jsonwebtoken';
-import { Permissions } from '@/ts/enums';
-import { UserWithPermissions } from '@/ts';
+import { Permissions } from '@enums';
+import { UserWithPermissions } from '@/ts/user';
 import prisma from '@/db';
 
 interface SignedTokens {

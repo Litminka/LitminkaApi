@@ -18,7 +18,9 @@
             "@requests/*": ["src/http/requests/*"],
             "@models/*": ["src/http/models/*"],
             "@prisma-model/*": ["prisma/*"],
-            "@tests/*": ["tests/*"]
+            "@tests/*": ["tests/*"],
+            "@enums": ["src/ts/enums"],
+            "@messages": ["src/ts/messages"]
         }
     },
     "ts-node": {

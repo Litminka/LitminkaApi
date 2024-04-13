@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import TokenService from '@services/TokenService';
 import { AuthReq } from '@requests/AuthRequest';
 import { EndSessionReq } from '@requests/session/EndSessionRequest';

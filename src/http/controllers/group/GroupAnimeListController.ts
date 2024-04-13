@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AddWithAnime } from '@/ts';
-import { RequestStatuses } from '@/ts/enums';
+import { AddWithAnime } from '@/ts/watchList';
+import { RequestStatuses } from '@enums';
 import GroupAnimeListService from '@services/group/GroupAnimeListService';
 import { GetGroupAnimeListReq } from '@requests/group/animeList/GetGroupAnimeListRequest';
 import { AddGroupAnimeListReq } from '@requests/group/animeList/AddGroupAnimeListRequest';

@@ -7,7 +7,7 @@ import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import NotificationService from '@services/NotificationService';
 import prisma from '@/db';
-import { AnimeStatuses, FollowTypes } from '@/ts/enums';
+import { AnimeStatuses, FollowTypes } from '@enums';
 import { logger } from '@/loggerConf';
 import { ShikimoriGraphAnime } from '@/ts/shikimori';
 

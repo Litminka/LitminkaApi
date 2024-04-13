@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { ValidationError, validationResult } from 'express-validator';
-import { RequestStatuses } from '@/ts/enums';
-import { AdditionalValidationError } from '@/ts/index';
+import { RequestStatuses } from '@enums';
+import { AdditionalValidationError } from '@/ts/errors';
 
 export function validatorError(req: Request, res: Response, next: NextFunction) {
     const customValidationResult = validationResult.withDefaults({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         formatter: (error: any) => {
             const customError: AdditionalValidationError = {
                 additional: {},

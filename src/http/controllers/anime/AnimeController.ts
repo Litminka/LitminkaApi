@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import AnimeService from '@services/anime/AnimeService';
-import { Permissions, RequestStatuses } from '@/ts/enums';
+import { Permissions, RequestStatuses } from '@enums';
 import AnimeSearchService from '@services/anime/AnimeSearchService';
 import { GetSingleAnimeReq } from '@requests/anime/GetSingleAnimeRequest';
 import { GetAnimeReq } from '@requests/anime/GetAnimeRequest';

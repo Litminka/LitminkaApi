@@ -1,4 +1,4 @@
-import { Permissions, RequestAuthTypes, RequestStatuses } from '@/ts/enums';
+import { Permissions, RequestAuthTypes, RequestStatuses } from '@enums';
 import { NextFunction, Response } from 'express';
 import { checkExact, ValidationChain } from 'express-validator';
 import hasPermissions from '@/helper/hasPermission';

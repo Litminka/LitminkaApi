@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import GroupListService from '@services/group/GroupListService';
 import { AuthReq } from '@requests/AuthRequest';
 import { CreateGroupReq } from '@requests/group/list/CreateGroupRequest';

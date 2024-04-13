@@ -15,18 +15,18 @@ import {
     getAnimeWithoutRelationQuery
 } from '@/ts/shikimoriGraphQLRequests';
 import {
-    ShikimoriWhoAmI,
-    RequestTypes,
+    ShikimoriProfile,
     ShikimoriWatchList,
     ShikimoriAnime,
     ShikimoriAnimeFull
-} from '@/ts/index';
+} from '@/ts/shikimori';
 import prisma from '@/db';
 import { shikiRateLimiter } from '@/shikiRateLimiter';
 import { RateLimiter } from 'limiter';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 
+type RequestTypes = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface iShikimoriApi {
     user:
         | (User & {
@@ -189,6 +189,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
                 if (status === RequestStatuses.Forbidden) {
                     throw new BadRequestError('no_shikimori_rights');
                 }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const data: any = response.data;
                 if (status !== RequestStatuses.Unauthorized) return data;
             }
@@ -219,7 +220,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
         }
     }
 
-    public async getProfile(): Promise<ShikimoriWhoAmI> {
+    public async getProfile(): Promise<ShikimoriProfile> {
         return this.makeRequest('/users/whoami', 'GET', true);
     }
 

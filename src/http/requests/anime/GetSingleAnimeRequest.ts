@@ -1,6 +1,6 @@
 import { paramStringValidator } from '@/validators/ParamBaseValidator';
 import { ValidationChain } from 'express-validator';
-import { RequestAuthTypes } from '@/ts/enums';
+import { RequestAuthTypes } from '@enums';
 import { IntegrationReq, IntegrationRequest } from '@requests/IntegrationRequest';
 import { OptionalReq } from '@requests/OptionalRequest';
 
