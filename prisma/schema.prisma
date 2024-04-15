@@ -130,9 +130,11 @@ model AnimeRelation {
 }
 
 model Genre {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique
-  anime Anime[] @relation("AnimeToGenre")
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  nameRussian String  @unique
+  anime       Anime[] @relation("AnimeToGenre")
+  kind        String  @default("genre")
 }
 
 model AnimeTranslation {

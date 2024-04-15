@@ -53,6 +53,12 @@ export interface ShikimoriGraphAnimeWithoutRelationRequest {
     };
 }
 
+export interface ShikimoriGraphGenresRequest {
+    data: {
+        genres: shikimoriGenre[];
+    };
+}
+
 export interface ShikimoriGraphAnime {
     id: string;
     name: string;
@@ -194,6 +200,9 @@ export interface ShikimoriWatchList {
     updated_at: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface ShikimoriAnime {
     id: number;
     /**
@@ -238,6 +247,9 @@ export interface ShikimoriAnime {
     released_on: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface ShikimoriAnimeFull {
     id: number;
     name: string;

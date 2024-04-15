@@ -301,7 +301,8 @@ const extention = Prisma.defineExtension({
                                         name: capitalize(genre.russian)
                                     },
                                     create: {
-                                        name: capitalize(genre.russian)
+                                        name: capitalize(genre.russian),
+                                        kind: genre.kind
                                     }
                                 };
                             })

@@ -2,7 +2,7 @@ import { getPreviousSeasonStart, getCurrentSeasonEnd, getSeason } from '@/helper
 import groupArrSplice from '@/helper/groupsplice';
 import KodikApiService from '@services/KodikApiService';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
-import { followType } from '@/ts/index';
+import { FollowType } from '@/ts/follow';
 import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import NotificationService from '@services/NotificationService';
@@ -20,7 +20,7 @@ export default class AutoCheckService {
     async checkAnime(
         shikimoriAnime: ShikimoriGraphAnime,
         kodikAnime?: KodikAnimeFull,
-        follow?: followType,
+        follow?: FollowType,
         anime?: animeWithTranslation
     ) {
         const { status } = shikimoriAnime;

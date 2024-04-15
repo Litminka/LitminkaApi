@@ -5,6 +5,7 @@ import BadRequestError from '@/errors/clienterrors/BadRequestError';
 import {
     ShikimoriGraphAnimeRequest,
     ShikimoriGraphAnimeWithoutRelationRequest,
+    ShikimoriGraphGenresRequest,
     ShikimoriListResponse,
     shikimoriList
 } from '@/ts/shikimori';
@@ -12,7 +13,8 @@ import {
     getAnimeByPageQuery,
     getAnimeBySeasonQuery,
     getAnimeWithRelationsQuery,
-    getAnimeWithoutRelationQuery
+    getAnimeWithoutRelationQuery,
+    getGenresQuery
 } from '@/ts/shikimoriGraphQLRequests';
 import {
     ShikimoriProfile,
@@ -353,6 +355,18 @@ export default class ShikimoriApiService implements iShikimoriApi {
             variables: {
                 page // must be larger than zero or shikimori will throw 503 error
             }
+        });
+    }
+
+    /**
+     * Get all shikimori genres
+     * @returns ShikimoriGraphGenresRequest
+     */
+    public async getGraphGenres(): Promise<ShikimoriGraphGenresRequest> {
+        const query = getGenresQuery;
+        return this.makeRequest(`/graphql`, 'POST', false, {
+            operationName: null,
+            query
         });
     }
 
