@@ -3,6 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { RequestWithBot } from '@/ts/index';
 import { RequestStatuses } from '@enums';
 import prisma from '@/db';
+import { tokenMsg } from '@/ts/messages';
 
 export async function optionalAuth(req: RequestWithBot, res: Response, next: NextFunction) {
     const token = req.get('authorization');
@@ -10,22 +11,15 @@ export async function optionalAuth(req: RequestWithBot, res: Response, next: Nex
     const result = token.split(' ')[1];
     jwt.verify(result, process.env.TOKEN_SECRET!, async function (err, decoded) {
         if (<any>err instanceof jwt.TokenExpiredError) {
-            return res
-                .status(RequestStatuses.Unauthorized)
-                .json({ error: true, message: 'Token expired' });
+            return res.status(RequestStatuses.Unauthorized).json({ error: tokenMsg.expired });
         }
         if (err) {
-            return res.status(RequestStatuses.Forbidden).json({
-                error: true,
-                message: 'Failed to authenticate token'
-            });
+            return res.status(RequestStatuses.Unauthorized).json({ error: tokenMsg.unauthorized });
         }
         req.auth = <any>decoded;
         if (!req.auth || !req.auth.token)
-            return res.status(RequestStatuses.Forbidden).json({
-                data: {
-                    message: 'Unauthorized'
-                }
+            return res.status(RequestStatuses.Unauthorized).json({
+                error: tokenMsg.unauthorized
             });
         try {
             await prisma.sessionToken.findFirstOrThrow({
@@ -35,10 +29,8 @@ export async function optionalAuth(req: RequestWithBot, res: Response, next: Nex
                 }
             });
         } catch (error) {
-            return res.status(RequestStatuses.Forbidden).json({
-                data: {
-                    message: 'Unauthorized'
-                }
+            return res.status(RequestStatuses.Unauthorized).json({
+                error: tokenMsg.unauthorized
             });
         }
 
