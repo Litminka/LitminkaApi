@@ -22,6 +22,12 @@ export const validation = {
             valueMustBeAnArray: 'value_must_be_an_array',
             valueMustBeDate: 'value_must_be_date'
         },
+        token: {
+            expired: 'expired',
+            refreshExpired: 'refresh_expired',
+            unauthorized: 'unauthorized',
+            notProvided: 'not_provided'
+        },
         search: {
             maxArraySizeExceeded: 'max_array_size_exceeded',
             maxLengthExceeded: 'max_length_exceeded',
@@ -34,6 +40,7 @@ export const validation = {
 };
 
 export const baseMsg = validation.errors.base;
+export const tokenMsg = validation.errors.token;
 export const searchMsg = validation.errors.search;
 export const registrationMsg = validation.errors.registration;
 export const sessionMsg = validation.errors.session;
