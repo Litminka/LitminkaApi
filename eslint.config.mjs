@@ -10,7 +10,15 @@ export default tseslint.config(
     eslintPluginPrettierRecommended,
     eslintConfigPrettier,
     {
-        ignores: ['**/*/config.ts', '**/*/config.js', 'src/**/*.js', 'tests']
+        ignores: [
+            '**/*/config.ts',
+            '**/*/config.js',
+            'src/**/*.js',
+            'tests',
+            'dist',
+            'coverage',
+            'node-modules'
+        ]
     },
     {
         files: ['src/**/*.ts'],
