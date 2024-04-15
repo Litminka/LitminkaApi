@@ -1,11 +1,16 @@
 import { Anime, Prisma, User } from '@prisma/client';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
-import { ShikimoriAnimeFull, ShikimoriAnime } from '@/ts/index';
 import { KodikAnime, KodikAnimeFull, animeWithTranslation, _translation } from '@/ts/kodik';
 import prisma from '@/db';
 import InternalServerError from '@/errors/servererrors/InternalServerError';
 import { cyrillicSlug } from '@/helper/cyrillic-slug';
-import { ShikimoriAnimeWithRelation, ShikimoriGraphAnime, ShikimoriRelation } from '@/ts/shikimori';
+import {
+    ShikimoriAnimeFull,
+    ShikimoriAnime,
+    ShikimoriAnimeWithRelation,
+    ShikimoriGraphAnime,
+    ShikimoriRelation
+} from '@/ts/shikimori';
 import { config } from '@/config';
 import groupArrSplice from '@/helper/groupsplice';
 import sleep from '@/helper/sleep';
@@ -157,7 +162,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                         connectOrCreate: materialData.anime_genres?.map((name) => {
                             return {
                                 where: { name },
-                                create: { name }
+                                create: { name, nameRussian: name }
                             };
                         })
                     }

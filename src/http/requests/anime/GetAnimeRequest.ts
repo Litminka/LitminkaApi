@@ -7,7 +7,7 @@ import {
 } from '@/validators/BodyBaseValidator';
 import { queryIntValidator } from '@/validators/QueryBaseValidator';
 import { baseMsg, searchMsg } from '@/ts/messages';
-import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from '@/ts/enums';
+import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from '@enums';
 import { ValidationChain } from 'express-validator';
 import { Request as ExpressRequest } from 'express';
 import { isSeason } from '@/helper/animeseason';

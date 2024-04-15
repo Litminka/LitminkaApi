@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import Period from '@/helper/period';
 import NotificationService from '@services/NotificationService';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import { GetUserNotificationsReq } from '@requests/notification/GetUserNotificationsRequest';
 import { GetNotificationsReq } from '@requests/notification/GetNotificationsRequest';
 import { ReadNotificationsReq } from '@requests/notification/ReadNotificationsRequest';
@@ -18,7 +18,7 @@ export default class NotificationController {
             period
         });
 
-        return res.json(notifications);
+        return res.status(RequestStatuses.OK).json({ body: notifications });
     }
 
     public static async getNotifications(req: GetNotificationsReq, res: Response) {
@@ -26,7 +26,7 @@ export default class NotificationController {
 
         const notifications = await NotificationService.getNotifications(Period.getPeriod(period));
 
-        return res.json(notifications);
+        return res.status(RequestStatuses.OK).json({ body: notifications });
     }
 
     public static async readNotifications(req: ReadNotificationsReq, res: Response) {
@@ -35,6 +35,6 @@ export default class NotificationController {
 
         await NotificationService.readNotifications(user.id, ids);
 
-        return res.status(RequestStatuses.OK).json({ message: 'notifications_read' });
+        return res.status(RequestStatuses.Created);
     }
 }

@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import GroupListService from '@services/group/GroupListService';
 import { AuthReq } from '@requests/AuthRequest';
 import { CreateGroupReq } from '@requests/group/list/CreateGroupRequest';
@@ -12,7 +12,7 @@ export default class GroupListController {
 
         const result = await GroupListService.getOwnedGroups(user.id);
 
-        return res.status(RequestStatuses.OK).json(result);
+        return res.status(RequestStatuses.OK).json({ body: result });
     }
 
     public static async createGroup(req: CreateGroupReq, res: Response) {
@@ -25,7 +25,7 @@ export default class GroupListController {
             user
         });
 
-        return res.status(RequestStatuses.OK).json(result);
+        return res.status(RequestStatuses.Created).json({ body: result });
     }
 
     public static async deleteGroup(req: DeleteGroupReq, res: Response) {
@@ -34,7 +34,7 @@ export default class GroupListController {
 
         await GroupListService.deleteGroup(groupId, user.id);
 
-        return res.status(RequestStatuses.OK).json({ message: 'group_deleted' });
+        return res.status(RequestStatuses.Accepted);
     }
 
     public static async updateGroup(req: UpdateGroupReq, res: Response) {
@@ -49,6 +49,6 @@ export default class GroupListController {
             groupId
         });
 
-        return res.status(RequestStatuses.OK).json(result);
+        return res.status(RequestStatuses.Created).json({ body: result });
     }
 }

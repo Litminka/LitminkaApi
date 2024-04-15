@@ -1,5 +1,5 @@
 import prisma from '@/db';
-import { UserWithIntegration } from '@/ts';
+import { UserWithIntegration } from '@/ts/user';
 import { AuthRequest } from '@requests/AuthRequest';
 
 export interface IntegrationReq {

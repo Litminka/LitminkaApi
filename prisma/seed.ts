@@ -4,11 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { Encrypt } from '@/helper/encrypt';
 import capitalize from '@/helper/capitalize';
-import KodikApiService from '@services/KodikApiService';
-import { KodikGenresRequest } from '@/ts/kodik';
 import { config } from '@/config';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import AutoCheckService from '@services/AutoCheckService';
+import ShikimoriApiService from '@/http/services/shikimori/ShikimoriApiService';
 
 async function main() {
     const adminRole = await prisma.role.upsert({
@@ -118,19 +117,23 @@ async function main() {
     console.dir(user);
     console.dir(botUser);
 
-    const kodik = new KodikApiService();
-    const genres = await kodik.getGenres();
-    // Test new logger
-    const { results } = genres as KodikGenresRequest;
-    results.forEach(async (genre) => {
+    const shikimoriApi = new ShikimoriApiService();
+    const genres = (await shikimoriApi.getGraphGenres()).data.genres;
+    genres.forEach(async (genre) => {
         await prisma.genre.upsert({
             where: {
-                name: capitalize(genre.title)
+                name: capitalize(genre.name)
             },
             create: {
-                name: capitalize(genre.title)
+                nameRussian: capitalize(genre.russian),
+                name: capitalize(genre.name),
+                kind: genre.kind
             },
-            update: {}
+            update: {
+                nameRussian: capitalize(genre.russian),
+                name: capitalize(genre.name),
+                kind: genre.kind
+            }
         });
     });
     const updateService = new AnimeUpdateService();

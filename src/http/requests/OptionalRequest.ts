@@ -1,5 +1,5 @@
 import prisma from '@/db';
-import { RequestAuthTypes } from '@/ts/enums';
+import { RequestAuthTypes } from '@enums';
 import { User } from '@prisma/client';
 import Request from '@requests/Request';
 

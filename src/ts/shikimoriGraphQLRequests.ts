@@ -128,3 +128,12 @@ export const getAnimeWithoutRelationQuery = `query($ids: String) {
         poster { id originalUrl mainUrl } 
     }
 }`;
+
+export const getGenresQuery = `{
+    genres(entryType: Anime) {
+      id,
+      kind,
+      name,
+      russian
+    }
+}`;

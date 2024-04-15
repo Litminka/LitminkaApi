@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import GroupMemberService from '@services/group/GroupMemberService';
 import { AuthReq } from '@requests/AuthRequest';
 import { GroupMemberReq } from '@requests/group/member/GroupMemberRequest';
@@ -12,7 +12,7 @@ export default class GroupMemberController {
 
         const result = await GroupMemberService.getMemberGroup(user.id);
 
-        return res.status(RequestStatuses.OK).json(result);
+        return res.status(RequestStatuses.OK).json({ body: result });
     }
 
     public static async getMembers(req: GroupMemberReq, res: Response) {
@@ -22,7 +22,7 @@ export default class GroupMemberController {
 
         const result = await GroupMemberService.getGroupMembers(user.id, groupId);
 
-        return res.status(RequestStatuses.OK).json(result);
+        return res.status(RequestStatuses.OK).json({ body: result });
     }
 
     public static async leaveGroup(req: GroupMemberReq, res: Response) {
@@ -32,7 +32,7 @@ export default class GroupMemberController {
 
         await GroupMemberService.leaveGroup(user.id, groupId);
 
-        return res.status(RequestStatuses.OK).json({ message: 'you_left_the_group' });
+        return res.status(RequestStatuses.Accepted);
     }
 
     public static async updateState(req: UpdateGroupMemberReq, res: Response) {
@@ -47,7 +47,7 @@ export default class GroupMemberController {
             modifyList
         });
 
-        return res.status(RequestStatuses.OK).json({ message: 'member_updated' });
+        return res.status(RequestStatuses.Created);
     }
 
     public static async kickUser(req: KickGroupMemberReq, res: Response) {
@@ -58,6 +58,6 @@ export default class GroupMemberController {
 
         await GroupMemberService.kickUser({ user, groupId, kickId });
 
-        return res.status(RequestStatuses.OK).json({ message: 'user_kicked' });
+        return res.status(RequestStatuses.Accepted);
     }
 }

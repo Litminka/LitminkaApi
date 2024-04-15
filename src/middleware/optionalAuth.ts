@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { RequestWithBot } from '@/ts/index';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import prisma from '@/db';
 
 export async function optionalAuth(req: RequestWithBot, res: Response, next: NextFunction) {

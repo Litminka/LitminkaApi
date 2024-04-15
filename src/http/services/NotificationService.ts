@@ -1,5 +1,5 @@
-import { Notify, UserNotify } from '@/ts';
-import { NotifyStatuses } from '@/ts/enums';
+import { Notification, UserNotification } from '@/ts/notification';
+import { NotifyStatuses } from '@enums';
 import prisma from '@/db';
 import Period from '@/helper/period';
 import dayjs from 'dayjs';
@@ -14,7 +14,7 @@ export default class NotificationService {
     constructor() {}
 
     public static async notifyUserRelease(userId: number, animeId: number) {
-        const notify: UserNotify = {
+        const notify: UserNotification = {
             userId,
             animeId,
             status: NotifyStatuses.AnimeRelease
@@ -28,7 +28,7 @@ export default class NotificationService {
         groupId: number,
         episode: number
     ) {
-        const notify: UserNotify = {
+        const notify: UserNotification = {
             userId,
             animeId,
             status: NotifyStatuses.EpisodeRelease,
@@ -44,7 +44,7 @@ export default class NotificationService {
         groupId: number,
         episode: number
     ) {
-        const notify: UserNotify = {
+        const notify: UserNotification = {
             userId,
             animeId,
             status: NotifyStatuses.FinalEpisodeReleased,
@@ -55,12 +55,12 @@ export default class NotificationService {
     }
 
     public static async notifyRelease(animeId: number) {
-        const notify: Notify = { animeId, status: NotifyStatuses.AnimeRelease };
+        const notify: Notification = { animeId, status: NotifyStatuses.AnimeRelease };
         return this._notifyEpisode(notify);
     }
 
     public static async notifyEpisode(animeId: number, groupId: number, episode: number) {
-        const notify: Notify = {
+        const notify: Notification = {
             animeId,
             status: NotifyStatuses.EpisodeRelease,
             episode,
@@ -70,7 +70,7 @@ export default class NotificationService {
     }
 
     public static async notifyFinalEpisode(animeId: number, groupId: number, episode: number) {
-        const notify: Notify = {
+        const notify: Notification = {
             animeId,
             status: NotifyStatuses.FinalEpisodeReleased,
             episode,
@@ -79,11 +79,11 @@ export default class NotificationService {
         return this._notifyEpisode(notify);
     }
 
-    private static async _notifyUserEpisode(notify: UserNotify) {
+    private static async _notifyUserEpisode(notify: UserNotification) {
         return prisma.userAnimeNotifications.createUserAnimeNotifications(notify);
     }
 
-    private static async _notifyEpisode(notify: Notify) {
+    private static async _notifyEpisode(notify: Notification) {
         return prisma.animeNotifications.createAnimeNotifications(notify);
     }
 

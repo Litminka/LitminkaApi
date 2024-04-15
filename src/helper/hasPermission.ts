@@ -1,5 +1,5 @@
-import { UserWithPermissions } from '@/ts';
-import { Permissions } from '@/ts/enums';
+import { UserWithPermissions } from '@/ts/user';
+import { Permissions } from '@enums';
 
 export default function hasPermissions(permissions: Permissions[], user?: UserWithPermissions) {
     if (permissions.length < 1) return true;

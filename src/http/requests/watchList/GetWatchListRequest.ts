@@ -6,7 +6,7 @@ import {
     bodyIntValidator,
     bodyStringValidator
 } from '@/validators/BodyBaseValidator';
-import { WatchListStatuses } from '@/ts/enums';
+import { WatchListStatuses } from '@enums';
 import { queryIntValidator } from '@/validators/QueryBaseValidator';
 
 export interface GetWatchListReq extends AuthReq {

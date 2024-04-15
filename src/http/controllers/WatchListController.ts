@@ -5,10 +5,16 @@ import { AddToWatchListReq } from '@requests/watchList/AddToWatchListRequest';
 import { EditWatchListReq } from '@requests/watchList/EditWatchListRequest';
 import { DeleteFromWatchListReq } from '@requests/watchList/DeleteFromWatchListRequest';
 import { GetWatchListReq } from '@requests/watchList/GetWatchListRequest';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 
 export default class WatchListController {
-    public static async getWatchList(req: GetWatchListReq, res: Response) {
+    /**
+     * Get watchlist
+     * @param req
+     * @param res
+     * @returns
+     */
+    public static async get(req: GetWatchListReq, res: Response) {
         const userId = req.auth.user.id;
         const statuses = req.body.statuses;
         const ratings = req.body.ratings;
@@ -25,48 +31,64 @@ export default class WatchListController {
         return res.status(RequestStatuses.OK).json({ count: listCount, body: list });
     }
 
-    public static async importList(req: IntegrationReq, res: Response) {
+    /**
+     * Import watchlist from Shikimori
+     * @param req
+     * @param res
+     * @returns
+     */
+    public static async startImport(req: IntegrationReq, res: Response) {
         const user = req.auth.user;
 
         WatchListService.startImport(user);
 
-        return res.json({
-            message: 'started_list_import'
-        });
+        return res.status(RequestStatuses.Accepted);
     }
 
-    public static async addToList(req: AddToWatchListReq, res: Response) {
+    /**
+     * Add entry to watchlist
+     * @param req
+     * @param res
+     * @returns Response
+     */
+    public static async add(req: AddToWatchListReq, res: Response) {
         const user = req.auth.user;
 
         const addParameters = req.body;
         const animeId = req.params.animeId;
 
         const animeList = await WatchListService.add(user, animeId, addParameters);
-        return res.json({
-            data: animeList
-        });
+        return res.status(RequestStatuses.Created).json({ body: animeList });
     }
 
-    public static async editList(req: EditWatchListReq, res: Response) {
+    /**
+     * Update entry in watchlist
+     * @param req
+     * @param res
+     * @returns
+     */
+    public static async update(req: EditWatchListReq, res: Response) {
         const user = req.auth.user;
 
         const editParameters = req.body;
         const animeId = req.params.animeId;
 
         const animeList = await WatchListService.update(user, animeId, editParameters);
-        return res.json({
-            data: animeList
-        });
+        return res.status(RequestStatuses.Accepted).json({ body: animeList });
     }
 
-    public static async deleteFromList(req: DeleteFromWatchListReq, res: Response) {
+    /**
+     * Delete entry from watchlist
+     * @param req
+     * @param res
+     * @returns
+     */
+    public static async delete(req: DeleteFromWatchListReq, res: Response) {
         const user = req.auth.user;
 
         const animeId = req.params.animeId;
 
-        await WatchListService.removeAnimeFromList(user, animeId);
-        return res.json({
-            message: 'Entry deleted successfully'
-        });
+        await WatchListService.delete(user, animeId);
+        return res.status(RequestStatuses.Accepted);
     }
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import TokenService from '@services/TokenService';
 import { AuthReq } from '@requests/AuthRequest';
 import { EndSessionReq } from '@requests/session/EndSessionRequest';
@@ -10,7 +10,7 @@ export default class TokenController {
 
         const tokens = await TokenService.refreshToken(token);
 
-        return res.status(RequestStatuses.OK).json({ data: tokens });
+        return res.status(RequestStatuses.OK).json({ body: tokens });
     }
 
     public static async getTokens(req: AuthReq, res: Response) {
@@ -20,8 +20,7 @@ export default class TokenController {
 
         const result = [];
 
-        for (const userToken of tokens) {
-            const { id, token } = userToken;
+        for (const { id, token } of tokens) {
             result.push({
                 id,
                 token,
@@ -29,7 +28,7 @@ export default class TokenController {
             });
         }
 
-        return res.status(RequestStatuses.OK).json({ data: result });
+        return res.status(RequestStatuses.OK).json({ body: result });
     }
 
     public static async deleteTokens(req: EndSessionReq, res: Response) {
@@ -39,6 +38,6 @@ export default class TokenController {
 
         await TokenService.deleteTokens(user.id, token, sessions);
 
-        return res.status(RequestStatuses.OK).json({ message: 'sessions_ended' });
+        return res.status(RequestStatuses.Accepted);
     }
 }

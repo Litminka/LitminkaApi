@@ -1,4 +1,4 @@
-import { ValidatorErrorMessage } from '@/ts';
+import { ValidatorErrorMessage } from '@/ts/errors';
 import { baseMsg } from '@/ts/messages';
 import { ValidationChain, ValidationError } from 'express-validator';
 import { IsBooleanOptions, IsDateOptions, MinMaxOptions } from 'express-validator/src/options';
@@ -123,7 +123,7 @@ export const stringValidator = ({
 }: TypeBaseValidator): ValidationChain => {
     return validator
         .notEmpty()
-        .withMessage(baseMsg.valueIsNotProvided)
+        .withMessage(baseMsg.notProvided)
         .bail()
         .isString()
         .withMessage(baseMsg.valueMustBeString)
@@ -195,7 +195,7 @@ export const boolValidator = ({ validator, typeParams }: TypeBoolValidator): Val
 export const uuidValidator = ({ validator }: TypeUUIDValidator): ValidationChain => {
     return validator
         .notEmpty()
-        .withMessage(baseMsg.valueIsNotProvided)
+        .withMessage(baseMsg.notProvided)
         .bail()
         .isUUID()
         .withMessage(baseMsg.valueMustBeUUID);

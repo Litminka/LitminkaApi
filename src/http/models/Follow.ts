@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/db';
-import { FollowAnime } from '@/ts';
+import { FollowAnime } from '@/ts/follow';
 
 const extention = Prisma.defineExtension({
     name: 'FollowModel',

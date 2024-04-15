@@ -1,4 +1,4 @@
-import { Permissions } from '@/ts/enums';
+import { Permissions } from '@enums';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { ValidationChain } from 'express-validator';
 import { WithPermissionsRequest } from '@requests/WithPermissionsRequest';

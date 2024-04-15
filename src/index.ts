@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as http from 'http';
 
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import { wrap } from '@/middleware/errorHandler';
 import { logger } from '@/loggerConf';
 

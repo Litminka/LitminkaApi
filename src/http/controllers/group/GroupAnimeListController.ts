@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AddWithAnime } from '@/ts';
-import { RequestStatuses } from '@/ts/enums';
+import { AddWithAnime } from '@/ts/watchList';
+import { RequestStatuses } from '@enums';
 import GroupAnimeListService from '@services/group/GroupAnimeListService';
 import { GetGroupAnimeListReq } from '@requests/group/animeList/GetGroupAnimeListRequest';
 import { AddGroupAnimeListReq } from '@requests/group/animeList/AddGroupAnimeListRequest';
@@ -48,7 +48,7 @@ export default class GroupAnimeListController {
             userId: user.id
         });
 
-        return res.status(RequestStatuses.OK).json(result);
+        return res.status(RequestStatuses.Created).json({ body: result });
     }
 
     public static async update(req: UpdateGroupAnimeListReq, res: Response) {
@@ -61,7 +61,7 @@ export default class GroupAnimeListController {
         data.animeId = animeId;
         await GroupAnimeListService.update({ data, groupId, userId: user.id });
 
-        return res.status(RequestStatuses.OK).json({ message: 'updated' });
+        return res.status(RequestStatuses.Accepted);
     }
 
     public static async delete(req: DeleteGroupAnimeListReq, res: Response) {
@@ -76,6 +76,6 @@ export default class GroupAnimeListController {
             userId: user.id
         });
 
-        return res.status(RequestStatuses.OK).json({ message: 'anime_removed_from_list' });
+        return res.status(RequestStatuses.Accepted);
     }
 }

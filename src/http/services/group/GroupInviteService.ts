@@ -1,5 +1,5 @@
 import BaseError from '@/errors/BaseError';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import prisma from '@/db';
 import { User, GroupList, GroupListInvites } from '@prisma/client';
 

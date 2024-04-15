@@ -1,5 +1,5 @@
 import prisma from '@/db';
-import { Permissions } from '@/ts/enums';
+import { Permissions } from '@enums';
 
 export default async function isBot(id: number) {
     const botUser = await prisma.user.findUserByIdWithRolePermission(id);

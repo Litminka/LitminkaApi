@@ -4,11 +4,11 @@ import capitalize from '@/helper/capitalize';
 import { config } from '@/config';
 import prisma from '@/db';
 import { cyrillicSlug } from '@/helper/cyrillic-slug';
-import { ShikimoriAnime, ShikimoriAnimeFull } from '@/ts';
+import { ShikimoriAnime, ShikimoriAnimeFull } from '@/ts/shikimori';
 import { ShikimoriGraphAnime } from '@/ts/shikimori';
 import dayjs from 'dayjs';
 import { getSeasonNameByDate } from '@/helper/animeseason';
-import { AnimeStatuses } from '@/ts/enums';
+import { AnimeStatuses } from '@enums';
 
 const extention = Prisma.defineExtension({
     name: 'AnimeModel',
@@ -32,10 +32,10 @@ const extention = Prisma.defineExtension({
                         rpaRating: update.rating,
                         genres: {
                             connectOrCreate: update.genres.map((genre) => {
-                                const { russian: name } = genre;
+                                const { russian: nameRussian, name: name } = genre;
                                 return {
                                     where: { name },
-                                    create: { name }
+                                    create: { name, nameRussian }
                                 };
                             })
                         }
@@ -65,8 +65,8 @@ const extention = Prisma.defineExtension({
                             genres: {
                                 connectOrCreate: anime.genres!.map((name) => {
                                     return {
-                                        where: { name: name.russian },
-                                        create: { name: name.russian }
+                                        where: { name: name.name },
+                                        create: { name: name.name, nameRussian: name.russian }
                                     };
                                 })
                             },
@@ -298,10 +298,12 @@ const extention = Prisma.defineExtension({
                             connectOrCreate: shikimori.genres.map((genre) => {
                                 return {
                                     where: {
-                                        name: capitalize(genre.russian)
+                                        name: capitalize(genre.name)
                                     },
                                     create: {
-                                        name: capitalize(genre.russian)
+                                        name: capitalize(genre.name),
+                                        nameRussian: capitalize(genre.russian),
+                                        kind: genre.kind
                                     }
                                 };
                             })

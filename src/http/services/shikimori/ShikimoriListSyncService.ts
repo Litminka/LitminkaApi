@@ -2,7 +2,7 @@ import prisma from '@/db';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import { shikimoriList } from '@/ts/shikimori';
 import { shikimoriListUpdateQueue } from '@/queues/queues';
-import { UserWithIntegrationSettings } from '@/ts';
+import { UserWithIntegrationSettings } from '@/ts/user';
 
 export default class ShikimoriListSyncService {
     public static async addOrUpdateList(userId: number, list: shikimoriList) {

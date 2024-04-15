@@ -1,6 +1,7 @@
 import { AnimeTranslation } from '@prisma/client';
-import { FollowAnime, followType, info } from '@/ts/index';
-import { AnimeStatuses, FollowTypes } from '@/ts/enums';
+import { FollowType, FollowInfo } from '@/ts/follow';
+import { FollowAnime } from '@/ts/follow';
+import { AnimeStatuses, FollowTypes } from '@enums';
 import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
 import prisma from '@/db';
 type follows = {
@@ -13,8 +14,8 @@ type follows = {
 }[];
 
 export default class FollowService {
-    public getFollowsMap(follows: follows): Map<number, followType> {
-        const followsMap = new Map<number, followType>();
+    public getFollowsMap(follows: follows): Map<number, FollowType> {
+        const followsMap = new Map<number, FollowType>();
         for (const follow of follows) {
             if (followsMap.has(follow.anime.shikimoriId)) {
                 const element = followsMap.get(follow.anime.shikimoriId);
@@ -32,13 +33,13 @@ export default class FollowService {
                 continue;
             }
             const { anime, userId, status, translation } = follow;
-            const info: info = {
+            const followInfo: FollowInfo = {
                 userId
             };
-            if (translation) info.translation = translation;
-            const newFollow: followType = {
+            if (translation) followInfo.translation = translation;
+            const newFollow: FollowType = {
                 anime,
-                info: [info],
+                info: [followInfo],
                 status
             };
             followsMap.set(follow.anime.shikimoriId, newFollow);

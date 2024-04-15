@@ -1,4 +1,4 @@
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import BaseError from '@/errors/BaseError';
 
 export default class TeapotError extends BaseError {

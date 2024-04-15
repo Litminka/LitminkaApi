@@ -1,7 +1,7 @@
 import { User, GroupList } from '@prisma/client';
 import prisma from '@/db';
 import BaseError from '@/errors/BaseError';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
 
 interface EditMember {

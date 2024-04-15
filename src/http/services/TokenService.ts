@@ -1,8 +1,9 @@
-import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 import * as jwt from 'jsonwebtoken';
-import { Permissions } from '@/ts/enums';
-import { UserWithPermissions } from '@/ts';
+import { Permissions } from '@enums';
+import { UserWithPermissions } from '@/ts/user';
 import prisma from '@/db';
+import UnauthorizedError from '@/errors/clienterrors/UnauthorizedError';
+import { tokenMsg } from '@/ts/messages';
 
 interface SignedTokens {
     token: string;
@@ -11,27 +12,27 @@ interface SignedTokens {
 
 export default class TokenService {
     public static async refreshToken(token?: string) {
-        if (!token) throw new ForbiddenError('No token provided');
+        if (!token) throw new UnauthorizedError(baseMsg.notProvided);
         const result = token.split(' ')[1];
         let userToken, userRefreshToken;
         const tokens = await new Promise((resolve, reject) => {
             jwt.verify(result, process.env.REFRESH_TOKEN_SECRET!, async function (err, decoded) {
                 if (<any>err instanceof jwt.TokenExpiredError)
-                    throw new ForbiddenError('Token expired');
-                if (err) return reject(new ForbiddenError('Failed to authenticate token'));
+                    throw new UnauthorizedError(tokenMsg.refreshExpired);
+                if (err) return reject(new UnauthorizedError(tokenMsg.unauthorized));
 
                 const auth = <any>decoded;
-                if (!auth) return reject(new ForbiddenError('Failed to authenticate token'));
+                if (!auth) return reject(new UnauthorizedError(tokenMsg.unauthorized));
 
                 const user = await prisma.user.findUserWithTokensAndPermissions(auth.id);
-                if (!user) return reject(new ForbiddenError('Failed to authenticate token'));
+                if (!user) return reject(new UnauthorizedError(tokenMsg.unauthorized));
 
                 if (
                     !user.sessionTokens.some((token) => {
                         return token.token === auth.token;
                     })
                 )
-                    return reject(new ForbiddenError('Unauthorized'));
+                    return reject(new UnauthorizedError(tokenMsg.unauthorized));
 
                 const { token, refreshToken } = TokenService.signTokens(user!, auth.token);
                 userToken = token;

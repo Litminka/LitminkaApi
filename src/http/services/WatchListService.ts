@@ -1,15 +1,10 @@
 import BadRequestError from '@/errors/clienterrors/BadRequestError';
 import NotFoundError from '@/errors/clienterrors/NotFoundError';
 import groupArrSplice from '@/helper/groupsplice';
-import {
-    AddToList,
-    ListFilters,
-    PaginationQuery,
-    ShikimoriAnime,
-    ShikimoriWatchList,
-    UserWithIntegration,
-    UserWithIntegrationSettings
-} from '@/ts';
+import { PaginationQuery } from '@/ts';
+import { AddToList, WatchListFilters } from '@/ts/watchList';
+import { ShikimoriAnime, ShikimoriWatchList } from '@/ts/shikimori';
+import { UserWithIntegration, UserWithIntegrationSettings } from '@/ts/user';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import KodikApiService from '@services/KodikApiService';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
@@ -22,8 +17,8 @@ import { importWatchListQueue } from '@/queues/queues';
 import ShikimoriListSyncService from '@services/shikimori/ShikimoriListSyncService';
 
 export default class WatchListService {
-    private static getFilters(userId: number, filters: ListFilters) {
-        const { statuses, ratings, isFavorite } = filters as ListFilters;
+    private static getFilters(userId: number, filters: WatchListFilters) {
+        const { statuses, ratings, isFavorite } = filters as WatchListFilters;
         const { filter } = {
             filter: () => {
                 return {
@@ -45,7 +40,7 @@ export default class WatchListService {
         return filter();
     }
 
-    public static async getCount(userId: number, filters: ListFilters) {
+    public static async getCount(userId: number, filters: WatchListFilters) {
         const { _count } = await prisma.animeList.aggregate({
             _count: {
                 id: true
@@ -293,7 +288,7 @@ export default class WatchListService {
         return await prisma.animeList.findWatchListEntry(user.id, animeId);
     }
 
-    public static async removeAnimeFromList(user: UserWithIntegrationSettings, animeId: number) {
+    public static async delete(user: UserWithIntegrationSettings, animeId: number) {
         const animeListEntry = await prisma.animeList.findWatchListEntry(user.id, animeId);
 
         if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
@@ -334,7 +329,7 @@ export default class WatchListService {
         return await prisma.animeList.findWatchListEntry(user.id, animeId);
     }
 
-    public static async get(userId: number, filters: ListFilters, query: PaginationQuery) {
+    public static async get(userId: number, filters: WatchListFilters, query: PaginationQuery) {
         return await prisma.animeList.findMany({
             take: query.pageLimit,
             skip: (query.page - 1) * query.pageLimit,

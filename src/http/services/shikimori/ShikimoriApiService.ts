@@ -5,6 +5,7 @@ import BadRequestError from '@/errors/clienterrors/BadRequestError';
 import {
     ShikimoriGraphAnimeRequest,
     ShikimoriGraphAnimeWithoutRelationRequest,
+    ShikimoriGraphGenresRequest,
     ShikimoriListResponse,
     shikimoriList
 } from '@/ts/shikimori';
@@ -12,21 +13,22 @@ import {
     getAnimeByPageQuery,
     getAnimeBySeasonQuery,
     getAnimeWithRelationsQuery,
-    getAnimeWithoutRelationQuery
+    getAnimeWithoutRelationQuery,
+    getGenresQuery
 } from '@/ts/shikimoriGraphQLRequests';
 import {
-    ShikimoriWhoAmI,
-    RequestTypes,
+    ShikimoriProfile,
     ShikimoriWatchList,
     ShikimoriAnime,
     ShikimoriAnimeFull
-} from '@/ts/index';
+} from '@/ts/shikimori';
 import prisma from '@/db';
 import { shikiRateLimiter } from '@/shikiRateLimiter';
 import { RateLimiter } from 'limiter';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 
+type RequestTypes = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface iShikimoriApi {
     user:
         | (User & {
@@ -189,6 +191,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
                 if (status === RequestStatuses.Forbidden) {
                     throw new BadRequestError('no_shikimori_rights');
                 }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const data: any = response.data;
                 if (status !== RequestStatuses.Unauthorized) return data;
             }
@@ -219,7 +222,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
         }
     }
 
-    public async getProfile(): Promise<ShikimoriWhoAmI> {
+    public async getProfile(): Promise<ShikimoriProfile> {
         return this.makeRequest('/users/whoami', 'GET', true);
     }
 
@@ -352,6 +355,18 @@ export default class ShikimoriApiService implements iShikimoriApi {
             variables: {
                 page // must be larger than zero or shikimori will throw 503 error
             }
+        });
+    }
+
+    /**
+     * Get all shikimori genres
+     * @returns ShikimoriGraphGenresRequest
+     */
+    public async getGraphGenres(): Promise<ShikimoriGraphGenresRequest> {
+        const query = getGenresQuery;
+        return this.makeRequest(`/graphql`, 'POST', false, {
+            operationName: null,
+            query
         });
     }
 

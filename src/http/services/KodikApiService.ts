@@ -11,7 +11,7 @@ import {
     KodikAnime,
     _translation
 } from '@/ts/kodik';
-import { RequestStatuses } from '@/ts/enums';
+import { RequestStatuses } from '@enums';
 import { logger } from '@/loggerConf';
 
 export default class KodikApiService {

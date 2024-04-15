@@ -1,4 +1,4 @@
-import { UserNotify } from '@/ts';
+import { UserNotification } from '@/ts/notification';
 import prisma from '@/db';
 import { Prisma } from '@prisma/client';
 import { getUserNotifications } from '@services/NotificationService';
@@ -13,7 +13,7 @@ const extention = Prisma.defineExtension({
                 status,
                 groupId,
                 episode
-            }: UserNotify) {
+            }: UserNotification) {
                 return prisma.userAnimeNotifications.create({
                     data: {
                         userId,
