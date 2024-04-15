@@ -33,6 +33,12 @@ export default tseslint.config(
             reportUnusedDisableDirectives: 'warn'
         },
         rules: {
+            'prettier/prettier': [
+                'error',
+                {
+                    endOfLine: 'auto'
+                }
+            ],
             camelcase: [
                 'error',
                 {

@@ -1,14 +1,17 @@
-export default {
+import type { UserConfig } from '@commitlint/types';
+import { RuleConfigSeverity } from '@commitlint/types';
+
+const config: UserConfig = {
     extends: ['@commitlint/config-conventional'],
     parserPreset: 'conventional-changelog-conventionalcommits',
     formatter: '@commitlint/format',
     rules: {
         'type-enum': [
-            2,
+            RuleConfigSeverity.Error,
             'always',
-            ['ci', 'chore', 'docs', 'ticket', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style']
+            ['ci', 'chore', 'docs', 'test', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style']
         ],
-        'subject-case': [2, 'always', ['sentence-case']]
+        'subject-case': [RuleConfigSeverity.Warning, 'always', ['sentence-case']]
     },
     prompt: {
         settings: {},
@@ -116,3 +119,5 @@ export default {
         }
     }
 };
+
+export default config;
