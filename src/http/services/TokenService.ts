@@ -3,7 +3,7 @@ import { Permissions } from '@enums';
 import { UserWithPermissions } from '@/ts/user';
 import prisma from '@/db';
 import UnauthorizedError from '@/errors/clienterrors/UnauthorizedError';
-import { tokenMsg } from '@/ts/messages';
+import { baseMsg, tokenMsg } from '@/ts/messages';
 
 interface SignedTokens {
     token: string;
@@ -90,14 +90,7 @@ export default class TokenService {
         return await prisma.sessionToken.deleteMany({
             where: {
                 userId: id,
-                token:
-                    isSpecificDelete ?
-                        {
-                            in: deleteTokens
-                        }
-                    :   {
-                            notIn: [currentToken]
-                        }
+                token: isSpecificDelete ? { in: deleteTokens } : { notIn: [currentToken] }
             }
         });
     }
