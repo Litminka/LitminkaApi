@@ -4,7 +4,7 @@ import { RequestWithBot } from '@/ts/index';
 import { RequestStatuses } from '@enums';
 import isBot from '@/helper/isBot';
 import prisma from '@/db';
-import { tokenMsg } from '@/ts/messages';
+import { baseMsg, tokenMsg } from '@/ts/messages';
 
 export async function auth(req: RequestWithBot, res: Response, next: NextFunction) {
     const token = req.get('authorization');
