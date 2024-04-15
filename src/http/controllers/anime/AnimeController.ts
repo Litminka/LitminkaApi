@@ -35,22 +35,12 @@ export default class AnimeController {
         });
     }
 
-    public static async getTopAnime(req: GetTopAnimeReq, res: Response) {
-        const shikimori = req.body.shikimori;
-
-        const top = await AnimeService.getTopAnime(shikimori);
-
-        return res.status(RequestStatuses.OK).json(top);
-    }
-
     public static async banAnime(req: BanAnimeReq, res: Response) {
         const animeId = req.params.animeId;
 
         await AnimeService.banAnime(animeId);
 
-        return res.status(RequestStatuses.OK).json({
-            message: 'anime_banned'
-        });
+        return res.status(RequestStatuses.Accepted);
     }
 
     public static async unBanAnime(req: BanAnimeReq, res: Response) {
@@ -58,9 +48,15 @@ export default class AnimeController {
 
         await AnimeService.unBanAnime(animeId);
 
-        return res.status(RequestStatuses.OK).json({
-            message: 'anime_unbanned'
-        });
+        return res.status(RequestStatuses.Accepted);
+    }
+
+    public static async getTopAnime(req: GetTopAnimeReq, res: Response) {
+        const shikimori = req.body.shikimori;
+
+        const top = await AnimeService.getTopAnime(shikimori);
+
+        return res.status(RequestStatuses.OK).json({ body: top });
     }
 
     public static async getSeasonal(req: FrontPageAnimeReq, res: Response) {
@@ -69,7 +65,7 @@ export default class AnimeController {
 
         const anime = await AnimeService.getSeasonal(withCensored, showBanned);
 
-        return res.status(RequestStatuses.OK).json({ data: anime });
+        return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
     public static async getPopularSeasonal(req: FrontPageAnimeReq, res: Response) {
@@ -78,7 +74,7 @@ export default class AnimeController {
 
         const anime = await AnimeService.getPopularSeasonal(withCensored, showBanned);
 
-        return res.status(RequestStatuses.OK).json({ data: anime });
+        return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
     public static async getNextSeasonAnnounced(req: FrontPageAnimeReq, res: Response) {
@@ -87,6 +83,6 @@ export default class AnimeController {
 
         const anime = await AnimeService.getNextSeasonAnnounced(withCensored, showBanned);
 
-        return res.status(RequestStatuses.OK).json({ data: anime });
+        return res.status(RequestStatuses.OK).json({ body: anime });
     }
 }

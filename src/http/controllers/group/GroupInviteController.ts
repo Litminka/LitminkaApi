@@ -13,7 +13,7 @@ export default class GroupInviteController {
 
         const userInvites = await GroupInviteService.getUserInvites(user.id);
 
-        return res.status(RequestStatuses.OK).json(userInvites);
+        return res.status(RequestStatuses.OK).json({ body: userInvites });
     }
 
     public static async inviteUser(req: SendInviteReq, res: Response) {
@@ -24,7 +24,7 @@ export default class GroupInviteController {
 
         await GroupInviteService.inviteUser({ owner: user, userId, groupId });
 
-        return res.status(RequestStatuses.Created).json();
+        return res.status(RequestStatuses.Created);
     }
 
     public static async deleteInvite(req: DeleteInviteReq, res: Response) {
@@ -35,7 +35,7 @@ export default class GroupInviteController {
 
         await GroupInviteService.deleteInvite({ owner: user, userId, groupId });
 
-        return res.status(RequestStatuses.OK).json({ message: 'user_uninvited' });
+        return res.status(RequestStatuses.Accepted);
     }
 
     public static async acceptInvite(req: AcceptInviteReq, res: Response) {
@@ -46,7 +46,7 @@ export default class GroupInviteController {
 
         await GroupInviteService.acceptInvite({ user, inviteId, modifyList });
 
-        return res.status(RequestStatuses.OK).json({ data: 'invite_accepted' });
+        return res.status(RequestStatuses.Accepted);
     }
 
     public static async denyInvite(req: DenyInviteReq, res: Response) {
@@ -56,6 +56,6 @@ export default class GroupInviteController {
 
         await GroupInviteService.denyInvite({ user, inviteId });
 
-        return res.status(RequestStatuses.OK).json({ data: 'invite_denied' });
+        return res.status(RequestStatuses.Accepted);
     }
 }

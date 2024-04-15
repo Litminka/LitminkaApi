@@ -58,9 +58,7 @@ export default class WatchListController {
         const animeId = req.params.animeId;
 
         const animeList = await WatchListService.add(user, animeId, addParameters);
-        return res.status(RequestStatuses.Created).json({
-            body: animeList
-        });
+        return res.status(RequestStatuses.Created).json({ body: animeList });
     }
 
     /**
@@ -76,9 +74,7 @@ export default class WatchListController {
         const animeId = req.params.animeId;
 
         const animeList = await WatchListService.update(user, animeId, editParameters);
-        return res.status(RequestStatuses.Accepted).json({
-            body: animeList
-        });
+        return res.status(RequestStatuses.Accepted).json({ body: animeList });
     }
 
     /**
