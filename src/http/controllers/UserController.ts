@@ -30,14 +30,10 @@ export default class UserController {
         });
     }
 
-    static async profile(req: WithPermissionsReq, res: Response) {
+    static async getProfile(req: WithPermissionsReq, res: Response) {
         const user = req.auth.user;
 
-        return res.status(RequestStatuses.OK).json({
-            body: {
-                user
-            }
-        });
+        return res.status(RequestStatuses.OK).json({ body: user });
     }
 
     static async updateSettings(req: UpdateSettingsReq, res: Response) {
@@ -46,8 +42,6 @@ export default class UserController {
 
         const settings = await UserService.updateSettings(user, data);
 
-        return res.status(RequestStatuses.Accepted).json({
-            body: settings
-        });
+        return res.status(RequestStatuses.Accepted).json({ body: settings });
     }
 }

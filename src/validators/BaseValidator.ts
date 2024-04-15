@@ -123,7 +123,7 @@ export const stringValidator = ({
 }: TypeBaseValidator): ValidationChain => {
     return validator
         .notEmpty()
-        .withMessage(baseMsg.valueIsNotProvided)
+        .withMessage(baseMsg.notProvided)
         .bail()
         .isString()
         .withMessage(baseMsg.valueMustBeString)
@@ -195,7 +195,7 @@ export const boolValidator = ({ validator, typeParams }: TypeBoolValidator): Val
 export const uuidValidator = ({ validator }: TypeUUIDValidator): ValidationChain => {
     return validator
         .notEmpty()
-        .withMessage(baseMsg.valueIsNotProvided)
+        .withMessage(baseMsg.notProvided)
         .bail()
         .isUUID()
         .withMessage(baseMsg.valueMustBeUUID);

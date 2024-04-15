@@ -12,6 +12,6 @@ router.post('/register', new RegisterUserRequest().send(), wrap(UserController.c
 router.post('/login', new LoginUserRequest().send(), wrap(UserController.login));
 
 // Private methods
-router.get('/profile', new WithPermissionsRequest().send(), wrap(UserController.profile));
+router.get('/profile', new WithPermissionsRequest().send(), wrap(UserController.getProfile));
 router.patch('/settings', new UpdateSettingsRequest().send(), wrap(UserController.updateSettings));
 export { router as userRouter };

@@ -122,14 +122,16 @@ async function main() {
     genres.forEach(async (genre) => {
         await prisma.genre.upsert({
             where: {
-                name: capitalize(genre.russian)
+                name: capitalize(genre.name)
             },
             create: {
-                name: capitalize(genre.russian),
+                nameRussian: capitalize(genre.russian),
+                name: capitalize(genre.name),
                 kind: genre.kind
             },
             update: {
-                name: capitalize(genre.russian),
+                nameRussian: capitalize(genre.russian),
+                name: capitalize(genre.name),
                 kind: genre.kind
             }
         });

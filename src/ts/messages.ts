@@ -12,9 +12,9 @@ export const validation = {
             noPasswordProvided: 'no_password_provided'
         },
         base: {
+            notProvided: 'not_provided',
             valueNotInRange: 'value_not_in_range',
             validationFailed: 'validation_failed',
-            valueIsNotProvided: 'value_is_not_provided',
             valueMustBeInt: 'value_must_be_int',
             valueMustBeBool: 'value_must_be_bool',
             valueMustBeString: 'value_must_be_string',
@@ -26,15 +26,12 @@ export const validation = {
             expired: 'expired',
             refreshExpired: 'refresh_expired',
             unauthorized: 'unauthorized',
-            notProvided: 'not_provided'
+            invalid: 'invalid'
         },
         search: {
             maxArraySizeExceeded: 'max_array_size_exceeded',
             maxLengthExceeded: 'max_length_exceeded',
             unknownType: 'unknown_type'
-        },
-        session: {
-            invalidSessionToken: 'invalid_session_token'
         }
     }
 };
@@ -43,4 +40,3 @@ export const baseMsg = validation.errors.base;
 export const tokenMsg = validation.errors.token;
 export const searchMsg = validation.errors.search;
 export const registrationMsg = validation.errors.registration;
-export const sessionMsg = validation.errors.session;

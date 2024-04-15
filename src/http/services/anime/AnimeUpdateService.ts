@@ -162,7 +162,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                         connectOrCreate: materialData.anime_genres?.map((name) => {
                             return {
                                 where: { name },
-                                create: { name }
+                                create: { name, nameRussian: name }
                             };
                         })
                     }

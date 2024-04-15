@@ -10,7 +10,7 @@ export async function auth(req: RequestWithBot, res: Response, next: NextFunctio
     const token = req.get('authorization');
     if (!token)
         return res.status(RequestStatuses.Unauthorized).json({
-            message: tokenMsg.notProvided
+            message: baseMsg.notProvided
         });
     const result = token.split(' ')[1];
     jwt.verify(result, process.env.TOKEN_SECRET!, async function (err, decoded) {

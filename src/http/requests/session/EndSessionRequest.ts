@@ -1,4 +1,4 @@
-import { sessionMsg } from '@/ts/messages';
+import { tokenMsg } from '@/ts/messages';
 import { bodyArrayValidator, bodyUUIDValidator } from '@/validators/BodyBaseValidator';
 import { AuthReq, AuthRequest } from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
@@ -19,7 +19,7 @@ export class EndSessionRequest extends AuthRequest {
                 typeParams: { min: 1, max: 100 }
             }).optional(),
             bodyUUIDValidator('sessions.*', {
-                message: sessionMsg.invalidSessionToken
+                message: tokenMsg.invalid
             })
         ];
     }

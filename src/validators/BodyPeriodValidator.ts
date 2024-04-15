@@ -42,7 +42,7 @@ export const bodySoftPeriodValidator = (
                 .trim()
                 .notEmpty()
                 .bail()
-                .withMessage(baseMsg.valueIsNotProvided)
+                .withMessage(baseMsg.notProvided)
                 .optional(),
             typeParams: { min: 0, max: 2 }
         }).bail(),

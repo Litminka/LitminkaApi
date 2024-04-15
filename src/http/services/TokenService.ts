@@ -12,7 +12,7 @@ interface SignedTokens {
 
 export default class TokenService {
     public static async refreshToken(token?: string) {
-        if (!token) throw new UnauthorizedError(tokenMsg.notProvided);
+        if (!token) throw new UnauthorizedError(baseMsg.notProvided);
         const result = token.split(' ')[1];
         let userToken, userRefreshToken;
         const tokens = await new Promise((resolve, reject) => {
