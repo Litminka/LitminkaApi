@@ -1,0 +1,10 @@
+node_modules
+dist
+cert
+tests
+logs
+.*
+!.env.example
+litminer
+nginx.conf
+thunder-collection_litminka-api.json
