@@ -4,10 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { Encrypt } from '@/helper/encrypt';
 import capitalize from '@/helper/capitalize';
-import { config } from '@/config';
+import { config } from '@config';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import AutoCheckService from '@services/AutoCheckService';
-import ShikimoriApiService from '@/http/services/shikimori/ShikimoriApiService';
+import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 
 async function main() {
     const adminRole = await prisma.role.upsert({

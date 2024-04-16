@@ -1,7 +1,7 @@
 import { Anime, Prisma } from '@prisma/client';
 import { KodikAnime } from '@/ts/kodik';
 import capitalize from '@/helper/capitalize';
-import { config } from '@/config';
+import { config } from '@config';
 import prisma from '@/db';
 import { cyrillicSlug } from '@/helper/cyrillic-slug';
 import { ShikimoriAnime, ShikimoriAnimeFull } from '@/ts/shikimori';

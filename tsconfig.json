@@ -10,22 +10,23 @@
         "module": "Node16",
         "resolveJsonModule": true,
         "rootDir": ".",
-        "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"],
-            "@services/*": ["src/http/services/*"],
-            "@controllers/*": ["src/http/controllers/*"],
-            "@requests/*": ["src/http/requests/*"],
-            "@models/*": ["src/http/models/*"],
-            "@prisma-model/*": ["prisma/*"],
-            "@tests/*": ["tests/*"],
-            "@enums": ["src/ts/enums"],
-            "@messages": ["src/ts/messages"]
-        }
+            "@/*": ["./src/*"],
+            "@services/*": ["./src/http/services/*"],
+            "@controllers/*": ["./src/http/controllers/*"],
+            "@requests/*": ["./src/http/requests/*"],
+            "@models/*": ["./src/http/models/*"],
+            "@prisma-model/*": ["./prisma/*"],
+            "@tests/*": ["./tests/*"],
+            "@enums": ["./src/ts/enums"],
+            "@messages": ["./src/ts/messages"],
+            "@config": ["./src/config"]
+        },
+        "plugins": [{ "transform": "typescript-transform-paths" }]
     },
     "ts-node": {
         "require": ["tsconfig-paths/register"]
     },
     "exclude": ["node_modules"],
-    "include": ["src", "ts", "tests", "prisma"]
+    "include": ["src", "tests", "prisma"]
 }

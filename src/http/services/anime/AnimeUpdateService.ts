@@ -11,7 +11,7 @@ import {
     ShikimoriGraphAnime,
     ShikimoriRelation
 } from '@/ts/shikimori';
-import { config } from '@/config';
+import { config } from '@config';
 import groupArrSplice from '@/helper/groupsplice';
 import sleep from '@/helper/sleep';
 import { logger } from '@/loggerConf';
