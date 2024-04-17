@@ -10,6 +10,13 @@ import { FrontPageAnimeReq } from '@requests/anime/FrontPageAnimeRequest';
 import hasPermissions from '@/helper/hasPermission';
 
 export default class AnimeController {
+    public static async getGenres(req: Request, res: Response) {
+        const genres = await AnimeService.getGenres();
+        return res.status(RequestStatuses.OK).json({
+            body: genres
+        });
+    }
+
     public static async getSingleAnime(req: GetSingleAnimeReq, res: Response) {
         const user = req.auth?.user;
         const slug = req.params.slug;
