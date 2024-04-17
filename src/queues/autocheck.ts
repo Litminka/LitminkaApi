@@ -5,7 +5,7 @@ import FollowService from '@services/FollowService';
 import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
 import { FollowTypes } from '@enums';
 import { logger } from '@/loggerConf';
-import { config } from '@/config';
+import { config } from '@config';
 import { autoCheckQueue } from './queues';
 
 /**
