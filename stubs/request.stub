@@ -1,20 +1,14 @@
-import { ValidationChain } from "express-validator";
-import { Request as ExpressRequest } from "express";
-import Request from "@requests/Request";
+import { ValidationChain } from 'express-validator';
+import { Request as ExpressRequest } from 'express';
+import Request from '@requests/Request';
 
-export interface StubReq extends ExpressRequest {
-
-}
+export interface StubReq extends ExpressRequest {}
 
 export default class StubRequest extends Request {
-
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
-        return [
-
-        ]
+        return [];
     }
 }

@@ -1,8 +1,5 @@
-
 export default class StubService {
-
     public static async get() {
-        return {}
+        return {};
     }
-    
 }
