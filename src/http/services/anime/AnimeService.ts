@@ -24,6 +24,19 @@ export default class AnimeService {
         return anime;
     }
 
+    public static async getGenres() {
+        const query: Prisma.GenreFindManyArgs = {
+            orderBy: { name: 'asc' },
+            select: {
+                id: true,
+                name: true,
+                nameRussian: true,
+                kind: true
+            }
+        };
+        return await prisma.genre.findMany(query);
+    }
+
     public static async getTopAnime(shikimori: boolean) {
         const query: Prisma.AnimeFindManyArgs = { take: 100 };
         query.orderBy = { rating: 'desc' };
