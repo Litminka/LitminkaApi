@@ -64,7 +64,7 @@ export const bodyStringValidator = (
  * @param message Error message for validation exceptions.
  */
 export const bodyIntValidator = (fieldName: string, options?: IntValidator): ValidationChain => {
-    const typeParams = options?.typeParams ?? { min: 0, max: 32 };
+    const typeParams = options?.typeParams ?? { min: 0, max: 2147483647 };
     const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({

@@ -148,7 +148,9 @@ export const intValidator = ({ validator, typeParams = {} }: TypeIntValidator): 
     return validator
         .custom((value) => {
             value = Number(value);
+
             if (isNaN(value)) throw new Error(baseMsg.valueMustBeInt);
+            if (typeof typeParams === 'undefined') typeParams = {};
 
             const options: { min: number; max: number } = {
                 min: typeof typeParams.min === 'undefined' ? -2147483648 : typeParams.min,

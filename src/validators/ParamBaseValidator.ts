@@ -28,8 +28,8 @@ export const paramStringValidator = (
     fieldName: string,
     options?: IntValidator
 ): ValidationChain => {
-    const typeParams = options?.typeParams ?? { min: 1, max: 2147483647 };
-    const message = options?.message ?? baseMsg.valueMustBeInt;
+    const typeParams = options?.typeParams ?? { min: 1, max: 32 };
+    const message = options?.message ?? baseMsg.valueMustBeString;
 
     return stringValidator({
         validator: param(fieldName, message),
