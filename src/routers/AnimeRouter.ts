@@ -4,11 +4,13 @@ import AnimeController from '@controllers/anime/AnimeController';
 import GetTopAnimeRequest from '@requests/anime/GetTopAnimeRequest';
 import { GetAnimeRequest } from '@requests/anime/GetAnimeRequest';
 import { GetSingleAnimeRequest } from '@requests/anime/GetSingleAnimeRequest';
-import FrontPageAnimeRequest from '@/http/requests/anime/FrontPageAnimeRequest';
+import FrontPageAnimeRequest from '@requests/anime/FrontPageAnimeRequest';
+import Request from '@requests/Request';
 const router = Router();
 
 router.get('', new GetAnimeRequest().send(), wrap(AnimeController.getAnime));
 router.get('/top', new GetTopAnimeRequest().send(), wrap(AnimeController.getTopAnime));
+router.get('/genres', new Request().send(), wrap(AnimeController.getGenres));
 
 router.get('/seasonal', new FrontPageAnimeRequest().send(), wrap(AnimeController.getSeasonal));
 router.get(

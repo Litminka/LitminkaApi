@@ -1,11 +1,9 @@
-import { Prisma } from "@prisma/client";
-import prisma from "@/db";
+import { Prisma } from '@prisma/client';
+import prisma from '@/db';
 
 const extention = Prisma.defineExtension({
-    name: "StubModel",
-    model: {
-       
-    }
+    name: 'StubModel',
+    model: {}
 });
 
-export { extention as StubExt }
+export { extention as StubExt };

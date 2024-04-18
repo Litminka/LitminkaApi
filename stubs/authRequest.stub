@@ -1,13 +1,10 @@
-import { ValidationChain } from "express-validator";
-import { AuthRequest, AuthReq } from "@requests/AuthRequest";
-import prisma from "@/db";
+import { ValidationChain } from 'express-validator';
+import { AuthRequest, AuthReq } from '@requests/AuthRequest';
+import prisma from '@/db';
 
-export interface StubReq extends AuthReq {
-
-} 
+export interface StubReq extends AuthReq {}
 
 export class StubRequest extends AuthRequest {
-
     /**
      * Define permissions for this request
      */
@@ -15,20 +12,15 @@ export class StubRequest extends AuthRequest {
 
     /**
      *  Define prisma user request for this method
-     * 
+     *
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number) {
-
-    }
+    protected async auth(userId: number) {}
 
     /**
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-
-        return [
-            
-        ]
+        return [];
     }
 }
