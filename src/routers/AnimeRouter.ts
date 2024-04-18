@@ -9,6 +9,7 @@ import Request from '@requests/Request';
 const router = Router();
 
 router.get('', new GetAnimeRequest().send(), wrap(AnimeController.getAnime));
+router.post('', new GetAnimeRequest().send(), wrap(AnimeController.getAnime));
 router.get('/top', new GetTopAnimeRequest().send(), wrap(AnimeController.getTopAnime));
 router.get('/genres', new Request().send(), wrap(AnimeController.getGenres));
 
