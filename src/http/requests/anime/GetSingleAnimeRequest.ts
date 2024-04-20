@@ -21,6 +21,6 @@ export class GetSingleAnimeRequest extends IntegrationRequest {
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-        return [paramStringValidator('slug')];
+        return [paramStringValidator('slug', { typeParams: { max: 256 } })];
     }
 }

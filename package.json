@@ -10,7 +10,7 @@
         "build": "tspc && cp -r prisma dist/ && rm dist/prisma/seed.ts",
         "start": "node dist/src/index.js",
         "seed": "ts-node prisma/seed.ts",
-        "dev": "npm install && npm run devmigrate && nodemon --inspect src/index.ts -r tsconfig-paths/register",
+        "dev": "npm install && npm run devmigrate && npx nodemon --inspect src/index.ts -r tsconfig-paths/register",
         "autocheck": "ts-node src/queues/autocheck.ts",
         "relation-update": "ts-node src/queues/relationUpdate.ts",
         "rating-update": "ts-node src/queues/ratingUpdate.ts",

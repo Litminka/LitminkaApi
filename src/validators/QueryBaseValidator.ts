@@ -11,19 +11,16 @@ interface QueryIntValidator extends IntValidator {
 /**
  * Validate optional integer query parameter with default value
  * @param fieldName Parameter name
- * @param defValue Default value if parameter `undefined` or `null`
- * @param typeParams Express [isint()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object.
- * @param message Error message for validation exceptions.
+ * @param options.defValue Default value if parameter `undefined` or `null`
+ * @param options.typeParams Express [isint()](https://express-validator.github.io/docs/api/validation-chain/#isint) options object.
+ * @param options.message Error message for validation exceptions.
  */
 export const queryIntValidator = (
     fieldName: string,
     options?: QueryIntValidator
 ): ValidationChain => {
     const defValue = options?.defValue ?? 0;
-    const typeParams = options?.typeParams ?? {
-        min: -2147483648,
-        max: 2147483647
-    };
+    const typeParams = options?.typeParams;
     const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({
@@ -35,14 +32,14 @@ export const queryIntValidator = (
 /**
  * Validate required `string` query parameter.
  * @param fieldName Parameter name
- * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
- * @param message Error message for validation exceptions.
+ * @param options.typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
+ * @param options.message Error message for validation exceptions.
  */
 export const queryStringValidator = (
     fieldName: string,
     options?: BaseValidator
 ): ValidationChain => {
-    const typeParams = options?.typeParams ?? { min: 0, max: 64 };
+    const typeParams = options?.typeParams;
     const message = options?.message ?? baseMsg.valueMustBeString;
 
     return stringValidator({

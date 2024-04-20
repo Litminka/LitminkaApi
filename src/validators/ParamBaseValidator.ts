@@ -9,7 +9,7 @@ import { IntValidator, intValidator, stringValidator } from '@/validators/BaseVa
  * @param message Error message for validation exceptions. By default `message: string = "validation_failed"`
  */
 export const paramIntValidator = (fieldName: string, options?: IntValidator): ValidationChain => {
-    const typeParams = options?.typeParams ?? { min: 1, max: 2147483647 };
+    const typeParams = options?.typeParams;
     const message = options?.message ?? baseMsg.valueMustBeInt;
 
     return intValidator({
@@ -28,7 +28,7 @@ export const paramStringValidator = (
     fieldName: string,
     options?: IntValidator
 ): ValidationChain => {
-    const typeParams = options?.typeParams ?? { min: 1, max: 32 };
+    const typeParams = options?.typeParams;
     const message = options?.message ?? baseMsg.valueMustBeString;
 
     return stringValidator({

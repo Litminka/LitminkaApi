@@ -61,10 +61,7 @@ export function genMessage(arg: {
     typeParams: { min?: number; max?: number; [key: string]: any };
 }): ValidatorErrorMessage {
     const setRange = (arg: { min?: number; max?: number }) => {
-        return [
-            typeof arg.min !== 'undefined' ? arg.min! : null,
-            typeof arg.max !== 'undefined' ? arg.max! : null
-        ];
+        return [arg.min ?? null, arg.max ?? null];
     };
 
     if (typeof arg.message === 'string')
@@ -92,8 +89,8 @@ export const arrayValidator = ({
         .toArray()
         .custom((value) => {
             const options = {
-                min: typeof typeParams.min === 'undefined' ? 1 : typeParams.min,
-                max: typeof typeParams.max === 'undefined' ? 50 : typeParams.max
+                min: typeParams.min ?? 1,
+                max: typeParams.max ?? 50
             };
 
             if (!Array.isArray(value)) throw new Error(baseMsg.valueMustBeAnArray);
@@ -117,10 +114,12 @@ export const arrayValidator = ({
  * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limits string length to 32 characters.
  * @returns ValidationChain
  */
-export const stringValidator = ({
-    validator,
-    typeParams = { min: 0, max: 32 }
-}: TypeBaseValidator): ValidationChain => {
+export const stringValidator = ({ validator, typeParams }: TypeBaseValidator): ValidationChain => {
+    typeParams = typeParams ?? {};
+    typeParams = {
+        min: typeParams.min ?? 1,
+        max: typeParams.max ?? 64
+    };
     return validator
         .notEmpty()
         .withMessage(baseMsg.notProvided)
@@ -153,8 +152,8 @@ export const intValidator = ({ validator, typeParams = {} }: TypeIntValidator): 
             if (typeof typeParams === 'undefined') typeParams = {};
 
             const options: { min: number; max: number } = {
-                min: typeof typeParams.min === 'undefined' ? -2147483648 : typeParams.min,
-                max: typeof typeParams.max === 'undefined' ? 2147483647 : typeParams.max
+                min: typeParams.min ?? -2147483648,
+                max: typeParams.max ?? 2147483647
             };
 
             if (!Number.isInteger(value)) throw new Error(baseMsg.valueMustBeInt);
