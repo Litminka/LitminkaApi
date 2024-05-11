@@ -1,27 +1,12 @@
-import NotFoundError from '@/errors/clienterrors/NotFoundError';
-import AnimeUpdateService from '@services/anime/AnimeUpdateService';
-import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import prisma from '@/db';
-import { UserWithIntegration } from '@/ts/user';
 import { Prisma } from '@prisma/client';
 import AnimeSearchService from '@services/anime/AnimeSearchService';
 import { AnimePgaRatings } from '@enums';
 import { getCurrentSeason, getNextSeason } from '@/helper/animeseason';
 
 export default class AnimeService {
-    public static async getSingleAnime(slug: string, user?: UserWithIntegration) {
-        let anime = await prisma.anime.findWithTranlsationsAndGenres(slug);
-        if (!anime) throw new NotFoundError("This anime doesn't exist");
-        if (!user) return anime;
-        // TODO: add user role checking, and setting check to allow shikimori requests only to specific users
-        if (anime.description != null && anime.rpaRating != null) return anime;
-        const shikimoriApi = new ShikimoriApiService(user);
-        const animeUpdateService = new AnimeUpdateService(shikimoriApi, user);
-        const updated = await animeUpdateService.update(anime);
-        if (updated) {
-            anime = await prisma.anime.findWithTranlsationsAndGenres(slug);
-        }
-        return anime;
+    public static async getSingleAnime(slug: string, userId?: number) {
+        return await prisma.anime.findWithTranlsationsAndGenres(slug, userId);
     }
 
     public static async getGenres() {
