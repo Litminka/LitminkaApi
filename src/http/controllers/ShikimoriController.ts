@@ -20,7 +20,7 @@ export default class ShikimoriController {
 
         await ShikimoriLinkService.link(token, code);
 
-        return res.status(RequestStatuses.Created);
+        return res.status(RequestStatuses.Created).json();
     }
 
     static async unlink(req: IntegrationRequest, res: Response) {

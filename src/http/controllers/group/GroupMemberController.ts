@@ -32,7 +32,7 @@ export default class GroupMemberController {
 
         await GroupMemberService.leaveGroup(user.id, groupId);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     public static async updateState(req: UpdateGroupMemberRequest, res: Response) {
@@ -47,7 +47,7 @@ export default class GroupMemberController {
             modifyList
         });
 
-        return res.status(RequestStatuses.Created);
+        return res.status(RequestStatuses.Created).json();
     }
 
     public static async kickUser(req: KickGroupMemberRequest, res: Response) {
@@ -58,6 +58,6 @@ export default class GroupMemberController {
 
         await GroupMemberService.kickUser({ user, groupId, kickId });
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 }

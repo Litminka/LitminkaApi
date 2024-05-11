@@ -34,7 +34,7 @@ export default class GroupListController {
 
         await GroupListService.deleteGroup(groupId, user.id);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     public static async updateGroup(req: UpdateGroupRequest, res: Response) {
