@@ -32,8 +32,7 @@ export default class AnimeController {
     public static async getAnime(req: GetAnimeRequest, res: Response) {
         const query = req.query;
         const body = req.body;
-        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
-        body.banInRussia = showBanned;
+        body.banInRussia = hasPermissions([Permissions.ManageAnime], req.user);
 
         const count = await AnimeSearchService.getFilteredCount(body);
         const anime = await AnimeSearchService.filterSelector(body, query);
@@ -48,7 +47,7 @@ export default class AnimeController {
 
         await AnimeService.banAnime(animeId);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     public static async unBanAnime(req: BanAnimeRequest, res: Response) {
@@ -56,15 +55,17 @@ export default class AnimeController {
 
         await AnimeService.unBanAnime(animeId);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     public static async getTopAnime(req: GetTopAnimeRequest, res: Response) {
+        const withCensored = req.body.withCensored;
         const shikimori = req.body.shikimori;
+        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
-        const top = await AnimeService.getTopAnime(shikimori);
+        const anime = await AnimeService.getTopAnime(withCensored, showBanned, shikimori);
 
-        return res.status(RequestStatuses.OK).json({ body: top });
+        return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
     public static async getSeasonal(req: FrontPageAnimeRequest, res: Response) {

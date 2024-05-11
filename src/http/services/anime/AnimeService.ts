@@ -21,13 +21,25 @@ export default class AnimeService {
         });
     }
 
-    public static async getTopAnime(shikimori: boolean) {
-        const query: Prisma.AnimeFindManyArgs = { take: 100 };
-        query.orderBy = { rating: 'desc' };
-        if (shikimori) {
-            query.orderBy = { shikimoriRating: 'desc' };
-        }
-        return await prisma.anime.findMany(query);
+    public static async getTopAnime(censor: boolean, showBanned: boolean, shikimori: boolean) {
+        return AnimeSearchService.filterShortSelector(
+            {
+                isWatchable: true,
+                withCensored: censor,
+                banInRussia: showBanned,
+                rpaRatings:
+                    !censor ?
+                        [
+                            AnimePgaRatings.None,
+                            AnimePgaRatings.G,
+                            AnimePgaRatings.PG,
+                            AnimePgaRatings.PG_13
+                        ]
+                    :   undefined
+            },
+            { page: 1, pageLimit: 100 },
+            shikimori ? { shikimoriRating: 'desc' } : { rating: 'desc' }
+        );
     }
 
     public static async getSeasonal(censor: boolean, watchable: boolean, showBanned: boolean) {

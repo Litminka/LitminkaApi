@@ -14,9 +14,9 @@ export interface AnimeFilterBody {
     mediaTypes?: string[];
     seasons?: string[];
     period?: Date[];
-    isWatchable?: boolean;
-    withCensored: boolean;
     banInRussia?: boolean;
+    withCensored: boolean;
+    isWatchable: boolean;
 }
 
 export default class AnimeSearchService {
@@ -139,7 +139,11 @@ export default class AnimeSearchService {
         return anime._count.id;
     }
 
-    public static async filterSelector(filters: AnimeFilterBody, query: PaginationQuery) {
+    public static async filterSelector(
+        filters: AnimeFilterBody,
+        query: PaginationQuery,
+        order?: Prisma.AnimeFindManyArgs['orderBy']
+    ) {
         return await prisma.anime.findMany({
             take: query.pageLimit,
             skip: (query.page - 1) * query.pageLimit,
@@ -159,7 +163,8 @@ export default class AnimeSearchService {
                 image: true,
                 mediaType: true,
                 description: true
-            }
+            },
+            orderBy: order
         });
     }
 
