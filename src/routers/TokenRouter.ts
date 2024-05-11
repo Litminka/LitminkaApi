@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import TokenController from '@controllers/TokenController';
+import { baseReq } from '@/http/requests/Request';
+import { authReq } from '@requests/AuthRequest';
+import { endSessionReq } from '@requests/session/EndSessionRequest';
 import { wrap } from '@/middleware/errorHandler';
-import { AuthRequest } from '@requests/AuthRequest';
-import { EndSessionRequest } from '@requests/session/EndSessionRequest';
+
 const router = Router();
 
-router.get('/refresh', wrap(TokenController.refreshToken));
-
-router.get('/', new AuthRequest().send(), wrap(TokenController.getTokens));
-router.delete('/', new EndSessionRequest().send(), wrap(TokenController.deleteTokens));
+router.get('/', authReq, wrap(TokenController.getTokens));
+router.get('/refresh', baseReq, wrap(TokenController.refreshToken));
+router.delete('/', endSessionReq, wrap(TokenController.deleteTokens));
 
 export { router as tokenRouter };

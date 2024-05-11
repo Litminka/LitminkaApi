@@ -1,5 +1,5 @@
 import { ValidationChain } from 'express-validator';
-import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
+import GroupRequest from '@requests/group/GroupRequest';
 import { WatchListStatuses } from '@enums';
 import {
     bodyArrayValidator,
@@ -10,22 +10,20 @@ import {
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { queryIntValidator } from '@/validators/QueryBaseValidator';
 
-export interface GetGroupAnimeListReq extends GroupReq {
-    params: {
+export default class GetGroupAnimeListRequest extends GroupRequest {
+    public params!: {
         groupId: number;
     };
-    body: {
+    public body!: {
         statuses?: WatchListStatuses[];
         ratings?: number[];
         isFavorite?: boolean;
     };
-    query: {
+    public query!: {
         page: number;
         pageLimit: number;
     };
-}
 
-export class GetGroupAnimeListRequest extends GroupRequest {
     /**
      * Define validation rules for this request
      */
@@ -52,3 +50,5 @@ export class GetGroupAnimeListRequest extends GroupRequest {
         ];
     }
 }
+
+export const getGroupAnimeListReq = new GetGroupAnimeListRequest().send();

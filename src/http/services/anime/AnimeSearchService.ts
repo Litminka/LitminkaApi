@@ -90,7 +90,6 @@ export default class AnimeSearchService {
     }
 
     private static generateFilters(filters: AnimeFilterBody) {
-        console.log(filters);
         const andFilter = {
             AND: [
                 this.byInGenre(filters.includeGenres),

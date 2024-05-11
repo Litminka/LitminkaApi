@@ -1,20 +1,18 @@
 import { ValidationChain } from 'express-validator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 import { FollowTypes } from '@enums';
 
-export interface FollowAnimeReq extends AuthReq {
-    params: {
+export default class FollowAnimeRequest extends AuthRequest {
+    public params!: {
         animeId: number;
     };
-    body: {
+    public body!: {
         type: FollowTypes;
         groupName: string;
     };
-}
 
-export class FollowAnimeRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -26,3 +24,5 @@ export class FollowAnimeRequest extends AuthRequest {
         ];
     }
 }
+
+export const followAnimeReq = new FollowAnimeRequest().send();

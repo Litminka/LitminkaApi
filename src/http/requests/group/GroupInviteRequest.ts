@@ -1,25 +1,16 @@
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 import prisma from '@/db';
-import { User, GroupListInvites } from '@prisma/client';
 
-export interface GroupInviteReq extends AuthReq {
-    auth: {
-        user: User & {
-            groupInvites: GroupListInvites[];
-        };
-        id: number;
-        token: string;
-    };
-}
-
-export class GroupInviteRequest extends AuthRequest {
+export default class GroupInviteRequest extends AuthRequest {
     /**
      *  if authType is not None
      *  Define prisma user request for this method
      *
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number): Promise<any> {
+    public async getUser(userId: number) {
         return await prisma.user.findUserWithGroupInvites(userId);
     }
 }
+
+export const groupInviteReq = new GroupInviteRequest().send();

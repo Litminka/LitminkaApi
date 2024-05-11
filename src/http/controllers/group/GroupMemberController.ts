@@ -1,22 +1,22 @@
 import { Response } from 'express';
 import { RequestStatuses } from '@enums';
 import GroupMemberService from '@services/group/GroupMemberService';
-import { AuthReq } from '@requests/AuthRequest';
-import { GroupMemberReq } from '@requests/group/member/GroupMemberRequest';
-import { KickGroupMemberReq } from '@requests/group/member/KickGroupMemberRequest';
-import { UpdateGroupMemberReq } from '@requests/group/member/UpdateGroupMemberRequest';
+import AuthRequest from '@requests/AuthRequest';
+import GroupMemberRequest from '@requests/group/member/GroupMemberRequest';
+import KickGroupMemberRequest from '@requests/group/member/KickGroupMemberRequest';
+import UpdateGroupMemberRequest from '@requests/group/member/UpdateGroupMemberRequest';
 
 export default class GroupMemberController {
-    public static async getMemberGroup(req: AuthReq, res: Response) {
-        const user = req.auth.user;
+    public static async getMemberGroup(req: AuthRequest, res: Response) {
+        const user = req.user;
 
         const result = await GroupMemberService.getMemberGroup(user.id);
 
         return res.status(RequestStatuses.OK).json({ body: result });
     }
 
-    public static async getMembers(req: GroupMemberReq, res: Response) {
-        const user = req.auth.user;
+    public static async getMembers(req: GroupMemberRequest, res: Response) {
+        const user = req.user;
 
         const groupId = req.params.groupId;
 
@@ -25,8 +25,8 @@ export default class GroupMemberController {
         return res.status(RequestStatuses.OK).json({ body: result });
     }
 
-    public static async leaveGroup(req: GroupMemberReq, res: Response) {
-        const user = req.auth.user;
+    public static async leaveGroup(req: GroupMemberRequest, res: Response) {
+        const user = req.user;
 
         const groupId = req.params.groupId;
 
@@ -35,8 +35,8 @@ export default class GroupMemberController {
         return res.status(RequestStatuses.Accepted);
     }
 
-    public static async updateState(req: UpdateGroupMemberReq, res: Response) {
-        const user = req.auth.user;
+    public static async updateState(req: UpdateGroupMemberRequest, res: Response) {
+        const user = req.user;
 
         const groupId = req.params.groupId as unknown as number;
         const modifyList = req.body.modifyList as unknown as boolean;
@@ -50,8 +50,8 @@ export default class GroupMemberController {
         return res.status(RequestStatuses.Created);
     }
 
-    public static async kickUser(req: KickGroupMemberReq, res: Response) {
-        const user = req.auth.user;
+    public static async kickUser(req: KickGroupMemberRequest, res: Response) {
+        const user = req.user;
 
         const groupId = req.params.groupId as unknown as number;
         const kickId = req.body.userId as unknown as number;

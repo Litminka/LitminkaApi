@@ -1,5 +1,5 @@
 import { ValidationChain } from 'express-validator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 import {
     bodyArrayValidator,
     bodyBoolValidator,
@@ -9,19 +9,17 @@ import {
 import { WatchListStatuses } from '@enums';
 import { queryIntValidator } from '@/validators/QueryBaseValidator';
 
-export interface GetWatchListReq extends AuthReq {
-    body: {
+export default class GetWatchListRequest extends AuthRequest {
+    body!: {
         statuses?: WatchListStatuses[];
         ratings?: number[];
         isFavorite?: boolean;
     };
-    query: {
+    query!: {
         page: number;
         pageLimit: number;
     };
-}
 
-export class GetWatchListRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -48,3 +46,5 @@ export class GetWatchListRequest extends AuthRequest {
         ];
     }
 }
+
+export const getWatchListReq = new GetWatchListRequest().send();

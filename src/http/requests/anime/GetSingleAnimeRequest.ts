@@ -1,22 +1,22 @@
 import { paramStringValidator } from '@/validators/ParamBaseValidator';
 import { ValidationChain } from 'express-validator';
-import { RequestAuthTypes } from '@enums';
-import { IntegrationReq, IntegrationRequest } from '@requests/IntegrationRequest';
-import { OptionalReq } from '@requests/OptionalRequest';
+import prisma from '@/db';
+import OptionalRequest from '@requests/OptionalRequest';
 
-export interface GetSingleAnimeReq extends OptionalReq {
-    auth?: IntegrationReq['auth'];
-    params: {
+export default class GetSingleAnimeRequest extends OptionalRequest {
+    public params!: {
         slug: string;
     };
-}
 
-export class GetSingleAnimeRequest extends IntegrationRequest {
     /**
-     * Define auth type for this request
+     *  if authType is not None
+     *  Define prisma user request for this method
+     *
+     *  @returns Prisma User Variant
      */
-    protected authType = RequestAuthTypes.Optional;
-
+    public async getUser(userId: number) {
+        return await prisma.user.findUserByIdWithIntegration(userId);
+    }
     /**
      * Define validation rules for this request
      */
@@ -24,3 +24,5 @@ export class GetSingleAnimeRequest extends IntegrationRequest {
         return [paramStringValidator('slug', { typeParams: { max: 256 } })];
     }
 }
+
+export const getSingleAnimeReq = new GetSingleAnimeRequest().send();

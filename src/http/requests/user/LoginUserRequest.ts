@@ -1,16 +1,13 @@
-import Request from '@requests/Request';
-import { Request as ExpressRequest } from 'express';
+import Request from '@/http/requests/Request';
 import { ValidationChain } from 'express-validator';
 import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 
-export interface LoginUserReq extends ExpressRequest {
-    body: {
+export default class LoginUserRequest extends Request {
+    public body!: {
         login: string;
         password: string;
     };
-}
 
-export class LoginUserRequest extends Request {
     /**
      * Define validation rules for this request
      */
@@ -18,3 +15,5 @@ export class LoginUserRequest extends Request {
         return [bodyStringValidator('login'), bodyStringValidator('password')];
     }
 }
+
+export const loginUserReq = new LoginUserRequest().send();

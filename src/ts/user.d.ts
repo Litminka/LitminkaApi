@@ -15,7 +15,7 @@ type UserWithTokens = User & {
 };
 
 export type UserWithPermissions = User & {
-    role: RoleWithPermissions;
+    role?: RoleWithPermissions;
 };
 
 export interface LoginUser {

@@ -1,10 +1,10 @@
 import { Response } from 'express';
 import WatchListService from '@services/WatchListService';
-import { IntegrationReq } from '@requests/IntegrationRequest';
-import { AddToWatchListReq } from '@requests/watchList/AddToWatchListRequest';
-import { EditWatchListReq } from '@requests/watchList/EditWatchListRequest';
-import { DeleteFromWatchListReq } from '@requests/watchList/DeleteFromWatchListRequest';
-import { GetWatchListReq } from '@requests/watchList/GetWatchListRequest';
+import IntegrationRequest from '@requests/IntegrationRequest';
+import AddToWatchListRequest from '@requests/watchList/AddToWatchListRequest';
+import EditWatchListRequest from '@requests/watchList/EditWatchListRequest';
+import DeleteFromWatchListRequest from '@requests/watchList/DeleteFromWatchListRequest';
+import GetWatchListRequest from '@requests/watchList/GetWatchListRequest';
 import { RequestStatuses } from '@enums';
 
 export default class WatchListController {
@@ -14,8 +14,8 @@ export default class WatchListController {
      * @param res
      * @returns
      */
-    public static async get(req: GetWatchListReq, res: Response) {
-        const userId = req.auth.user.id;
+    public static async get(req: GetWatchListRequest, res: Response) {
+        const userId = req.user.id;
         const statuses = req.body.statuses;
         const ratings = req.body.ratings;
         const isFavorite = req.body.isFavorite;
@@ -37,8 +37,8 @@ export default class WatchListController {
      * @param res
      * @returns
      */
-    public static async startImport(req: IntegrationReq, res: Response) {
-        const user = req.auth.user;
+    public static async startImport(req: IntegrationRequest, res: Response) {
+        const user = req.user;
 
         WatchListService.startImport(user);
 
@@ -51,8 +51,8 @@ export default class WatchListController {
      * @param res
      * @returns Response
      */
-    public static async add(req: AddToWatchListReq, res: Response) {
-        const user = req.auth.user;
+    public static async add(req: AddToWatchListRequest, res: Response) {
+        const user = req.user;
 
         const addParameters = req.body;
         const animeId = req.params.animeId;
@@ -67,8 +67,8 @@ export default class WatchListController {
      * @param res
      * @returns
      */
-    public static async update(req: EditWatchListReq, res: Response) {
-        const user = req.auth.user;
+    public static async update(req: EditWatchListRequest, res: Response) {
+        const user = req.user;
 
         const editParameters = req.body;
         const animeId = req.params.animeId;
@@ -83,8 +83,8 @@ export default class WatchListController {
      * @param res
      * @returns
      */
-    public static async delete(req: DeleteFromWatchListReq, res: Response) {
-        const user = req.auth.user;
+    public static async delete(req: DeleteFromWatchListRequest, res: Response) {
+        const user = req.user;
 
         const animeId = req.params.animeId;
 

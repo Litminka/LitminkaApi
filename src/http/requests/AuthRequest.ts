@@ -1,21 +1,17 @@
 import prisma from '@/db';
 import { RequestAuthTypes } from '@enums';
-import { User } from '@prisma/client';
 import Request from '@requests/Request';
 
-export interface AuthReq {
-    auth: {
-        user: User;
-        id: number;
-        token: string;
-    };
-}
-
-export class AuthRequest extends Request {
+export default class AuthRequest extends Request {
     /**
      * Define auth type for this request
      */
     protected authType = RequestAuthTypes.Auth;
+    public auth!: {
+        id: number;
+        token: string;
+    };
+    public user!: Awaited<ReturnType<this['getUser']>>;
 
     /**
      *  if authType is not None
@@ -23,7 +19,9 @@ export class AuthRequest extends Request {
      *
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number): Promise<any> {
+    public async getUser(userId: number) {
         return await prisma.user.findUserById(userId);
     }
 }
+
+export const authReq = new AuthRequest().send();

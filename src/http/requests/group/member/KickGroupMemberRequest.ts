@@ -1,18 +1,16 @@
 import { ValidationChain } from 'express-validator';
-import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
+import GroupRequest from '@requests/group/GroupRequest';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { bodyIntValidator } from '@/validators/BodyBaseValidator';
 
-export interface KickGroupMemberReq extends GroupReq {
-    params: {
+export default class KickGroupMemberRequest extends GroupRequest {
+    public params!: {
         groupId: number;
     };
-    body: {
+    public body!: {
         userId: number;
     };
-}
 
-export class KickGroupMemberRequest extends GroupRequest {
     /**
      * Define validation rules for this request
      */
@@ -20,3 +18,5 @@ export class KickGroupMemberRequest extends GroupRequest {
         return [paramIntValidator('groupId'), bodyIntValidator('userId')];
     }
 }
+
+export const kickGroupMemberReq = new KickGroupMemberRequest().send();

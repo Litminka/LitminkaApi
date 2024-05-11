@@ -1,19 +1,17 @@
 import { ValidationChain } from 'express-validator';
-import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
+import GroupRequest from '@requests/group/GroupRequest';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 
-export interface UpdateGroupReq extends GroupReq {
-    params: {
+export default class UpdateGroupRequest extends GroupRequest {
+    public params!: {
         groupId: number;
     };
-    body: {
+    public body!: {
         name?: string;
         description?: string;
     };
-}
 
-export class UpdateGroupRequest extends GroupRequest {
     /**
      * Define validation rules for this request
      */
@@ -25,3 +23,5 @@ export class UpdateGroupRequest extends GroupRequest {
         ];
     }
 }
+
+export const updateGroupReq = new UpdateGroupRequest().send();

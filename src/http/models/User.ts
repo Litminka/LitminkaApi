@@ -84,7 +84,7 @@ const extention = Prisma.defineExtension({
                 });
             },
             async findUserByIdWithRolePermission(id: number) {
-                return await prisma.user.findFirst({
+                return await prisma.user.findFirstOrThrow({
                     where: {
                         id
                     },
@@ -98,7 +98,7 @@ const extention = Prisma.defineExtension({
                 });
             },
             async findUserWithTokensAndPermissions(id: number) {
-                return await prisma.user.findFirst({
+                return await prisma.user.findFirstOrThrow({
                     where: { id },
                     include: {
                         role: {
@@ -110,14 +110,7 @@ const extention = Prisma.defineExtension({
             },
             async findUserById(id: number) {
                 return await prisma.user.findFirstOrThrow({
-                    where: { id },
-                    include: {
-                        role: {
-                            include: {
-                                permissions: true
-                            }
-                        }
-                    }
+                    where: { id }
                 });
             },
             async findUserWithOwnedGroups(id: number) {

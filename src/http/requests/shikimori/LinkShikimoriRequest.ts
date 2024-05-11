@@ -1,16 +1,13 @@
-import Request from '@requests/Request';
+import Request from '@/http/requests/Request';
 import { ValidationChain } from 'express-validator';
-import { Request as ExpressRequest } from 'express';
 import { queryStringValidator } from '@/validators/QueryBaseValidator';
 
-export interface LinkShikimoriReq extends ExpressRequest {
-    query: {
+export default class LinkShikimoriRequest extends Request {
+    public query!: {
         token: string;
         code: string;
     };
-}
 
-export class LinkShikimoriRequest extends Request {
     /**
      * Define validation rules for this request
      */
@@ -18,3 +15,5 @@ export class LinkShikimoriRequest extends Request {
         return [queryStringValidator('token'), queryStringValidator('code')];
     }
 }
+
+export const linkShikimoriReq = new LinkShikimoriRequest().send();

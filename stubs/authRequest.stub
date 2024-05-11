@@ -1,21 +1,21 @@
 import { ValidationChain } from 'express-validator';
-import { AuthRequest, AuthReq } from '@requests/AuthRequest';
 import prisma from '@/db';
+import AuthRequest from '@requests/AuthRequest';
 
-export interface StubReq extends AuthReq {}
+export default class StubRequest extends AuthRequest {
+    protected permissions = [];
 
-export class StubRequest extends AuthRequest {
+    public body: {};
+    public query: {};
+    public params: {};
+
     /**
-     * Define permissions for this request
-     */
-    protected permissions: string[] = [];
-
-    /**
+     *  if authType is not None
      *  Define prisma user request for this method
      *
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number) {}
+    public async getUser(userId: number) {}
 
     /**
      * Define validation rules for this request
@@ -24,3 +24,5 @@ export class StubRequest extends AuthRequest {
         return [];
     }
 }
+
+export const StubReq = new StubRequest().send();

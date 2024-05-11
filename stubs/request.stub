@@ -1,10 +1,11 @@
 import { ValidationChain } from 'express-validator';
-import { Request as ExpressRequest } from 'express';
 import Request from '@requests/Request';
 
-export interface StubReq extends ExpressRequest {}
-
 export default class StubRequest extends Request {
+    public body: {};
+    public query: {};
+    public params: {};
+
     /**
      * Define validation rules for this request
      */
@@ -12,3 +13,5 @@ export default class StubRequest extends Request {
         return [];
     }
 }
+
+export const StubReq = new StubRequest().send();

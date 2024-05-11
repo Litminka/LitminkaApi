@@ -2,11 +2,12 @@ import { Response } from 'express';
 import AnimeService from '@services/anime/AnimeService';
 import { Permissions, RequestStatuses } from '@enums';
 import AnimeSearchService from '@services/anime/AnimeSearchService';
-import { GetSingleAnimeReq } from '@requests/anime/GetSingleAnimeRequest';
-import { GetAnimeReq } from '@requests/anime/GetAnimeRequest';
-import { BanAnimeReq } from '@requests/anime/BanAnimeRequest';
-import { GetTopAnimeReq } from '@requests/anime/GetTopAnimeRequest';
-import { FrontPageAnimeReq } from '@requests/anime/FrontPageAnimeRequest';
+import Request from '@requests/Request';
+import GetSingleAnimeRequest from '@requests/anime/GetSingleAnimeRequest';
+import GetAnimeRequest from '@requests/anime/GetAnimeRequest';
+import BanAnimeRequest from '@requests/anime/BanAnimeRequest';
+import GetTopAnimeRequest from '@requests/anime/GetTopAnimeRequest';
+import FrontPageAnimeRequest from '@requests/anime/FrontPageAnimeRequest';
 import hasPermissions from '@/helper/hasPermission';
 
 export default class AnimeController {
@@ -17,8 +18,8 @@ export default class AnimeController {
         });
     }
 
-    public static async getSingleAnime(req: GetSingleAnimeReq, res: Response) {
-        const user = req.auth?.user;
+    public static async getSingleAnime(req: GetSingleAnimeRequest, res: Response) {
+        const user = req.user;
         const slug = req.params.slug;
 
         const anime = await AnimeService.getSingleAnime(slug, user);
@@ -28,10 +29,10 @@ export default class AnimeController {
         });
     }
 
-    public static async getAnime(req: GetAnimeReq, res: Response) {
+    public static async getAnime(req: GetAnimeRequest, res: Response) {
         const query = req.query;
         const body = req.body;
-        const showBanned = hasPermissions([Permissions.ManageAnime], req.auth?.user);
+        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
         body.banInRussia = showBanned;
 
         const count = await AnimeSearchService.getFilteredCount(body);
@@ -42,7 +43,7 @@ export default class AnimeController {
         });
     }
 
-    public static async banAnime(req: BanAnimeReq, res: Response) {
+    public static async banAnime(req: BanAnimeRequest, res: Response) {
         const animeId = req.params.animeId;
 
         await AnimeService.banAnime(animeId);
@@ -50,7 +51,7 @@ export default class AnimeController {
         return res.status(RequestStatuses.Accepted);
     }
 
-    public static async unBanAnime(req: BanAnimeReq, res: Response) {
+    public static async unBanAnime(req: BanAnimeRequest, res: Response) {
         const animeId = req.params.animeId;
 
         await AnimeService.unBanAnime(animeId);
@@ -58,7 +59,7 @@ export default class AnimeController {
         return res.status(RequestStatuses.Accepted);
     }
 
-    public static async getTopAnime(req: GetTopAnimeReq, res: Response) {
+    public static async getTopAnime(req: GetTopAnimeRequest, res: Response) {
         const shikimori = req.body.shikimori;
 
         const top = await AnimeService.getTopAnime(shikimori);
@@ -66,27 +67,27 @@ export default class AnimeController {
         return res.status(RequestStatuses.OK).json({ body: top });
     }
 
-    public static async getSeasonal(req: FrontPageAnimeReq, res: Response) {
+    public static async getSeasonal(req: FrontPageAnimeRequest, res: Response) {
         const withCensored = req.body.withCensored;
-        const showBanned = hasPermissions([Permissions.ManageAnime], req.auth?.user);
+        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
         const anime = await AnimeService.getSeasonal(withCensored, showBanned);
 
         return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
-    public static async getPopularSeasonal(req: FrontPageAnimeReq, res: Response) {
+    public static async getPopularSeasonal(req: FrontPageAnimeRequest, res: Response) {
         const withCensored = req.body.withCensored;
-        const showBanned = hasPermissions([Permissions.ManageAnime], req.auth?.user);
+        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
         const anime = await AnimeService.getPopularSeasonal(withCensored, showBanned);
 
         return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
-    public static async getNextSeasonAnnounced(req: FrontPageAnimeReq, res: Response) {
+    public static async getNextSeasonAnnounced(req: FrontPageAnimeRequest, res: Response) {
         const withCensored = req.body.withCensored;
-        const showBanned = hasPermissions([Permissions.ManageAnime], req.auth?.user);
+        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
         const anime = await AnimeService.getNextSeasonAnnounced(withCensored, showBanned);
 

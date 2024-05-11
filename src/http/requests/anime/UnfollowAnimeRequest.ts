@@ -1,18 +1,16 @@
 import { ValidationChain } from 'express-validator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { bodyStringValidator } from '@/validators/BodyBaseValidator';
+import AuthRequest from '@requests/AuthRequest';
 
-export interface UnFollowAnimeReq extends AuthReq {
-    body: {
+export default class UnFollowAnimeRequest extends AuthRequest {
+    public body!: {
         groupName?: string;
     };
-    params: {
+    public params!: {
         animeId: number;
     };
-}
 
-export class UnFollowAnimeRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -20,3 +18,5 @@ export class UnFollowAnimeRequest extends AuthRequest {
         return [paramIntValidator('animeId'), bodyStringValidator('groupName').optional()];
     }
 }
+
+export const unFollowAnimeReq = new UnFollowAnimeRequest().send();

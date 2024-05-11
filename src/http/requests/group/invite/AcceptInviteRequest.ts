@@ -1,18 +1,16 @@
 import { ValidationChain } from 'express-validator';
-import { GroupInviteReq, GroupInviteRequest } from '@requests/group/GroupInviteRequest';
 import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
+import GroupInviteRequest from '@requests/group/GroupInviteRequest';
 
-export interface AcceptInviteReq extends GroupInviteReq {
-    params: {
+export default class AcceptInviteRequest extends GroupInviteRequest {
+    public params!: {
         inviteId: number;
     };
-    body: {
+    public body!: {
         modifyList: boolean;
     };
-}
 
-export class AcceptInviteRequest extends GroupInviteRequest {
     /**
      * Define validation rules for this request
      */
@@ -20,3 +18,5 @@ export class AcceptInviteRequest extends GroupInviteRequest {
         return [paramIntValidator('inviteId'), bodyBoolValidator('modifyList', { defValue: true })];
     }
 }
+
+export const acceptInviteReq = new AcceptInviteRequest().send();

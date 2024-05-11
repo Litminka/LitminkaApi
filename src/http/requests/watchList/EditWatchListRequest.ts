@@ -8,24 +8,19 @@ import {
 } from '@/validators/BodyBaseValidator';
 import { WatchListStatuses } from '@enums';
 import { ValidationChain } from 'express-validator';
-import {
-    IntegrationSettingsReq,
-    IntegrationSettingsRequest
-} from '@requests/IntegrationSettingsRequest';
+import IntegrationSettingsRequest from '@requests/IntegrationSettingsRequest';
 
-export interface EditWatchListReq extends IntegrationSettingsReq {
-    params: {
+export default class EditWatchListRequest extends IntegrationSettingsRequest {
+    public params!: {
         animeId: number;
     };
-    body: {
+    public body!: {
         status: WatchListStatuses;
         watchedEpisodes: number;
         rating: number;
         isFavorite: boolean;
     };
-}
 
-export class EditWatchListRequest extends IntegrationSettingsRequest {
     /**
      * Define validation rules for this request
      */
@@ -52,3 +47,5 @@ export class EditWatchListRequest extends IntegrationSettingsRequest {
         ];
     }
 }
+
+export const editWatchListReq = new EditWatchListRequest().send();

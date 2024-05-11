@@ -2,18 +2,12 @@ import prisma from '@/db';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { baseMsg } from '@/ts/messages';
 import { ValidationChain } from 'express-validator';
-import {
-    IntegrationSettingsReq,
-    IntegrationSettingsRequest
-} from '@requests/IntegrationSettingsRequest';
+import IntegrationSettingsRequest from '@requests/IntegrationSettingsRequest';
 
-export interface DeleteFromWatchListReq extends IntegrationSettingsReq {
-    params: {
+export default class DeleteFromWatchListRequest extends IntegrationSettingsRequest {
+    public params!: {
         animeId: number;
     };
-}
-
-export class DeleteFromWatchListRequest extends IntegrationSettingsRequest {
     /**
      * Define validation rules for this request
      * @returns ValidationChain
@@ -32,3 +26,5 @@ export class DeleteFromWatchListRequest extends IntegrationSettingsRequest {
         ];
     }
 }
+
+export const deleteFromWatchListReq = new DeleteFromWatchListRequest().send();
