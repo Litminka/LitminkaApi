@@ -65,7 +65,7 @@ export default class AnimeSearchService {
     }
 
     private static isWatchable(arg?: boolean) {
-        return !arg ? { kodikLink: { not: null } } : undefined;
+        return arg ? { kodikLink: { not: null } } : undefined;
     }
 
     private static byPeriod(arg?: Date[]) {
@@ -124,6 +124,7 @@ export default class AnimeSearchService {
                     })
                 };
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
         return filter();
     }

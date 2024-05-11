@@ -33,6 +33,7 @@ export default class AnimeService {
     public static async getSeasonal(censor: boolean, watchable: boolean, showBanned: boolean) {
         return AnimeSearchService.filterShortSelector(
             {
+                isWatchable: watchable,
                 withCensored: censor,
                 seasons: [getCurrentSeason()],
                 banInRussia: showBanned,
@@ -50,9 +51,14 @@ export default class AnimeService {
         );
     }
 
-    public static async getPopularSeasonal(censor: boolean, showBanned: boolean) {
+    public static async getPopularSeasonal(
+        censor: boolean,
+        watchable: boolean,
+        showBanned: boolean
+    ) {
         return AnimeSearchService.filterShortSelector(
             {
+                isWatchable: watchable,
                 withCensored: censor,
                 seasons: [getCurrentSeason()],
                 banInRussia: showBanned,
@@ -71,9 +77,14 @@ export default class AnimeService {
         );
     }
 
-    public static async getNextSeasonAnnounced(censor: boolean, showBanned: boolean) {
+    public static async getNextSeasonAnnounced(
+        censor: boolean,
+        watchable: boolean,
+        showBanned: boolean
+    ) {
         return AnimeSearchService.filterShortSelector(
             {
+                isWatchable: watchable,
                 withCensored: censor,
                 seasons: [getNextSeason(new Date())],
                 statuses: ['announced'],

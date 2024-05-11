@@ -23,6 +23,7 @@ export default class GetAnimeRequest extends OptionalRequest {
         excludeGenres?: number[];
         period?: Date[];
         withCensored: boolean;
+        isWatchable: boolean;
         banInRussia: boolean;
     };
     public query!: {
@@ -75,6 +76,8 @@ export default class GetAnimeRequest extends OptionalRequest {
             ...bodySoftPeriodValidator('period'),
 
             bodyBoolValidator('withCensored', { defValue: false }),
+
+            bodyBoolValidator('isWatchable', { defValue: false }),
 
             queryIntValidator('page', {
                 defValue: 1,
