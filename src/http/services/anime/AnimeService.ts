@@ -1,5 +1,4 @@
 import prisma from '@/db';
-import { Prisma } from '@prisma/client';
 import AnimeSearchService from '@services/anime/AnimeSearchService';
 import { AnimePgaRatings } from '@enums';
 import { getCurrentSeason, getNextSeason } from '@/helper/animeseason';
