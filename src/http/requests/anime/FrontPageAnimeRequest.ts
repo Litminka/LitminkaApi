@@ -6,6 +6,7 @@ import prisma from '@/db';
 export default class FrontPageAnimeRequest extends OptionalRequest {
     public body!: {
         withCensored: boolean;
+        isWatchable: boolean;
     };
 
     /**
@@ -23,7 +24,10 @@ export default class FrontPageAnimeRequest extends OptionalRequest {
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-        return [bodyBoolValidator('withCensored', { defValue: false })];
+        return [
+            bodyBoolValidator('withCensored', { defValue: false }),
+            bodyBoolValidator('isWatchable', { defValue: true })
+        ];
     }
 }
 

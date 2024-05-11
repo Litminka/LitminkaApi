@@ -45,7 +45,7 @@ export default class AnimeService {
         return await prisma.anime.findMany(query);
     }
 
-    public static async getSeasonal(censor: boolean, showBanned: boolean) {
+    public static async getSeasonal(censor: boolean, watchable: boolean, showBanned: boolean) {
         return AnimeSearchService.filterShortSelector(
             {
                 withCensored: censor,

@@ -14,6 +14,7 @@ export interface AnimeFilterBody {
     mediaTypes?: string[];
     seasons?: string[];
     period?: Date[];
+    isWatchable?: boolean;
     withCensored: boolean;
     banInRussia?: boolean;
 }
@@ -63,6 +64,10 @@ export default class AnimeSearchService {
         return !arg ? { censored: arg } : undefined;
     }
 
+    private static isWatchable(arg?: boolean) {
+        return !arg ? { kodikLink: { not: null } } : undefined;
+    }
+
     private static byPeriod(arg?: Date[]) {
         if (arg === undefined || arg.length < 1) return [];
         const period = ((arg?: Date[] | string[]) => {
@@ -101,6 +106,7 @@ export default class AnimeSearchService {
                 this.byName(filters.name),
                 this.bySeasons(filters.seasons),
                 this.isCensored(filters.withCensored),
+                this.isWatchable(filters.isWatchable),
                 this.byBan(filters.banInRussia)
             ]
                 .flat()
