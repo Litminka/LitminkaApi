@@ -9,13 +9,11 @@ import { queryIntValidator } from '@/validators/QueryBaseValidator';
 import { baseMsg, searchMsg } from '@/ts/messages';
 import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from '@enums';
 import { ValidationChain } from 'express-validator';
-import { Request as ExpressRequest } from 'express';
 import { isSeason } from '@/helper/animeseason';
-import FrontPageAnimeRequest, { FrontPageAnimeReq } from '@requests/anime/FrontPageAnimeRequest';
+import OptionalRequest from '../OptionalRequest';
 
-type queryType = ExpressRequest<object, object, object, object>; // workaround on query
-export interface GetAnimeReq extends queryType, FrontPageAnimeReq {
-    body: {
+export default class GetAnimeRequest extends OptionalRequest {
+    public body!: {
         name?: string;
         seasons?: string[];
         statuses?: AnimeStatuses[];
@@ -27,13 +25,11 @@ export interface GetAnimeReq extends queryType, FrontPageAnimeReq {
         withCensored: boolean;
         banInRussia: boolean;
     };
-    query: {
+    public query!: {
         page: number;
         pageLimit: number;
     };
-}
 
-export class GetAnimeRequest extends FrontPageAnimeRequest {
     /**
      * Define validation rules for this request
      */
@@ -92,3 +88,5 @@ export class GetAnimeRequest extends FrontPageAnimeRequest {
         ];
     }
 }
+
+export const getAnimeReq = new GetAnimeRequest().send();

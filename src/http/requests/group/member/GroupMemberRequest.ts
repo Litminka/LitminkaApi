@@ -1,14 +1,12 @@
 import { ValidationChain } from 'express-validator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
-export interface GroupMemberReq extends AuthReq {
-    params: {
+export default class GroupMemberRequest extends AuthRequest {
+    public params!: {
         groupId: number;
     };
-}
 
-export class GroupMemberRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -16,3 +14,5 @@ export class GroupMemberRequest extends AuthRequest {
         return [paramIntValidator('groupId')];
     }
 }
+
+export const groupMemberReq = new GroupMemberRequest().send();

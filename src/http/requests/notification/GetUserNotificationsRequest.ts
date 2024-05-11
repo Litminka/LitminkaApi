@@ -1,16 +1,14 @@
 import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
 import { bodySoftPeriodValidator } from '@/validators/BodyPeriodValidator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
 
-export interface GetUserNotificationsReq extends AuthReq {
-    body: {
+export default class GetUserNotificationsRequest extends AuthRequest {
+    public body!: {
         period: Date[];
         isRead: boolean;
     };
-}
 
-export class GetUserNotificationsRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -18,3 +16,5 @@ export class GetUserNotificationsRequest extends AuthRequest {
         return [...bodySoftPeriodValidator('period'), bodyBoolValidator('isRead')];
     }
 }
+
+export const getUserNotificationsReq = new GetUserNotificationsRequest().send();

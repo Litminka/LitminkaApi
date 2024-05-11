@@ -1,25 +1,13 @@
 import { ValidationChain } from 'express-validator';
 import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
-import { OptionalReq, OptionalRequest } from '@requests/OptionalRequest';
+import OptionalRequest from '@requests/OptionalRequest';
 import prisma from '@/db';
-import { Permission, Role, User } from '@prisma/client';
-
-export interface FrontPageAnimeReq extends OptionalReq {
-    auth?: {
-        user: User & {
-            role: Role & {
-                permissions: Permission[];
-            };
-        };
-        id: number;
-        token: string;
-    };
-    body: {
-        withCensored: boolean;
-    };
-}
 
 export default class FrontPageAnimeRequest extends OptionalRequest {
+    public body!: {
+        withCensored: boolean;
+    };
+
     /**
      *  if authType is not None
      *  Define prisma user request for this method
@@ -27,7 +15,7 @@ export default class FrontPageAnimeRequest extends OptionalRequest {
      *  @returns Prisma User Variant
      */
 
-    protected async auth(userId: number) {
+    public async getUser(userId: number) {
         return await prisma.user.findUserByIdWithRolePermission(userId);
     }
 
@@ -38,3 +26,5 @@ export default class FrontPageAnimeRequest extends OptionalRequest {
         return [bodyBoolValidator('withCensored', { defValue: false })];
     }
 }
+
+export const frontPageAnimeReq = new FrontPageAnimeRequest().send();

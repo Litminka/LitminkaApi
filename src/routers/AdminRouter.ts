@@ -1,14 +1,11 @@
 import { Router } from 'express';
-import { wrap } from '@/middleware/errorHandler';
 import AnimeController from '@controllers/anime/AnimeController';
-import { BanAnimeRequest } from '@requests/anime/BanAnimeRequest';
+import { banAnimeReq } from '@requests/anime/BanAnimeRequest';
+import { wrap } from '@/middleware/errorHandler';
+
 const router = Router();
 
-router.post('/anime/:animeId/ban', new BanAnimeRequest().send(), wrap(AnimeController.banAnime));
-router.delete(
-    '/anime/:animeId/ban',
-    new BanAnimeRequest().send(),
-    wrap(AnimeController.unBanAnime)
-);
+router.post('/anime/:animeId/ban', banAnimeReq, wrap(AnimeController.banAnime));
+router.delete('/anime/:animeId/ban', banAnimeReq, wrap(AnimeController.unBanAnime));
 
 export { router as adminRouter };

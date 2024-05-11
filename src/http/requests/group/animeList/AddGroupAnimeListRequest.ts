@@ -1,7 +1,7 @@
 import prisma from '@/db';
 import { ValidationChain } from 'express-validator';
 import { minmax } from '@/ts';
-import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
+import GroupRequest from '@requests/group/GroupRequest';
 import { WatchListStatuses } from '@enums';
 import {
     bodyStringValidator,
@@ -10,20 +10,18 @@ import {
 } from '@/validators/BodyBaseValidator';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
-export interface AddGroupAnimeListReq extends GroupReq {
-    params: {
+export default class AddGroupAnimeListRequest extends GroupRequest {
+    public params!: {
         groupId: number;
         animeId: number;
     };
-    body: {
+    public body!: {
         status: WatchListStatuses;
         watchedEpisodes: number;
         rating: number;
         isFavorite: boolean;
     };
-}
 
-export class AddGroupAnimeListRequest extends GroupRequest {
     /**
      * Define validation rules for this request
      */
@@ -45,3 +43,5 @@ export class AddGroupAnimeListRequest extends GroupRequest {
         ];
     }
 }
+
+export const addGroupAnimeListReq = new AddGroupAnimeListRequest().send();

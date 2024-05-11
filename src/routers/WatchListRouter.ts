@@ -1,21 +1,18 @@
 import { Router } from 'express';
 import WatchListController from '@controllers/WatchListController';
 import { wrap } from '@/middleware/errorHandler';
-import { AddToWatchListRequest } from '@requests/watchList/AddToWatchListRequest';
-import { EditWatchListRequest } from '@requests/watchList/EditWatchListRequest';
-import { DeleteFromWatchListRequest } from '@requests/watchList/DeleteFromWatchListRequest';
-import { GetWatchListRequest } from '@requests/watchList/GetWatchListRequest';
-import { IntegrationRequest } from '@requests/IntegrationRequest';
+import { addToWatchListReq } from '@requests/watchList/AddToWatchListRequest';
+import { editWatchListReq } from '@requests/watchList/EditWatchListRequest';
+import { deleteFromWatchListReq } from '@requests/watchList/DeleteFromWatchListRequest';
+import { getWatchListReq } from '@requests/watchList/GetWatchListRequest';
+import { integrationReq } from '@requests/IntegrationRequest';
+
 const router = Router();
 
-// Private methods
-router.get('/', new GetWatchListRequest().send(), wrap(WatchListController.get));
-router.post('/import', new IntegrationRequest().send(), wrap(WatchListController.startImport));
-router.post('/:animeId', new AddToWatchListRequest().send(), wrap(WatchListController.add));
-router.patch('/:animeId', new EditWatchListRequest().send(), wrap(WatchListController.update));
-router.delete(
-    '/:animeId',
-    new DeleteFromWatchListRequest().send(),
-    wrap(WatchListController.delete)
-);
+router.get('/', getWatchListReq, wrap(WatchListController.get));
+router.post('/import', integrationReq, wrap(WatchListController.startImport));
+router.post('/:animeId', addToWatchListReq, wrap(WatchListController.add));
+router.patch('/:animeId', editWatchListReq, wrap(WatchListController.update));
+router.delete('/:animeId', deleteFromWatchListReq, wrap(WatchListController.delete));
+
 export { router as watchListRouter };

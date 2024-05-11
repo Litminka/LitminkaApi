@@ -1,21 +1,18 @@
 import Request from '@requests/Request';
-import { Request as ExpressRequest } from 'express';
 import { registrationMsg } from '@/ts/messages';
 import { ValidationChain } from 'express-validator';
 import prisma from '@/db';
 import { bodyStringValidator } from '@/validators/BodyBaseValidator';
 
-export interface RegisterUserReq extends ExpressRequest {
-    body: {
+export default class RegisterUserRequest extends Request {
+    public body!: {
         login: string;
         email: string;
         name: string;
         password: string;
         passwordConfirm: string;
     };
-}
 
-export class RegisterUserRequest extends Request {
     /**
      * Define validation rules for this request
      */
@@ -54,3 +51,5 @@ export class RegisterUserRequest extends Request {
         ];
     }
 }
+
+export const registerUserReq = new RegisterUserRequest().send();

@@ -1,14 +1,12 @@
 import { bodyArrayValidator, bodyIntValidator } from '@/validators/BodyBaseValidator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
 
-export interface ReadNotificationsReq extends AuthReq {
-    body: {
+export default class ReadNotificationsRequest extends AuthRequest {
+    public body!: {
         id?: number[];
     };
-}
 
-export class ReadNotificationsRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -16,3 +14,5 @@ export class ReadNotificationsRequest extends AuthRequest {
         return [bodyArrayValidator('id').optional(), bodyIntValidator('id.*')];
     }
 }
+
+export const readNotificationsReq = new ReadNotificationsRequest().send();

@@ -4,10 +4,10 @@ import {
     bodyIntValidator,
     bodyStringValidator
 } from '@/validators/BodyBaseValidator';
-import { IntegrationReq, IntegrationRequest } from '@requests/IntegrationRequest';
+import IntegrationRequest from '@requests/IntegrationRequest';
 
-export interface UpdateSettingsReq extends IntegrationReq {
-    body: {
+export default class UpdateSettingsRequest extends IntegrationRequest {
+    public body!: {
         siteTheme?: string;
         watchListMode?: string;
         watchListAddAfterEpisodes?: number;
@@ -19,9 +19,7 @@ export interface UpdateSettingsReq extends IntegrationReq {
         notifyVK?: boolean;
         notifyPush?: boolean;
     };
-}
 
-export class UpdateSettingsRequest extends IntegrationRequest {
     /**
      * Define validation rules for this request
      */
@@ -40,3 +38,5 @@ export class UpdateSettingsRequest extends IntegrationRequest {
         ];
     }
 }
+
+export const updateSettingsReq = new UpdateSettingsRequest().send();

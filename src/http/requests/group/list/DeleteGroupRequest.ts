@@ -1,14 +1,12 @@
 import { ValidationChain } from 'express-validator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@/http/requests/AuthRequest';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
-export interface DeleteGroupReq extends AuthReq {
-    params: {
+export default class DeleteGroupRequest extends AuthRequest {
+    public params!: {
         groupId: number;
     };
-}
 
-export class DeleteGroupRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -16,3 +14,5 @@ export class DeleteGroupRequest extends AuthRequest {
         return [paramIntValidator('groupId')];
     }
 }
+
+export const deleteGroupReq = new DeleteGroupRequest().send();

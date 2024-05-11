@@ -1,16 +1,13 @@
 import { ValidationChain } from 'express-validator';
 import prisma from '@/db';
-import { GroupReq, GroupRequest } from '@requests/group/GroupRequest';
+import GroupRequest from '@requests/group/GroupRequest';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 
-export interface DeleteGroupAnimeListReq extends GroupReq {
-    params: {
+export default class DeleteGroupAnimeListRequest extends GroupRequest {
+    public params!: {
         animeId: number;
         groupId: number;
     };
-}
-
-export class DeleteGroupAnimeListRequest extends GroupRequest {
     /**
      * Define validation rules for this request
      */
@@ -26,3 +23,5 @@ export class DeleteGroupAnimeListRequest extends GroupRequest {
         ];
     }
 }
+
+export const deleteGroupAnimeListReq = new DeleteGroupAnimeListRequest().send();

@@ -1,21 +1,24 @@
 import { ValidationChain } from 'express-validator';
-import { OptionalReq, OptionalRequest } from '@requests/OptionalRequest';
 import prisma from '@/db';
+import OptionalRequest from '@requests/OptionalRequest';
 
-export interface StubReq extends OptionalReq {}
-
-export class StubRequest extends OptionalRequest {
+export default class StubRequest extends OptionalRequest {
     /**
      * Define permissions for this request
      */
-    protected permissions: string[] = [];
+    protected permissions = [];
+
+    public body: {};
+    public query: {};
+    public params: {};
 
     /**
+     *  if authType is not None
      *  Define prisma user request for this method
      *
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number) {}
+    public async getUser(userId: number) {}
 
     /**
      * Define validation rules for this request
@@ -24,3 +27,5 @@ export class StubRequest extends OptionalRequest {
         return [];
     }
 }
+
+export const StubReq = new StubRequest().send();

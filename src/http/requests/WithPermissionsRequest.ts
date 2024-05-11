@@ -1,22 +1,16 @@
 import prisma from '@/db';
-import { UserWithPermissions } from '@/ts/user';
-import { AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 
-export interface WithPermissionsReq {
-    auth: {
-        user: UserWithPermissions;
-        id: number;
-    };
-}
-
-export class WithPermissionsRequest extends AuthRequest {
+export default class WithPermissionsRequest extends AuthRequest {
     /**
      *  if authType is not None
      *  Define prisma user request for this method
      *
      *  @returns Prisma User Variant
      */
-    protected async auth(userId: number): Promise<any> {
-        return await prisma.user.findUserByIdWithRolePermission(userId);
+    public async getUser(userId: number) {
+        return await prisma.user.findUserByIdWithIntegration(userId);
     }
 }
+
+export const withPermissionsReq = new WithPermissionsRequest().send();

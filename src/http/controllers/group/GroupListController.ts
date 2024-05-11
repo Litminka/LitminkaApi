@@ -1,22 +1,22 @@
 import { Response } from 'express';
 import { RequestStatuses } from '@enums';
 import GroupListService from '@services/group/GroupListService';
-import { AuthReq } from '@requests/AuthRequest';
-import { CreateGroupReq } from '@requests/group/list/CreateGroupRequest';
-import { DeleteGroupReq } from '@requests/group/list/DeleteGroupRequest';
-import { UpdateGroupReq } from '@requests/group/list/UpdateGroupRequest';
+import AuthRequest from '@requests/AuthRequest';
+import CreateGroupRequest from '@requests/group/list/CreateGroupRequest';
+import DeleteGroupRequest from '@requests/group/list/DeleteGroupRequest';
+import UpdateGroupRequest from '@requests/group/list/UpdateGroupRequest';
 
 export default class GroupListController {
-    public static async getOwnedGroups(req: AuthReq, res: Response) {
-        const user = req.auth.user;
+    public static async getOwnedGroups(req: AuthRequest, res: Response) {
+        const user = req.user;
 
         const result = await GroupListService.getOwnedGroups(user.id);
 
         return res.status(RequestStatuses.OK).json({ body: result });
     }
 
-    public static async createGroup(req: CreateGroupReq, res: Response) {
-        const user = req.auth.user;
+    public static async createGroup(req: CreateGroupRequest, res: Response) {
+        const user = req.user;
         const { description, name } = req.body;
 
         const result = await GroupListService.createGroup({
@@ -28,8 +28,8 @@ export default class GroupListController {
         return res.status(RequestStatuses.Created).json({ body: result });
     }
 
-    public static async deleteGroup(req: DeleteGroupReq, res: Response) {
-        const user = req.auth.user;
+    public static async deleteGroup(req: DeleteGroupRequest, res: Response) {
+        const user = req.user;
         const groupId = req.params.groupId as unknown as number;
 
         await GroupListService.deleteGroup(groupId, user.id);
@@ -37,8 +37,8 @@ export default class GroupListController {
         return res.status(RequestStatuses.Accepted);
     }
 
-    public static async updateGroup(req: UpdateGroupReq, res: Response) {
-        const user = req.auth.user;
+    public static async updateGroup(req: UpdateGroupRequest, res: Response) {
+        const user = req.user;
         const groupId = req.params.groupId;
         const { description, name } = req.body;
 

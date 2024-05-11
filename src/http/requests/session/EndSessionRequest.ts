@@ -1,15 +1,13 @@
 import { tokenMsg } from '@/ts/messages';
 import { bodyArrayValidator, bodyUUIDValidator } from '@/validators/BodyBaseValidator';
-import { AuthReq, AuthRequest } from '@requests/AuthRequest';
+import AuthRequest from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
 
-export interface EndSessionReq extends AuthReq {
-    body: {
+export default class EndSessionRequest extends AuthRequest {
+    public body!: {
         sessions?: string[];
     };
-}
 
-export class EndSessionRequest extends AuthRequest {
     /**
      * Define validation rules for this request
      */
@@ -24,3 +22,5 @@ export class EndSessionRequest extends AuthRequest {
         ];
     }
 }
+
+export const endSessionReq = new EndSessionRequest().send();

@@ -50,7 +50,7 @@ export default class TokenService {
     public static signTokens(user: UserWithPermissions, sessionToken: string): SignedTokens {
         const signObject = {
             id: user.id,
-            bot: user.role.permissions.some((perm) => {
+            bot: user.role!.permissions.some((perm) => {
                 return perm.name == Permissions.ApiServiceBot;
             }),
             token: sessionToken

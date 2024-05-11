@@ -1,16 +1,25 @@
 import { Permissions } from '@enums';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
 import { ValidationChain } from 'express-validator';
-import { WithPermissionsRequest } from '@requests/WithPermissionsRequest';
+import prisma from '@/db';
+import AuthRequest from '@requests/AuthRequest';
 
-export interface BanAnimeReq extends WithPermissionsRequest {
-    params: {
+export default class BanAnimeRequest extends AuthRequest {
+    protected permissions = [Permissions.ManageAnime];
+
+    public params!: {
         animeId: number;
     };
-}
 
-export class BanAnimeRequest extends WithPermissionsRequest {
-    protected permissions: Permissions[] = [Permissions.ManageAnime];
+    /**
+     *  if authType is not None
+     *  Define prisma user request for this method
+     *
+     *  @returns Prisma User Variant
+     */
+    public async getUser(userId: number) {
+        return await prisma.user.findUserByIdWithIntegration(userId);
+    }
 
     /**
      * Define validation rules for this request
@@ -19,3 +28,5 @@ export class BanAnimeRequest extends WithPermissionsRequest {
         return [paramIntValidator('animeId')];
     }
 }
+
+export const banAnimeReq = new BanAnimeRequest().send();
