@@ -236,7 +236,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
     }
 
     static async updateRating() {
-        prisma.animeList.count();
+        logger.info('Starting rating update');
         const avgByAll = await prisma.anime.aggregate({
             _avg: {
                 shikimoriRating: true
@@ -245,16 +245,22 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 shikimoriRating: { not: 0 }
             }
         });
+        logger.info(`Average by all with shikimori rating: ${avgByAll._avg.shikimoriRating}`);
 
         const avgByTitle = await prisma.animeList.groupBy({
             by: 'animeId',
             _avg: { rating: true },
             where: { rating: { not: 0 } }
         });
+        logger.info(`Average by title records: ${avgByTitle.length}`);
 
         const splitedAvgByTitle = groupArrSplice(avgByTitle, 50);
+        logger.info(`Average by title batches: ${splitedAvgByTitle.length}`);
 
+        let batchCount = 0;
         for (const pack of splitedAvgByTitle) {
+            batchCount++;
+            logger.info(`Batch ${batchCount} with 50 records`);
             for (const anime of pack) {
                 const ratings = await prisma.animeList.groupBy({
                     by: 'rating',
@@ -264,6 +270,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     },
                     _count: { _all: true }
                 });
+
                 const ratingsCount = (() => {
                     let count = 0;
                     for (const rate of ratings) {
@@ -271,10 +278,12 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                     }
                     return count;
                 })();
+
                 const rating =
                     (anime._avg.rating! * ratingsCount +
                         avgByAll._avg.shikimoriRating! * config.ratingMinVotes) /
                     (ratingsCount + config.ratingMinVotes);
+
                 await prisma.anime.update({
                     where: { id: anime.animeId },
                     data: { rating: Number(rating.toFixed(2)) }
@@ -282,6 +291,8 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             }
             await sleep(1000);
         }
+
+        logger.info(`Rating update complete`);
     }
 
     static async updateRelations() {
