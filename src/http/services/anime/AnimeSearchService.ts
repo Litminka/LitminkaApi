@@ -14,8 +14,9 @@ export interface AnimeFilterBody {
     mediaTypes?: string[];
     seasons?: string[];
     period?: Date[];
-    withCensored: boolean;
     banInRussia?: boolean;
+    withCensored: boolean;
+    isWatchable: boolean;
 }
 
 export default class AnimeSearchService {
@@ -63,6 +64,10 @@ export default class AnimeSearchService {
         return !arg ? { censored: arg } : undefined;
     }
 
+    private static isWatchable(arg?: boolean) {
+        return arg ? { kodikLink: { not: null } } : undefined;
+    }
+
     private static byPeriod(arg?: Date[]) {
         if (arg === undefined || arg.length < 1) return [];
         const period = ((arg?: Date[] | string[]) => {
@@ -101,6 +106,7 @@ export default class AnimeSearchService {
                 this.byName(filters.name),
                 this.bySeasons(filters.seasons),
                 this.isCensored(filters.withCensored),
+                this.isWatchable(filters.isWatchable),
                 this.byBan(filters.banInRussia)
             ]
                 .flat()
@@ -118,6 +124,7 @@ export default class AnimeSearchService {
                     })
                 };
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } satisfies Record<string, (...args: any) => Prisma.AnimeWhereInput>;
         return filter();
     }
@@ -132,7 +139,11 @@ export default class AnimeSearchService {
         return anime._count.id;
     }
 
-    public static async filterSelector(filters: AnimeFilterBody, query: PaginationQuery) {
+    public static async filterSelector(
+        filters: AnimeFilterBody,
+        query: PaginationQuery,
+        order?: Prisma.AnimeFindManyArgs['orderBy']
+    ) {
         return await prisma.anime.findMany({
             take: query.pageLimit,
             skip: (query.page - 1) * query.pageLimit,
@@ -152,7 +163,8 @@ export default class AnimeSearchService {
                 image: true,
                 mediaType: true,
                 description: true
-            }
+            },
+            orderBy: order
         });
     }
 

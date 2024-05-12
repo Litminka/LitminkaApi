@@ -1,5 +1,4 @@
 import prisma from '@/db';
-import { Prisma } from '@prisma/client';
 import AnimeSearchService from '@services/anime/AnimeSearchService';
 import { AnimePgaRatings } from '@enums';
 import { getCurrentSeason, getNextSeason } from '@/helper/animeseason';
@@ -21,18 +20,31 @@ export default class AnimeService {
         });
     }
 
-    public static async getTopAnime(shikimori: boolean) {
-        const query: Prisma.AnimeFindManyArgs = { take: 100 };
-        query.orderBy = { rating: 'desc' };
-        if (shikimori) {
-            query.orderBy = { shikimoriRating: 'desc' };
-        }
-        return await prisma.anime.findMany(query);
-    }
-
-    public static async getSeasonal(censor: boolean, showBanned: boolean) {
+    public static async getTopAnime(censor: boolean, showBanned: boolean, shikimori: boolean) {
         return AnimeSearchService.filterShortSelector(
             {
+                isWatchable: true,
+                withCensored: censor,
+                banInRussia: showBanned,
+                rpaRatings:
+                    !censor ?
+                        [
+                            AnimePgaRatings.None,
+                            AnimePgaRatings.G,
+                            AnimePgaRatings.PG,
+                            AnimePgaRatings.PG_13
+                        ]
+                    :   undefined
+            },
+            { page: 1, pageLimit: 100 },
+            shikimori ? { shikimoriRating: 'desc' } : { rating: 'desc' }
+        );
+    }
+
+    public static async getSeasonal(censor: boolean, watchable: boolean, showBanned: boolean) {
+        return AnimeSearchService.filterShortSelector(
+            {
+                isWatchable: watchable,
                 withCensored: censor,
                 seasons: [getCurrentSeason()],
                 banInRussia: showBanned,
@@ -50,9 +62,14 @@ export default class AnimeService {
         );
     }
 
-    public static async getPopularSeasonal(censor: boolean, showBanned: boolean) {
+    public static async getPopularSeasonal(
+        censor: boolean,
+        watchable: boolean,
+        showBanned: boolean
+    ) {
         return AnimeSearchService.filterShortSelector(
             {
+                isWatchable: watchable,
                 withCensored: censor,
                 seasons: [getCurrentSeason()],
                 banInRussia: showBanned,
@@ -71,9 +88,14 @@ export default class AnimeService {
         );
     }
 
-    public static async getNextSeasonAnnounced(censor: boolean, showBanned: boolean) {
+    public static async getNextSeasonAnnounced(
+        censor: boolean,
+        watchable: boolean,
+        showBanned: boolean
+    ) {
         return AnimeSearchService.filterShortSelector(
             {
+                isWatchable: watchable,
                 withCensored: censor,
                 seasons: [getNextSeason(new Date())],
                 statuses: ['announced'],

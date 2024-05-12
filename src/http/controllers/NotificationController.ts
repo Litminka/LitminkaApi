@@ -35,6 +35,6 @@ export default class NotificationController {
 
         await NotificationService.readNotifications(user.id, ids);
 
-        return res.status(RequestStatuses.Created);
+        return res.status(RequestStatuses.Created).json();
     }
 }

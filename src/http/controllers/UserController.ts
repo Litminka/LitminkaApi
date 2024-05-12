@@ -11,7 +11,7 @@ export default class UserController {
         const { email, login, password, name } = req.body;
         UserService.create({ email, login, password, name });
 
-        return res.status(RequestStatuses.Created);
+        return res.status(RequestStatuses.Created).json();
     }
 
     static async login(req: LoginUserRequest, res: Response) {

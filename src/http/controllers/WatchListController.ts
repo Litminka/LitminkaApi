@@ -42,7 +42,7 @@ export default class WatchListController {
 
         WatchListService.startImport(user);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     /**
@@ -89,6 +89,6 @@ export default class WatchListController {
         const animeId = req.params.animeId;
 
         await WatchListService.delete(user, animeId);
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 }

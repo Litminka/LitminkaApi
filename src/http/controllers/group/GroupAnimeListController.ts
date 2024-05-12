@@ -61,7 +61,7 @@ export default class GroupAnimeListController {
         data.animeId = animeId;
         await GroupAnimeListService.update({ data, groupId, userId: user.id });
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     public static async delete(req: DeleteGroupAnimeListRequest, res: Response) {
@@ -76,6 +76,6 @@ export default class GroupAnimeListController {
             userId: user.id
         });
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 }

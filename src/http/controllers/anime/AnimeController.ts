@@ -32,8 +32,7 @@ export default class AnimeController {
     public static async getAnime(req: GetAnimeRequest, res: Response) {
         const query = req.query;
         const body = req.body;
-        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
-        body.banInRussia = showBanned;
+        body.banInRussia = hasPermissions([Permissions.ManageAnime], req.user);
 
         const count = await AnimeSearchService.getFilteredCount(body);
         const anime = await AnimeSearchService.filterSelector(body, query);
@@ -48,7 +47,7 @@ export default class AnimeController {
 
         await AnimeService.banAnime(animeId);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     public static async unBanAnime(req: BanAnimeRequest, res: Response) {
@@ -56,40 +55,49 @@ export default class AnimeController {
 
         await AnimeService.unBanAnime(animeId);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 
     public static async getTopAnime(req: GetTopAnimeRequest, res: Response) {
+        const withCensored = req.body.withCensored;
         const shikimori = req.body.shikimori;
+        const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
-        const top = await AnimeService.getTopAnime(shikimori);
+        const anime = await AnimeService.getTopAnime(withCensored, showBanned, shikimori);
 
-        return res.status(RequestStatuses.OK).json({ body: top });
+        return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
     public static async getSeasonal(req: FrontPageAnimeRequest, res: Response) {
         const withCensored = req.body.withCensored;
+        const isWatchable = req.body.isWatchable;
         const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
-        const anime = await AnimeService.getSeasonal(withCensored, showBanned);
+        const anime = await AnimeService.getSeasonal(withCensored, isWatchable, showBanned);
 
         return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
     public static async getPopularSeasonal(req: FrontPageAnimeRequest, res: Response) {
         const withCensored = req.body.withCensored;
+        const isWatchable = req.body.isWatchable;
         const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
-        const anime = await AnimeService.getPopularSeasonal(withCensored, showBanned);
+        const anime = await AnimeService.getPopularSeasonal(withCensored, isWatchable, showBanned);
 
         return res.status(RequestStatuses.OK).json({ body: anime });
     }
 
     public static async getNextSeasonAnnounced(req: FrontPageAnimeRequest, res: Response) {
         const withCensored = req.body.withCensored;
+        const isWatchable = req.body.isWatchable;
         const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
-        const anime = await AnimeService.getNextSeasonAnnounced(withCensored, showBanned);
+        const anime = await AnimeService.getNextSeasonAnnounced(
+            withCensored,
+            isWatchable,
+            showBanned
+        );
 
         return res.status(RequestStatuses.OK).json({ body: anime });
     }

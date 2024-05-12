@@ -39,6 +39,6 @@ export default class TokenController {
 
         await TokenService.deleteTokens(user.id, token, sessions);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 }

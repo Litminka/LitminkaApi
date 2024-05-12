@@ -12,7 +12,7 @@ export default class FollowController {
 
         await FollowService.follow(animeId, user.id, type, groupName);
 
-        return res.status(RequestStatuses.Created);
+        return res.status(RequestStatuses.Created).json();
     }
 
     public static async unfollow(req: UnFollowAnimeRequest, res: Response) {
@@ -22,6 +22,6 @@ export default class FollowController {
 
         await FollowService.unfollow(animeId, user.id, groupName);
 
-        return res.status(RequestStatuses.Accepted);
+        return res.status(RequestStatuses.Accepted).json();
     }
 }
