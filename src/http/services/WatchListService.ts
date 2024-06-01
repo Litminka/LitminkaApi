@@ -335,7 +335,23 @@ export default class WatchListService {
             skip: (query.page - 1) * query.pageLimit,
             where: this.getFilters(userId, filters),
             include: {
-                anime: true
+                anime: {
+                    select: {
+                        id: true,
+                        slug: true,
+                        image: true,
+                        name: true,
+                        status: true,
+                        rpaRating: true,
+                        shikimoriId: true,
+                        rating: true,
+                        shikimoriRating: true,
+                        mediaType: true,
+                        currentEpisodes: true,
+                        maxEpisodes: true,
+                        season: true
+                    }
+                }
             }
         });
     }
