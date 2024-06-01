@@ -3,6 +3,7 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 function capitalize(string) {
+    if (typeof string === 'undefined') return null;
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -37,9 +38,8 @@ const args = parseArgs({
     allowPositionals: true,
     strict: true
 });
-
+console.log(args);
 const command = args.positionals[0];
-const fileName = capitalize(args.positionals[1]);
 if (!command) {
     return console.log(`
 An utility to create boiler plate files
@@ -52,6 +52,7 @@ make>command
     make:request <name>    - Creates a request          --auth (-a) Extends AuthRequest --optional(-o) Extends OptionalRequest
     `);
 }
+const fileName = capitalize(args.positionals[1]);
 if (!fileName) {
     return console.log('Error: No name specified');
 }

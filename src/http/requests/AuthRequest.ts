@@ -20,7 +20,7 @@ export default class AuthRequest extends Request {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserById(userId);
+        return await prisma.user.findUserWithoutPassword(userId);
     }
 }
 

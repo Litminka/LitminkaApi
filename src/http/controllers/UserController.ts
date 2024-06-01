@@ -5,6 +5,7 @@ import WithPermissionsRequest from '@requests/WithPermissionsRequest';
 import LoginUserRequest from '@requests/user/LoginUserRequest';
 import RegisterUserRequest from '@requests/user/RegisterUserRequest';
 import UpdateSettingsRequest from '@requests/user/UpdateSettingsRequest';
+import ProfileUserRequest from '../requests/ProfileUserRequest';
 
 export default class UserController {
     static async create(req: RegisterUserRequest, res: Response) {
@@ -30,7 +31,7 @@ export default class UserController {
         });
     }
 
-    static async getProfile(req: WithPermissionsRequest, res: Response) {
+    static async getProfile(req: ProfileUserRequest, res: Response) {
         const user = req.user;
 
         return res.status(RequestStatuses.OK).json({ body: user });
