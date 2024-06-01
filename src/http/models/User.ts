@@ -113,6 +113,37 @@ const extention = Prisma.defineExtension({
                     where: { id }
                 });
             },
+            async findUserProfile(id: number) {
+                return await prisma.user.findFirstOrThrow({
+                    where: { id },
+                    select: {
+                        id: true,
+                        email: true,
+                        login: true,
+                        name: true,
+                        createdAt: true,
+                        roleId: true,
+                        settings: true,
+                        integration: true,
+                        role: {
+                            include: { permissions: true }
+                        }
+                    }
+                });
+            },
+            async findUserWithoutPassword(id: number) {
+                return await prisma.user.findFirstOrThrow({
+                    where: { id },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        login: true,
+                        createdAt: true,
+                        roleId: true
+                    }
+                });
+            },
             async findUserWithOwnedGroups(id: number) {
                 return await prisma.user.findFirstOrThrow({
                     where: { id },
