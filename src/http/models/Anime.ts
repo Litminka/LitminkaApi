@@ -170,7 +170,12 @@ const extention = Prisma.defineExtension({
                             }
                         },
                         relations: true,
-                        follows: { where: { userId } },
+                        follows: {
+                            where: { userId },
+                            include: {
+                                translation: true
+                            }
+                        },
                         animeLists: { where: { userId } }
                     }
                 });
