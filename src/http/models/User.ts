@@ -124,7 +124,18 @@ const extention = Prisma.defineExtension({
                         createdAt: true,
                         roleId: true,
                         settings: true,
-                        integration: true,
+                        integration: {
+                            select: {
+                                discordId: true,
+                                id: true,
+                                shikimoriCanChangeList: true,
+                                shikimoriId: true,
+                                telegramId: true,
+                                vkId: true,
+                                user: true,
+                                userId: true
+                            }
+                        },
                         role: {
                             include: { permissions: true }
                         }
