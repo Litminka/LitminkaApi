@@ -3,6 +3,7 @@ import { NotifyStatuses } from '@enums';
 import prisma from '@/db';
 import Period from '@/helper/period';
 import dayjs from 'dayjs';
+import { Prisma } from '@prisma/client';
 
 export interface getUserNotifications {
     page: number;
@@ -85,8 +86,22 @@ export default class NotificationService {
         return this._notifyEpisode(notify);
     }
 
-    private static async _notifyUserEpisode(notify: UserNotification) {
-        return prisma.userAnimeNotifications.createUserAnimeNotifications(notify);
+    private static async _notifyUserEpisode({
+        userId,
+        animeId,
+        status,
+        groupId,
+        episode
+    }: UserNotification) {
+        return prisma.userAnimeNotifications.create({
+            data: {
+                userId,
+                animeId,
+                status,
+                groupId,
+                episode
+            }
+        });
     }
 
     private static async _notifyEpisode({ animeId, status, groupId, episode }: Notification) {
@@ -209,6 +224,18 @@ export default class NotificationService {
 
     public static async readNotifications(userId: number, ids?: number[]) {
         if (typeof ids === 'undefined') ids = [];
-        return prisma.userAnimeNotifications.readNotifications(ids, userId);
+        const query: Prisma.UserAnimeNotificationsUpdateManyArgs = {
+            where: {
+                userId
+            },
+            data: { isRead: true }
+        };
+
+        if (ids.length !== 0)
+            query.where = {
+                userId,
+                id: { in: ids }
+            };
+        return prisma.userAnimeNotifications.updateMany(query);
     }
 }
