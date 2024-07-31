@@ -7,6 +7,7 @@ import { shikimoriCheckQueue } from './queues';
 new Worker(
     'relationUpdate',
     async () => {
+        const started = Date.now();
         try {
             await AnimeUpdateService.updateRelations();
         } catch (error) {
@@ -14,8 +15,8 @@ new Worker(
             logger.error('relationUpdate Failed');
         }
 
-        logger.info('finished');
-        return 'finished';
+        const finished = Date.now();
+        logger.info(`Finished in: ${(finished - started) / 1000} seconds`);
     },
     {
         connection: {
