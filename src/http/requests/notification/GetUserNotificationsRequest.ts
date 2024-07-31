@@ -1,11 +1,11 @@
-import { bodyBoolValidator } from '@/validators/BodyBaseValidator';
-import { bodySoftPeriodValidator } from '@/validators/BodyPeriodValidator';
+import { queryBoolValidator, queryIntValidator } from '@/validators/QueryBaseValidator';
 import AuthRequest from '@requests/AuthRequest';
 import { ValidationChain } from 'express-validator';
 
 export default class GetUserNotificationsRequest extends AuthRequest {
-    public body!: {
-        period: Date[];
+    public query!: {
+        page: number;
+        pageLimit: number;
         isRead: boolean;
     };
 
@@ -13,7 +13,17 @@ export default class GetUserNotificationsRequest extends AuthRequest {
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-        return [...bodySoftPeriodValidator('period'), bodyBoolValidator('isRead')];
+        return [
+            queryIntValidator('page', {
+                defValue: 1,
+                typeParams: { min: 1 }
+            }),
+            queryIntValidator('pageLimit', {
+                defValue: 50,
+                typeParams: { min: 1, max: 125 }
+            }),
+            queryBoolValidator('isRead').optional()
+        ];
     }
 }
 

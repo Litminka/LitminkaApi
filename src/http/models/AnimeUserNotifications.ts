@@ -38,18 +38,6 @@ const extention = Prisma.defineExtension({
                         id: { in: ids }
                     };
                 return prisma.userAnimeNotifications.updateMany(query);
-            },
-            async getUserNotifications({ isRead = false, userId, period }: getUserNotifications) {
-                return prisma.userAnimeNotifications.findMany({
-                    where: {
-                        isRead,
-                        userId,
-                        createdAt: {
-                            lte: period[1],
-                            gte: period[0]
-                        }
-                    }
-                });
             }
         }
     }

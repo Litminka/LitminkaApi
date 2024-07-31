@@ -3,7 +3,6 @@ import { AnimeRelationExt } from '@models/AnimeRelations';
 import { FollowExt } from '@models/Follow';
 import { AnimeExt } from '@models/Anime';
 import { IntegrationExt } from '@models/Integration';
-import { AnimeNotificationExt } from '@models/AnimeNotificatons';
 import { UserNotificationExt } from '@models/AnimeUserNotifications';
 import { AnimeListExt } from '@models/AnimeList';
 import { SessionTokenExt } from '@models/SessionToken';
@@ -14,7 +13,6 @@ const prismaClientSingleton = () => {
     return new PrismaClient()
         .$extends(AnimeExt)
         .$extends(AnimeListExt)
-        .$extends(AnimeNotificationExt)
         .$extends(UserNotificationExt)
         .$extends(FollowExt)
         .$extends(IntegrationExt)

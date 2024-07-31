@@ -5,9 +5,15 @@ import Period from '@/helper/period';
 import dayjs from 'dayjs';
 
 export interface getUserNotifications {
-    period: Date[];
-    userId: number;
+    page: number;
+    pageLimit: number;
     isRead: boolean;
+}
+
+export interface getNotifications {
+    period: Date[];
+    page: number;
+    pageLimit: number;
 }
 
 export default class NotificationService {
@@ -83,28 +89,81 @@ export default class NotificationService {
         return prisma.userAnimeNotifications.createUserAnimeNotifications(notify);
     }
 
-    private static async _notifyEpisode(notify: Notification) {
-        return prisma.animeNotifications.createAnimeNotifications(notify);
-    }
-
-    public static async getUserNotifications({
-        isRead = false,
-        userId,
-        period
-    }: getUserNotifications) {
-        if (typeof period === 'undefined')
-            period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()];
-        return prisma.userAnimeNotifications.getUserNotifications({
-            isRead,
-            userId,
-            period: Period.getPeriod(period)
+    private static async _notifyEpisode({ animeId, status, groupId, episode }: Notification) {
+        return prisma.animeNotifications.create({
+            data: {
+                animeId,
+                status,
+                groupId,
+                episode
+            }
         });
     }
 
-    public static async getNotifications(period: Date[]) {
+    public static async getUserNotificationsCount(userId: number, isRead: boolean) {
+        const _count = await prisma.userAnimeNotifications.aggregate({
+            _count: {
+                id: true
+            },
+            where: {
+                userId,
+                isRead
+            }
+        });
+
+        return _count._count.id;
+    }
+
+    public static async getUserNotifications(
+        userId: number,
+        { isRead, page, pageLimit }: getUserNotifications
+    ) {
+        const count = await this.getUserNotificationsCount(userId, isRead);
+        const notifications = await prisma.userAnimeNotifications.findMany({
+            take: pageLimit,
+            skip: (page - 1) * pageLimit,
+            orderBy: { createdAt: 'asc' },
+            where: {
+                isRead,
+                userId
+            },
+            include: {
+                anime: {
+                    select: {
+                        slug: true,
+                        image: true,
+                        name: true
+                    }
+                },
+                group: {
+                    select: {
+                        name: true,
+                        type: true
+                    }
+                }
+            }
+        });
+
+        return {
+            count,
+            notifications
+        };
+    }
+
+    public static async getNotifications({ period, page, pageLimit }: getNotifications) {
         if (typeof period === 'undefined')
             period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()];
-        return prisma.animeNotifications.getNotifications(Period.getPeriod(period));
+        period = Period.getPeriod(period);
+        return prisma.animeNotifications.findMany({
+            take: pageLimit,
+            skip: (page - 1) * pageLimit,
+            where: {
+                createdAt: {
+                    gte: period[0],
+                    lte: period[1]
+                }
+            }
+        });
     }
 
     public static async readNotifications(userId: number, ids?: number[]) {

@@ -184,7 +184,7 @@ export const intValidator = ({ validator, typeParams = {} }: TypeIntValidator): 
  * @returns ValidationChain
  */
 export const boolValidator = ({ validator, typeParams }: TypeBoolValidator): ValidationChain => {
-    return validator.isBoolean(typeParams).withMessage(baseMsg.valueMustBeBool);
+    return validator.isBoolean(typeParams).toBoolean().withMessage(baseMsg.valueMustBeBool);
 };
 
 /**

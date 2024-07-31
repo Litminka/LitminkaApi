@@ -5,26 +5,46 @@ import { RequestStatuses } from '@enums';
 import GetUserNotificationsRequest from '@requests/notification/GetUserNotificationsRequest';
 import GetNotificationsRequest from '@requests/notification/GetNotificationsRequest';
 import ReadNotificationsRequest from '@requests/notification/ReadNotificationsRequest';
+import GetUserNotificationsCountRequest from '@requests/notification/GetUserNotificationsCountRequest';
 
 export default class NotificationController {
     public static async getUserNotifications(req: GetUserNotificationsRequest, res: Response) {
         const userId = req.user.id;
-        const isRead = req.body.isRead;
-        const period = req.body.period;
+        const isRead = req.query.isRead;
+        const page = req.query.page;
+        const pageLimit = req.query.pageLimit;
 
-        const notifications = await NotificationService.getUserNotifications({
-            isRead,
-            userId,
-            period
+        const notifications = await NotificationService.getUserNotifications(userId, {
+            page,
+            pageLimit,
+            isRead
         });
 
         return res.status(RequestStatuses.OK).json({ body: notifications });
     }
 
-    public static async getNotifications(req: GetNotificationsRequest, res: Response) {
-        const period = req.body.period;
+    public static async getUserNotificationsCount(
+        req: GetUserNotificationsCountRequest,
+        res: Response
+    ) {
+        const userId = req.user.id;
+        const isRead = req.query.isRead;
 
-        const notifications = await NotificationService.getNotifications(Period.getPeriod(period));
+        const count = await NotificationService.getUserNotificationsCount(userId, isRead);
+
+        return res.status(RequestStatuses.OK).json({ body: { count } });
+    }
+
+    public static async getNotifications(req: GetNotificationsRequest, res: Response) {
+        const period = Period.getPeriod(req.query.period);
+        const page = req.query.page;
+        const pageLimit = req.query.pageLimit;
+
+        const notifications = await NotificationService.getNotifications({
+            period,
+            page,
+            pageLimit
+        });
 
         return res.status(RequestStatuses.OK).json({ body: notifications });
     }

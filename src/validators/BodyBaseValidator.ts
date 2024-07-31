@@ -82,7 +82,7 @@ export const bodyIntValidator = (fieldName: string, options?: IntValidator): Val
  */
 export const bodyBoolValidator = (fieldName: string, options?: BoolValidator): ValidationChain => {
     const message = options?.message ?? baseMsg.valueMustBeBool;
-    const defValue = options?.defValue ?? 0;
+    const defValue = options?.defValue ?? false;
 
     return boolValidator({
         validator: body(fieldName, message).default(defValue),

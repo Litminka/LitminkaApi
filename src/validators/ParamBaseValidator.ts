@@ -19,7 +19,7 @@ export const paramIntValidator = (fieldName: string, options?: IntValidator): Va
 };
 
 /**
- * Validate required `string` body parameter.
+ * Validate required `string` param parameter.
  * @param fieldName Parameter name
  * @param typeParams Express [isLength()](https://express-validator.github.io/docs/api/validation-chain/#islength) options object. By default limited by 32 characters length.
  * @param message Error message for validation exceptions.
