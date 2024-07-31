@@ -114,6 +114,25 @@ export default class NotificationService {
         return _count._count.id;
     }
 
+    public static async getNotificationsCount(period: Date[]) {
+        if (typeof period === 'undefined')
+            period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()];
+        period = Period.getPeriod(period);
+        const _count = await prisma.userAnimeNotifications.aggregate({
+            _count: {
+                id: true
+            },
+            where: {
+                createdAt: {
+                    gte: period[0],
+                    lte: period[1]
+                }
+            }
+        });
+
+        return _count._count.id;
+    }
+
     public static async getUserNotifications(
         userId: number,
         { isRead, page, pageLimit }: getUserNotifications
@@ -154,7 +173,9 @@ export default class NotificationService {
         if (typeof period === 'undefined')
             period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()];
         period = Period.getPeriod(period);
-        return prisma.animeNotifications.findMany({
+
+        const count = await this.getNotificationsCount(period);
+        const notifications = prisma.animeNotifications.findMany({
             take: pageLimit,
             skip: (page - 1) * pageLimit,
             where: {
@@ -162,8 +183,28 @@ export default class NotificationService {
                     gte: period[0],
                     lte: period[1]
                 }
+            },
+            include: {
+                anime: {
+                    select: {
+                        slug: true,
+                        image: true,
+                        name: true
+                    }
+                },
+                group: {
+                    select: {
+                        name: true,
+                        type: true
+                    }
+                }
             }
         });
+
+        return {
+            count,
+            notifications
+        };
     }
 
     public static async readNotifications(userId: number, ids?: number[]) {

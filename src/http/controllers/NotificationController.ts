@@ -6,6 +6,7 @@ import GetUserNotificationsRequest from '@requests/notification/GetUserNotificat
 import GetNotificationsRequest from '@requests/notification/GetNotificationsRequest';
 import ReadNotificationsRequest from '@requests/notification/ReadNotificationsRequest';
 import GetUserNotificationsCountRequest from '@requests/notification/GetUserNotificationsCountRequest';
+import GetNotificationsCountRequest from '@requests/notification/GetNotificationsCountRequest';
 
 export default class NotificationController {
     public static async getUserNotifications(req: GetUserNotificationsRequest, res: Response) {
@@ -47,6 +48,14 @@ export default class NotificationController {
         });
 
         return res.status(RequestStatuses.OK).json({ body: notifications });
+    }
+
+    public static async getNotificationsCount(req: GetNotificationsCountRequest, res: Response) {
+        const period = req.query.period;
+
+        const count = await NotificationService.getNotificationsCount(period);
+
+        return res.status(RequestStatuses.OK).json({ body: { count } });
     }
 
     public static async readNotifications(req: ReadNotificationsRequest, res: Response) {
