@@ -12,6 +12,9 @@ export default class UpdateSettingsRequest extends IntegrationRequest {
         watchListMode?: string;
         watchListAddAfterEpisodes?: number;
         watchListAskAboutRating?: boolean;
+        watchListAutoAdd?: boolean;
+        watchListIgnoreOptionForLessEpisodes?: boolean;
+        watchListWatchedPercentage?: number;
         showCensoredContent?: boolean;
         shikimoriExportList?: boolean;
         notifyDiscord?: boolean;
@@ -27,7 +30,12 @@ export default class UpdateSettingsRequest extends IntegrationRequest {
         return [
             bodyStringValidator('watchListMode').isIn(['auto', 'manual']).optional(),
             bodyIntValidator('watchListAddAfterEpisodes').optional(),
+            bodyIntValidator('watchListWatchedPercentage', {
+                typeParams: { min: 0, max: 100 }
+            }).optional(),
             bodyBoolValidator('watchListAskAboutRating').optional(),
+            bodyBoolValidator('watchListAutoAdd').optional(),
+            bodyBoolValidator('watchListIgnoreOptionForLessEpisodes').optional(),
             bodyBoolValidator('showCensoredContent').optional(),
             bodyBoolValidator('shikimoriExportList').optional(),
             bodyBoolValidator('notifyDiscord').optional(),

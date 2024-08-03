@@ -29,19 +29,22 @@ model User {
 }
 
 model UserSettings {
-  id                        Int     @id @default(autoincrement())
-  watchListMode             String  @default("auto")
-  watchListAddAfterEpisodes Int     @default(3)
-  watchListAskAboutRating   Boolean @default(true)
-  showCensoredContent       Boolean @default(false)
-  notifyDiscord             Boolean @default(false)
-  notifyPush                Boolean @default(false)
-  notifyTelegram            Boolean @default(false)
-  notifyVK                  Boolean @default(false)
-  siteTheme                 String  @default("dark")
-  userId                    Int     @unique
-  shikimoriExportList       Boolean @default(false)
-  user                      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                                   Int     @id @default(autoincrement())
+  watchListMode                        String  @default("auto")
+  watchListAddAfterEpisodes            Int     @default(3)
+  watchListAskAboutRating              Boolean @default(true)
+  watchListIgnoreOptionForLessEpisodes Boolean @default(true)
+  watchListAutoAdd                     Boolean @default(true)
+  watchListWatchedPercentage           Int     @default(80)
+  showCensoredContent                  Boolean @default(false)
+  notifyDiscord                        Boolean @default(false)
+  notifyPush                           Boolean @default(false)
+  notifyTelegram                       Boolean @default(false)
+  notifyVK                             Boolean @default(false)
+  siteTheme                            String  @default("dark")
+  userId                               Int     @unique
+  shikimoriExportList                  Boolean @default(false)
+  user                                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Role {
