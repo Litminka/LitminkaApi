@@ -52,9 +52,9 @@ export default class AnimeSearchService {
         return arg !== undefined ?
                 {
                     OR: [
-                        { name: { contains: arg } },
-                        { englishName: { contains: arg } },
-                        { franchiseName: { contains: arg } }
+                        { name: { contains: arg, mode: Prisma.QueryMode.insensitive } },
+                        { englishName: { contains: arg, mode: Prisma.QueryMode.insensitive } },
+                        { franchiseName: { contains: arg, mode: Prisma.QueryMode.insensitive } }
                     ]
                 }
             :   [];
