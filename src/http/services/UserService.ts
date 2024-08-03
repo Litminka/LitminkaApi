@@ -14,6 +14,7 @@ interface UpdateSettings {
     watchListAutoAdd?: boolean;
     watchListIgnoreOptionForLessEpisodes?: boolean;
     watchListWatchedPercentage?: number;
+    watchListUnsubAfterDrop?: boolean;
     showCensoredContent?: boolean;
     shikimoriExportList?: boolean;
     notifyDiscord?: boolean;
@@ -64,7 +65,8 @@ export default class UserService {
             watchListAddAfterEpisodes,
             watchListAutoAdd,
             watchListIgnoreOptionForLessEpisodes,
-            watchListWatchedPercentage
+            watchListWatchedPercentage,
+            watchListUnsubAfterDrop
         } = data;
 
         const { notifyDiscord, notifyTelegram, notifyVK, notifyPush, shikimoriExportList } = data;

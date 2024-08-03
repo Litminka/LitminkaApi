@@ -35,6 +35,7 @@ model UserSettings {
   watchListAskAboutRating              Boolean @default(true)
   watchListIgnoreOptionForLessEpisodes Boolean @default(true)
   watchListAutoAdd                     Boolean @default(true)
+  watchListUnsubAfterDrop              Boolean @default(true)
   watchListWatchedPercentage           Int     @default(80)
   showCensoredContent                  Boolean @default(false)
   notifyDiscord                        Boolean @default(false)
