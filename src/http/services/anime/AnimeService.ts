@@ -88,14 +88,10 @@ export default class AnimeService {
         );
     }
 
-    public static async getNextSeasonAnnounced(
-        censor: boolean,
-        watchable: boolean,
-        showBanned: boolean
-    ) {
+    public static async getNextSeasonAnnounced(censor: boolean, showBanned: boolean) {
         return AnimeSearchService.filterShortSelector(
             {
-                isWatchable: watchable,
+                isWatchable: false,
                 withCensored: censor,
                 seasons: [getNextSeason(new Date())],
                 statuses: ['announced'],

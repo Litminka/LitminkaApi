@@ -51,7 +51,7 @@ export const getAnimeWithRelationsQuery = `query($ids: String) {
         } 
     }`;
 
-export const getAnimeBySeasonQuery = `query($season: SeasonString, $page: Int) { 
+export const getAnimeBySeasonQuery = `query($season: SeasonString, $page: PositiveInt) { 
     animes(season: $season, page: $page, limit: 50) {
         id 
         name 
@@ -77,7 +77,33 @@ export const getAnimeBySeasonQuery = `query($season: SeasonString, $page: Int) {
     }
 }`;
 
-export const getAnimeByPageQuery = `query($page: Int) { 
+export const getAnimeByStatusPageQuery = `query($page: PositiveInt, $status: AnimeStatusString) { 
+    animes(page: $page, status: $status, limit: 50) {
+        id 
+        name 
+        russian 
+        licenseNameRu
+        licensors 
+        english 
+        japanese 
+        kind 
+        rating 
+        score 
+        status 
+        episodes 
+        episodesAired 
+        airedOn { year month day date } 
+        releasedOn { year month day date } 
+        season 
+        isCensored 
+        description 
+        genres { id name russian kind } 
+        franchise 
+        poster { id originalUrl mainUrl } 
+    }
+}`;
+
+export const getAnimeByPageQuery = `query($page: PositiveInt) { 
     animes(page: $page, limit: 50) {
         id 
         name 

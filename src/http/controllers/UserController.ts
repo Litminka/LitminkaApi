@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { RequestStatuses } from '@enums';
 import UserService from '@services/UserService';
-import WithPermissionsRequest from '@requests/WithPermissionsRequest';
 import LoginUserRequest from '@requests/user/LoginUserRequest';
 import RegisterUserRequest from '@requests/user/RegisterUserRequest';
 import UpdateSettingsRequest from '@requests/user/UpdateSettingsRequest';

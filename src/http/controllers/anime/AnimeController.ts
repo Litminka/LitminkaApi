@@ -90,14 +90,9 @@ export default class AnimeController {
 
     public static async getNextSeasonAnnounced(req: FrontPageAnimeRequest, res: Response) {
         const withCensored = req.body.withCensored;
-        const isWatchable = req.body.isWatchable;
         const showBanned = hasPermissions([Permissions.ManageAnime], req.user);
 
-        const anime = await AnimeService.getNextSeasonAnnounced(
-            withCensored,
-            isWatchable,
-            showBanned
-        );
+        const anime = await AnimeService.getNextSeasonAnnounced(withCensored, showBanned);
 
         return res.status(RequestStatuses.OK).json({ body: anime });
     }

@@ -173,6 +173,24 @@ export default class AutoCheckService {
         return checkAnime;
     }
 
+    async getAnnounces(): Promise<ShikimoriGraphAnime[]> {
+        const user: undefined = undefined; // No user is required
+        const shikimoriApi = new ShikimoriApiService(user);
+        const checkAnime: ShikimoriGraphAnime[] = [];
+
+        let page = 1;
+        do {
+            const shikimoriAnimeRequest = await shikimoriApi.getGraphAnnouncesByPage(page);
+            const shikimoriAnime = shikimoriAnimeRequest.data.animes;
+
+            logger.info(`Getting announces from shikimori, page:${page}`);
+            checkAnime.push(...shikimoriAnime);
+            if (shikimoriAnime.length == 0 || shikimoriAnime.length < 50) break;
+            page += 1;
+        } while (true);
+        return checkAnime;
+    }
+
     async getAnime(ids: number[]) {
         const user: undefined = undefined; // No user is required
         const shikimoriApi = new ShikimoriApiService(user);

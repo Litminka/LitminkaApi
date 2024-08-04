@@ -12,6 +12,7 @@ import {
 import {
     getAnimeByPageQuery,
     getAnimeBySeasonQuery,
+    getAnimeByStatusPageQuery,
     getAnimeWithRelationsQuery,
     getAnimeWithoutRelationQuery,
     getGenresQuery
@@ -315,6 +316,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
             }
         });
     }
+
     /**
      * Get 50 anime by page and season
      * Note: if page is less than 1, it will be set to 1
@@ -333,6 +335,27 @@ export default class ShikimoriApiService implements iShikimoriApi {
             query,
             variables: {
                 season,
+                page // must be larger than zero or shikimori will throw 503 error
+            }
+        });
+    }
+
+    /**
+     * Get 50 anime by shikimori page
+     * Note: if page is less than 1, it will be set to 1
+     * @param page
+     * @returns ShikimoriGraphAnimeWithoutRelationRequest
+     */
+    public async getGraphAnnouncesByPage(
+        page: number
+    ): Promise<ShikimoriGraphAnimeWithoutRelationRequest> {
+        if (page < 1) page = 1;
+        const query = getAnimeByStatusPageQuery;
+        return this.makeRequest(`/graphql`, 'POST', false, {
+            operationName: null,
+            query,
+            variables: {
+                status: 'anons',
                 page // must be larger than zero or shikimori will throw 503 error
             }
         });

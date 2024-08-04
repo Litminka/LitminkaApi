@@ -71,7 +71,7 @@ new Worker(
         const followedAnime = await autoCheckService.getAnime(followIds);
         logger.info(`Got follows, amount: ${followedAnime.length}`);
 
-        const announcedAnime = await autoCheckService.getAnime(announcementsIds);
+        const announcedAnime = await autoCheckService.getAnnounces();
         logger.info(`Got announcements, amount: ${announcedAnime.length}`);
 
         logger.info(`Getting anime from kodik`);
@@ -88,6 +88,9 @@ new Worker(
         const ids = [
             ...followIds,
             ...announcementsIds,
+            ...announcedAnime.map((anime) => {
+                return Number(anime.id);
+            }),
             ...defaultAnime.map((anime) => {
                 return Number(anime.id);
             })
