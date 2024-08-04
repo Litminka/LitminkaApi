@@ -122,8 +122,8 @@ const extention = Prisma.defineExtension({
                         login: true,
                         name: true,
                         createdAt: true,
-                        roleId: true,
                         settings: true,
+                        roleId: true,
                         integration: {
                             select: {
                                 discordId: true,
@@ -131,9 +131,7 @@ const extention = Prisma.defineExtension({
                                 shikimoriCanChangeList: true,
                                 shikimoriId: true,
                                 telegramId: true,
-                                vkId: true,
-                                user: true,
-                                userId: true
+                                vkId: true
                             }
                         },
                         role: {
