@@ -1,16 +1,13 @@
 import { baseMsg } from '@/ts/messages';
 import { body, ValidationChain } from 'express-validator';
 import {
-    BaseValidator,
     intValidator,
     stringValidator,
     boolValidator,
     uuidValidator,
-    arrayValidator,
-    BoolValidator,
-    UUIDValidator,
-    IntValidator
+    arrayValidator
 } from '@/validators/BaseValidator';
+import { BaseValidator, BoolValidator, IntValidator, UUIDValidator } from '@/ts/baseValidator';
 
 // 🕷️: Why are we still here?
 // 🕷️: Just to suffer?

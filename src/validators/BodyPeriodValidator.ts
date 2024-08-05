@@ -1,17 +1,13 @@
 import { body, ValidationChain } from 'express-validator';
-import {
-    arrayValidator,
-    DateValidator,
-    dateValidator,
-    genMessage
-} from '@/validators/BaseValidator';
+import { arrayValidator, dateValidator, genMessage } from '@/validators/BaseValidator';
 import { baseMsg } from '@/ts/messages';
+import { DateValidator } from '@/ts/baseValidator';
 
 /**
  * Base period validator
  * @param fieldName Parameter name
- * @param typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
- * @param message Error message for validation exceptions.
+ * @param options.typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
+ * @param options.message Error message for validation exceptions.
  * @returns base date validation chain
  */
 const bodyDateValidator = (fieldName: string, options?: DateValidator): ValidationChain => {
@@ -26,8 +22,8 @@ const bodyDateValidator = (fieldName: string, options?: DateValidator): Validati
 /**
  * Validate required array[any] body parameter.
  * @param fieldName Parameter name
- * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object.
- * @param message Error message for validation exceptions.
+ * @param options.typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object.
+ * @param options.message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
 export const bodySoftPeriodValidator = (
@@ -56,8 +52,8 @@ export const bodySoftPeriodValidator = (
 /**
  * Validate required array[any] body parameter.
  * @param fieldName Parameter name
- * @param typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
- * @param message Error message for validation exceptions.
+ * @param options.typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
+ * @param options.message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
 export const bodyStrictPeriodValidator = (

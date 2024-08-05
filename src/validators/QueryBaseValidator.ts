@@ -2,13 +2,11 @@ import { ValidationChain, query } from 'express-validator';
 import { baseMsg } from '@/ts/messages';
 import {
     arrayValidator,
-    BoolValidator,
     boolValidator,
     dateValidator,
-    DateValidator,
     stringValidator
 } from '@/validators/BaseValidator';
-import { BaseValidator, IntValidator } from '@/validators/BaseValidator';
+import { BaseValidator, BoolValidator, DateValidator, IntValidator } from '@/ts/baseValidator';
 import { intValidator } from '@/validators/BaseValidator';
 
 interface QueryIntValidator extends IntValidator {
@@ -75,8 +73,8 @@ export const queryBoolValidator = (fieldName: string, options?: BoolValidator): 
 /**
  * Base query period validator
  * @param fieldName Parameter name
- * @param typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
- * @param message Error message for validation exceptions.
+ * @param options.typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
+ * @param options.message Error message for validation exceptions.
  * @returns base date validation chain
  */
 const queryDateValidator = (fieldName: string, options?: DateValidator): ValidationChain => {
@@ -91,8 +89,8 @@ const queryDateValidator = (fieldName: string, options?: DateValidator): Validat
 /**
  * Validate required array[any] query parameter.
  * @param fieldName Parameter name
- * @param typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object.
- * @param message Error message for validation exceptions.
+ * @param options.typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object.
+ * @param options.message Error message for validation exceptions.
  * @returns Array of ValidationChain
  */
 export const querySoftPeriodValidator = (
