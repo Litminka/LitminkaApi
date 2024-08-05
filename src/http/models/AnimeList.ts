@@ -111,7 +111,7 @@ const extention = Prisma.defineExtension({
             },
             async findWatchListEntry(userId: number, animeId: number) {
                 return await prisma.animeList.findFirst({
-                    where: { AND: { userId, animeId } }
+                    where: { userId, animeId }
                 });
             },
             async getListLengthByUserId(userId: number) {
