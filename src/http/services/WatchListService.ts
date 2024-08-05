@@ -256,68 +256,40 @@ export default class WatchListService {
             }
         }
         await prisma.animeRelation.createFromShikimoriMap(writeRelations);
-        await prisma.animeList.createWatchListEntries(user.id, shikimoriDBAnimeMap, watchList);
-    }
-
-    public static async add(
-        user: UserWithIntegrationSettings,
-        animeId: number,
-        addingParameters: AddToList
-    ) {
-        const animeListEntry = await prisma.animeList.findWatchListEntry(user.id, animeId);
-        const { shikimoriId } = await prisma.anime.findFirstOrThrow({
-            where: {
-                id: animeId
-            },
-            select: {
-                shikimoriId: true
-            }
-        });
-
-        if (animeListEntry) throw new BadRequestError('List entry with this anime already exists');
-
-        await prisma.animeList.addWatchListEntry(user.id, animeId, addingParameters);
-
-        ShikimoriListSyncService.createAddUpdateJob(user, {
-            animeId: shikimoriId,
-            episodes: addingParameters.watchedEpisodes,
-            status: addingParameters.status,
-            score: addingParameters.rating === 0 ? undefined : addingParameters.rating
-        });
-
-        return await prisma.animeList.findWatchListEntry(user.id, animeId);
+        await prisma.animeList.importShikimoriWatchlist(user.id, shikimoriDBAnimeMap, watchList);
     }
 
     public static async delete(user: UserWithIntegrationSettings, animeId: number) {
         const animeListEntry = await prisma.animeList.findWatchListEntry(user.id, animeId);
 
-        if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
-
-        if (animeListEntry.shikimoriId !== null) {
+        if (animeListEntry !== null && animeListEntry.shikimoriId !== null) {
             ShikimoriListSyncService.createDeleteJob(user, animeListEntry.shikimoriId);
         }
 
-        await prisma.animeList.removeWatchListEntry(user.id, animeId);
+        await prisma.animeList.deleteMany({
+            where: { userId: user.id, animeId }
+        });
     }
 
-    public static async update(
+    public static async edit(
         user: UserWithIntegrationSettings,
         animeId: number,
         editParameters: AddToList
     ) {
-        const animeListEntry = await prisma.animeList.findWatchListEntry(user.id, animeId);
-        const { shikimoriId } = await prisma.anime.findFirstOrThrow({
+        const { shikimoriId, maxEpisodes } = await prisma.anime.findFirstOrThrow({
             where: {
                 id: animeId
             },
             select: {
-                shikimoriId: true
+                shikimoriId: true,
+                maxEpisodes: true
             }
         });
 
-        if (!animeListEntry) throw new NotFoundError("List entry with this anime doesn't exists");
+        if (editParameters.watchedEpisodes > maxEpisodes)
+            editParameters.watchedEpisodes = maxEpisodes;
 
-        await prisma.animeList.updateWatchListEntry(user.id, animeId, editParameters);
+        await prisma.animeList.editWatchListEntry(user.id, animeId, editParameters);
 
         ShikimoriListSyncService.createAddUpdateJob(user, {
             animeId: shikimoriId,
