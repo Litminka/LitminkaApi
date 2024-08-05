@@ -21,13 +21,8 @@ export default class WatchListController {
         const query = req.query;
 
         const list = await WatchListService.get(userId, { statuses, ratings, isFavorite }, query);
-        const listCount = await WatchListService.getCount(userId, {
-            statuses,
-            ratings,
-            isFavorite
-        });
 
-        return res.status(RequestStatuses.OK).json({ count: listCount, body: list });
+        return res.status(RequestStatuses.OK).json({ body: list });
     }
 
     /**

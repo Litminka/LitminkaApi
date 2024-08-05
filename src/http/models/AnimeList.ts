@@ -2,13 +2,14 @@ import { Anime, Prisma } from '@prisma/client';
 import prisma from '@/db';
 import { AddToList } from '@/ts/watchList';
 import { ShikimoriWatchList } from '@/ts/shikimori';
+import WatchListService from '../services/WatchListService';
 
 const extention = Prisma.defineExtension({
     name: 'AnimeListModel',
     model: {
         animeList: {
             /**
-             * @deprecated prefer using createWatchListEntries instead
+             * @deprecated prefer using createEntriesFromShikimoriList instead
              * @param userId
              * @param dbAnime
              * @param watchList
@@ -34,6 +35,7 @@ const extention = Prisma.defineExtension({
                     })
                 });
             },
+
             /**
              *
              * @deprecated prefer using updateWatchListEntry
@@ -57,13 +59,14 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
+
             /**
              * Used for watchlist import from shikimori
              * @param userId
              * @param animeMap
              * @param watchList
              */
-            async importShikimoriWatchlist(
+            async createEntriesFromShikimoriList(
                 userId: number,
                 animeMap: Map<number, number>,
                 watchList: ShikimoriWatchList[]
@@ -82,9 +85,10 @@ const extention = Prisma.defineExtension({
                     })
                 });
             },
-            async editWatchListEntry(userId: number, animeId: number, parameters: AddToList) {
+
+            async upsertWatchlistEntry(userId: number, animeId: number, parameters: AddToList) {
                 const { isFavorite, rating, status, watchedEpisodes } = parameters as AddToList;
-                const animeListEntry = await prisma.animeList.findWatchListEntry(userId, animeId);
+                const animeListEntry = await WatchListService._findWatchlistEntry(userId, animeId);
 
                 if (animeListEntry) {
                     await prisma.animeList.updateMany({
@@ -108,20 +112,6 @@ const extention = Prisma.defineExtension({
                         }
                     });
                 }
-            },
-            async findWatchListEntry(userId: number, animeId: number) {
-                return await prisma.animeList.findFirst({
-                    where: { userId, animeId }
-                });
-            },
-            async getListLengthByUserId(userId: number) {
-                const list = await prisma.animeList.aggregate({
-                    where: { userId },
-                    _count: {
-                        id: true
-                    }
-                });
-                return list._count;
             }
         }
     }
