@@ -13,13 +13,14 @@ import {
 } from '@/ts/kodik';
 import { RequestStatuses } from '@enums';
 import { logger } from '@/loggerConf';
+import config from '@/config';
 
 export default class KodikApiService {
     baseurl = 'https://kodikapi.com';
 
     private async _requestFullAnime(shikimori_id: number): Promise<_KodikAnimeFullRequest> {
         const params = new URLSearchParams({
-            token: process.env.KODIK_API_KEY!,
+            token: config.kodikApiKey!,
             shikimori_id: shikimori_id.toString(),
             with_material_data: 'true'
         });
@@ -40,7 +41,7 @@ export default class KodikApiService {
 
     private async _requestAnime(shikimori_id: number): Promise<_KodikAnimeRequest> {
         const params = new URLSearchParams({
-            token: process.env.KODIK_API_KEY!,
+            token: config.kodikApiKey!,
             shikimori_id: shikimori_id.toString()
         });
         const response = await fetch(`${this.baseurl}/search`, {
@@ -167,7 +168,7 @@ export default class KodikApiService {
 
     async getGenres(): Promise<KodikGenresRequest> {
         const params = new URLSearchParams({
-            token: process.env.KODIK_API_KEY!,
+            token: config.kodikApiKey!,
             genres_type: 'shikimori',
             types: 'anime'
         });
@@ -185,7 +186,7 @@ export default class KodikApiService {
 
     async getTranslationGroups(): Promise<_translation[]> {
         const params = new URLSearchParams({
-            token: process.env.KODIK_API_KEY!,
+            token: config.kodikApiKey!,
             genres_type: 'shikimori'
         });
         const response = await fetch(`${this.baseurl}/translations`, {

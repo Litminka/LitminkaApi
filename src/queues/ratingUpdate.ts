@@ -1,8 +1,8 @@
 import { Worker } from 'bullmq';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { logger } from '@/loggerConf';
-import { config } from '@config';
 import { ratingUpdateQueue } from './queues';
+import config from '@/config';
 
 new Worker(
     'ratingUpdate',
@@ -16,8 +16,8 @@ new Worker(
     },
     {
         connection: {
-            host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT!)
+            host: config.redisHost,
+            port: parseInt(config.redisPort!)
         }
     }
 );

@@ -7,6 +7,7 @@ import { AnimeListExt } from '@models/AnimeList';
 import { SessionTokenExt } from '@models/SessionToken';
 import { ShikimoriLinkTokenExt } from '@models/ShikimoriLinkToken';
 import { UserExt } from '@models/User';
+import config from '@/config';
 
 const prismaClientSingleton = () => {
     return new PrismaClient()
@@ -26,6 +27,6 @@ declare global {
 }
 
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;
+if (config.runEnvironment !== 'production') globalThis.prismaGlobal = prisma;
 
 export default prisma;

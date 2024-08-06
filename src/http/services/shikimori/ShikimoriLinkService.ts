@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import prisma from '@/db';
 import BadRequestError from '@/errors/clienterrors/BadRequestError';
 import NotFoundError from '@/errors/clienterrors/NotFoundError';
+import config from '@/config';
 
 export default class ShikimoriLinkService {
     public static async link(token: string, code: string) {
@@ -51,6 +52,6 @@ export default class ShikimoriLinkService {
 
         const token: string = crypto.randomBytes(24).toString('hex');
         await prisma.shikimoriLinkToken.createShikimoriLinkTokenByUserId(token, user.id);
-        return `${process.env.APP_URL}/shikimori/link?token=${token}`;
+        return `${config.appUrl}/shikimori/link?token=${token}`;
     }
 }

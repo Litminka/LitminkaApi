@@ -5,6 +5,7 @@ import { RequestStatuses } from '@enums';
 import isBot from '@/helper/isBot';
 import prisma from '@/db';
 import { baseMsg, tokenMsg } from '@/ts/messages';
+import config from '@/config';
 
 export async function auth(req: RequestWithBot, res: Response, next: NextFunction) {
     const token = req.get('authorization');
@@ -13,7 +14,7 @@ export async function auth(req: RequestWithBot, res: Response, next: NextFunctio
             error: baseMsg.notProvided
         });
     const result = token.split(' ')[1];
-    jwt.verify(result, process.env.TOKEN_SECRET!, async function (err, decoded) {
+    jwt.verify(result, config.tokenSecret!, async function (err, decoded) {
         if (<any>err instanceof jwt.TokenExpiredError) {
             return res.status(RequestStatuses.Unauthorized).json({ error: tokenMsg.expired });
         }

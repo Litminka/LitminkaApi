@@ -5,12 +5,10 @@ node_modules
 .env
 .env.*
 !.env.example
-config.json
 nginx.conf
 nginx*.conf
 cert/
 coverage/
-src/config.ts
 .eslintcache
 
 # Require to build app

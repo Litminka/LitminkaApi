@@ -4,12 +4,13 @@ import { RequestWithBot } from '@/ts/index';
 import { RequestStatuses } from '@enums';
 import prisma from '@/db';
 import { tokenMsg } from '@/ts/messages';
+import config from '@/config';
 
 export async function optionalAuth(req: RequestWithBot, res: Response, next: NextFunction) {
     const token = req.get('authorization');
     if (!token) return next();
     const result = token.split(' ')[1];
-    jwt.verify(result, process.env.TOKEN_SECRET!, async function (err, decoded) {
+    jwt.verify(result, config.tokenSecret!, async function (err, decoded) {
         if (<any>err instanceof jwt.TokenExpiredError) {
             return res.status(RequestStatuses.Unauthorized).json({ error: tokenMsg.expired });
         }

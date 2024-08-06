@@ -1,8 +1,8 @@
 import { Worker } from 'bullmq';
 import { logger } from '@/loggerConf';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
-import { config } from '@config';
 import { shikimoriCheckQueue } from './queues';
+import config from '@config';
 
 new Worker(
     'relationUpdate',
@@ -20,8 +20,8 @@ new Worker(
     },
     {
         connection: {
-            host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT!)
+            host: config.redisHost,
+            port: parseInt(config.redisPort!)
         }
     }
 );

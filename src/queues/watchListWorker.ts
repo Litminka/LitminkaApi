@@ -1,6 +1,7 @@
 import { logger } from '@/loggerConf';
 import { Job, Worker } from 'bullmq';
 import WatchListService from '@services/WatchListService';
+import config from '@/config';
 
 new Worker(
     'importWatchList',
@@ -17,8 +18,8 @@ new Worker(
     },
     {
         connection: {
-            host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT!)
+            host: config.redisHost,
+            port: parseInt(config.redisPort!)
         }
     }
 );
