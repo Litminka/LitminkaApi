@@ -1,5 +1,6 @@
 import prisma from '@/db';
 import { RequestAuthTypes } from '@enums';
+import { Prisma } from '@prisma/client';
 import Request from '@requests/Request';
 
 export default class AuthRequest extends Request {
@@ -11,7 +12,7 @@ export default class AuthRequest extends Request {
         id: number;
         token: string;
     };
-    public user!: Awaited<ReturnType<this['getUser']>>;
+    public user!: Prisma.PromiseReturnType<this['getUser']>;
 
     /**
      *  if authType is not None
@@ -20,7 +21,7 @@ export default class AuthRequest extends Request {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserWithoutPassword(userId);
+        return await prisma.user.findUserById(userId, {});
     }
 }
 

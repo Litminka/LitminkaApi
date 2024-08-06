@@ -8,7 +8,10 @@ export default class IntegrationSettingsRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findWithIntegrationSettings(userId);
+        return await prisma.user.findUserById(userId, {
+            settings: true,
+            integration: true
+        });
     }
 }
 

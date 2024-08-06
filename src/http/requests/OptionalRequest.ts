@@ -1,5 +1,6 @@
 import prisma from '@/db';
 import { RequestAuthTypes } from '@enums';
+import { Prisma } from '@prisma/client';
 import Request from '@requests/Request';
 
 export default class OptionalRequest extends Request {
@@ -7,7 +8,8 @@ export default class OptionalRequest extends Request {
      * Define auth type for this request
      */
     protected authType = RequestAuthTypes.Optional;
-    public user: Awaited<ReturnType<this['getUser']>> | undefined;
+    public user?: Prisma.PromiseReturnType<this['getUser']>;
+
     /**
      *  if authType is not None
      *  Define prisma user request for this method
@@ -15,7 +17,13 @@ export default class OptionalRequest extends Request {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserById(userId);
+        return await prisma.user.findUserById(userId, {
+            role: {
+                include: {
+                    permissions: true
+                }
+            }
+        });
     }
 }
 

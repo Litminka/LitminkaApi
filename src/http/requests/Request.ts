@@ -8,13 +8,14 @@ import { optionalAuth } from '@/middleware/optionalAuth';
 import { validatorData } from '@/middleware/validatorData';
 import OptionalRequest from '@requests/OptionalRequest';
 import AuthRequest from '@requests/AuthRequest';
+import { Prisma } from '@prisma/client';
 
 interface BaseReq<T extends Request> {
     auth: {
         id?: number;
         token?: string;
     };
-    user?: Awaited<ReturnType<T['getUser']>>;
+    user?: Prisma.PromiseReturnType<T['getUser']>;
 }
 
 export default class Request implements BaseReq<Request> {
@@ -25,7 +26,7 @@ export default class Request implements BaseReq<Request> {
         id?: number;
         token?: string;
     };
-    public user?: Awaited<ReturnType<this['getUser']>>;
+    public user?: Prisma.PromiseReturnType<this['getUser']>;
     public body = {};
     public query = {};
     public params = {};

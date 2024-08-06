@@ -146,7 +146,10 @@ export default class WatchListService {
     }
 
     public static async import(id: number) {
-        const user = await prisma.user.findUserByIdWithIntegration(id);
+        const user = await prisma.user.findUserById(id, {
+            integration: true,
+            shikimoriLink: true
+        });
         const shikimoriApi = new ShikimoriApiService(user);
         const kodikApi = new KodikApiService();
 

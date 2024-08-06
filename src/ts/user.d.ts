@@ -1,22 +1,22 @@
 import { Integration, User, UserSettings, SessionToken } from '@prisma/client';
 import { RoleWithPermissions } from '@/ts/role';
 
-type UserWithoutPassword<U> = Omit<U, 'password'>;
+type UserWithoutPassword = Omit<User, 'password'>;
 
-export type UserWithIntegration = User & {
+export type UserWithIntegration = UserWithoutPassword & {
     integration: Integration | null;
 };
 
-export type UserWithIntegrationSettings = User & {
+export type UserWithIntegrationSettings = UserWithoutPassword & {
     integration: Integration | null;
     settings: UserSettings | null;
 };
 
-type UserWithTokens = User & {
+type UserWithTokens = UserWithoutPassword & {
     sessionTokens: SessionToken[];
 };
 
-export type UserWithPermissions = UserWithoutPassword<User> & {
+export type UserWithPermissions = UserWithoutPassword & {
     role?: RoleWithPermissions;
 };
 

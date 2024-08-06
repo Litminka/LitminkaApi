@@ -1,9 +1,10 @@
-import { GroupList, User } from '@prisma/client';
+import { GroupList } from '@prisma/client';
 import prisma from '@/db';
 import BaseError from '@/errors/BaseError';
 import { RequestStatuses } from '@enums';
+import { UserWithoutPassword } from '@/ts/user';
 
-type UserWithGroup = User & {
+type UserWithGroup = UserWithoutPassword & {
     ownedGroups: GroupList[];
 };
 

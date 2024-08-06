@@ -6,7 +6,10 @@ import { UserWithIntegrationSettings } from '@/ts/user';
 
 export default class ShikimoriListSyncService {
     public static async addOrUpdateList(userId: number, list: shikimoriList) {
-        const user = await prisma.user.findUserByIdWithIntegration(userId);
+        const user = await prisma.user.findUserById(userId, {
+            integration: true,
+            shikimoriLink: true
+        });
         const anime = await prisma.anime.findFirstOrThrow({
             where: {
                 shikimoriId: list.animeId
@@ -33,7 +36,10 @@ export default class ShikimoriListSyncService {
     }
 
     public static async deleteList(userId: number, shikimoriId: number) {
-        const user = await prisma.user.findUserByIdWithIntegration(userId);
+        const user = await prisma.user.findUserById(userId, {
+            integration: true,
+            shikimoriLink: true
+        });
 
         if (!user) return;
         if (!user.integration?.shikimoriCanChangeList) return;

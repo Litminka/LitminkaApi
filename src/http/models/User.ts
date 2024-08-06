@@ -30,17 +30,28 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
-            async findUserByIdWithAnimeList(id: number) {
-                return await prisma.user.findFirstOrThrow({
+            /**
+             * Find first user with ID or throw exception.
+             * Accepts additional dynamic selects.
+             * @param id User ID
+             * @param query Prisma.UserSelect type
+             * @returns User object
+             */
+            async findUserById<T extends Prisma.UserSelect>(id: number, query: T) {
+                const _query = {
+                    ...query,
+                    id: true,
+                    name: true,
+                    email: true,
+                    login: true,
+                    createdAt: true,
+                    roleId: true
+                } satisfies Prisma.UserSelect;
+
+                return (await prisma.user.findFirstOrThrow({
                     where: { id },
-                    include: {
-                        animeList: {
-                            include: {
-                                anime: true
-                            }
-                        }
-                    }
-                });
+                    select: _query
+                })) as Promise<Prisma.UserGetPayload<{ select: typeof _query }>>;
             },
             async findUserByShikimoriLinkToken(token: string) {
                 return await prisma.user.findFirstOrThrow({
@@ -49,140 +60,75 @@ const extention = Prisma.defineExtension({
                             token
                         }
                     },
-                    include: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        login: true,
+                        createdAt: true,
+                        roleId: true,
                         integration: true,
                         shikimoriLink: true
                     }
                 });
             },
-            async findWithIntegrationSettings(id: number) {
-                return prisma.user.findFirstOrThrow({
-                    where: { id },
-                    include: {
-                        settings: true,
-                        integration: true
-                    }
-                });
-            },
-            async findWithSettings(id: number) {
-                return prisma.user.findFirstOrThrow({
-                    where: { id },
-                    include: {
-                        settings: true
-                    }
-                });
-            },
+            /** Prefer using `findUserById()` with query parameter
+             * @deprecated
+             * @param id
+             * @returns
+             */
             async findUserByIdWithIntegration(id: number) {
                 return await prisma.user.findFirstOrThrow({
                     where: {
                         id
                     },
-                    include: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        login: true,
+                        createdAt: true,
+                        roleId: true,
                         integration: true,
                         shikimoriLink: true
                     }
                 });
             },
-            async findUserByIdWithRolePermission(id: number) {
-                return await prisma.user.findFirstOrThrow({
-                    where: {
-                        id
-                    },
-                    include: {
-                        role: {
-                            include: {
-                                permissions: true
-                            }
-                        }
-                    }
-                });
-            },
-            async findUserWithTokensAndPermissions(id: number) {
-                return await prisma.user.findFirstOrThrow({
+            /**
+             * # WIP method
+             * @param id
+             * @returns
+             */
+            async disableUserById(id: number) {
+                return await prisma.user.update({
                     where: { id },
-                    include: {
-                        role: {
-                            include: { permissions: true }
-                        },
-                        sessionTokens: true
-                    }
+                    data: {}
                 });
             },
-            async findUserById(id: number) {
-                return await prisma.user.findFirstOrThrow({
+            async deleteUserById(id: number) {
+                return await prisma.user.delete({
                     where: { id }
                 });
             },
-            async findUserProfile(id: number) {
-                return await prisma.user.findFirstOrThrow({
-                    where: { id },
-                    select: {
-                        id: true,
-                        email: true,
-                        login: true,
-                        name: true,
-                        createdAt: true,
-                        settings: true,
-                        roleId: true,
-                        integration: {
-                            select: {
-                                discordId: true,
-                                id: true,
-                                shikimoriCanChangeList: true,
-                                shikimoriId: true,
-                                telegramId: true,
-                                vkId: true
-                            }
-                        },
-                        role: {
-                            include: { permissions: true }
-                        }
-                    }
-                });
-            },
-            async findUserWithoutPassword(id: number) {
-                return await prisma.user.findFirstOrThrow({
-                    where: { id },
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                        login: true,
-                        createdAt: true,
-                        roleId: true
-                    }
-                });
-            },
-            async findUserWithOwnedGroups(id: number) {
-                return await prisma.user.findFirstOrThrow({
-                    where: { id },
-                    include: { ownedGroups: true }
-                });
-            },
-            async findUserWithGroupInvites(id: number) {
-                return await prisma.user.findFirstOrThrow({
-                    where: { id },
-                    include: { groupInvites: true }
-                });
-            },
-            async removeById(id: number) {
-                return await prisma.user.delete({
-                    where: {
-                        id
-                    }
-                });
-            },
+            /**
+             * @deprecated
+             * @param login
+             * @returns
+             */
             async findUserByLogin(login: string) {
                 return prisma.user.findFirst({
-                    include: {
-                        role: {
-                            include: {
-                                permissions: true
-                            }
-                        }
-                    },
                     where: {
                         OR: [{ login: { equals: login } }, { email: { equals: login } }]
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        login: true,
+                        createdAt: true,
+                        roleId: true,
+                        password: true,
+                        role: { include: { permissions: true } }
                     }
                 });
             },
