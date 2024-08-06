@@ -4,6 +4,7 @@ import { UserWithPermissions } from '@/ts/user';
 import prisma from '@/db';
 import UnauthorizedError from '@/errors/clienterrors/UnauthorizedError';
 import { baseMsg, tokenMsg } from '@/ts/messages';
+import config from '@/config';
 
 interface SignedTokens {
     token: string;
@@ -16,7 +17,7 @@ export default class TokenService {
         const result = token.split(' ')[1];
         let userToken, userRefreshToken;
         const tokens = await new Promise((resolve, reject) => {
-            jwt.verify(result, process.env.REFRESH_TOKEN_SECRET!, async function (err, decoded) {
+            jwt.verify(result, config.refreshTokenSecret!, async function (err, decoded) {
                 if (<any>err instanceof jwt.TokenExpiredError)
                     throw new UnauthorizedError(tokenMsg.refreshExpired);
                 if (err) return reject(new UnauthorizedError(tokenMsg.unauthorized));
@@ -59,13 +60,13 @@ export default class TokenService {
             token: sessionToken
         };
 
-        const token = jwt.sign(signObject, process.env.TOKEN_SECRET!, {
-            expiresIn: process.env.TOKEN_LIFE
+        const token = jwt.sign(signObject, config.tokenSecret!, {
+            expiresIn: config.tokenLife
         });
         const refreshToken = jwt.sign(
             { id: user.id, token: sessionToken },
-            process.env.REFRESH_TOKEN_SECRET!,
-            { expiresIn: process.env.REFRESH_TOKEN_LIFE }
+            config.refreshTokenSecret!,
+            { expiresIn: config.refreshTokenLife }
         );
         return {
             token,

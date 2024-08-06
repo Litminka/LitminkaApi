@@ -2,6 +2,7 @@ import { logger } from '@/loggerConf';
 import { Job, Worker } from 'bullmq';
 import ShikimoriListSyncService from '@services/shikimori/ShikimoriListSyncService';
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
+import config from '@/config';
 
 new Worker(
     'shikimoriListUpdate',
@@ -23,8 +24,8 @@ new Worker(
     },
     {
         connection: {
-            host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT!)
+            host: config.redisHost,
+            port: parseInt(config.redisPort!)
         }
     }
 );

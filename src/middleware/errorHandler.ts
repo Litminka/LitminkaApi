@@ -3,8 +3,9 @@ import BaseError from '@/errors/BaseError';
 import { RequestStatuses } from '@enums';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { logger } from '@/loggerConf';
+import config from '@/config';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = config.runEnvironment === 'production';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function wrap(method: Function) {

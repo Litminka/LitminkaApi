@@ -5,8 +5,8 @@ import FollowService from '@services/FollowService';
 import { KodikAnimeFull, animeWithTranslation } from '@/ts/kodik';
 import { FollowTypes } from '@enums';
 import { logger } from '@/loggerConf';
-import { config } from '@config';
 import { autoCheckQueue } from './queues';
+import config from '@config';
 
 /**
  * get titles ->
@@ -135,8 +135,8 @@ new Worker(
     },
     {
         connection: {
-            host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT!)
+            host: config.redisHost,
+            port: parseInt(config.redisPort!)
         }
     }
 );

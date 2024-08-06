@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const helmet = require('helmet');
-import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import * as fs from 'fs';
 import * as https from 'https';
@@ -20,18 +19,16 @@ import { animeRouter } from '@/routers/AnimeRouter';
 import { groupListRouter } from '@/routers/GroupListRouter';
 import { notificationRouter } from '@/routers/NotificationRouter';
 import { adminRouter } from '@/routers/AdminRouter';
-
-dotenv.config();
+import config from '@/config';
 
 export const app: Express = express();
 
-const port: string | undefined = process.env.PORT;
-
-if (!process.env.SHIKIMORI_AGENT) throw new Error('No agent specified in ENV');
-if (!process.env.SHIKIMORI_CLIENT_ID) throw new Error('No client id specified in ENV');
-if (!process.env.SHIKIMORI_CLIENT_SECRET) throw new Error('No client secret specified in ENV');
-if (!process.env.SHIKIMORI_URL) throw new Error('Shikimori base url is not specified');
-if (!process.env.APP_URL) throw new Error('App Url not specified');
+const port: string = config.appPort;
+if (!config.shikimoriAgent) throw new Error('No agent specified in ENV');
+if (!config.shikimoriClientId) throw new Error('No client id specified in ENV');
+if (!config.shikimoriClientSecret) throw new Error('No client secret specified in ENV');
+if (!config.shikimoriUrl) throw new Error('Shikimori base url is not specified');
+if (!config.appUrl) throw new Error('App Url not specified');
 
 app.use(helmet());
 app.use((req, res, next) => {
@@ -67,13 +64,13 @@ app.get('/shikimori_token', (req: Request) => {
     logger.debug(`shikimori_token ${req.query}`);
 });
 
-switch (process.env.SSL) {
+switch (config.ssl) {
     case '1':
     case 'true':
     case 'True': {
         const httpsOptions = {
-            key: fs.readFileSync(process.env.SSL_KEY as string),
-            cert: fs.readFileSync(process.env.SSL_CERT as string)
+            key: fs.readFileSync(config.sslKey),
+            cert: fs.readFileSync(config.sslCert)
         };
         https.createServer(httpsOptions, app).listen(port, () => {
             logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);

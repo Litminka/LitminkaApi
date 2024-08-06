@@ -29,6 +29,7 @@ import { RateLimiter } from 'limiter';
 import { RequestStatuses } from '@enums';
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 import { UserWithIntegration } from '@/ts/user';
+import config from '@/config';
 
 type RequestTypes = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface iShikimoriApi {
@@ -56,7 +57,7 @@ interface ShikimoriResponse {
  *                                                    also has a lot of undocumented errors
  */
 
-const baseUrl = `${process.env.SHIKIMORI_URL}/api`;
+const baseUrl = `${config.shikimoriUrl}/api`;
 export default class ShikimoriApiService implements iShikimoriApi {
     user: UserWithIntegration | undefined;
     limiter: RateLimiter;
@@ -85,23 +86,23 @@ export default class ShikimoriApiService implements iShikimoriApi {
         }
         const requestBody = new URLSearchParams({
             grant_type: token ? 'authorization_code' : 'refresh_token',
-            client_id: process.env.SHIKIMORI_CLIENT_ID!,
-            client_secret: process.env.SHIKIMORI_CLIENT_SECRET!
+            client_id: config.shikimoriClientId!,
+            client_secret: config.shikimoriClientSecret!
         });
         // If token exists, then we assume user has just linked shikimori
         if (token) {
             requestBody.append('code', this.user.integration!.shikimoriCode!);
             requestBody.append(
                 'redirect_uri',
-                `${process.env.APP_URL}/shikimori/link?token=${token!.token}`
+                `${config.appUrl}/shikimori/link?token=${token!.token}`
             );
         } else {
             requestBody.append('refresh_token', this.user.integration!.shikimoriRefreshToken!);
         }
-        const response = await axios(`${process.env.SHIKIMORI_URL}/oauth/token`, {
+        const response = await axios(`${config.shikimoriUrl}/oauth/token`, {
             method: 'POST',
             headers: {
-                'User-Agent': process.env.SHIKIMORI_AGENT!,
+                'User-Agent': config.shikimoriAgent!,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             data: requestBody
@@ -171,7 +172,7 @@ export default class ShikimoriApiService implements iShikimoriApi {
 
             const headers = new AxiosHeaders();
 
-            headers.set('User-Agent', process.env.SHIKIMORI_AGENT!);
+            headers.set('User-Agent', config.shikimoriAgent!);
             headers.set('Content-Type', 'application/json');
 
             if (auth)

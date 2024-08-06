@@ -1,9 +1,10 @@
 import { Queue } from 'bullmq';
+import config from '@/config';
 
 const connection = {
     connection: {
-        host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT!)
+        host: config.redisHost,
+        port: parseInt(config.redisPort!)
     }
 };
 
