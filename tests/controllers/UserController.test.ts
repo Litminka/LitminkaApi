@@ -31,7 +31,7 @@ export async function testRegister(user: any) {
 
 export async function removeUser(login: string) {
     const user = await prisma.user.findUserByLogin(login);
-    if (user) await prisma.user.removeById(user.id);
+    if (user) await prisma.user.deleteUserById(user.id);
 }
 
 describe('UserController.ts Tests', async () => {

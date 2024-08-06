@@ -17,7 +17,11 @@ export default class FrontPageAnimeRequest extends OptionalRequest {
      */
 
     public async getUser(userId: number) {
-        return await prisma.user.findUserByIdWithRolePermission(userId);
+        return await prisma.user.findUserById(userId, {
+            role: {
+                include: { permissions: true }
+            }
+        });
     }
 
     /**

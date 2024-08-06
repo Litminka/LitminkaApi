@@ -20,14 +20,18 @@ export default class AnimeService {
         });
     }
 
-    public static async getTopAnime(censor: boolean, showBanned: boolean, shikimori: boolean) {
+    public static async getTopAnime(
+        withCensored: boolean,
+        withBanned: boolean,
+        byShikimoriRating: boolean
+    ) {
         return AnimeSearchService.filterShortSelector(
             {
                 isWatchable: true,
-                withCensored: censor,
-                banInRussia: showBanned,
+                withCensored,
+                withBanned,
                 rpaRatings:
-                    !censor ?
+                    !withCensored ?
                         [
                             AnimePgaRatings.None,
                             AnimePgaRatings.G,
@@ -37,19 +41,23 @@ export default class AnimeService {
                     :   undefined
             },
             { page: 1, pageLimit: 100 },
-            shikimori ? { shikimoriRating: 'desc' } : { rating: 'desc' }
+            byShikimoriRating ? { shikimoriRating: 'desc' } : { rating: 'desc' }
         );
     }
 
-    public static async getSeasonal(censor: boolean, watchable: boolean, showBanned: boolean) {
+    public static async getSeasonal(
+        withCensored: boolean,
+        isWatchable: boolean,
+        withBanned: boolean
+    ) {
         return AnimeSearchService.filterShortSelector(
             {
-                isWatchable: watchable,
-                withCensored: censor,
+                isWatchable,
+                withCensored,
                 seasons: [getCurrentSeason()],
-                banInRussia: showBanned,
+                withBanned,
                 rpaRatings:
-                    !censor ?
+                    !withCensored ?
                         [
                             AnimePgaRatings.None,
                             AnimePgaRatings.G,
@@ -63,18 +71,18 @@ export default class AnimeService {
     }
 
     public static async getPopularSeasonal(
-        censor: boolean,
-        watchable: boolean,
-        showBanned: boolean
+        withCensored: boolean,
+        isWatchable: boolean,
+        withBanned: boolean
     ) {
         return AnimeSearchService.filterShortSelector(
             {
-                isWatchable: watchable,
-                withCensored: censor,
+                isWatchable,
+                withCensored,
+                withBanned,
                 seasons: [getCurrentSeason()],
-                banInRussia: showBanned,
                 rpaRatings:
-                    !censor ?
+                    !withCensored ?
                         [
                             AnimePgaRatings.None,
                             AnimePgaRatings.G,
@@ -88,16 +96,16 @@ export default class AnimeService {
         );
     }
 
-    public static async getNextSeasonAnnounced(censor: boolean, showBanned: boolean) {
+    public static async getNextSeasonAnnounced(withCensored: boolean, withBanned: boolean) {
         return AnimeSearchService.filterShortSelector(
             {
                 isWatchable: false,
-                withCensored: censor,
                 seasons: [getNextSeason(new Date())],
                 statuses: ['announced'],
-                banInRussia: showBanned,
+                withCensored,
+                withBanned,
                 rpaRatings:
-                    !censor ?
+                    !withCensored ?
                         [
                             AnimePgaRatings.None,
                             AnimePgaRatings.G,
@@ -113,18 +121,14 @@ export default class AnimeService {
     public static async banAnime(animeId: number) {
         await prisma.anime.updateMany({
             where: { id: animeId },
-            data: {
-                banned: true
-            }
+            data: { banned: true }
         });
     }
 
     public static async unBanAnime(animeId: number) {
         await prisma.anime.updateMany({
             where: { id: animeId },
-            data: {
-                banned: false
-            }
+            data: { banned: false }
         });
     }
 }

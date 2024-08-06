@@ -1,8 +1,9 @@
-import { User, GroupList } from '@prisma/client';
+import { GroupList } from '@prisma/client';
 import prisma from '@/db';
 import BaseError from '@/errors/BaseError';
 import { RequestStatuses } from '@enums';
 import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
+import { UserWithoutPassword } from '@/ts/user';
 
 interface EditMember {
     userId: number;
@@ -10,7 +11,7 @@ interface EditMember {
     modifyList?: boolean;
 }
 
-type UserWithGroup = User & {
+type UserWithGroup = UserWithoutPassword & {
     ownedGroups: GroupList[];
 };
 

@@ -24,7 +24,10 @@ export default class TokenService {
                 const auth = <any>decoded;
                 if (!auth) return reject(new UnauthorizedError(tokenMsg.unauthorized));
 
-                const user = await prisma.user.findUserWithTokensAndPermissions(auth.id);
+                const user = await prisma.user.findUserById(auth.id, {
+                    role: { include: { permissions: true } },
+                    sessionTokens: true
+                });
                 if (!user) return reject(new UnauthorizedError(tokenMsg.unauthorized));
 
                 if (

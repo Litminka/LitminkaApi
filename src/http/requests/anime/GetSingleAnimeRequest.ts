@@ -15,7 +15,15 @@ export default class GetSingleAnimeRequest extends OptionalRequest {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserByIdWithIntegration(userId);
+        return await prisma.user.findUserById(userId, {
+            role: {
+                include: {
+                    permissions: true
+                }
+            },
+            integration: true,
+            shikimoriLink: true
+        });
     }
     /**
      * Define validation rules for this request

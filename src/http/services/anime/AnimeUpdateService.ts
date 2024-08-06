@@ -1,4 +1,4 @@
-import { Anime, Prisma, User } from '@prisma/client';
+import { Anime, Prisma } from '@prisma/client';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import { KodikAnime, KodikAnimeFull, animeWithTranslation, _translation } from '@/ts/kodik';
 import prisma from '@/db';
@@ -16,16 +16,17 @@ import groupArrSplice from '@/helper/groupsplice';
 import sleep from '@/helper/sleep';
 import { logger } from '@/loggerConf';
 import KodikApiService from '@services/KodikApiService';
+import { UserWithoutPassword } from '@/ts/user';
 
 interface iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined;
-    user: User | undefined;
+    user: UserWithoutPassword | undefined;
 }
 
 export default class AnimeUpdateService implements iAnimeUpdateService {
     shikimoriApi: ShikimoriApiService | undefined;
-    user: User | undefined;
-    constructor(shikimori?: ShikimoriApiService, user?: User) {
+    user: UserWithoutPassword | undefined;
+    constructor(shikimori?: ShikimoriApiService, user?: UserWithoutPassword) {
         this.shikimoriApi = shikimori;
         this.user = user;
     }

@@ -18,7 +18,13 @@ export default class BanAnimeRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserByIdWithIntegration(userId);
+        return await prisma.user.findUserById(userId, {
+            role: {
+                include: { permissions: true }
+            },
+            integration: true,
+            shikimoriLink: true
+        });
     }
 
     /**

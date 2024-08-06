@@ -12,7 +12,21 @@ export default class ProfileUserRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserProfile(userId);
+        return await prisma.user.findUserById(userId, {
+            integration: {
+                select: {
+                    discordId: true,
+                    id: true,
+                    shikimoriCanChangeList: true,
+                    shikimoriId: true,
+                    telegramId: true,
+                    vkId: true
+                }
+            },
+            role: {
+                include: { permissions: true }
+            }
+        });
     }
 
     /**

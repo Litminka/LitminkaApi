@@ -9,7 +9,9 @@ export default class GroupRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserWithOwnedGroups(userId);
+        return await prisma.user.findUserById(userId, {
+            ownedGroups: true
+        });
     }
 }
 

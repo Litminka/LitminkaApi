@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { User, Integration, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import axios, { AxiosHeaders } from 'axios';
 import BadRequestError from '@/errors/clienterrors/BadRequestError';
 import {
@@ -28,14 +28,11 @@ import { shikiRateLimiter } from '@/shikiRateLimiter';
 import { RateLimiter } from 'limiter';
 import { RequestStatuses } from '@enums';
 import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
+import { UserWithIntegration } from '@/ts/user';
 
 type RequestTypes = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface iShikimoriApi {
-    user:
-        | (User & {
-              integration: Integration | null;
-          })
-        | undefined;
+    user: UserWithIntegration | undefined;
     limiter: RateLimiter;
 }
 
@@ -61,10 +58,10 @@ interface ShikimoriResponse {
 
 const baseUrl = `${process.env.SHIKIMORI_URL}/api`;
 export default class ShikimoriApiService implements iShikimoriApi {
-    user: (User & { integration: Integration | null }) | undefined;
+    user: UserWithIntegration | undefined;
     limiter: RateLimiter;
 
-    constructor(user: (User & { integration: Integration | null }) | undefined = undefined) {
+    constructor(user: UserWithIntegration | undefined = undefined) {
         this.user = user;
         this.limiter = shikiRateLimiter;
     }

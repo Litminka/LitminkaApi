@@ -1,13 +1,14 @@
 import BaseError from '@/errors/BaseError';
 import { RequestStatuses } from '@enums';
 import prisma from '@/db';
-import { User, GroupList, GroupListInvites } from '@prisma/client';
+import { GroupList, GroupListInvites } from '@prisma/client';
+import { UserWithoutPassword } from '@/ts/user';
 
-type UserWithGroup = User & {
+type UserWithGroup = UserWithoutPassword & {
     ownedGroups: GroupList[];
 };
 
-type UserWithInvites = User & {
+type UserWithInvites = UserWithoutPassword & {
     groupInvites: GroupListInvites[];
 };
 

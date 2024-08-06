@@ -9,7 +9,9 @@ export default class GroupInviteRequest extends AuthRequest {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserWithGroupInvites(userId);
+        return await prisma.user.findUserById(userId, {
+            groupInvites: true
+        });
     }
 }
 
