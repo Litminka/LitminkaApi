@@ -2,13 +2,14 @@ import { Anime, Prisma } from '@prisma/client';
 import prisma from '@/db';
 import { AddToList } from '@/ts/watchList';
 import { ShikimoriWatchList } from '@/ts/shikimori';
+import WatchListService from '../services/WatchListService';
 
 const extention = Prisma.defineExtension({
     name: 'AnimeListModel',
     model: {
         animeList: {
             /**
-             * @deprecated prefer using createWatchListEntries instead
+             * @deprecated prefer using createEntriesFromShikimoriList instead
              * @param userId
              * @param dbAnime
              * @param watchList
@@ -34,38 +35,7 @@ const extention = Prisma.defineExtension({
                     })
                 });
             },
-            async createWatchListEntries(
-                userId: number,
-                animeMap: Map<number, number>,
-                watchList: ShikimoriWatchList[]
-            ) {
-                await prisma.animeList.createMany({
-                    data: watchList.map((listEntry) => {
-                        return {
-                            isFavorite: false,
-                            status: listEntry.status,
-                            watchedEpisodes: listEntry.episodes,
-                            userId,
-                            animeId: animeMap.get(Number(listEntry.target_id))!,
-                            rating: listEntry.score,
-                            shikimoriId: listEntry.id
-                        } satisfies Prisma.AnimeListCreateManyInput;
-                    })
-                });
-            },
-            async addWatchListEntry(userId: number, animeId: number, parameters: AddToList) {
-                const { isFavorite, rating, status, watchedEpisodes } = parameters as AddToList;
-                await prisma.animeList.create({
-                    data: {
-                        isFavorite,
-                        status,
-                        watchedEpisodes,
-                        rating,
-                        animeId,
-                        userId
-                    }
-                });
-            },
+
             /**
              *
              * @deprecated prefer using updateWatchListEntry
@@ -89,36 +59,59 @@ const extention = Prisma.defineExtension({
                     }
                 });
             },
-            async updateWatchListEntry(userId: number, animeId: number, parameters: AddToList) {
+
+            /**
+             * Used for watchlist import from shikimori
+             * @param userId
+             * @param animeMap
+             * @param watchList
+             */
+            async createEntriesFromShikimoriList(
+                userId: number,
+                animeMap: Map<number, number>,
+                watchList: ShikimoriWatchList[]
+            ) {
+                await prisma.animeList.createMany({
+                    data: watchList.map((listEntry) => {
+                        return {
+                            isFavorite: false,
+                            status: listEntry.status,
+                            watchedEpisodes: listEntry.episodes,
+                            userId,
+                            animeId: animeMap.get(Number(listEntry.target_id))!,
+                            rating: listEntry.score,
+                            shikimoriId: listEntry.id
+                        } satisfies Prisma.AnimeListCreateManyInput;
+                    })
+                });
+            },
+
+            async upsertWatchlistEntry(userId: number, animeId: number, parameters: AddToList) {
                 const { isFavorite, rating, status, watchedEpisodes } = parameters as AddToList;
-                await prisma.animeList.updateMany({
-                    where: { userId, animeId },
-                    data: {
-                        isFavorite,
-                        status,
-                        watchedEpisodes,
-                        rating
-                    }
-                });
-            },
-            async findWatchListEntry(userId: number, animeId: number) {
-                return await prisma.animeList.findFirst({
-                    where: { AND: { userId, animeId } }
-                });
-            },
-            async removeWatchListEntry(userId: number, animeId: number) {
-                await prisma.animeList.deleteMany({
-                    where: { userId, animeId }
-                });
-            },
-            async getListLengthByUserId(userId: number) {
-                const list = await prisma.animeList.aggregate({
-                    where: { userId },
-                    _count: {
-                        id: true
-                    }
-                });
-                return list._count;
+                const animeListEntry = await WatchListService._findWatchlistEntry(userId, animeId);
+
+                if (animeListEntry) {
+                    await prisma.animeList.updateMany({
+                        where: { userId, animeId },
+                        data: {
+                            isFavorite,
+                            status,
+                            watchedEpisodes,
+                            rating
+                        }
+                    });
+                } else {
+                    await prisma.animeList.create({
+                        data: {
+                            isFavorite,
+                            status,
+                            watchedEpisodes,
+                            rating,
+                            animeId,
+                            userId
+                        }
+                    });
+                }
             }
         }
     }

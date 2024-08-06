@@ -25,25 +25,18 @@ export default class EditWatchListRequest extends IntegrationSettingsRequest {
      * Define validation rules for this request
      */
     protected rules(): ValidationChain[] {
-        const watchedRange: minmax = { min: 0 };
         return [
-            paramIntValidator('animeId').custom(async (value) => {
-                const anime = await prisma.anime.findFirst({
-                    where: { id: value }
-                });
-                if (!anime) throw new Error("Anime doesn't exist");
-                watchedRange.max = anime.maxEpisodes;
-            }),
-            bodyStringValidator('status').isIn(Object.values(WatchListStatuses)),
+            paramIntValidator('animeId'),
+            bodyStringValidator('status').isIn(Object.values(WatchListStatuses)).optional(),
             bodyIntValidator('watchedEpisodes', {
-                typeParams: watchedRange
-            }),
+                typeParams: { min: 0 }
+            }).optional(),
 
             bodyIntValidator('rating', {
                 typeParams: { min: 0, max: 10 }
-            }),
+            }).optional(),
 
-            bodyBoolValidator('isFavorite')
+            bodyBoolValidator('isFavorite').optional()
         ];
     }
 }

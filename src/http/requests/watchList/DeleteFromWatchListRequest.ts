@@ -13,17 +13,7 @@ export default class DeleteFromWatchListRequest extends IntegrationSettingsReque
      * @returns ValidationChain
      */
     protected rules(): ValidationChain[] {
-        return [
-            paramIntValidator('animeId', {
-                message: baseMsg.valueNotInRange
-            }).custom(async (value) => {
-                // TODO: this will die, if it doesnt find an anime
-                const anime = await prisma.anime.findFirst({
-                    where: { id: value }
-                });
-                if (!anime) throw new Error("Anime doesn't exist");
-            })
-        ];
+        return [paramIntValidator('animeId')];
     }
 }
 
