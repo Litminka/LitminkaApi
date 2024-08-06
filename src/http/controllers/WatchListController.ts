@@ -15,12 +15,19 @@ export default class WatchListController {
      */
     public static async get(req: GetWatchListRequest, res: Response) {
         const userId = req.user.id;
-        const statuses = req.body.statuses;
-        const ratings = req.body.ratings;
-        const isFavorite = req.body.isFavorite;
-        const query = req.query;
+        const statuses = req.query.statuses;
+        const ratings = req.query.ratings;
+        const isFavorite = req.query.isFavorite;
+        const pagination = {
+            page: req.query.page,
+            pageLimit: req.query.pageLimit
+        };
 
-        const list = await WatchListService.get(userId, { statuses, ratings, isFavorite }, query);
+        const list = await WatchListService.get(
+            userId,
+            { statuses, ratings, isFavorite },
+            pagination
+        );
 
         return res.status(RequestStatuses.OK).json({ body: list });
     }
