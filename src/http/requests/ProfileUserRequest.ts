@@ -25,7 +25,8 @@ export default class ProfileUserRequest extends AuthRequest {
             },
             role: {
                 include: { permissions: true }
-            }
+            },
+            settings: true
         });
     }
 
