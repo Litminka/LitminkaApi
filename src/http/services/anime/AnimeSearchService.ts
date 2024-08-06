@@ -14,9 +14,9 @@ export interface AnimeFilterBody {
     mediaTypes?: string[];
     seasons?: string[];
     period?: Date[];
-    banInRussia?: boolean;
-    withCensored: boolean;
     isWatchable: boolean;
+    withCensored: boolean;
+    withBanned?: boolean;
 }
 
 export default class AnimeSearchService {
@@ -105,9 +105,9 @@ export default class AnimeSearchService {
                 this.byPeriod(filters.period),
                 this.byName(filters.name),
                 this.bySeasons(filters.seasons),
-                this.isCensored(filters.withCensored),
                 this.isWatchable(filters.isWatchable),
-                this.byBan(filters.banInRussia)
+                this.isCensored(filters.withCensored),
+                this.byBan(filters.withCensored)
             ]
                 .flat()
                 .filter((filter) => {
