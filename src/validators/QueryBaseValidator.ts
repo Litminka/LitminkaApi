@@ -10,7 +10,7 @@ import { BaseValidator, BoolValidator, DateValidator, IntValidator } from '@/ts/
 import { intValidator } from '@/validators/BaseValidator';
 
 interface QueryIntValidator extends IntValidator {
-    defValue: number;
+    defValue?: number;
 }
 
 /**
@@ -67,6 +67,25 @@ export const queryBoolValidator = (fieldName: string, options?: BoolValidator): 
     return boolValidator({
         validator: query(fieldName, message).default(defValue),
         typeParams: options?.typeParams
+    });
+};
+
+/**
+ * Validate required array[any] query parameter.
+ * @param fieldName Parameter name
+ * @param options.typeParams Express [isArray()](https://express-validator.github.io/docs/api/validation-chain/#isarray) options object. By default limits array length to 50 elements.
+ * @param options.message Error message for validation exceptions.
+ */
+export const queryArrayValidator = (
+    fieldName: string,
+    options?: BaseValidator
+): ValidationChain => {
+    const typeParams = options?.typeParams;
+    const message = options?.message ?? baseMsg.valueMustBeAnArray;
+
+    return arrayValidator({
+        validator: query(fieldName, message),
+        typeParams
     });
 };
 

@@ -1,21 +1,18 @@
 import { ValidationChain } from 'express-validator';
 import AuthRequest from '@requests/AuthRequest';
-import {
-    bodyArrayValidator,
-    bodyBoolValidator,
-    bodyIntValidator,
-    bodyStringValidator
-} from '@/validators/BodyBaseValidator';
 import { WatchListStatuses } from '@enums';
-import { queryIntValidator } from '@/validators/QueryBaseValidator';
+import {
+    queryArrayValidator,
+    queryBoolValidator,
+    queryIntValidator,
+    queryStringValidator
+} from '@/validators/QueryBaseValidator';
 
 export default class GetWatchListRequest extends AuthRequest {
-    body!: {
+    query!: {
         statuses?: WatchListStatuses[];
         ratings?: number[];
         isFavorite?: boolean;
-    };
-    query!: {
         page: number;
         pageLimit: number;
     };
@@ -25,15 +22,13 @@ export default class GetWatchListRequest extends AuthRequest {
      */
     protected rules(): ValidationChain[] {
         return [
-            bodyArrayValidator('statuses').optional(),
-            bodyStringValidator('statuses.*').isIn(Object.values(WatchListStatuses)),
+            queryArrayValidator('statuses').optional(),
+            queryStringValidator('statuses.*').isIn(Object.values(WatchListStatuses)),
 
-            bodyArrayValidator('ratings').optional(),
-            bodyIntValidator('ratings.*', {
-                typeParams: { min: 0, max: 10 }
-            }),
+            queryArrayValidator('ratings').optional(),
+            queryIntValidator('ratings.*', { typeParams: { min: 0, max: 10 } }),
 
-            bodyBoolValidator('isFavorite').optional(),
+            queryBoolValidator('isFavorite').optional(),
 
             queryIntValidator('page', {
                 defValue: 1,
