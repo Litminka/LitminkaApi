@@ -10,7 +10,6 @@ import { wrap } from '@/middleware/errorHandler';
 const router = Router();
 
 router.get('', getAnimeReq, wrap(AnimeController.getAnime));
-router.post('', getAnimeReq, wrap(AnimeController.getAnime));
 router.get('/top', getTopAnimeReq, wrap(AnimeController.getTopAnime));
 router.get('/genres', baseReq, wrap(AnimeController.getGenres));
 
