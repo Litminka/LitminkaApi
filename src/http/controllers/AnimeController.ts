@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import AnimeService from '@services/anime/AnimeService';
-import { Permissions, RequestStatuses } from '@enums';
+import { SortList, Permissions, RequestStatuses, SortDirections } from '@enums';
 import AnimeSearchService from '@services/anime/AnimeSearchService';
 import Request from '@requests/Request';
 import GetSingleAnimeRequest from '@requests/anime/GetSingleAnimeRequest';
@@ -9,7 +9,7 @@ import BanAnimeRequest from '@requests/anime/BanAnimeRequest';
 import GetTopAnimeRequest from '@requests/anime/GetTopAnimeRequest';
 import FrontPageAnimeRequest from '@requests/anime/FrontPageAnimeRequest';
 import hasPermissions from '@/helper/hasPermission';
-import { logger } from '@/loggerConf';
+import Sort from '@/helper/sorts';
 
 export default class AnimeController {
     public static async getGenres(req: Request, res: Response) {
@@ -50,11 +50,11 @@ export default class AnimeController {
             withBanned: hasPermissions([Permissions.ManageAnime], req.user)
         };
 
-        const sort = JSON.parse(
-            `{"${req.query.sort ?? 'name'}": "${req.query.sortDirection ?? 'asc'}"}`
-        );
+        const sort = Sort.getSort({
+            field: req.query.sortField,
+            direction: req.query.sortDirection
+        });
 
-        logger.debug(`using sort: ${JSON.stringify(sort)}`);
         const count = await AnimeSearchService.getFilteredCount(filters);
         const anime = await AnimeSearchService.filterSelector(filters, pagination, sort);
         return res.status(RequestStatuses.OK).json({

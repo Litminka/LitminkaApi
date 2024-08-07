@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import AnimeController from '@controllers/anime/AnimeController';
+import AnimeController from '@/http/controllers/AnimeController';
 import { baseReq } from '@/http/requests/Request';
 import { getAnimeReq } from '@requests/anime/GetAnimeRequest';
 import { getTopAnimeReq } from '@requests/anime/GetTopAnimeRequest';

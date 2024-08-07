@@ -22,6 +22,8 @@ export default class Request implements BaseReq<Request> {
     protected authType: RequestAuthTypes;
     protected permissions: Permissions[];
     // Define request interface
+    public static sortDirections = ['Ascending', 'Descending'] as const;
+    public sortFields = ['name'] as const;
     public auth!: {
         id?: number;
         token?: string;
