@@ -1,10 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
-import dotenv from 'dotenv';
-dotenv.config();
 import { Encrypt } from '@/helper/encrypt';
 import capitalize from '@/helper/capitalize';
-import { config } from '@config';
+import config from '@config';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import AutoCheckService from '@services/AutoCheckService';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
@@ -66,8 +64,8 @@ async function main() {
         update: {},
         create: {
             email: 'admin@admin.ru',
-            login: process.env.ROOT_LOGIN!,
-            password: await Encrypt.cryptPassword(process.env.ROOT_PASS!),
+            login: config.rootLogin,
+            password: await Encrypt.cryptPassword(config.rootPassword),
             name: 'Admin',
             role: {
                 connect: {
