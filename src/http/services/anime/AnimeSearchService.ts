@@ -4,6 +4,7 @@ import Period from '@/helper/period';
 import dayjs from 'dayjs';
 import { PaginationQuery } from '@/ts';
 import { getSeasonPeriod } from '@/helper/animeseason';
+import { logger } from '@/loggerConf';
 
 export interface AnimeFilterBody {
     name?: string;
@@ -14,9 +15,9 @@ export interface AnimeFilterBody {
     mediaTypes?: string[];
     seasons?: string[];
     period?: Date[];
-    isWatchable: boolean;
-    withCensored: boolean;
-    withBanned?: boolean;
+    withBanned: boolean;
+    withCensored?: boolean;
+    isWatchable?: boolean;
 }
 
 export default class AnimeSearchService {
@@ -60,21 +61,15 @@ export default class AnimeSearchService {
             :   [];
     }
 
-    private static isCensored(arg: boolean) {
-        return !arg ? { censored: arg } : undefined;
-    }
-
-    private static isWatchable(arg?: boolean) {
-        return arg ? { kodikLink: { not: null } } : undefined;
-    }
-
+    /**
+     *
+     * @param arg
+     * @returns
+     */
     private static byPeriod(arg?: Date[]) {
-        if (arg === undefined || arg.length < 1) return [];
-        const period = ((arg?: Date[] | string[]) => {
-            if (arg![0] === undefined)
-                return Period.getPeriod([dayjs('1970-01-01').toDate(), dayjs().toDate()]);
-            return Period.getPeriod(arg);
-        })(arg);
+        if (arg === undefined) return [];
+        const period = Period.validatePeriod(arg);
+
         return {
             OR: [
                 {
@@ -82,16 +77,27 @@ export default class AnimeSearchService {
                     lastEpisodeAired: { lte: period[1] }
                 },
                 {
+                    // Fix for unreleased titles without lastEpisodeAired
                     lastEpisodeAired: {
-                        equals: dayjs('1970-01-01 00:00:00.000').toDate()
+                        equals: dayjs(0).toDate()
                     }
                 }
             ]
         };
     }
 
-    private static byBan(arg?: boolean) {
-        return !arg ? { banned: arg } : undefined;
+    private static isWatchable(arg?: boolean) {
+        if (typeof arg === 'boolean')
+            return arg ? { kodikLink: { not: null } } : { kodikLink: null };
+        return undefined;
+    }
+
+    private static withBanned(arg?: boolean) {
+        return !arg ? { banned: false } : undefined;
+    }
+
+    private static withCensored(arg?: boolean) {
+        return !arg ? { censored: false } : undefined;
     }
 
     private static generateFilters(filters: AnimeFilterBody) {
@@ -106,8 +112,8 @@ export default class AnimeSearchService {
                 this.byName(filters.name),
                 this.bySeasons(filters.seasons),
                 this.isWatchable(filters.isWatchable),
-                this.isCensored(filters.withCensored),
-                this.byBan(filters.withCensored)
+                this.withCensored(filters.withCensored),
+                this.withBanned(filters.withBanned)
             ]
                 .flat()
                 .filter((filter) => {
@@ -115,6 +121,7 @@ export default class AnimeSearchService {
                 })
         };
 
+        logger.debug(`Search anime with filters: ${JSON.stringify(andFilter.AND, null, 4)}`);
         const { filter } = {
             filter: () => {
                 return {
@@ -144,6 +151,7 @@ export default class AnimeSearchService {
         query: PaginationQuery,
         order?: Prisma.AnimeFindManyArgs['orderBy']
     ) {
+        order = order ?? { name: 'asc' };
         return await prisma.anime.findMany({
             take: query.pageLimit,
             skip: (query.page - 1) * query.pageLimit,

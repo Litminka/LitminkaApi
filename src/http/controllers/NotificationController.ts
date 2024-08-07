@@ -36,7 +36,7 @@ export default class NotificationController {
     }
 
     public static async getNotifications(req: GetNotificationsRequest, res: Response) {
-        const period = Period.getPeriod(req.query.period);
+        const period = Period.validatePeriod(req.query.period);
         const page = req.query.page;
         const pageLimit = req.query.pageLimit;
 

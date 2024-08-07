@@ -8,6 +8,8 @@ import {
 } from '@/validators/BaseValidator';
 import { BaseValidator, BoolValidator, DateValidator, IntValidator } from '@/ts/baseValidator';
 import { intValidator } from '@/validators/BaseValidator';
+import dayjs from 'dayjs';
+import Period from '@/helper/period';
 
 interface QueryIntValidator extends IntValidator {
     defValue?: number;
@@ -102,7 +104,7 @@ const queryDateValidator = (fieldName: string, options?: DateValidator): Validat
     return dateValidator({
         validator: query(`${fieldName}.*`, message),
         typeParams: options?.typeParams
-    });
+    }).toDate();
 };
 
 /**
@@ -120,17 +122,9 @@ export const querySoftPeriodValidator = (
 
     return [
         arrayValidator({
-            validator: query(fieldName)
-                .trim()
-                .notEmpty()
-                .bail()
-                .withMessage(baseMsg.notProvided)
-                .optional(),
+            validator: query(fieldName).optional(),
             typeParams: { min: 0, max: 2 }
-        }).bail(),
-        queryDateValidator(`${fieldName}.*`, {
-            message,
-            typeParams: options?.typeParams
-        })
+        }),
+        query(`${fieldName}.*`).toDate()
     ];
 };
