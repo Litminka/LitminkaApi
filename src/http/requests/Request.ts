@@ -94,6 +94,7 @@ export default class Request implements BaseReq<Request> {
     }
 
     private getAuthMethod() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const middleware: any = [];
         if (this.authType === RequestAuthTypes.Auth) {
             middleware.push(auth);

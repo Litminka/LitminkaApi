@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import AnimeController from '@/http/controllers/AnimeController';
+import AnimeController from '@controllers/AnimeController';
 import { banAnimeReq } from '@requests/anime/BanAnimeRequest';
 import { wrap } from '@/middleware/errorHandler';
 
