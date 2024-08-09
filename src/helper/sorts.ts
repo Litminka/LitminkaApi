@@ -7,13 +7,15 @@ export default class Sort {
         field?: SortAnimeFieldsType;
         direction?: SortDirectionType;
     }): Prisma.AnimeOrderByWithRelationInput {
-        const sortObject: Prisma.AnimeFindManyArgs['orderBy'] = {};
+        query.field = query.field ?? 'name';
+        query.direction = query.direction ?? 'asc';
 
-        for (const sort in SortAnimeFields) {
-            if (query.field === sort)
-                for (const direction in SortDirections) {
-                    if (query.direction === direction) sortObject[sort] = direction;
-                }
+        const sortObject: Prisma.AnimeFindManyArgs['orderBy'] = {};
+        const sortFields = [...Object.values(SortAnimeFields)] as SortAnimeFieldsType[];
+        const sortDirections = [...Object.values(SortDirections)] as SortDirectionType[];
+
+        if (sortFields.includes(query.field) && sortDirections.includes(query.direction)) {
+            sortObject[query.field] = query.direction;
         }
 
         return sortObject;
