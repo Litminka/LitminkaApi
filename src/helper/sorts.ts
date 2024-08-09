@@ -1,21 +1,21 @@
-import { SortDirections, SortList } from '@/ts/enums';
-import { SortListType, SortDirectionType } from '@/ts/sorts';
+import { SortDirections, SortAnimeFields } from '@/ts/enums';
+import { SortAnimeFieldsType, SortDirectionType } from '@/ts/sorts';
+import { Prisma } from '@prisma/client';
 
 export default class Sort {
-    public static getSort(query: { field?: SortListType; direction?: SortDirectionType }) {
-        const sort = Object();
+    public static getAnimeSort(query: {
+        field?: SortAnimeFieldsType;
+        direction?: SortDirectionType;
+    }): Prisma.AnimeOrderByWithRelationInput {
+        const sortObject: Prisma.AnimeFindManyArgs['orderBy'] = {};
 
-        for (const sortKey in SortList) {
-            if (query.field === sortKey) {
-                for (const dirKey in SortDirections) {
-                    if (query.direction === dirKey) {
-                        sort[SortList[sortKey]] = SortDirections[dirKey];
-                        return sort;
-                    }
+        for (const sort in SortAnimeFields) {
+            if (query.field === sort)
+                for (const direction in SortDirections) {
+                    if (query.direction === direction) sortObject[sort] = direction;
                 }
-            }
         }
 
-        return sort;
+        return sortObject;
     }
 }

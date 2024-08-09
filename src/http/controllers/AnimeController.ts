@@ -50,7 +50,7 @@ export default class AnimeController {
             withBanned: hasPermissions([Permissions.ManageAnime], req.user)
         };
 
-        const sort = Sort.getSort({
+        const sort = Sort.getAnimeSort({
             field: req.query.sortField,
             direction: req.query.sortDirection
         });

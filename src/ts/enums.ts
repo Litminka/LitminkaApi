@@ -4,15 +4,15 @@ export enum FollowTypes {
 }
 
 export enum SortDirections {
-    Ascending = 'asc',
-    Descending = 'desc'
+    asc = 'asc',
+    desc = 'desc'
 }
 
-export enum SortList {
-    Name = 'name',
-    Rating = 'rating',
-    ShikimoriRating = 'shikimoriRating',
-    ReleaseDate = 'firstEpisodeAired'
+export enum SortAnimeFields {
+    name = 'name',
+    rating = 'rating',
+    shikimoriRating = 'shikimoriRating',
+    firstEpisodeAired = 'firstEpisodeAired'
 }
 
 export enum AnimeStatuses {

@@ -9,6 +9,7 @@ import { validatorData } from '@/middleware/validatorData';
 import OptionalRequest from '@requests/OptionalRequest';
 import AuthRequest from '@requests/AuthRequest';
 import { Prisma } from '@prisma/client';
+import { SortAnimeFieldsType } from '@/ts/sorts';
 
 interface BaseReq<T extends Request> {
     auth: {
@@ -22,8 +23,7 @@ export default class Request implements BaseReq<Request> {
     protected authType: RequestAuthTypes;
     protected permissions: Permissions[];
     // Define request interface
-    public static sortDirections = ['Ascending', 'Descending'] as const;
-    public sortFields = ['name'] as const;
+    public sortFields = ['name'] as const satisfies SortAnimeFieldsType[];
     public auth!: {
         id?: number;
         token?: string;

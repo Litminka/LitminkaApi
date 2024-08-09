@@ -149,9 +149,9 @@ export default class AnimeSearchService {
     public static async filterSelector(
         filters: AnimeFilterBody,
         query: PaginationQuery,
-        order?: Prisma.AnimeFindManyArgs['orderBy']
+        orderBy?: Prisma.AnimeFindManyArgs['orderBy']
     ) {
-        order = order ?? { name: 'asc' };
+        orderBy = orderBy ?? { name: 'asc' };
         return await prisma.anime.findMany({
             take: query.pageLimit,
             skip: (query.page - 1) * query.pageLimit,
@@ -172,7 +172,7 @@ export default class AnimeSearchService {
                 mediaType: true,
                 description: true
             },
-            orderBy: order
+            orderBy
         });
     }
 

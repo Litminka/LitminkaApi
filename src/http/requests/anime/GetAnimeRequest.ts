@@ -1,9 +1,8 @@
 import { baseMsg, searchMsg } from '@/ts/messages';
-import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from '@enums';
-import { query, ValidationChain } from 'express-validator';
+import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes, SortDirections } from '@enums';
+import { ValidationChain } from 'express-validator';
 import { isSeason } from '@/helper/animeseason';
 import OptionalRequest from '@requests/OptionalRequest';
-import Request from '@requests/Request';
 import {
     queryArrayValidator,
     queryBoolValidator,
@@ -11,10 +10,15 @@ import {
     querySoftPeriodValidator,
     queryStringValidator
 } from '@/validators/QueryBaseValidator';
-import { SortDirectionType, SortAnimeSearchType } from '@/ts/sorts';
+import { SortDirectionType, SortAnimeFieldsType } from '@/ts/sorts';
 
 export default class GetAnimeRequest extends OptionalRequest {
-    public static sortFields = ['Name', 'Rating', 'ShikimoriRating', 'ReleaseDate'] as const;
+    public static sortFields = [
+        'name',
+        'rating',
+        'shikimoriRating',
+        'firstEpisodeAired'
+    ] as const satisfies SortAnimeFieldsType[];
     public query!: {
         name?: string;
         seasons?: string[];
@@ -24,7 +28,7 @@ export default class GetAnimeRequest extends OptionalRequest {
         includeGenres?: number[];
         excludeGenres?: number[];
         period?: Date[];
-        sortField?: SortAnimeSearchType;
+        sortField?: (typeof GetAnimeRequest.sortFields)[number];
         sortDirection?: SortDirectionType;
         withCensored?: boolean;
         isWatchable: boolean;
@@ -81,15 +85,9 @@ export default class GetAnimeRequest extends OptionalRequest {
 
             queryBoolValidator('withCensored', { defValue: false }),
 
-            query('sortField')
-                .isIn(GetAnimeRequest.sortFields)
-                .withMessage(searchMsg.unknownType)
-                .optional(),
+            queryStringValidator('sortField').isIn(GetAnimeRequest.sortFields).optional(),
 
-            query('sortDirection')
-                .isIn(Request.sortDirections)
-                .withMessage(searchMsg.unknownType)
-                .optional(),
+            queryStringValidator('sortDirection').isIn(Object.values(SortDirections)).optional(),
 
             queryIntValidator('page', {
                 defValue: 1,

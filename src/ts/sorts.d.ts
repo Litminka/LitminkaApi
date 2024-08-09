@@ -1,6 +1,4 @@
-import GetAnimeRequest from '@requests/anime/GetAnimeRequest';
-import Request from '@requests/Request';
+import { SortDirections, SortAnimeFields } from '@/ts/enums';
 
-export type SortAnimeSearchType = (typeof GetAnimeRequest.sortFields)[number];
-export type SortListType = 'Name' | 'Rating' | 'ShikimoriRating' | 'ReleaseDate';
-export type SortDirectionType = (typeof Request.sortDirections)[number];
+export type SortAnimeFieldsType = keyof typeof SortAnimeFields;
+export type SortDirectionType = keyof typeof SortDirections;
