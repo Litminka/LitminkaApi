@@ -3,6 +3,18 @@ export enum FollowTypes {
     Announcement = 'announcement'
 }
 
+export enum SortDirections {
+    asc = 'asc',
+    desc = 'desc'
+}
+
+export enum SortAnimeFields {
+    name = 'name',
+    rating = 'rating',
+    shikimoriRating = 'shikimoriRating',
+    firstEpisodeAired = 'firstEpisodeAired'
+}
+
 export enum AnimeStatuses {
     Announced = 'announced',
     Released = 'released',

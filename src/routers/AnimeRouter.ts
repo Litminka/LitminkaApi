@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import AnimeController from '@controllers/anime/AnimeController';
+import AnimeController from '@/http/controllers/AnimeController';
 import { baseReq } from '@/http/requests/Request';
 import { getAnimeReq } from '@requests/anime/GetAnimeRequest';
 import { getTopAnimeReq } from '@requests/anime/GetTopAnimeRequest';
@@ -10,7 +10,6 @@ import { wrap } from '@/middleware/errorHandler';
 const router = Router();
 
 router.get('', getAnimeReq, wrap(AnimeController.getAnime));
-router.post('', getAnimeReq, wrap(AnimeController.getAnime));
 router.get('/top', getTopAnimeReq, wrap(AnimeController.getTopAnime));
 router.get('/genres', baseReq, wrap(AnimeController.getGenres));
 

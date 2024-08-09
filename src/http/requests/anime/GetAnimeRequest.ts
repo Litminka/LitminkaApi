@@ -1,19 +1,25 @@
-import { bodySoftPeriodValidator } from '@/validators/BodyPeriodValidator';
-import {
-    bodyArrayValidator,
-    bodyBoolValidator,
-    bodyIntValidator,
-    bodyStringValidator
-} from '@/validators/BodyBaseValidator';
-import { queryIntValidator } from '@/validators/QueryBaseValidator';
 import { baseMsg, searchMsg } from '@/ts/messages';
-import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes } from '@enums';
+import { AnimeStatuses, AnimePgaRatings, AnimeMediaTypes, SortDirections } from '@enums';
 import { ValidationChain } from 'express-validator';
 import { isSeason } from '@/helper/animeseason';
-import OptionalRequest from '../OptionalRequest';
+import OptionalRequest from '@requests/OptionalRequest';
+import {
+    queryArrayValidator,
+    queryBoolValidator,
+    queryIntValidator,
+    querySoftPeriodValidator,
+    queryStringValidator
+} from '@/validators/QueryBaseValidator';
+import { SortDirectionType, SortAnimeFieldsType } from '@/ts/sorts';
 
 export default class GetAnimeRequest extends OptionalRequest {
-    public body!: {
+    public static sortFields = [
+        'name',
+        'rating',
+        'shikimoriRating',
+        'firstEpisodeAired'
+    ] as const satisfies SortAnimeFieldsType[];
+    public query!: {
         name?: string;
         seasons?: string[];
         statuses?: AnimeStatuses[];
@@ -22,11 +28,11 @@ export default class GetAnimeRequest extends OptionalRequest {
         includeGenres?: number[];
         excludeGenres?: number[];
         period?: Date[];
-        withCensored: boolean;
+        sortField?: (typeof GetAnimeRequest.sortFields)[number];
+        sortDirection?: SortDirectionType;
+        withCensored?: boolean;
         isWatchable: boolean;
         banInRussia: boolean;
-    };
-    public query!: {
         page: number;
         pageLimit: number;
     };
@@ -36,48 +42,52 @@ export default class GetAnimeRequest extends OptionalRequest {
      */
     protected rules(): ValidationChain[] {
         return [
-            bodyStringValidator('name').optional(),
+            queryStringValidator('name').optional(),
 
-            bodyArrayValidator('seasons', {
+            queryArrayValidator('seasons', {
                 typeParams: { max: 2 }
             }).optional(),
-            bodyStringValidator('seasons.*').custom((value) => {
+            queryStringValidator('seasons.*').custom((value) => {
                 if (!isSeason(value)) throw new Error(baseMsg.valueNotInRange);
                 return true;
             }),
 
-            bodyArrayValidator('statuses', {
+            queryArrayValidator('statuses', {
                 typeParams: { max: 3 }
             }).optional(),
-            bodyStringValidator('statuses.*')
+            queryStringValidator('statuses.*')
                 .isIn(Object.values(AnimeStatuses))
                 .withMessage(searchMsg.unknownType),
 
-            bodyArrayValidator('rpaRatings', {
+            queryArrayValidator('rpaRatings', {
                 typeParams: { max: 6 }
             }).optional(),
-            bodyStringValidator('rpaRatings.*')
+            queryStringValidator('rpaRatings.*')
                 .isIn(Object.values(AnimePgaRatings))
                 .withMessage(searchMsg.unknownType),
 
-            bodyArrayValidator('mediaTypes', {
+            queryArrayValidator('mediaTypes', {
                 typeParams: { max: 6 }
             }).optional(),
-            bodyStringValidator('mediaTypes.*')
+            queryStringValidator('mediaTypes.*')
                 .isIn(Object.values(AnimeMediaTypes))
                 .withMessage(searchMsg.unknownType),
 
-            bodyArrayValidator('includeGenres').optional(),
-            bodyIntValidator('includeGenres.*'),
+            queryArrayValidator('includeGenres').optional(),
+            queryIntValidator('includeGenres.*'),
 
-            bodyArrayValidator('excludeGenres').optional(),
-            bodyIntValidator('excludeGenres.*'),
+            queryArrayValidator('excludeGenres').optional(),
+            queryIntValidator('excludeGenres.*'),
 
-            ...bodySoftPeriodValidator('period'),
+            ...querySoftPeriodValidator('period'),
 
-            bodyBoolValidator('withCensored', { defValue: false }),
+            queryBoolValidator('isWatchable').optional(),
 
-            bodyBoolValidator('isWatchable', { defValue: false }),
+            queryBoolValidator('withCensored', { defValue: false }),
+
+            queryStringValidator('sortField').isIn(GetAnimeRequest.sortFields).optional(),
+
+            queryStringValidator('sortDirection').isIn(Object.values(SortDirections)).optional(),
 
             queryIntValidator('page', {
                 defValue: 1,

@@ -9,6 +9,7 @@ import { validatorData } from '@/middleware/validatorData';
 import OptionalRequest from '@requests/OptionalRequest';
 import AuthRequest from '@requests/AuthRequest';
 import { Prisma } from '@prisma/client';
+import { SortAnimeFieldsType } from '@/ts/sorts';
 
 interface BaseReq<T extends Request> {
     auth: {
@@ -22,6 +23,7 @@ export default class Request implements BaseReq<Request> {
     protected authType: RequestAuthTypes;
     protected permissions: Permissions[];
     // Define request interface
+    public sortFields = ['name'] as const satisfies SortAnimeFieldsType[];
     public auth!: {
         id?: number;
         token?: string;
@@ -92,6 +94,7 @@ export default class Request implements BaseReq<Request> {
     }
 
     private getAuthMethod() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const middleware: any = [];
         if (this.authType === RequestAuthTypes.Auth) {
             middleware.push(auth);

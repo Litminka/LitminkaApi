@@ -1,8 +1,6 @@
 import dotenv from 'dotenv';
 
 dotenv.config();
-console.log('test')
-// console.dir(JSON.stringify(process.env, null, 4));
 export default {
     /**
      * ignore these licensors for geoban when parsing shikimori anime

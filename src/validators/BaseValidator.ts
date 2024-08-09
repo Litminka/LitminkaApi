@@ -165,7 +165,6 @@ export const uuidValidator = ({ validator }: TypeUUIDValidator): ValidationChain
  * Validate date parameter.
  * @param validator Express [check()](https://express-validator.github.io/docs/api/check/#check) ValidationChain.
  * @param typeParams Express [isDate()](https://express-validator.github.io/docs/api/validation-chain/#isdate) options object.
- * @param message Error message for validation exceptions.
  * @returns ValidationChain
  */
 export const dateValidator = ({ validator, typeParams }: TypeDateValidator): ValidationChain => {

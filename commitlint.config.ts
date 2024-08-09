@@ -9,7 +9,19 @@ const config: UserConfig = {
         'type-enum': [
             RuleConfigSeverity.Error,
             'always',
-            ['ci', 'chore', 'docs', 'test', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style']
+            [
+                'break',
+                'ci',
+                'chore',
+                'docs',
+                'test',
+                'feat',
+                'fix',
+                'perf',
+                'refactor',
+                'revert',
+                'style'
+            ]
         ],
         'subject-case': [RuleConfigSeverity.Warning, 'always', ['sentence-case']]
     },
@@ -27,6 +39,11 @@ const config: UserConfig = {
             type: {
                 description: "Select the type of change that you're committing:",
                 enum: {
+                    break: {
+                        description: 'Breaking change',
+                        title: 'Breaking',
+                        emoji: '💀'
+                    },
                     feat: {
                         description: 'A new feature',
                         title: 'Features',

@@ -9,6 +9,7 @@ import BanAnimeRequest from '@requests/anime/BanAnimeRequest';
 import GetTopAnimeRequest from '@requests/anime/GetTopAnimeRequest';
 import FrontPageAnimeRequest from '@requests/anime/FrontPageAnimeRequest';
 import hasPermissions from '@/helper/hasPermission';
+import Sort from '@/helper/sorts';
 
 export default class AnimeController {
     public static async getGenres(req: Request, res: Response) {
@@ -30,15 +31,38 @@ export default class AnimeController {
     }
 
     public static async getAnime(req: GetAnimeRequest, res: Response) {
-        const query = req.query;
-        const body = req.body;
-        body.banInRussia = hasPermissions([Permissions.ManageAnime], req.user);
+        const pagination = {
+            page: req.query.page,
+            pageLimit: req.query.pageLimit
+        };
 
-        const count = await AnimeSearchService.getFilteredCount(body);
-        const anime = await AnimeSearchService.filterSelector(body, query);
+        const filters = {
+            name: req.query.name,
+            seasons: req.query.seasons,
+            statuses: req.query.statuses,
+            rpaRatings: req.query.rpaRatings,
+            mediaTypes: req.query.mediaTypes,
+            excludeGenres: req.query.excludeGenres,
+            includeGenres: req.query.includeGenres,
+            period: req.query.period,
+            isWatchable: req.query.isWatchable,
+            withCensored: req.query.withCensored,
+            withBanned: hasPermissions([Permissions.ManageAnime], req.user)
+        };
+
+        const sort = Sort.getAnimeSort({
+            field: req.query.sortField,
+            direction: req.query.sortDirection
+        });
+
+        const count = await AnimeSearchService.getFilteredCount(filters);
+        const anime = await AnimeSearchService.filterSelector(filters, pagination, sort);
         return res.status(RequestStatuses.OK).json({
-            count: count,
-            body: anime
+            body: {
+                count,
+                pagination,
+                anime
+            }
         });
     }
 

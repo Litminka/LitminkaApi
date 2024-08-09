@@ -4,7 +4,7 @@ import { queryIntValidator, querySoftPeriodValidator } from '@/validators/QueryB
 
 export default class GetNotificationsRequest extends Request {
     public query!: {
-        period: Date[];
+        period?: Date[];
         page: number;
         pageLimit: number;
     };

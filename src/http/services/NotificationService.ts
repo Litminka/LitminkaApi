@@ -132,7 +132,7 @@ export default class NotificationService {
     public static async getNotificationsCount(period: Date[]) {
         if (typeof period === 'undefined')
             period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()];
-        period = Period.getPeriod(period);
+        period = Period.validatePeriod(period);
         const _count = await prisma.userAnimeNotifications.aggregate({
             _count: {
                 id: true
@@ -187,7 +187,7 @@ export default class NotificationService {
     public static async getNotifications({ period, page, pageLimit }: getNotifications) {
         if (typeof period === 'undefined')
             period = [dayjs().subtract(2, 'weeks').toDate(), dayjs().toDate()];
-        period = Period.getPeriod(period);
+        period = Period.validatePeriod(period);
 
         const count = await this.getNotificationsCount(period);
         const notifications = prisma.animeNotifications.findMany({
