@@ -19,6 +19,7 @@ ENV SHIKIMORI_URL=https://shikimori.one \
     REFRESH_TOKEN_LIFE=14d
 
 WORKDIR /app
+COPY package*.json .
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist .
