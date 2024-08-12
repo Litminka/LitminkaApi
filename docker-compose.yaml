@@ -2,12 +2,12 @@ version: '3.9'
 
 volumes:
   postgres-data:
-    external: false # Внешние волюмы не привязываются к композу и при docker-compose down --volumes не удаляются
+    external: false
   redis-data:
     external: false
 
 networks:
-  litminka-net: 
+  litminka-net:
     external: false
 
 services:
