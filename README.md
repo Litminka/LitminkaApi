@@ -1,18 +1,93 @@
 ## Table of contents
 
--   [Table of contents](#tableofcontents)
--   [Description](#description)
--   [Documentation](#documentation)
+- [Table of contents](#table-of-contents)
+- [Description](#description)
+- [Installation](#installation)
+  - [Build from source](#build-from-source)
+  - [Run from .zip (with release)](#run-from-zip-with-release)
+  - [Run with docker (with release)](#run-with-docker-with-release)
+- [Run for contribution](#run-for-contribution)
+- [Documentation](#documentation)
 
 ---
 
 ## Description
 
-API for [litminka.ru](litminka.ru)
+Public service API [litminka.ru](litminka.ru).
 
-Litminka - is a service for managing lists, watching and discussing anime-serials and films.
+**requirements:**
+    - NodeJS 20, 22, 24
+    - git
 
-This project works with [shikimori](shikimori.one) list integration, synchronization and automatic editing. One of selling points is an ability to follow specific dub/sub for every serial and notifications for new episodes through the website or connect a discord bot, or a telegram bot.
+---
+## Installation
+
+### Build from source
+
+1. Clone project repository
+```shell
+git clone https://github.com/Litminka/LitminkaApi
+```
+
+2. Download dependencies
+```shell
+npm install
+```
+
+3. Build typescript code to javascript
+```shell
+npm run build
+```
+
+4. Rename `.env.example` to `.env` and configure
+
+5. Start database migrations and seeding
+```shell
+prisma migrate deploy && node dist/prisma/seed.js
+```
+
+6. Run main process and queries
+```shell
+node dist/src/queues/autocheck.js & 
+node dist/src/queues/ratingUpdate.js & 
+node dist/src/queues/relationUpdate.js & 
+node dist/src/queues/shikimoriListUpdate.js & 
+node dist/src/queues/watchListWorker.js & 
+node dist/src/index.js
+```
+
+### Run from .zip (with release)
+
+### Run with docker (with release)
+
+---
+
+## Run for contribution
+
+1. Clone project repository
+```shell
+git clone https://github.com/Litminka/LitminkaApi
+```
+
+2. Download dependencies
+```shell
+npm install
+```
+
+3. Copy `.env.example` to `.env` and configure
+
+4. Run application
+```shell
+npm run dev
+```
+> For running queries you may read package.json
+>
+>Run query scripts:
+>  - autocheck
+>  - relation-update
+>  - rating-update
+>  - watchlist-importer
+>  - shikimori-watchlist-sync
 
 ---
 
@@ -20,26 +95,4 @@ This project works with [shikimori](shikimori.one) list integration, synchroniza
 
 Right now the website is in development, documentation will be available later
 
----
-
-## Содержание
-
--   [Содержание](#содержание)
--   [Описание](#описание)
--   [Документация](#документация)
-
----
-
-## Описание
-
-API для проекта [litminka.ru](litminka.ru)
-
-Litminka - это площадка для ведения списков, просмотра и обсуждения аниме-сериалов и фильмов.
-
-Проект работает с интеграцией списков [shikimori](shikimori.one), их синхронизацией и автоматическим редактированием. Отличительной чертой является возможность выбора подписки на желаемую озвучку/субтитры для каждого сериала, получение уведомлений о выходе серий через сайт, либо подключить бота к телеграмм-каналу или дискорд-серверу.
-
----
-
-## Документация
-
-На данный момент сайт в разработке, документация к использованию будет доступна позже
+-

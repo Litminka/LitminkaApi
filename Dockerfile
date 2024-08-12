@@ -4,7 +4,6 @@ WORKDIR /app
 COPY . .
 
 RUN rm -rf tests && \
-    mv src/config.ts.example src/config.ts && \
     npm install && \
     npm run build
 
