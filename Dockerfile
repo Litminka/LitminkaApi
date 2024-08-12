@@ -1,8 +1,8 @@
 FROM node:lts-alpine AS build
 
-LABEL project.maintainer="maks2002bytovskii@gmail.com"
-LABEL project="Litminka"
-LABEL project.url="https://github.com/Litminka/LitminkaApi"
+LABEL org.opencontainers.image.project = "Litminka"
+LABEL org.opencontainers.image.project.maintainer = "maks2002bytovskii@gmail.com"
+LABEL org.opencontainers.image.source = "https://github.com/Litminka/LitminkaApi"
 
 WORKDIR /app
 COPY . .
