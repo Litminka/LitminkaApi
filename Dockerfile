@@ -1,5 +1,9 @@
 FROM node:lts-alpine AS build
 
+LABEL project.maintainer="maks2002bytovskii@gmail.com"
+LABEL project="Litminka"
+LABEL project.url="https://github.com/Litminka/LitminkaApi"
+
 WORKDIR /app
 COPY . .
 
@@ -20,12 +24,11 @@ ENV SHIKIMORI_URL=https://shikimori.one \
     TOKEN_LIFE=1d \
     REFRESH_TOKEN_LIFE=14d
 
-WORKDIR /app
-# COPY package*.json .
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist .
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/
 
+WORKDIR /app
 RUN dos2unix /docker-entrypoint.sh
 
 CMD [ "sh", "/docker-entrypoint.sh" ]
