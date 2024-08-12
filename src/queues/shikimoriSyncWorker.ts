@@ -5,8 +5,11 @@ import ForbiddenError from '@/errors/clienterrors/ForbiddenError';
 import config from '@/config';
 
 new Worker(
-    'shikimoriListUpdate',
+    'shikimoriSync',
     async (job: Job) => {
+        const started = Date.now();
+
+        logger.info(`[shikimoriSync]: Started job`);
         const data = job.data;
         try {
             if (data.type === 'add-update') {
@@ -17,10 +20,11 @@ new Worker(
             }
         } catch (error) {
             if (!(error instanceof ForbiddenError)) {
-                logger.error('ListUpdate has failed! Error' + error);
+                logger.error('[shikimoriSync]:', error);
                 throw error;
             }
         }
+        logger.info(`[shikimoriSync]: Finished in: ${(Date.now() - started) / 1000} seconds`);
     },
     {
         connection: {

@@ -1,33 +1,27 @@
 import { Worker } from 'bullmq';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import { logger } from '@/loggerConf';
-import { ratingUpdateQueue } from './queues';
 import config from '@/config';
 
 new Worker(
     'ratingUpdate',
     async () => {
+        const started = Date.now();
+
+        logger.info(`[ratingUpdate]: Started job`);
         try {
             await AnimeUpdateService.updateRating();
-        } catch (err) {
-            logger.error('Rating update failed:', err);
-            throw err;
+        } catch (error) {
+            logger.error('[ratingUpdate]:', error);
+            throw error;
         }
+
+        logger.info(`[ratingUpdate]: Finished in: ${(Date.now() - started) / 1000} seconds`);
     },
     {
         connection: {
             host: config.redisHost,
             port: parseInt(config.redisPort!)
         }
-    }
-);
-
-ratingUpdateQueue.add(
-    'ratingUpdate',
-    {},
-    {
-        removeOnComplete: 10,
-        removeOnFail: 100,
-        repeat: config.updateRatingSchedule
     }
 );

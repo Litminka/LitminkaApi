@@ -23,8 +23,8 @@ export default {
     ratingMinVotes: 5,
     createTestData: true,
     updateRatingSchedule: { pattern: '*/30 * * * *' },
-    updateShikimoriSchedule: { pattern: '*/5 * * * *' },
-    autocheckSchedule: { pattern: '0 */1 * * *' },
+    updateShikimoriSchedule: { pattern: '*/20 * * * *' },
+    autocheckSchedule: { pattern: '*/10 * * * *' },
 
     /**
      *  .env processing

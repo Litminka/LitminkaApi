@@ -10,6 +10,7 @@ import prisma from '@/db';
 import { AnimeStatuses, FollowTypes } from '@enums';
 import { logger } from '@/loggerConf';
 import { ShikimoriGraphAnime } from '@/ts/shikimori';
+import FollowService from '@services/FollowService';
 
 export default class AutoCheckService {
     animeUpdateService: AnimeUpdateService;
@@ -30,7 +31,7 @@ export default class AutoCheckService {
         // if we have no anime in db, create it and exit
         if (!haveDbAnime) {
             this.animeUpdateService.createShikimoriGraphAnime(shikimoriAnime, kodikAnime);
-            logger.info(`New anime found ${shikimoriAnime.name}`);
+            logger.debug(`[autocheck]: New anime found ${shikimoriAnime.name}`);
             return;
         }
 
@@ -46,8 +47,8 @@ export default class AutoCheckService {
                 // notify all followers about it
                 for (const single of follow.info) {
                     NotificationService.notifyUserRelease(single.userId, anime.id);
-                    logger.info(
-                        `Need to notify user ${single.userId} that ${anime.name} began releasing`
+                    logger.debug(
+                        `[autocheck]: Need to notify user ${single.userId} that ${anime.name} began releasing`
                     );
 
                     // delete follow from db
@@ -81,8 +82,8 @@ export default class AutoCheckService {
             if (kodikTranslation === undefined) continue;
             if (kodikTranslation.episodes_count === translation.currentEpisodes) continue;
             const isFinalEpisode = kodikTranslation.episodes_count === anime.maxEpisodes;
-            logger.info(
-                `NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`
+            logger.debug(
+                `[autocheck]: NEW Episode: ${anime.name}: ${kodikTranslation.title} ${kodikTranslation.episodes_count}`
             );
             if (isFinalEpisode) {
                 NotificationService.notifyFinalEpisode(
@@ -109,8 +110,8 @@ export default class AutoCheckService {
                         kodikTranslation.id,
                         kodikTranslation.episodes_count
                     );
-                    logger.info(
-                        `Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`
+                    logger.debug(
+                        `[autocheck]: Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a ${kodikTranslation.episodes_count} episode`
                     );
 
                     continue;
@@ -128,8 +129,8 @@ export default class AutoCheckService {
                         userId: single.userId
                     }
                 });
-                logger.info(
-                    `Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`
+                logger.debug(
+                    `[autocheck]: Need to notify user ${single.userId} that ${kodikTranslation.title} group uploaded a final ${kodikTranslation.episodes_count} episode`
                 );
             }
         }
@@ -165,11 +166,14 @@ export default class AutoCheckService {
                 page = 1;
                 continue;
             }
-            logger.info(`Getting base anime from shikimori, page:${page}, season:${seasonString}`);
+            logger.debug(
+                `[autocheck]: Getting base anime from shikimori, page:${page}, season:${seasonString}`
+            );
             checkAnime.push(...shikimoriAnime);
             if (shikimoriAnime.length == 0 || shikimoriAnime.length < 50) break;
             page += 1;
         } while (true);
+
         return checkAnime;
     }
 
@@ -177,17 +181,23 @@ export default class AutoCheckService {
         const user: undefined = undefined; // No user is required
         const shikimoriApi = new ShikimoriApiService(user);
         const checkAnime: ShikimoriGraphAnime[] = [];
+        const started = Date.now();
 
+        logger.info('[autocheck]: Getting announces from shikimori');
         let page = 1;
         do {
             const shikimoriAnimeRequest = await shikimoriApi.getGraphAnnouncesByPage(page);
             const shikimoriAnime = shikimoriAnimeRequest.data.animes;
 
-            logger.info(`Getting announces from shikimori, page:${page}`);
+            logger.debug(`[autocheck]: Getting announces from shikimori, page:${page}`);
             checkAnime.push(...shikimoriAnime);
             if (shikimoriAnime.length == 0 || shikimoriAnime.length < 50) break;
             page += 1;
         } while (true);
+
+        logger.info(
+            `[autocheck]: Finishing geting anime from shikimori in: ${(Date.now() - started) / 1000} seconds`
+        );
         return checkAnime;
     }
 
@@ -195,19 +205,25 @@ export default class AutoCheckService {
         const user: undefined = undefined; // No user is required
         const shikimoriApi = new ShikimoriApiService(user);
         const idsSpliced = groupArrSplice(ids, 50);
-        logger.info('Getting anime from shikimori');
+        const started = Date.now();
+
+        logger.info('[autocheck]: Getting anime from shikimori');
 
         const shikimoriRes: Promise<any>[] = idsSpliced.flatMap(async (batch) => {
             const response = await shikimoriApi.getBatchGraphAnime(batch);
             return response.data.animes;
         });
-        let followedAnime: ShikimoriGraphAnime[] = await Promise.all(
+
+        const followedAnime: ShikimoriGraphAnime[] = await Promise.all(
             shikimoriRes.flatMap(async (p) => {
                 return await p;
             })
         );
-        followedAnime = followedAnime.flat();
-        return followedAnime;
+
+        logger.info(
+            `[autocheck]: Finishing geting anime from shikimori in: ${(Date.now() - started) / 1000} seconds`
+        );
+        return followedAnime.flat();
     }
 
     async getKodikAnime(anime: ShikimoriGraphAnime[]): Promise<KodikAnimeFull[]> {
@@ -227,9 +243,11 @@ export default class AutoCheckService {
     }
 
     async updateGroups() {
-        logger.info('began updating groups');
         const kodikApi = new KodikApiService();
         const translations = await kodikApi.getTranslationGroups();
+        const started = Date.now();
+
+        logger.info('[autocheck]: Began updating groups');
         for (const translation of translations) {
             await prisma.group.upsert({
                 where: {
@@ -247,6 +265,109 @@ export default class AutoCheckService {
                 }
             });
         }
-        logger.info('finished updating groups');
+
+        logger.info(
+            `[autocheck]: Finished updating groups in: ${(Date.now() - started) / 1000} seconds`
+        );
+    }
+
+    async runAutocheck() {
+        const follows = await prisma.follow.findMany({
+            where: {
+                status: FollowTypes.Follow
+            },
+            select: {
+                status: true,
+                userId: true,
+                anime: {
+                    select: {
+                        shikimoriId: true
+                    }
+                },
+                translation: true
+            }
+        });
+        const followService = new FollowService();
+
+        const announcements = await prisma.follow.findMany({
+            where: {
+                status: FollowTypes.Announcement
+            },
+            select: {
+                status: true,
+                userId: true,
+                anime: {
+                    select: {
+                        shikimoriId: true
+                    }
+                }
+            }
+        });
+        const followsMap = followService.getFollowsMap(follows);
+        const announcementMap = followService.getFollowsMap(announcements);
+        const followIds = [...followsMap.keys()];
+        const announcementsIds = [...announcementMap.keys()];
+        const defaultAnime = await this.getDefaultAnime();
+        logger.debug(`[autocheck]: Got basic check anime, amount: ${defaultAnime.length}`);
+
+        const followedAnime = await this.getAnime(followIds);
+        logger.debug(`[autocheck]: Got follows, amount: ${followedAnime.length}`);
+
+        const announcedAnime = await this.getAnnounces();
+        logger.debug(`[autocheck]: Got announcements, amount: ${announcedAnime.length}`);
+
+        logger.debug(`[autocheck]: Getting anime from kodik`);
+        const kodikDefaultAnime = await this.getKodikAnime(defaultAnime);
+        logger.debug(`[autocheck]: Got kodik anime, amount: ${kodikDefaultAnime.length}`);
+
+        logger.debug(`[autocheck]: Getting anime from kodik`);
+        const kodikFollowedAnime = await this.getKodikAnime(followedAnime);
+        logger.debug(`[autocheck]: Got kodik anime, amount: ${kodikFollowedAnime.length}`);
+        const kodikAnimeMap = new Map<number, KodikAnimeFull>();
+        for (const anime of [...kodikDefaultAnime, ...kodikFollowedAnime]) {
+            kodikAnimeMap.set(parseInt(anime.shikimori_id), anime);
+        }
+        const ids = [
+            ...followIds,
+            ...announcementsIds,
+            ...announcedAnime.map((anime) => {
+                return Number(anime.id);
+            }),
+            ...defaultAnime.map((anime) => {
+                return Number(anime.id);
+            })
+        ];
+        const anime = await prisma.anime.findMany({
+            where: {
+                shikimoriId: {
+                    in: ids
+                }
+            },
+            include: {
+                animeTranslations: true
+            }
+        });
+        const animeMap = new Map<number, animeWithTranslation>();
+        for (const anim of anime) animeMap.set(anim.shikimoriId, anim);
+
+        const checkedIds: number[] = [];
+        for (const anime of [...defaultAnime, ...followedAnime, ...announcedAnime]) {
+            const id = Number(anime.id);
+            if (checkedIds.includes(id)) {
+                continue;
+            }
+            let follow = followsMap.get(id);
+            if (follow === undefined) {
+                follow = announcementMap.get(id);
+            }
+            const dbAnime = animeMap.get(id);
+            const kodikAnime = kodikAnimeMap.get(id);
+            checkedIds.push(id);
+            try {
+                this.checkAnime(anime, kodikAnime, follow, dbAnime);
+            } catch (error) {
+                logger.error(error);
+            }
+        }
     }
 }

@@ -4,17 +4,19 @@ import WatchListService from '@services/WatchListService';
 import config from '@/config';
 
 new Worker(
-    'importWatchList',
+    'watchlistImport',
     async (job: Job) => {
         const started = Date.now();
+        logger.info(`[watchlistImport]: Started job`);
         try {
             await WatchListService.import(job.data.id);
         } catch (error) {
-            logger.error('ImportList has failed! Error' + error);
+            logger.error('[watchlistImport]:', error);
             throw error;
         }
         const finished = Date.now();
-        logger.info(`Finished in: ${(finished - started) / 1000} seconds`);
+
+        logger.info(`[watchlistImport]: Finished in: ${(finished - started) / 1000} seconds`);
     },
     {
         connection: {

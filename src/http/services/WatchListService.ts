@@ -12,7 +12,7 @@ import { KodikAnime } from '@/ts/kodik';
 import { logger } from '@/loggerConf';
 import prisma from '@/db';
 import { Anime, Prisma } from '@prisma/client';
-import { importWatchListQueue } from '@/queues/queues';
+import { watchListImportQueue } from '@/queues/queues';
 import ShikimoriListSyncService from '@services/shikimori/ShikimoriListSyncService';
 
 export default class WatchListService {
@@ -135,8 +135,8 @@ export default class WatchListService {
         if (!user.integration || !user.integration.shikimoriId)
             throw new BadRequestError('no_shikimori_integration');
 
-        importWatchListQueue.add(
-            'importWatchList',
+        watchListImportQueue.add(
+            'watchListImport',
             { id: user.id },
             {
                 removeOnComplete: 10,

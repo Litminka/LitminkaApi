@@ -1,13 +1,15 @@
-FROM node:24-alpine AS build
+FROM node:lts-alpine AS build
 
 WORKDIR /app
 COPY . .
 
-RUN rm -rf tests && \
-    npm install && \
-    npm run build
+RUN set -e; \ 
+    rm -rf tests; \
+    npm install; \
+    npm run build; \
+    npm prune --omit=dev; 
 
-FROM node:24-alpine AS runtime
+FROM node:lts-alpine AS runtime
 
 ENV SHIKIMORI_URL=https://shikimori.one \
     APP_URL=http://localhost \
@@ -19,13 +21,12 @@ ENV SHIKIMORI_URL=https://shikimori.one \
     REFRESH_TOKEN_LIFE=14d
 
 WORKDIR /app
-COPY package*.json .
+# COPY package*.json .
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist .
 
-# RUN npm install --omit=dev
-RUN npm prune --omit=dev && dos2unix /docker-entrypoint.sh
+RUN dos2unix /docker-entrypoint.sh
 
 CMD [ "sh", "/docker-entrypoint.sh" ]
 EXPOSE 8080

@@ -41,20 +41,15 @@ npm install
 npm run build
 ```
 
-4. Rename `.env.example` to `.env` and configure
+4. Rename `.env.example` to `.env` and configure server
 
 5. Start database migrations and seeding
 ```shell
 prisma migrate deploy && node dist/prisma/seed.js
 ```
 
-6. Run main process and queries
+6. Run main process and workers (in single thread mode)
 ```shell
-node dist/src/queues/autocheck.js & 
-node dist/src/queues/ratingUpdate.js & 
-node dist/src/queues/relationUpdate.js & 
-node dist/src/queues/shikimoriListUpdate.js & 
-node dist/src/queues/watchListWorker.js & 
 node dist/src/index.js
 ```
 
@@ -137,14 +132,17 @@ npm install
 ```shell
 npm run dev
 ```
-> For running queries you may read package.json
+> For running queries you can read package.json scripts section
 >
->Run query scripts:
+> Run only query scripts:
 >  - autocheck
 >  - relation-update
 >  - rating-update
 >  - watchlist-importer
 >  - shikimori-watchlist-sync
+>
+> Also you can run some server workers in multithreading mode (NodeJS cluster is not ready at the moment, use at your own risk):
+>  - `npm run server` or `node dist/src/server.js`
 
 ---
 
