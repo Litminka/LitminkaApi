@@ -1,7 +1,7 @@
 import prisma from '@/db';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import { shikimoriList } from '@/ts/shikimori';
-import { shikimoriListUpdateQueue } from '@/queues/queues';
+import { shikimoriListSyncQueue } from '@/queues/queues';
 import { UserWithIntegrationSettings } from '@/ts/user';
 
 export default class ShikimoriListSyncService {
@@ -58,8 +58,8 @@ export default class ShikimoriListSyncService {
         )
             return;
 
-        shikimoriListUpdateQueue.add(
-            'shikimoriListUpdate',
+        shikimoriListSyncQueue.add(
+            'shikimoriSync',
             { userId: user.id, list, type: 'add-update' },
             {
                 removeOnComplete: 10,
@@ -77,8 +77,8 @@ export default class ShikimoriListSyncService {
         )
             return;
 
-        shikimoriListUpdateQueue.add(
-            'shikimoriListUpdate',
+        shikimoriListSyncQueue.add(
+            'shikimoriSync',
             { userId: user.id, shikimoriId: id, type: 'delete' },
             {
                 removeOnComplete: 10,

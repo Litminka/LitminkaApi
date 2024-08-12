@@ -21,6 +21,13 @@ import { notificationRouter } from '@/routers/NotificationRouter';
 import { adminRouter } from '@/routers/AdminRouter';
 import config from '@/config';
 
+// Import background workers
+import '@/queues/autocheckWorker';
+import '@/queues/ratingUpdateWorker';
+import '@/queues/relationUpdateWorker';
+import '@/queues/shikimoriSyncWorker';
+import '@/queues/watchlistImportWorker';
+
 export const app: Express = express();
 
 const port: string = config.appPort;
@@ -64,26 +71,30 @@ app.get('/shikimori_token', (req: Request) => {
     logger.debug(`shikimori_token ${req.query}`);
 });
 
-switch (config.ssl) {
+const welcome = '⚡️[server]: Server is running at: ';
+switch (config.ssl.toLowerCase()) {
     case '1':
-    case 'true':
-    case 'True': {
+    case 'true': {
         const httpsOptions = {
             key: fs.readFileSync(config.sslKey),
             cert: fs.readFileSync(config.sslCert)
         };
         https.createServer(httpsOptions, app).listen(port, () => {
-            logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
+            logger.info(welcome + `https://localhost:${port}`);
         });
         break;
     }
+
     case '0':
-    case 'false':
-    case 'False':
+    case 'false': {
         http.createServer(app).listen(port, () => {
-            logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
+            logger.info(welcome + `http://localhost:${port}`);
         });
         break;
+    }
+
     default:
         throw new Error('SSL parameter must be bool');
 }
+
+import '@/queues/queues';

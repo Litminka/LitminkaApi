@@ -2,7 +2,7 @@
 
 # TODO: Добавить поддержу параметров, возможность запуска с автосидом.
 startApplication() {
-    npm run migrate &&
+    npx prisma migrate deploy &&
         node /app/src/index.js
 }
 

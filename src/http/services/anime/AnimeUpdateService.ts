@@ -237,7 +237,6 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
     }
 
     static async updateRating() {
-        logger.info('Starting rating update');
         const avgByAll = await prisma.anime.aggregate({
             _avg: {
                 shikimoriRating: true
@@ -246,22 +245,24 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 shikimoriRating: { not: 0 }
             }
         });
-        logger.info(`Average by all with shikimori rating: ${avgByAll._avg.shikimoriRating}`);
+        logger.debug(
+            `[ratingUpdate]: Average by all with shikimori rating: ${avgByAll._avg.shikimoriRating}`
+        );
 
         const avgByTitle = await prisma.animeList.groupBy({
             by: 'animeId',
             _avg: { rating: true },
             where: { rating: { not: 0 } }
         });
-        logger.info(`Average by title records: ${avgByTitle.length}`);
+        logger.debug(`[ratingUpdate]: Average by title records: ${avgByTitle.length}`);
 
         const splitedAvgByTitle = groupArrSplice(avgByTitle, 50);
-        logger.info(`Average by title batches: ${splitedAvgByTitle.length}`);
+        logger.debug(`[ratingUpdate]: Average by title batches: ${splitedAvgByTitle.length}`);
 
         let batchCount = 0;
         for (const pack of splitedAvgByTitle) {
             batchCount++;
-            logger.info(`Batch ${batchCount} with 50 records`);
+            logger.debug(`[ratingUpdate]: Batch ${batchCount} with 50 records`);
             for (const anime of pack) {
                 const ratings = await prisma.animeList.groupBy({
                     by: 'rating',
@@ -292,8 +293,6 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
             }
             await sleep(1000);
         }
-
-        logger.info(`Rating update complete`);
     }
 
     static async updateRelations() {
@@ -320,14 +319,16 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
                 checkMap.add(single.shikimoriId);
                 shikimoriIds.push(single.shikimoriId);
             }
-            logger.info(`Requesting batch: ${page} from shikimori`);
+            logger.debug(`[relationUpdate]: Requesting batch: ${page} from shikimori`);
             const shikimoriRequest = await shikimoriApi.getBatchGraphAnime(shikimoriIds);
             const shikimoriAnime = shikimoriRequest.data.animes;
             const shikimoriMap = new Map<number, ShikimoriAnimeWithRelation>();
 
             for (const shikimori of shikimoriAnime) {
                 shikimoriMap.set(Number(shikimori.id), shikimori);
-                logger.info(`Writing relations for anime ${shikimori.russian ?? shikimori.name}`);
+                logger.debug(
+                    `[relationUpdate]: Writing relations for anime ${shikimori.russian ?? shikimori.name}`
+                );
                 const relations = new Map<number, ShikimoriRelation>();
                 const createAnime = new Map<number, ShikimoriGraphAnime>();
 
@@ -341,7 +342,7 @@ export default class AnimeUpdateService implements iAnimeUpdateService {
 
                     createAnime.set(Number(relation.anime!.id), relation.anime!);
                 }
-                logger.info(`Getting anime from kodik`);
+                logger.debug(`[relationUpdate]: Getting anime from kodik`);
 
                 const animeInDb = await prisma.anime.findMany({
                     where: {
