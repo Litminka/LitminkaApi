@@ -2,13 +2,16 @@
 
 - [Table of contents](#table-of-contents)
 - [Description](#description)
+- [Requirements](#requirements)
 - [Installation](#installation)
   - [Build from source](#build-from-source)
   - [Run from .zip (with release)](#run-from-zip-with-release)
   - [Run with docker (with release)](#run-with-docker-with-release)
+    - [Using docker](#using-docker)
+    - [Using docker compose](#using-docker-compose)
 - [Configuration](#configuration)
   - [Run behind Nginx proxy](#run-behind-nginx-proxy)
-- [Run for contribution](#run-for-contribution)
+- [Contribution](#contribution)
 - [Documentation](#documentation)
 
 ---
@@ -17,9 +20,8 @@
 
 Public service API [litminka.ru](litminka.ru).
 
-**requirements:**
-    - NodeJS 20, 22, 24
-    - git
+## Requirements
+- NodeJS 20, 22, 24
 
 ---
 ## Installation
@@ -56,7 +58,29 @@ node dist/src/index.js
 ### Run from .zip (with release)
 
 ### Run with docker (with release)
+#### Using docker
+1. Pull docker package
+```shell
+docker pull ghcr.io/litminka/litminka-api:latest
+```
 
+2. Copy and configure `.env` from example in repo
+
+3. Run container
+```shell
+docker run --name litminka-api --env-file .env ghcr.io/litminka/litminka-api:latest
+```
+> Container requires instances of PostgreSQL and Redis databases (configured in `.env`)
+
+#### Using docker compose
+1. Copy `docker-compose.yaml` from repo
+
+2. Copy and configure `.env` from example in repo
+
+3. Run compose
+```shell
+docker-compose up
+```
 ---
 
 ## Configuration
@@ -114,7 +138,7 @@ http {
 
 ---
 
-## Run for contribution
+## Contribution
 
 1. Clone project repository
 ```shell
