@@ -1,4 +1,5 @@
 import { format, transports, createLogger, Logger } from 'winston';
+import config from '@/config';
 const { combine, timestamp, label, printf } = format;
 
 const myFormat = printf(({ level, message, label, timestamp }) => {
@@ -6,7 +7,7 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 });
 
 const loggerConf = {
-    level: 'debug',
+    level: config.debug.toLowerCase() === 'true' ? 'debug' : 'info',
     // format: format.json(),
     format: combine(label({ label: 'litminka-api' }), timestamp(), myFormat),
     defaultMeta: { service: 'litminka-api' },

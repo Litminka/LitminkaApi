@@ -30,7 +30,7 @@ ratingUpdateQueue.add(
     {
         removeOnComplete: 10,
         removeOnFail: 100,
-        repeat: config.updateRatingSchedule
+        repeat: config.ratingUpdateSchedule
     }
 );
 
@@ -43,7 +43,7 @@ shikimoriCheckQueue.add(
     {
         removeOnComplete: 10,
         removeOnFail: 100,
-        repeat: config.updateShikimoriSchedule
+        repeat: config.relationUpdateSchedule
     }
 );
 

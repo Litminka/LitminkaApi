@@ -22,8 +22,8 @@ export default {
     ],
     ratingMinVotes: 5,
     createTestData: true,
-    updateRatingSchedule: { pattern: '*/30 * * * *' },
-    updateShikimoriSchedule: { pattern: '*/20 * * * *' },
+    ratingUpdateSchedule: { pattern: '*/5 * * * *' },
+    relationUpdateSchedule: { pattern: '*/30 * * * *' },
     autocheckSchedule: { pattern: '*/10 * * * *' },
 
     /**
@@ -32,6 +32,7 @@ export default {
     appUrl: process.env.APP_URL ?? 'https://api.litminka.ru',
     appPort: process.env.PORT ?? '8001',
     runEnvironment: process.env.NODE_ENV ?? 'production',
+    debug: process.env.DEBUG ?? 'false',
 
     // LitminkaApi root user
     rootLogin: process.env.ROOT_LOGIN ?? 'admin',
