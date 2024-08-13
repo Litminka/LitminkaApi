@@ -136,7 +136,7 @@ export default class WatchListService {
             throw new BadRequestError('no_shikimori_integration');
 
         watchListImportQueue.add(
-            'watchListImport',
+            'watchlistImport',
             { id: user.id },
             {
                 removeOnComplete: 10,
@@ -154,7 +154,7 @@ export default class WatchListService {
         const kodikApi = new KodikApiService();
 
         const watchList = await shikimoriApi.getUserList();
-        logger.info(`Got list of user ID:${user.id}:${user.login}`);
+        logger.debug(`[watchlistImport]: Got list of user ID:${user.id}:${user.login}`);
 
         const watchListAnimeIds: number[] = watchList.map((anime) => {
             return anime.target_id;
@@ -167,7 +167,9 @@ export default class WatchListService {
         const noKodikSet = new Set<number>();
 
         for (const batch of groupedIds) {
-            logger.info(`Requesting anime from watchList, batch:${batchNumber}`);
+            logger.debug(
+                `[watchlistImport]: Requesting anime from watchList, batch:${batchNumber}`
+            );
             const shikimoriData = await shikimoriApi.getBatchGraphAnime(batch);
 
             for (const anime of shikimoriData.data.animes) {
@@ -200,7 +202,9 @@ export default class WatchListService {
 
         const translationBatch = groupArrSplice([...noKodikSet], 50);
         for (const batch of translationBatch) {
-            logger.info(`Requesting additional anime from kodik, batch:${batchNumber}`);
+            logger.debug(
+                `[watchlistImport]: Requesting additional anime from kodik, batch:${batchNumber}`
+            );
             const kodikData = await kodikApi.getBatchAnime(batch);
 
             for (const kodikAnime of kodikData) {
@@ -209,6 +213,8 @@ export default class WatchListService {
 
             batchNumber++;
         }
+
+        logger.debug('[watchlistImport]: Request anime from kodik complete');
 
         const shikimoriBatchIds: number[][] = groupArrSplice([...shikimoriMap.keys()], 100);
         const writeRelations = new Map<number, ShikimoriAnimeWithRelation>();

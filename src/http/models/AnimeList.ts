@@ -3,6 +3,7 @@ import prisma from '@/db';
 import { AddToList } from '@/ts/watchList';
 import { ShikimoriWatchList } from '@/ts/shikimori';
 import WatchListService from '../services/WatchListService';
+import { logger } from '@/loggerConf';
 
 const extention = Prisma.defineExtension({
     name: 'AnimeListModel',
@@ -73,6 +74,7 @@ const extention = Prisma.defineExtension({
             ) {
                 await prisma.animeList.createMany({
                     data: watchList.map((listEntry) => {
+                        logger.debug(listEntry.id);
                         return {
                             isFavorite: false,
                             status: listEntry.status,

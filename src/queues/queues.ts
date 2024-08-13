@@ -47,6 +47,6 @@ shikimoriCheckQueue.add(
     }
 );
 
-export const watchListImportQueue = new Queue('watchListImport', connection);
+export const watchListImportQueue = new Queue('watchlistImport', connection);
 
 export const shikimoriListSyncQueue = new Queue('shikimoriSync', connection);
