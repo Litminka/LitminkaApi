@@ -153,10 +153,10 @@ export default class WatchListService {
         const shikimoriApi = new ShikimoriApiService(user);
         const kodikApi = new KodikApiService();
 
-        const watchList = await shikimoriApi.getUserList();
+        const shikimoriWatchList = await shikimoriApi.getUserList();
         logger.debug(`[watchlistImport]: Got list of user ID:${user.id}:${user.login}`);
 
-        const watchListAnimeIds: number[] = watchList.map((anime) => {
+        const watchListAnimeIds: number[] = shikimoriWatchList.map((anime) => {
             return anime.target_id;
         });
         const groupedIds = groupArrSplice(watchListAnimeIds, 50);
@@ -269,11 +269,12 @@ export default class WatchListService {
                     writeRelations.set(id, shikimoriAnime! as ShikimoriAnimeWithRelation);
             }
         }
+
         await prisma.animeRelation.createFromShikimoriMap(writeRelations);
         await prisma.animeList.createEntriesFromShikimoriList(
             user.id,
             shikimoriDBAnimeMap,
-            watchList
+            shikimoriWatchList
         );
     }
 

@@ -72,19 +72,56 @@ const extention = Prisma.defineExtension({
                 animeMap: Map<number, number>,
                 watchList: ShikimoriWatchList[]
             ) {
-                await prisma.animeList.createMany({
-                    data: watchList.map((listEntry) => {
-                        logger.debug(listEntry.id);
-                        return {
-                            isFavorite: false,
-                            status: listEntry.status,
-                            watchedEpisodes: listEntry.episodes,
-                            userId,
-                            animeId: animeMap.get(Number(listEntry.target_id))!,
-                            rating: listEntry.score,
-                            shikimoriId: listEntry.id
-                        } satisfies Prisma.AnimeListCreateManyInput;
+                const prismaData = [];
+                const localWatchList = await prisma.animeList.findMany({
+                    where: {
+                        userId,
+                        animeId: { in: Array.from(animeMap.values()) }
+                    }
+                });
+
+                const watchListMap = new Map(
+                    localWatchList.map((entry) => {
+                        return [entry.id, entry];
                     })
+                );
+
+                for (const shikimoriEntry of watchList) {
+                    const animeId = Number(shikimoriEntry.target_id);
+                    const localEntry = watchListMap.get(animeMap.get(animeId)!);
+
+                    if (localEntry) {
+                        await prisma.animeList.updateMany({
+                            where: {
+                                userId,
+                                animeId
+                            },
+                            data: {
+                                isFavorite: false,
+                                status: shikimoriEntry.status,
+                                watchedEpisodes: shikimoriEntry.episodes,
+                                userId,
+                                animeId,
+                                rating: shikimoriEntry.score,
+                                shikimoriId: shikimoriEntry.id
+                            }
+                        });
+                        continue;
+                    }
+
+                    prismaData.push({
+                        isFavorite: false,
+                        status: shikimoriEntry.status,
+                        watchedEpisodes: shikimoriEntry.episodes,
+                        userId,
+                        animeId,
+                        rating: shikimoriEntry.score,
+                        shikimoriId: shikimoriEntry.id
+                    } satisfies Prisma.AnimeListCreateManyInput);
+                }
+
+                await prisma.animeList.createMany({
+                    data: prismaData
                 });
             },
 
