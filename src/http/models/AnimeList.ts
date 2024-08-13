@@ -1,4 +1,4 @@
-import { Anime, Prisma } from '@prisma/client';
+import { Anime, AnimeList, Prisma } from '@prisma/client';
 import prisma from '@/db';
 import { AddToList } from '@/ts/watchList';
 import { ShikimoriWatchList } from '@/ts/shikimori';
@@ -80,15 +80,15 @@ const extention = Prisma.defineExtension({
                     }
                 });
 
-                const watchListMap = new Map(
+                const watchListMap: Map<number, AnimeList> = new Map(
                     localWatchList.map((entry) => {
-                        return [entry.id, entry];
+                        return [entry.animeId, entry];
                     })
                 );
 
                 for (const shikimoriEntry of watchList) {
-                    const animeId = Number(shikimoriEntry.target_id);
-                    const localEntry = watchListMap.get(animeMap.get(animeId)!);
+                    const animeId = animeMap.get(Number(shikimoriEntry.target_id)) as number;
+                    const localEntry = watchListMap.get(animeId);
 
                     if (localEntry) {
                         await prisma.animeList.updateMany({
@@ -97,11 +97,8 @@ const extention = Prisma.defineExtension({
                                 animeId
                             },
                             data: {
-                                isFavorite: false,
                                 status: shikimoriEntry.status,
                                 watchedEpisodes: shikimoriEntry.episodes,
-                                userId,
-                                animeId,
                                 rating: shikimoriEntry.score,
                                 shikimoriId: shikimoriEntry.id
                             }
@@ -110,11 +107,11 @@ const extention = Prisma.defineExtension({
                     }
 
                     prismaData.push({
+                        userId,
+                        animeId,
                         isFavorite: false,
                         status: shikimoriEntry.status,
                         watchedEpisodes: shikimoriEntry.episodes,
-                        userId,
-                        animeId,
                         rating: shikimoriEntry.score,
                         shikimoriId: shikimoriEntry.id
                     } satisfies Prisma.AnimeListCreateManyInput);
