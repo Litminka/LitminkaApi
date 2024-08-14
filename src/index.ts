@@ -72,9 +72,8 @@ app.get('/shikimori_token', (req: Request) => {
 });
 
 const welcome = '⚡️[server]: Server is running at: ';
-switch (config.ssl.toLowerCase()) {
-    case '1':
-    case 'true': {
+switch (config.ssl) {
+    case true: {
         const httpsOptions = {
             key: fs.readFileSync(config.sslKey),
             cert: fs.readFileSync(config.sslCert)
@@ -85,8 +84,7 @@ switch (config.ssl.toLowerCase()) {
         break;
     }
 
-    case '0':
-    case 'false': {
+    case false: {
         http.createServer(app).listen(port, () => {
             logger.info(welcome + `http://localhost:${port}`);
         });

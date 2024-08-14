@@ -1,5 +1,21 @@
 import dotenv from 'dotenv';
 
+const __stringToBool = (arg?: string, envName?: string) => {
+    if (!arg) return undefined;
+    switch (arg.toLowerCase()) {
+        case 'true':
+        case '1': {
+            return true;
+        }
+        case 'false':
+        case '0': {
+            return false;
+        }
+    }
+    const errMessage = `String must be boolean: \${${envName ?? 'stringName'}}`;
+    throw new Error(errMessage);
+};
+
 dotenv.config();
 export default {
     /**
@@ -21,7 +37,6 @@ export default {
         'All Media Company'
     ],
     ratingMinVotes: 5,
-    createTestData: true,
     ratingUpdateSchedule: { pattern: '*/5 * * * *' },
     relationUpdateSchedule: { pattern: '*/30 * * * *' },
     autocheckSchedule: { pattern: '*/10 * * * *' },
@@ -32,7 +47,8 @@ export default {
     appUrl: process.env.APP_URL ?? 'https://api.litminka.ru',
     appPort: process.env.PORT ?? '8001',
     runEnvironment: process.env.NODE_ENV ?? 'production',
-    debug: process.env.DEBUG ?? 'false',
+    debug: __stringToBool(process.env.DEBUG, 'DEBUG') ?? false,
+    createTestData: __stringToBool(process.env.CREATE_TEST_DATA, 'CREATE_TEST_DATA') ?? false,
 
     // LitminkaApi root user
     rootLogin: process.env.ROOT_LOGIN ?? 'admin',
@@ -56,7 +72,7 @@ export default {
     country: process.env.COUNTRY_SN ?? 'RU',
 
     // SSL parameters for nodeJS application
-    ssl: process.env.SSL ?? '0',
+    ssl: __stringToBool(process.env.SSL, 'SSL') ?? false,
     sslCert: process.env.SSL_CERT ?? 'cert/server-cert.pem',
     sslKey: process.env.SSL_KEY ?? 'cert/server-key.pem',
 

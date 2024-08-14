@@ -7,7 +7,7 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 });
 
 const loggerConf = {
-    level: config.debug.toLowerCase() === 'true' ? 'debug' : 'info',
+    level: config.debug ? 'debug' : 'info',
     // format: format.json(),
     format: combine(label({ label: 'litminka-api' }), timestamp(), myFormat),
     defaultMeta: { service: 'litminka-api' },
