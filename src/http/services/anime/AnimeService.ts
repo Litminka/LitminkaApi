@@ -45,14 +45,10 @@ export default class AnimeService {
         );
     }
 
-    public static async getSeasonal(
-        withCensored: boolean,
-        isWatchable: boolean,
-        withBanned: boolean
-    ) {
+    public static async getSeasonal(withCensored: boolean, withBanned: boolean) {
         return AnimeSearchService.filterShortSelector(
             {
-                isWatchable,
+                isWatchable: true,
                 withCensored,
                 seasons: [getCurrentSeason()],
                 withBanned,
@@ -72,12 +68,12 @@ export default class AnimeService {
 
     public static async getPopularSeasonal(
         withCensored: boolean,
-        isWatchable: boolean,
-        withBanned: boolean
+        withBanned: boolean,
+        byShikimoriRating: boolean
     ) {
         return AnimeSearchService.filterShortSelector(
             {
-                isWatchable,
+                isWatchable: true,
                 withCensored,
                 withBanned,
                 seasons: [getCurrentSeason()],
@@ -92,7 +88,7 @@ export default class AnimeService {
                     :   undefined
             },
             { page: 1, pageLimit: 5 },
-            { rating: 'desc' }
+            byShikimoriRating ? { shikimoriRating: 'desc' } : { rating: 'desc' }
         );
     }
 

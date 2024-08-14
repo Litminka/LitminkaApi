@@ -17,13 +17,7 @@ export default class OptionalRequest extends Request {
      *  @returns Prisma User Variant
      */
     public async getUser(userId: number) {
-        return await prisma.user.findUserById(userId, {
-            role: {
-                include: {
-                    permissions: true
-                }
-            }
-        });
+        return await prisma.user.findUserById(userId, {});
     }
 }
 

@@ -19,6 +19,7 @@ export default class GetAnimeRequest extends OptionalRequest {
         'shikimoriRating',
         'firstEpisodeAired'
     ] as const satisfies SortAnimeFieldsType[];
+
     public query!: {
         name?: string;
         seasons?: string[];

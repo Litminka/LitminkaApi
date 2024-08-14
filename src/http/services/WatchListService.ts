@@ -3,7 +3,7 @@ import groupArrSplice from '@/helper/groupsplice';
 import { PaginationQuery } from '@/ts';
 import { AddToList, WatchListFilters } from '@/ts/watchList';
 import { ShikimoriAnime, ShikimoriWatchList } from '@/ts/shikimori';
-import { UserWithIntegration, UserWithIntegrationSettings } from '@/ts/user';
+import { UserWithIntegration, UserProfile } from '@/ts/user';
 import AnimeUpdateService from '@services/anime/AnimeUpdateService';
 import KodikApiService from '@services/KodikApiService';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
@@ -131,7 +131,7 @@ export default class WatchListService {
         await prisma.animeList.createWatchListEntry(user.id, animeInList, watchList);
     }
 
-    public static startImport(user: UserWithIntegration) {
+    public static startImport(user: UserProfile) {
         if (!user.integration || !user.integration.shikimoriId)
             throw new BadRequestError('no_shikimori_integration');
 
@@ -278,7 +278,7 @@ export default class WatchListService {
         );
     }
 
-    public static async delete(user: UserWithIntegrationSettings, animeId: number) {
+    public static async delete(user: UserProfile, animeId: number) {
         const animeListEntry = await this._findWatchlistEntry(user.id, animeId);
 
         if (animeListEntry !== null && animeListEntry.shikimoriId !== null) {
@@ -290,11 +290,7 @@ export default class WatchListService {
         });
     }
 
-    public static async edit(
-        user: UserWithIntegrationSettings,
-        animeId: number,
-        editParameters: AddToList
-    ) {
+    public static async edit(user: UserProfile, animeId: number, editParameters: AddToList) {
         const { shikimoriId, maxEpisodes } = await prisma.anime.findFirstOrThrow({
             where: {
                 id: animeId

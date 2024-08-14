@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import WatchListService from '@services/WatchListService';
-import IntegrationRequest from '@requests/IntegrationRequest';
+import ProfileUserRequest from '@requests/ProfileUserRequest';
 import EditWatchListRequest from '@requests/watchList/EditWatchListRequest';
 import DeleteFromWatchListRequest from '@requests/watchList/DeleteFromWatchListRequest';
 import GetWatchListRequest from '@requests/watchList/GetWatchListRequest';
@@ -38,7 +38,7 @@ export default class WatchListController {
      * @param res
      * @returns
      */
-    public static async startImport(req: IntegrationRequest, res: Response) {
+    public static async startImport(req: ProfileUserRequest, res: Response) {
         const user = req.user;
 
         WatchListService.startImport(user);

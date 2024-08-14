@@ -2,8 +2,9 @@ import { ValidationChain } from 'express-validator';
 import OptionalRequest from '@requests/OptionalRequest';
 import { queryBoolValidator } from '@/validators/QueryBaseValidator';
 
-export default class FrontPageAnimeRequest extends OptionalRequest {
+export default class GetPopularAnimeRequest extends OptionalRequest {
     public query!: {
+        shikimori: boolean;
         withCensored: boolean;
     };
 
@@ -12,10 +13,10 @@ export default class FrontPageAnimeRequest extends OptionalRequest {
      */
     protected rules(): ValidationChain[] {
         return [
-            queryBoolValidator('withCensored', { defValue: false }),
-            queryBoolValidator('isWatchable', { defValue: true })
+            queryBoolValidator('shikimori', { defValue: false }),
+            queryBoolValidator('withCensored', { defValue: false })
         ];
     }
 }
 
-export const frontPageAnimeReq = new FrontPageAnimeRequest().send();
+export const getPopularAnimeReq = new GetPopularAnimeRequest().send();
