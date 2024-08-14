@@ -3,12 +3,17 @@ import { RoleWithPermissions } from '@/ts/role';
 
 type UserWithoutPassword = Omit<User, 'password'>;
 
+type NonSensetiveIntegration = Omit<
+    Integration,
+    'userId' | 'shikimoriCode' | 'shikimoriRefreshToken' | 'shikimoriToken'
+>;
+
 export type UserWithIntegration = UserWithoutPassword & {
     integration: Integration | null;
 };
 
-export type UserWithIntegrationSettings = UserWithoutPassword & {
-    integration: Integration | null;
+export type UserProfile = UserWithoutPassword & {
+    integration: NonSensetiveIntegration | null;
     settings: UserSettings | null;
 };
 

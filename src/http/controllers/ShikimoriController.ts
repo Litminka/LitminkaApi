@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { RequestStatuses } from '@enums';
 import ShikimoriLinkService from '@services/shikimori/ShikimoriLinkService';
-import ProfileUserRequest from '@requests/ProfileUserRequest';
 import LinkShikimoriRequest from '@requests/shikimori/LinkShikimoriRequest';
 import config from '@/config';
+import IntegrationRequest from '@requests/IntegrationRequest';
 
 export default class ShikimoriController {
-    static async generateLink(req: ProfileUserRequest, res: Response) {
+    static async generateLink(req: IntegrationRequest, res: Response) {
         const user = req.user;
 
         const link = await ShikimoriLinkService.generateLink(user);
@@ -24,7 +24,7 @@ export default class ShikimoriController {
         return res.status(RequestStatuses.Created).json();
     }
 
-    static async unlink(req: ProfileUserRequest, res: Response) {
+    static async unlink(req: IntegrationRequest, res: Response) {
         const user = req.user;
 
         ShikimoriLinkService.unlink(user);
@@ -34,7 +34,7 @@ export default class ShikimoriController {
         });
     }
 
-    static async getProfile(req: ProfileUserRequest, res: Response) {
+    static async getProfile(req: IntegrationRequest, res: Response) {
         const user = req.user;
 
         const result = await ShikimoriLinkService.getProfile(user);

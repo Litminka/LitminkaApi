@@ -2,7 +2,7 @@ import prisma from '@/db';
 import ShikimoriApiService from '@services/shikimori/ShikimoriApiService';
 import { shikimoriList } from '@/ts/shikimori';
 import { shikimoriListSyncQueue } from '@/queues/queues';
-import { UserWithIntegrationSettings } from '@/ts/user';
+import { UserProfile } from '@/ts/user';
 
 export default class ShikimoriListSyncService {
     public static async addOrUpdateList(userId: number, list: shikimoriList) {
@@ -48,7 +48,7 @@ export default class ShikimoriListSyncService {
         await shikimoriApi.deleteListEntry(shikimoriId);
     }
 
-    public static createAddUpdateJob(user: UserWithIntegrationSettings, list: shikimoriList) {
+    public static createAddUpdateJob(user: UserProfile, list: shikimoriList) {
         if (
             !user ||
             !user.integration ||
@@ -67,7 +67,7 @@ export default class ShikimoriListSyncService {
             }
         );
     }
-    public static createDeleteJob(user: UserWithIntegrationSettings, id: number) {
+    public static createDeleteJob(user: UserProfile, id: number) {
         if (
             !user ||
             !user.integration ||

@@ -1,7 +1,6 @@
 import prisma from '@/db';
 import { Encrypt } from '@/helper/encrypt';
-import { CreateUser, LoginUser } from '@/ts/user';
-import { UserWithIntegration } from '@/ts/user';
+import { CreateUser, LoginUser, UserProfile } from '@/ts/user';
 import crypto from 'crypto';
 import TokenService from '@services/TokenService';
 import UnprocessableContentError from '@/errors/clienterrors/UnprocessableContentError';
@@ -56,7 +55,7 @@ export default class UserService {
 
     public static async profile() {}
 
-    public static async updateSettings(user: UserWithIntegration, data: UpdateSettings) {
+    public static async updateSettings(user: UserProfile, data: UpdateSettings) {
         const {
             siteTheme,
             showCensoredContent,
