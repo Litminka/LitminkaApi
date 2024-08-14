@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import ShikimoriController from '@controllers/ShikimoriController';
 import { wrap } from '@/middleware/errorHandler';
-import { integrationReq } from '@requests/IntegrationRequest';
+import { integrationReq } from '@requests/ProfileUserRequest';
 import { linkShikimoriReq } from '@requests/shikimori/LinkShikimoriRequest';
 
 const router = Router();

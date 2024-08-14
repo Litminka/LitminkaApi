@@ -2,24 +2,21 @@ import { ValidationChain } from 'express-validator';
 import GroupRequest from '@requests/group/GroupRequest';
 import { WatchListStatuses } from '@enums';
 import {
-    bodyArrayValidator,
-    bodyStringValidator,
-    bodyIntValidator,
-    bodyBoolValidator
-} from '@/validators/BodyBaseValidator';
+    queryArrayValidator,
+    queryStringValidator,
+    queryBoolValidator,
+    queryIntValidator
+} from '@/validators/QueryBaseValidator';
 import { paramIntValidator } from '@/validators/ParamBaseValidator';
-import { queryIntValidator } from '@/validators/QueryBaseValidator';
 
 export default class GetGroupAnimeListRequest extends GroupRequest {
     public params!: {
         groupId: number;
     };
-    public body!: {
+    public query!: {
         statuses?: WatchListStatuses[];
         ratings?: number[];
         isFavorite?: boolean;
-    };
-    public query!: {
         page: number;
         pageLimit: number;
     };
@@ -31,13 +28,13 @@ export default class GetGroupAnimeListRequest extends GroupRequest {
         return [
             paramIntValidator('groupId'),
 
-            bodyArrayValidator('statuses').optional(),
-            bodyStringValidator('statuses.*').isIn(Object.values(WatchListStatuses)),
+            queryArrayValidator('statuses').optional(),
+            queryStringValidator('statuses.*').isIn(Object.values(WatchListStatuses)),
 
-            bodyArrayValidator('ratings').optional(),
-            bodyIntValidator('ratings.*', { typeParams: { min: 0, max: 10 } }),
+            queryArrayValidator('ratings').optional(),
+            queryIntValidator('ratings.*', { typeParams: { min: 0, max: 10 } }),
 
-            bodyBoolValidator('isFavorite').optional(),
+            queryBoolValidator('isFavorite').optional(),
 
             queryIntValidator('page', {
                 defValue: 1,

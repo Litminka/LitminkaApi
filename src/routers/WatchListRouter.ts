@@ -4,7 +4,7 @@ import { wrap } from '@/middleware/errorHandler';
 import { editWatchListReq } from '@requests/watchList/EditWatchListRequest';
 import { deleteFromWatchListReq } from '@requests/watchList/DeleteFromWatchListRequest';
 import { getWatchListReq } from '@requests/watchList/GetWatchListRequest';
-import { integrationReq } from '@requests/IntegrationRequest';
+import { integrationReq } from '@requests/ProfileUserRequest';
 
 const router = Router();
 

@@ -11,9 +11,9 @@ export default class GroupAnimeListController {
     public static async get(req: GetGroupAnimeListRequest, res: Response) {
         const user = req.user;
         const groupId = req.params.groupId;
-        const statuses = req.body.statuses;
-        const ratings = req.body.ratings;
-        const isFavorite = req.body.isFavorite;
+        const statuses = req.query.statuses;
+        const ratings = req.query.ratings;
+        const isFavorite = req.query.isFavorite;
         const query = req.query;
 
         const groupAnimeList = await GroupAnimeListService.get(

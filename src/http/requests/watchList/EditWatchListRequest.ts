@@ -8,9 +8,9 @@ import {
 } from '@/validators/BodyBaseValidator';
 import { WatchListStatuses } from '@enums';
 import { ValidationChain } from 'express-validator';
-import IntegrationSettingsRequest from '@requests/IntegrationSettingsRequest';
+import ProfileUserRequest from '@requests/ProfileUserRequest';
 
-export default class EditWatchListRequest extends IntegrationSettingsRequest {
+export default class EditWatchListRequest extends ProfileUserRequest {
     public params!: {
         animeId: number;
     };

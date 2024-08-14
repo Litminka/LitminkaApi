@@ -3,8 +3,6 @@ import AuthRequest from '@requests/AuthRequest';
 import { queryBoolValidator } from '@/validators/QueryBaseValidator';
 
 export default class GetUserNotificationsCountRequest extends AuthRequest {
-    protected permissions = [];
-
     public query!: {
         page: number;
         pageLimit: number;

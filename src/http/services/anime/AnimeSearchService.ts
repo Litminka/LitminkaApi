@@ -194,6 +194,7 @@ export default class AnimeSearchService {
                 rpaRating: true,
                 shikimoriId: true,
                 rating: true,
+                shikimoriRating: true,
                 mediaType: true
             },
             orderBy: order

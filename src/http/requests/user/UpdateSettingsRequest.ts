@@ -4,9 +4,9 @@ import {
     bodyIntValidator,
     bodyStringValidator
 } from '@/validators/BodyBaseValidator';
-import IntegrationRequest from '@requests/IntegrationRequest';
+import ProfileUserRequest from '@requests/ProfileUserRequest';
 
-export default class UpdateSettingsRequest extends IntegrationRequest {
+export default class UpdateSettingsRequest extends ProfileUserRequest {
     public body!: {
         siteTheme?: string;
         watchListMode?: string;

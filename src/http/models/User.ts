@@ -45,7 +45,8 @@ const extention = Prisma.defineExtension({
                     email: true,
                     login: true,
                     createdAt: true,
-                    roleId: true
+                    roleId: true,
+                    role: { include: { permissions: true } }
                 } satisfies Prisma.UserSelect;
 
                 return (await prisma.user.findFirstOrThrow({

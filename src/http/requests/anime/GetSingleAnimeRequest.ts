@@ -1,6 +1,5 @@
 import { paramStringValidator } from '@/validators/ParamBaseValidator';
 import { ValidationChain } from 'express-validator';
-import prisma from '@/db';
 import OptionalRequest from '@requests/OptionalRequest';
 
 export default class GetSingleAnimeRequest extends OptionalRequest {
@@ -8,23 +7,6 @@ export default class GetSingleAnimeRequest extends OptionalRequest {
         slug: string;
     };
 
-    /**
-     *  if authType is not None
-     *  Define prisma user request for this method
-     *
-     *  @returns Prisma User Variant
-     */
-    public async getUser(userId: number) {
-        return await prisma.user.findUserById(userId, {
-            role: {
-                include: {
-                    permissions: true
-                }
-            },
-            integration: true,
-            shikimoriLink: true
-        });
-    }
     /**
      * Define validation rules for this request
      */
