@@ -21,7 +21,7 @@
 Public service API [litminka.ru](litminka.ru).
 
 ## Requirements
-- NodeJS 20, 22, 24
+- NodeJS 20, 22
 
 ---
 ## Installation
