@@ -46,7 +46,7 @@ EOM
 # Return:
 #   None
 ##############################
-parseSemVer(){
+parseSemVer() {
     local VERSION=$1
 
     VERSION_MAJOR="${VERSION%%.*}"
@@ -58,7 +58,7 @@ parseSemVer(){
     VERSION_PRE_RELEASE_TAG=""
 
     case "$VERSION" in
-      *-*)
+    *-*)
         VERSION_PRE_RELEASE="${VERSION#*-}"
         VERSION_PRE_RELEASE_TAG="${VERSION_PRE_RELEASE%%.*}"
         VERSION_PRE_RELEASE="${VERSION_PRE_RELEASE#*.}"
@@ -122,8 +122,8 @@ bumpVersion() {
         npm install &&
             git add "$ROOT_DIR/package.json" "$ROOT_DIR/package-lock.json" "$ROOT_DIR/docker-compose.yaml" &&
             git commit -m "chore: [skip ci] release $newVersion" &&
-            git push origin "$branch" &&
             git tag -a "v$newVersion" -m "chore: [skip ci] release $newVersion" &&
+            git push origin "$branch" &&
             git push origin "v$newVersion"
     fi
 }
@@ -175,14 +175,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ "$0" == "$(dirname "$0")/build.sh" ]; then
-#    if [ $# -eq 0 ]; then
-#        __msgErr "Images missing" 1
-#        echo "$usage"
-#        exit 1
-#    fi
-
+    #    if [ $# -eq 0 ]; then
+    #        __msgErr "Images missing" 1
+    #        echo "$usage"
+    #        exit 1
+    #    fi
 
     [ "$BUMP" -eq 1 ] && bumpVersion
     __debug || buildImages && __msgDebug "Run build"
 fi
-
