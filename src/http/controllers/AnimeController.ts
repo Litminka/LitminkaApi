@@ -22,7 +22,6 @@ export default class AnimeController {
     public static async getSingleAnime(req: GetSingleAnimeRequest, res: Response) {
         const userId = req.user?.id;
         const slug = req.params.slug;
-
         const anime = await AnimeService.getSingleAnime(slug, userId);
 
         return res.status(RequestStatuses.OK).json({

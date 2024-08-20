@@ -48,7 +48,6 @@ export async function auth(req: RequestWithBot, res: Response, next: NextFunctio
             }
             delete req.query.userId;
         }
-
         delete req.auth.bot;
         next();
     });

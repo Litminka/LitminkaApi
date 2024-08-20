@@ -5,6 +5,7 @@ import { RequestStatuses } from '@enums';
 import prisma from '@/db';
 import { tokenMsg } from '@/ts/messages';
 import config from '@/config';
+import isBot from '@/helper/isBot';
 
 export async function optionalAuth(req: RequestWithBot, res: Response, next: NextFunction) {
     const token = req.get('authorization');
@@ -34,6 +35,15 @@ export async function optionalAuth(req: RequestWithBot, res: Response, next: Nex
                 error: tokenMsg.unauthorized
             });
         }
+
+        if (req.auth.bot && (await isBot(req.auth.id))) {
+            const userId = Number(req.query.userId);
+            if (!isNaN(userId) && userId !== undefined && userId % 1 === 0) {
+                req.auth.id = userId;
+            }
+            delete req.query.userId;
+        }
+        delete req.auth.bot;
 
         next();
     });

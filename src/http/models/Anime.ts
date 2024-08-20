@@ -154,11 +154,23 @@ const extention = Prisma.defineExtension({
             async findWithTranlsationsAndGenres(slug: string, userId?: number) {
                 let findBySlug = true;
                 if (!isNaN(Number(slug))) findBySlug = false;
-
                 const where = {
                     slug: findBySlug ? slug : undefined,
                     shikimoriId: !findBySlug ? Number(slug) : undefined
                 } satisfies Prisma.AnimeWhereInput;
+
+                const authInclude =
+                    typeof userId !== 'undefined' ?
+                        ({
+                            follows: {
+                                where: { userId },
+                                include: {
+                                    translation: true
+                                }
+                            },
+                            animeLists: { where: { userId } }
+                        } satisfies Prisma.AnimeInclude)
+                    :   {};
 
                 return await prisma.anime.findFirstOrThrow({
                     where,
@@ -170,13 +182,7 @@ const extention = Prisma.defineExtension({
                             }
                         },
                         relations: true,
-                        follows: {
-                            where: { userId },
-                            include: {
-                                translation: true
-                            }
-                        },
-                        animeLists: { where: { userId } }
+                        ...authInclude
                     }
                 });
             },
