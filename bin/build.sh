@@ -122,8 +122,8 @@ bumpVersion() {
         npm install &&
             git add "$ROOT_DIR/package.json" "$ROOT_DIR/package-lock.json" "$ROOT_DIR/docker-compose.yaml" &&
             git commit -m "chore: [skip ci] release $newVersion" &&
-            git tag -a "v$newVersion" -m "chore: [skip ci] release $newVersion" &&
             git push origin "$branch" &&
+            git tag "v$newVersion" &&
             git push origin "v$newVersion"
     fi
 }
