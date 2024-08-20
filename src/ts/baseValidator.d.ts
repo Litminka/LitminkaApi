@@ -1,4 +1,4 @@
-import { IsBooleanOptions, IsDateOptions, MinMaxOptions } from 'express-validator/src/options';
+import { IsBooleanOptions, IsDateOptions, MinMaxOptions } from 'express-validator/lib/options';
 import { ValidationChain } from 'express-validator';
 import { ValidatorErrorMessage } from '@/ts/errors';
 
