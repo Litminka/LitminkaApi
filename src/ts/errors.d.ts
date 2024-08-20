@@ -1,4 +1,4 @@
-import { ErrorMessage, FieldValidationError } from 'express-validator/src/base';
+import { ErrorMessage, FieldValidationError } from 'express-validator/lib/base';
 
 export type AdditionalValidationError = FieldValidationError & {
     additional: object;

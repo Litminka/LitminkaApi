@@ -52,14 +52,15 @@ services:
       - litminka-net
 
   litminka-api:
-    image: ghcr.io/litminka/litminka-api:latest
+    image: ghcr.io/litminka/litminka-api:v2.0.0-alpha.3
     container_name: litminka-api
     build:
+      args:
+        VERSION: v2.0.0-alpha.3
       context: .
       dockerfile: Dockerfile
       tags:
-        - "ghcr.io/litminka/litminka-api:v2.0.0-alpha.1"
-        - "ghcr.io/litminka/litminka-api:alpine"
+        - "ghcr.io/litminka/litminka-api:latest"
     env_file: .env.docker
     networks:
       - litminka-net
