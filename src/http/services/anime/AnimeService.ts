@@ -4,10 +4,6 @@ import { AnimePgaRatings } from '@enums';
 import { getCurrentSeason, getNextSeason } from '@/helper/animeseason';
 
 export default class AnimeService {
-    public static async getSingleAnime(slug: string, userId?: number) {
-        return await prisma.anime.findWithTranlsationsAndGenres(slug, userId);
-    }
-
     public static async getGenres() {
         return await prisma.genre.findMany({
             orderBy: { name: 'asc' },

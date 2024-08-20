@@ -10,6 +10,7 @@ import GetPopularAnimeRequest from '@/http/requests/anime/GetPopularAnimeRequest
 import FrontPageAnimeRequest from '@requests/anime/FrontPageAnimeRequest';
 import hasPermissions from '@/helper/hasPermission';
 import Sort from '@/helper/sorts';
+import prisma from '@/db';
 
 export default class AnimeController {
     public static async getGenres(req: Request, res: Response) {
@@ -22,7 +23,8 @@ export default class AnimeController {
     public static async getSingleAnime(req: GetSingleAnimeRequest, res: Response) {
         const userId = req.user?.id;
         const slug = req.params.slug;
-        const anime = await AnimeService.getSingleAnime(slug, userId);
+
+        const anime = await prisma.anime.findWithTranlsationsAndGenres(slug, userId);
 
         return res.status(RequestStatuses.OK).json({
             body: anime
