@@ -23,7 +23,7 @@
     },
     "lint-staged": {
         "*": [
-            "npx eslint . --cache"
+            "npx eslint . --fix --cache"
         ]
     },
     "repository": {
