@@ -56,7 +56,7 @@ services:
     container_name: litminka-api
     build:
       args:
-        VERSION: v2.0.0-alpha.2
+        VERSION: v2.0.0-alpha.3
       context: .
       dockerfile: Dockerfile
       tags:

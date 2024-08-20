@@ -1,6 +1,6 @@
 {
     "name": "litminka-api",
-    "version": "2.0.0-alpha.2",
+    "version": "2.0.0-alpha.3",
     "description": "api for the litminka service",
     "main": "index.js",
     "scripts": {
