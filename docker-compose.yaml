@@ -61,7 +61,6 @@ services:
       dockerfile: Dockerfile
       tags:
         - "ghcr.io/litminka/litminka-api:v2.0.0-alpha.2"
-        - "ghcr.io/litminka/litminka-api:alpine"
     env_file: .env.docker
     networks:
       - litminka-net
