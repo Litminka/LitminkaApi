@@ -75,24 +75,28 @@ export default class FollowService {
     ) {
         const anime = await prisma.anime.findWithTranlsations(animeId);
         if (type === FollowTypes.Follow) {
-            if (groupName === undefined) {
+            if (groupName === undefined)
                 throw new UnprocessableContentError('no_group_name_provided');
-            }
+
             const translation = anime.animeTranslations.find((anime) => {
                 return anime.group.name == groupName;
             });
-            if (translation === undefined)
-                throw new UnprocessableContentError("This anime doesn't have given group");
+
+            if (translation === undefined) throw new UnprocessableContentError('group_not_found');
+
             if (
                 anime.status == AnimeStatuses.Released &&
                 translation.currentEpisodes >= anime.maxEpisodes
             )
-                throw new UnprocessableContentError("Can't follow released anime");
+                throw new UnprocessableContentError('cannot_follow_released');
+
             if (
+                anime.maxEpisodes !== 0 &&
                 anime.currentEpisodes >= anime.maxEpisodes &&
                 anime.currentEpisodes === translation.currentEpisodes
             )
-                throw new UnprocessableContentError("Can't follow non ongoing anime");
+                throw new UnprocessableContentError('cannot_follow_non_ongoing');
+
             await FollowService.followUpdate(
                 FollowTypes.Follow,
                 anime.id,
@@ -101,9 +105,10 @@ export default class FollowService {
                 translation.group.name
             );
         }
+
         if (type === FollowTypes.Announcement) {
             if (anime.status !== AnimeStatuses.Announced)
-                throw new UnprocessableContentError("Can't follow non announced anime");
+                throw new UnprocessableContentError('cannot_follow_non_announces');
             await FollowService.followUpdate(FollowTypes.Announcement, anime.id, userId);
         }
     }
@@ -117,8 +122,7 @@ export default class FollowService {
         const translation = anime.animeTranslations.find((anime) => {
             return anime.group.name == groupName;
         });
-        if (translation === undefined)
-            throw new UnprocessableContentError("This anime doesn't have given group");
+        if (translation === undefined) throw new UnprocessableContentError('group_not_found');
         unfollow.translationId = translation.id;
         return await prisma.follow.removeFollow(unfollow);
     }
